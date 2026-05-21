@@ -1,6 +1,7 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import { SECTORS } from '../../data/sectors.js';
+import SectorIcon from '../../components/SectorIcon.astro';
 ---
 <BaseLayout
   title="Sectores — Planning Core"
@@ -23,7 +24,7 @@ import { SECTORS } from '../../data/sectors.js';
       {SECTORS.map((s, i) => (
         <a href={`/sectores/${s.slug}`} class="sector-row" style={`--acc:${s.accent}`}>
           <div class="sector-row__num">{String(i+1).padStart(2,'0')}</div>
-          <div class="sector-row__icon">{s.icon}</div>
+          <div class="sector-row__icon"><SectorIcon slug={s.slug} size={22} /></div>
           <div class="sector-row__main">
             <div class="sector-row__top">
               <h2>{s.name}</h2>
@@ -40,10 +41,6 @@ import { SECTORS } from '../../data/sectors.js';
             <div class="meta-item">
               <span class="meta-label">Ciclo venta</span>
               <span class="meta-val">{s.cycle}</span>
-            </div>
-            <div class="meta-item">
-              <span class="meta-label">Fit</span>
-              <span class="meta-val meta-val--accent">{s.fit}</span>
             </div>
           </div>
           <div class="sector-row__arrow">→</div>
@@ -91,7 +88,7 @@ import { SECTORS } from '../../data/sectors.js';
     flex-shrink: 0;
     width: 28px;
   }
-  .sector-row__icon { font-size: 2rem; flex-shrink: 0; }
+  .sector-row__icon { width: 44px; height: 44px; border-radius: 11px; background: color-mix(in srgb, var(--acc) 10%, transparent); display: flex; align-items: center; justify-content: center; color: var(--acc); flex-shrink: 0; }
 
   .sector-row__main { flex: 1; min-width: 0; }
   .sector-row__top { display: flex; align-items: center; gap: .75rem; flex-wrap: wrap; margin-bottom: .35rem; }

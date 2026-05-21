@@ -1,6 +1,7 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { SECTORS } from '../data/sectors.js';
+import SectorIcon from '../components/SectorIcon.astro';
 ---
 <BaseLayout>
   <!-- HERO -->
@@ -194,13 +195,12 @@ import { SECTORS } from '../data/sectors.js';
       <div class="sectors-grid">
         {SECTORS.map(s => (
           <a href={`/sectores/${s.slug}`} class="sector-card" style={`--acc:${s.accent}`}>
-            <div class="sector-card__icon">{s.icon}</div>
+            <div class="sector-card__icon"><SectorIcon slug={s.slug} /></div>
             <div class="sector-card__body">
               <h3>{s.short}</h3>
               <p>{s.tagline}</p>
               <div class="sector-card__meta">
                 <span>{s.price}</span>
-                <span class="sector-card__fit">Fit {s.fit}</span>
               </div>
             </div>
             <div class="sector-card__arrow">→</div>
@@ -384,11 +384,10 @@ import { SECTORS } from '../data/sectors.js';
     border-left: 3px solid var(--acc);
   }
   .sector-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-lg); }
-  .sector-card__icon { font-size: 1.5rem; }
+  .sector-card__icon { width: 40px; height: 40px; border-radius: 10px; background: color-mix(in srgb, var(--acc) 10%, transparent); display: flex; align-items: center; justify-content: center; color: var(--acc); }
   .sector-card__body h3 { font-size: .95rem; font-weight: 700; color: var(--navy); margin-bottom: .3rem; }
   .sector-card__body p { font-size: .82rem; color: var(--n30); line-height: 1.5; }
   .sector-card__meta { display: flex; justify-content: space-between; align-items: center; margin-top: .5rem; font-size: .75rem; color: var(--n30); }
-  .sector-card__fit { font-size: .7rem; font-weight: 700; color: var(--acc); padding: .15rem .5rem; border-radius: 999px; border: 1px solid var(--acc); }
   .sector-card__arrow { position: absolute; bottom: 1.25rem; right: 1.25rem; font-size: 1rem; color: var(--acc); opacity: 0; transition: opacity .2s; }
   .sector-card:hover .sector-card__arrow { opacity: 1; }
 
