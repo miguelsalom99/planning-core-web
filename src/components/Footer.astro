@@ -1,0 +1,107 @@
+---
+const sectors = [
+  { href: '/sectores/impresion-packaging', label: 'Impresión & Packaging' },
+  { href: '/sectores/fundicion-metalurgia', label: 'Fundición y Metalurgia' },
+  { href: '/sectores/fabricacion-muebles', label: 'Muebles y Madera' },
+  { href: '/sectores/medtech-dispositivos', label: 'MedTech' },
+  { href: '/sectores/ferroviario-mro', label: 'Ferroviario MRO' },
+  { href: '/sectores/agroalimentario', label: 'Agroalimentaria' },
+  { href: '/sectores/naval-astilleros', label: 'Naval y Astilleros' },
+  { href: '/sectores/construccion-industrial', label: 'Construcción Industrial' },
+];
+---
+<footer class="footer">
+  <div class="container footer__inner">
+    <div class="footer__brand">
+      <a href="/" class="footer__logo-link">
+        <img src="/images/logo-stacked.png" alt="Planning Core" class="footer__logo-img" />
+      </a>
+      <p class="footer__tagline">El Gantt inteligente para manufactura industrial.</p>
+      <p class="footer__tagline footer__tagline--sub">Sin código. Sin IT. En semanas.</p>
+    </div>
+
+    <div class="footer__col">
+      <h4>Producto</h4>
+      <a href="/producto">Cómo funciona</a>
+      <a href="/precios">Precios y piloto</a>
+      <a href="/contacto">Solicitar demo</a>
+    </div>
+
+    <div class="footer__col">
+      <h4>Sectores</h4>
+      {sectors.slice(0,4).map(s => <a href={s.href}>{s.label}</a>)}
+    </div>
+
+    <div class="footer__col">
+      <h4>&nbsp;</h4>
+      {sectors.slice(4).map(s => <a href={s.href}>{s.label}</a>)}
+    </div>
+  </div>
+
+  <div class="footer__bottom">
+    <div class="container">
+      <span>© 2025 Planning Core · IE University</span>
+      <span>miguel.salom@student.ie.edu</span>
+    </div>
+  </div>
+</footer>
+
+<style>
+  .footer {
+    background: #0B1C3A;
+    color: rgba(255,255,255,.55);
+    font-size: .875rem;
+    border-top: 1px solid rgba(255,255,255,.06);
+  }
+  .footer__inner {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr 1fr;
+    gap: 3rem;
+    padding: 3.5rem 1.5rem;
+  }
+
+  .footer__logo-link { display: inline-block; margin-bottom: .9rem; }
+  .footer__logo-img {
+    height: 52px;
+    width: auto;
+    object-fit: contain;
+    /* fondo PNG ≈ footer background → se integra sin blend */
+  }
+
+  .footer__tagline { line-height: 1.5; color: rgba(255,255,255,.55); font-size: .875rem; }
+  .footer__tagline--sub { margin-top: .25rem; opacity: .5; font-size: .8rem; }
+
+  .footer__col h4 {
+    font-size: .75rem;
+    font-weight: 700;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,.35);
+    margin-bottom: .85rem;
+  }
+  .footer__col a {
+    display: block;
+    color: rgba(255,255,255,.55);
+    margin-bottom: .5rem;
+    transition: color .15s;
+  }
+  .footer__col a:hover { color: #fff; }
+
+  .footer__bottom {
+    border-top: 1px solid rgba(255,255,255,.06);
+    padding: 1.25rem 1.5rem;
+  }
+  .footer__bottom .container {
+    display: flex;
+    justify-content: space-between;
+    font-size: .8rem;
+  }
+
+  @media (max-width: 900px) {
+    .footer__inner { grid-template-columns: 1fr 1fr; }
+  }
+  @media (max-width: 580px) {
+    .footer__inner { grid-template-columns: 1fr; gap: 2rem; }
+    .footer__bottom .container { flex-direction: column; gap: .35rem; }
+  }
+</style>

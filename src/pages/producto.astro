@@ -1,0 +1,266 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+<BaseLayout
+  title="Producto — Planning Core"
+  description="Cómo funciona Planning Core: Gantt inteligente, escenarios Opt/Eq/Cons, replanificación en tiempo real para manufactura industrial."
+>
+  <!-- HERO -->
+  <section class="page-hero">
+    <div class="container">
+      <p class="section-label">El producto</p>
+      <h1 class="section-title section-title--light">Un Gantt que decide,<br/>no solo que dibuja</h1>
+      <p class="page-hero__sub">
+        Planning Core es la capa de planificación que tu ERP no tiene. Gestiona recursos,
+        simula escenarios y replanifica en segundos cuando la realidad cambia.
+      </p>
+    </div>
+  </section>
+
+  <!-- FEATURES -->
+  <section class="features">
+    <div class="container">
+      <div class="feature-block feature-block--reverse">
+        <div class="feature-block__text">
+          <p class="section-label">Gantt en tiempo real</p>
+          <h2 class="section-title">Visibilidad total<br/>de tu planta</h2>
+          <p class="feature-desc">
+            Ve todas tus máquinas, líneas y operarios en una sola pantalla.
+            El plan se actualiza automáticamente cuando cambia algo en producción.
+            Sin refrescos manuales, sin versiones desactualizadas.
+          </p>
+          <ul class="feature-list">
+            <li>Arrastrar y soltar para reordenar operaciones</li>
+            <li>Alertas automáticas de colisión de recursos</li>
+            <li>Vista por turno, día o semana</li>
+            <li>Exportación a PDF o integración vía API</li>
+          </ul>
+        </div>
+        <div class="feature-block__visual">
+          <div class="feature-screen">
+            <div class="screen-bar">
+              <span class="screen-dot red"></span>
+              <span class="screen-dot yellow"></span>
+              <span class="screen-dot green"></span>
+              <span class="screen-title">Planning Core — Gantt</span>
+            </div>
+            <div class="screen-body">
+              <div class="mini-gantt">
+                {['Línea A','Línea B','Línea C','Operarios'].map((row, ri) => (
+                  <div class="mg-row">
+                    <span class="mg-label">{row}</span>
+                    <div class="mg-track">
+                      <div class="mg-bar" style={`width:${[35,20,28,55][ri]}%;background:${['#1E4DB7','#16A34A','#DC6803','#0891B2'][ri]}`}></div>
+                      {ri < 3 && <div class="mg-bar" style={`width:${[20,35,15][ri]}%;background:${['#7C3AED','#DC6803','#1E4DB7'][ri]};margin-left:3px`}></div>}
+                    </div>
+                  </div>
+                ))}
+              </div>
+              <div class="alert-chip">⚠ Colisión detectada en Línea B — Sem 3</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="feature-block">
+        <div class="feature-block__text">
+          <p class="section-label">Escenarios de simulación</p>
+          <h2 class="section-title">3 planes en segundos.<br/>Tú eliges cuál ejecutar.</h2>
+          <p class="feature-desc">
+            El motor genera automáticamente tres versiones del plan: Óptimo (máximo throughput),
+            Equilibrado (balance carga-entrega) y Conservador (mínimo riesgo). Compara y decide
+            en segundos, no en horas de reunión.
+          </p>
+          <ul class="feature-list">
+            <li>Óptimo: maximiza producción y OEE</li>
+            <li>Equilibrado: equilibra carga entre recursos</li>
+            <li>Conservador: prioriza fechas de entrega</li>
+            <li>Guardar y comparar escenarios históricos</li>
+          </ul>
+        </div>
+        <div class="feature-block__visual">
+          <div class="scenarios-card">
+            {[
+              { label:'Óptimo', oee:'94%', otd:'91%', color:'#16A34A', desc:'Máximo throughput' },
+              { label:'Equilibrado', oee:'87%', otd:'97%', color:'#1E4DB7', desc:'Balance recomendado', active:true },
+              { label:'Conservador', oee:'78%', otd:'99%', color:'#8BA3C1', desc:'Mínimo riesgo' },
+            ].map(sc => (
+              <div class={`scenario ${sc.active ? 'scenario--active' : ''}`} style={`--sc:${sc.color}`}>
+                <div class="scenario__top">
+                  <span class="scenario__label">{sc.label}</span>
+                  {sc.active && <span class="scenario__tag">Recomendado</span>}
+                </div>
+                <div class="scenario__metrics">
+                  <div class="sc-metric"><span>OEE</span><strong>{sc.oee}</strong></div>
+                  <div class="sc-metric"><span>OTD</span><strong>{sc.otd}</strong></div>
+                </div>
+                <p class="scenario__desc">{sc.desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      <div class="feature-block feature-block--reverse">
+        <div class="feature-block__text">
+          <p class="section-label">Replanificación inteligente</p>
+          <h2 class="section-title">La realidad cambia.<br/>El plan también.</h2>
+          <p class="feature-desc">
+            Avería, pedido urgente, operario de baja. Planning Core detecta la desviación
+            y genera un nuevo plan en segundos, sin perder las fechas comprometidas.
+          </p>
+          <ul class="feature-list">
+            <li>Replanificación con un clic</li>
+            <li>Mantiene restricciones regulatorias y de calidad</li>
+            <li>Auditoría de cambios con marca de tiempo</li>
+            <li>Simulación de impacto antes de confirmar</li>
+          </ul>
+        </div>
+        <div class="feature-block__visual">
+          <div class="replan-card">
+            <div class="replan-event">
+              <span class="event-icon">🔴</span>
+              <div>
+                <strong>Avería detectada</strong>
+                <span>Línea A — Turno tarde</span>
+              </div>
+              <span class="event-time">14:32</span>
+            </div>
+            <div class="replan-arrow">↓ Replanificando...</div>
+            <div class="replan-result">
+              <span class="event-icon">✅</span>
+              <div>
+                <strong>Nuevo plan listo</strong>
+                <span>3 OTs reasignadas · OTD: 96% mantenido</span>
+              </div>
+              <span class="event-time">14:32</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- INTEGRATIONS -->
+  <section class="integrations" style="background:var(--n90)">
+    <div class="container text-center">
+      <p class="section-label">Integraciones</p>
+      <h2 class="section-title">Encima de lo que ya tienes</h2>
+      <p class="section-sub text-center" style="margin:0 auto 3rem">
+        Planning Core no reemplaza tu ERP. Se conecta vía API y añade la capa de
+        planificación inteligente que le faltaba.
+      </p>
+      <div class="integrations-grid">
+        {['SAP', 'Sage', 'Odoo', 'Dynamics 365', 'Fichero CSV', 'API REST'].map(int => (
+          <div class="integration-chip">{int}</div>
+        ))}
+      </div>
+      <p class="integrations-note">¿Tu ERP no está en la lista? Contáctanos — la integración suele tardar menos de una semana.</p>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="cta-section">
+    <div class="container cta-inner">
+      <div>
+        <h2 class="section-title">¿Listo para ver Planning Core<br/>en tu planta?</h2>
+        <p class="section-sub">Demo personalizada para tu sector y tus restricciones reales.</p>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:.75rem;flex-shrink:0">
+        <a href="/contacto" class="btn btn--primary">Solicitar demo →</a>
+        <a href="/precios" class="btn btn--dark">Ver precios del piloto</a>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .page-hero { background: linear-gradient(145deg, #060F20, #0B1C3A); padding: 5rem 0 4rem; }
+  .page-hero__sub { color: var(--silver); max-width: 580px; line-height: 1.7; margin-top: .75rem; font-size: 1.05rem; }
+
+  .features { padding: 5rem 0; }
+
+  .feature-block {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 5rem;
+    align-items: center;
+    margin-bottom: 6rem;
+  }
+  .feature-block--reverse .feature-block__text { order: 2; }
+  .feature-block--reverse .feature-block__visual { order: 1; }
+
+  .feature-desc { font-size: 1rem; color: var(--n30); line-height: 1.7; margin-top: .75rem; margin-bottom: 1.25rem; }
+
+  .feature-list { list-style: none; padding: 0; display: flex; flex-direction: column; gap: .6rem; }
+  .feature-list li {
+    padding-left: 1.25rem;
+    position: relative;
+    font-size: .9rem;
+    color: var(--n30);
+    line-height: 1.5;
+  }
+  .feature-list li::before { content: '✓'; position: absolute; left: 0; color: var(--brand); font-weight: 700; }
+
+  /* FEATURE SCREEN */
+  .feature-screen { background: #1A2A42; border-radius: 12px; overflow: hidden; box-shadow: 0 20px 60px rgba(11,28,58,.25); }
+  .screen-bar { display: flex; align-items: center; gap: .5rem; background: #0F1E33; padding: .65rem 1rem; }
+  .screen-dot { width: 10px; height: 10px; border-radius: 50%; }
+  .screen-dot.red { background: #FF5F57; }
+  .screen-dot.yellow { background: #FEBC2E; }
+  .screen-dot.green { background: #28C840; }
+  .screen-title { font-size: .7rem; color: rgba(255,255,255,.35); margin-left: .5rem; }
+  .screen-body { padding: 1.25rem; }
+  .mini-gantt { display: flex; flex-direction: column; gap: .45rem; }
+  .mg-row { display: flex; align-items: center; gap: .5rem; }
+  .mg-label { width: 60px; font-size: .65rem; color: rgba(255,255,255,.4); flex-shrink: 0; }
+  .mg-track { flex: 1; height: 20px; background: rgba(255,255,255,.04); border-radius: 3px; display: flex; align-items: center; padding: 0 2px; overflow: hidden; }
+  .mg-bar { height: 16px; border-radius: 2px; }
+  .alert-chip { margin-top: .85rem; background: rgba(220,104,3,.15); border: 1px solid rgba(220,104,3,.3); color: #fb923c; font-size: .7rem; font-weight: 600; padding: .35rem .75rem; border-radius: 6px; }
+
+  /* SCENARIOS */
+  .scenarios-card { display: flex; flex-direction: column; gap: .75rem; }
+  .scenario {
+    background: var(--n90);
+    border: 1px solid var(--n80);
+    border-left: 3px solid var(--sc);
+    border-radius: var(--radius-lg);
+    padding: 1.25rem 1.5rem;
+    transition: all .2s;
+  }
+  .scenario--active { background: #fff; box-shadow: var(--shadow-lg); }
+  .scenario__top { display: flex; justify-content: space-between; align-items: center; margin-bottom: .75rem; }
+  .scenario__label { font-size: .9rem; font-weight: 700; color: var(--navy); }
+  .scenario__tag { font-size: .65rem; font-weight: 700; background: rgba(30,77,183,.1); color: var(--brand); padding: .2rem .6rem; border-radius: 999px; }
+  .scenario__metrics { display: flex; gap: 1.5rem; }
+  .sc-metric span { display: block; font-size: .65rem; color: var(--silver); text-transform: uppercase; letter-spacing: .06em; margin-bottom: .1rem; }
+  .sc-metric strong { font-size: 1.25rem; font-weight: 800; color: var(--sc); }
+  .scenario__desc { font-size: .8rem; color: var(--silver); margin-top: .5rem; }
+
+  /* REPLAN */
+  .replan-card { background: var(--n90); border: 1px solid var(--n80); border-radius: var(--radius-lg); padding: 1.5rem; }
+  .replan-event, .replan-result { display: flex; align-items: center; gap: 1rem; }
+  .replan-event { opacity: .7; }
+  .event-icon { font-size: 1.25rem; flex-shrink: 0; }
+  .replan-event div strong, .replan-result div strong { display: block; font-size: .9rem; color: var(--navy); font-weight: 700; }
+  .replan-event div span, .replan-result div span { font-size: .8rem; color: var(--n30); }
+  .event-time { margin-left: auto; font-size: .75rem; color: var(--silver); font-variant-numeric: tabular-nums; }
+  .replan-arrow { text-align: center; font-size: .85rem; color: var(--brand); font-weight: 600; padding: 1rem 0; }
+
+  /* INTEGRATIONS */
+  .integrations { padding: 5rem 0; }
+  .integrations-grid { display: flex; flex-wrap: wrap; gap: .75rem; justify-content: center; margin-bottom: 1.5rem; }
+  .integration-chip { background: #fff; border: 1px solid var(--n80); border-radius: 999px; padding: .55rem 1.25rem; font-size: .875rem; font-weight: 600; color: var(--navy); box-shadow: var(--shadow); }
+  .integrations-note { font-size: .85rem; color: var(--silver); margin-top: .5rem; }
+
+  /* CTA */
+  .cta-section { padding: 5rem 0; background: var(--n90); }
+  .cta-inner { display: flex; justify-content: space-between; align-items: center; gap: 3rem; flex-wrap: wrap; }
+
+  @media (max-width: 900px) {
+    .feature-block { grid-template-columns: 1fr; gap: 2.5rem; }
+    .feature-block--reverse .feature-block__text { order: 1; }
+    .feature-block--reverse .feature-block__visual { order: 2; }
+    .cta-inner { flex-direction: column; }
+  }
+</style>

@@ -1,0 +1,144 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { SECTORS } from '../../data/sectors.js';
+---
+<BaseLayout
+  title="Sectores — Planning Core"
+  description="Planning Core adaptado a 8 sectores industriales. Impresión, Fundición, Muebles, MedTech, Ferroviario, Agroalimentario, Naval y Construcción."
+>
+  <section class="page-hero">
+    <div class="container">
+      <p class="section-label">Sectores industriales</p>
+      <h1 class="section-title section-title--light">Diseñado para tu industria,<br/>no para todas a la vez</h1>
+      <p class="page-hero__sub">
+        Cada sector industrial tiene restricciones distintas: ventanas de mantenimiento,
+        cuello de botella, trazabilidad regulatoria, turnos de 24h. Planning Core viene
+        preconfigurado con la lógica de tu sector.
+      </p>
+    </div>
+  </section>
+
+  <section class="sectors-list">
+    <div class="container">
+      {SECTORS.map((s, i) => (
+        <a href={`/sectores/${s.slug}`} class="sector-row" style={`--acc:${s.accent}`}>
+          <div class="sector-row__num">{String(i+1).padStart(2,'0')}</div>
+          <div class="sector-row__icon">{s.icon}</div>
+          <div class="sector-row__main">
+            <div class="sector-row__top">
+              <h2>{s.name}</h2>
+              <span class="sector-badge">{s.badge}</span>
+            </div>
+            <p class="sector-row__tagline">{s.tagline}</p>
+            <p class="sector-row__roi">{s.roiHeadline}</p>
+          </div>
+          <div class="sector-row__meta">
+            <div class="meta-item">
+              <span class="meta-label">Precio</span>
+              <span class="meta-val">{s.price}</span>
+            </div>
+            <div class="meta-item">
+              <span class="meta-label">Ciclo venta</span>
+              <span class="meta-val">{s.cycle}</span>
+            </div>
+            <div class="meta-item">
+              <span class="meta-label">Fit</span>
+              <span class="meta-val meta-val--accent">{s.fit}</span>
+            </div>
+          </div>
+          <div class="sector-row__arrow">→</div>
+        </a>
+      ))}
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .page-hero {
+    background: linear-gradient(145deg, #060F20, #0B1C3A);
+    padding: 5rem 0 4rem;
+  }
+  .page-hero__sub {
+    color: var(--silver);
+    max-width: 620px;
+    line-height: 1.7;
+    margin-top: .75rem;
+    font-size: 1.05rem;
+  }
+
+  .sectors-list { padding: 3rem 0 5rem; }
+
+  .sector-row {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    padding: 1.75rem 2rem;
+    border: 1px solid var(--n80);
+    border-left: 4px solid var(--acc);
+    border-radius: var(--radius-lg);
+    margin-bottom: 1rem;
+    background: #fff;
+    transition: all var(--transition);
+    text-decoration: none;
+    color: inherit;
+  }
+  .sector-row:hover { transform: translateX(4px); box-shadow: var(--shadow-lg); background: var(--n90); }
+
+  .sector-row__num {
+    font-size: .75rem;
+    font-weight: 700;
+    color: var(--silver);
+    flex-shrink: 0;
+    width: 28px;
+  }
+  .sector-row__icon { font-size: 2rem; flex-shrink: 0; }
+
+  .sector-row__main { flex: 1; min-width: 0; }
+  .sector-row__top { display: flex; align-items: center; gap: .75rem; flex-wrap: wrap; margin-bottom: .35rem; }
+  .sector-row__top h2 { font-size: 1.1rem; font-weight: 700; color: var(--navy); }
+
+  .sector-badge {
+    font-size: .65rem;
+    font-weight: 700;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    color: var(--acc);
+    background: color-mix(in srgb, var(--acc) 10%, transparent);
+    border: 1px solid color-mix(in srgb, var(--acc) 25%, transparent);
+    padding: .2rem .65rem;
+    border-radius: 999px;
+  }
+
+  .sector-row__tagline {
+    font-size: .9rem;
+    color: var(--n30);
+    font-style: italic;
+    margin-bottom: .3rem;
+  }
+  .sector-row__roi { font-size: .82rem; color: var(--silver); }
+
+  .sector-row__meta {
+    display: flex;
+    gap: 2rem;
+    flex-shrink: 0;
+    border-left: 1px solid var(--n80);
+    padding-left: 2rem;
+  }
+  .meta-item { text-align: center; }
+  .meta-label { display: block; font-size: .65rem; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--silver); margin-bottom: .2rem; }
+  .meta-val { font-size: .85rem; font-weight: 600; color: var(--navy); }
+  .meta-val--accent { color: var(--acc); }
+
+  .sector-row__arrow { font-size: 1.25rem; color: var(--acc); flex-shrink: 0; opacity: 0; transition: opacity .2s; }
+  .sector-row:hover .sector-row__arrow { opacity: 1; }
+
+  @media (max-width: 900px) {
+    .sector-row { flex-wrap: wrap; }
+    .sector-row__meta { border-left: none; padding-left: 0; border-top: 1px solid var(--n80); padding-top: 1rem; width: 100%; justify-content: flex-start; gap: 1.5rem; }
+    .sector-row__arrow { display: none; }
+  }
+  @media (max-width: 600px) {
+    .sector-row { padding: 1.25rem; }
+    .sector-row__num { display: none; }
+  }
+</style>

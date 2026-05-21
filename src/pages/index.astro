@@ -1,0 +1,432 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { SECTORS } from '../data/sectors.js';
+---
+<BaseLayout>
+  <!-- HERO -->
+  <section class="hero">
+    <div class="container hero__inner">
+      <div class="hero__content">
+        <div class="badge" style="margin-bottom:1.25rem;background:rgba(220,104,3,.12);color:#f97316;border-color:rgba(220,104,3,.25)">
+          <span>⚠</span> El cuello de botella de esta tarde ya existe
+        </div>
+        <h1 class="hero__title">
+          Tu equipo trabaja con<br/>
+          <span class="hero__accent">el plan del lunes.</span>
+        </h1>
+        <p class="hero__sub">
+          La planta real lleva horas siendo otra cosa. Tu jefe de turno
+          ya tomó tres decisiones sin datos, a ojo — y tú te enterarás
+          mañana en la reunión de producción.
+          <br/><br/>
+          <span class="hero__relief">Planning Core lo cambia:</span> un único
+          plan en tiempo real, alertas antes de que el daño ocurra, y tres
+          escenarios de replanificación listos en segundos.
+        </p>
+        <div class="hero__ctas">
+          <a href="/contacto" class="btn btn--primary">Quiero visibilidad ahora →</a>
+          <a href="/producto" class="btn btn--outline">Ver cómo funciona</a>
+        </div>
+        <div class="hero__trust">
+          <span>✓ Sin reemplazar tu ERP</span>
+          <span>✓ Operativo en 12 semanas</span>
+          <span>✓ ROI medible desde el día 1</span>
+        </div>
+      </div>
+      <div class="hero__visual">
+        <div class="gantt-preview">
+          <div class="gantt-header">
+            <span class="gantt-title">Plan de producción — Semana 21</span>
+            <div class="gantt-chips">
+              <span class="chip chip--green">Óptimo</span>
+              <span class="chip chip--blue">Equilibrado</span>
+              <span class="chip chip--gray">Conservador</span>
+            </div>
+          </div>
+          <div class="gantt-rows">
+            <div class="gantt-row">
+              <span class="gantt-row-label">Máquina A</span>
+              <div class="gantt-row-track">
+                <div class="gantt-bar" style="width:30%;background:#1E4DB7">OP-201</div>
+                <div class="gantt-bar" style="width:20%;background:#16A34A;margin-left:4px">OP-202</div>
+              </div>
+            </div>
+            <div class="gantt-row">
+              <span class="gantt-row-label">Máquina B</span>
+              <div class="gantt-row-track">
+                <div class="gantt-bar" style="width:15%;background:#DC6803">OP-203</div>
+                <div class="gantt-bar" style="width:35%;background:#1E4DB7;margin-left:4px">OP-204</div>
+              </div>
+            </div>
+            <div class="gantt-row">
+              <span class="gantt-row-label">Máquina C</span>
+              <div class="gantt-row-track">
+                <div class="gantt-bar" style="width:25%;background:#7C3AED">OP-205</div>
+                <div class="gantt-bar" style="width:18%;background:#DC6803;margin-left:4px">OP-206</div>
+              </div>
+            </div>
+            <div class="gantt-row">
+              <span class="gantt-row-label">Operarios</span>
+              <div class="gantt-row-track">
+                <div class="gantt-bar" style="width:50%;background:#0891B2">Turno Mañana</div>
+              </div>
+            </div>
+          </div>
+          <div class="gantt-footer">
+            <span class="kpi-chip">OEE: 87%</span>
+            <span class="kpi-chip">Carga: 94%</span>
+            <span class="kpi-chip kpi-chip--warn">2 cuellos detectados</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SOCIAL PROOF BAR -->
+  <div class="proof-bar">
+    <div class="container proof-bar__inner">
+      <div class="proof-item">
+        <strong>8</strong>
+        <span>sectores industriales</span>
+      </div>
+      <div class="proof-divider"></div>
+      <div class="proof-item">
+        <strong>12 sem</strong>
+        <span>piloto a producción</span>
+      </div>
+      <div class="proof-divider"></div>
+      <div class="proof-item">
+        <strong>0</strong>
+        <span>líneas de código</span>
+      </div>
+      <div class="proof-divider"></div>
+      <div class="proof-item">
+        <strong>3</strong>
+        <span>escenarios en segundos</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- HOW IT WORKS -->
+  <section class="how">
+    <div class="container">
+      <div class="text-center">
+        <p class="section-label">Cómo funciona</p>
+        <h2 class="section-title">Un Gantt que toma decisiones,<br/>no solo las muestra</h2>
+        <p class="section-sub text-center" style="margin:0 auto 3rem">
+          Planning Core vive encima de tu ERP. Tú defines los recursos y restricciones;
+          el motor genera el plan óptimo y te muestra tres escenarios en segundos.
+        </p>
+      </div>
+      <div class="how__steps">
+
+        <div class="how-step">
+          <div class="how-step__num">01</div>
+          <div class="how-step__icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <circle cx="9" cy="6" r="2"/><line x1="3" y1="6" x2="7" y2="6"/><line x1="11" y1="6" x2="21" y2="6"/>
+              <circle cx="15" cy="12" r="2"/><line x1="3" y1="12" x2="13" y2="12"/><line x1="17" y1="12" x2="21" y2="12"/>
+              <circle cx="8" cy="18" r="2"/><line x1="3" y1="18" x2="6" y2="18"/><line x1="10" y1="18" x2="21" y2="18"/>
+            </svg>
+          </div>
+          <h3>Define tus recursos</h3>
+          <p>Máquinas, operarios, turnos y restricciones. Sin código, sin IT. En menos de una semana.</p>
+        </div>
+
+        <div class="how-step">
+          <div class="how-step__num">02</div>
+          <div class="how-step__icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <rect x="6" y="6" width="12" height="12" rx="1.5"/>
+              <path d="M9 6V3M12 6V3M15 6V3M9 18v3M12 18v3M15 18v3M6 9H3M6 12H3M6 15H3M18 9h3M18 12h3M18 15h3"/>
+              <rect x="9.5" y="9.5" width="5" height="5" rx=".75" fill="currentColor" stroke="none" opacity=".25"/>
+            </svg>
+          </div>
+          <h3>El motor planifica</h3>
+          <p>Algoritmo de scheduling genera el plan óptimo respetando todas tus restricciones de planta.</p>
+        </div>
+
+        <div class="how-step">
+          <div class="how-step__num">03</div>
+          <div class="how-step__icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <rect x="3" y="9" width="4" height="12" rx="1"/>
+              <rect x="10" y="5" width="4" height="16" rx="1"/>
+              <rect x="17" y="12" width="4" height="9" rx="1"/>
+              <path d="M3 21h18"/>
+            </svg>
+          </div>
+          <h3>Compara 3 escenarios</h3>
+          <p>Óptimo, Equilibrado y Conservador. Elige el que encaja con la demanda real del día.</p>
+        </div>
+
+        <div class="how-step">
+          <div class="how-step__num">04</div>
+          <div class="how-step__icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <polyline points="3 17 8 11 13 14 21 5"/>
+              <polyline points="17 5 21 5 21 9"/>
+              <path d="M3 21h18"/>
+            </svg>
+          </div>
+          <h3>Ejecuta y mide</h3>
+          <p>Gantt en tiempo real, alertas de cuello de botella y scorecard de impacto desde el primer día.</p>
+        </div>
+
+      </div>
+      <div class="text-center mt-8">
+        <a href="/producto" class="btn btn--dark">Ver el producto en detalle →</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTORS GRID -->
+  <section class="sectors-sec" style="background:var(--n90)">
+    <div class="container">
+      <div class="text-center">
+        <p class="section-label">Sectores</p>
+        <h2 class="section-title">Diseñado para tu industria,<br/>no para todas a la vez</h2>
+        <p class="section-sub text-center" style="margin:0 auto 3rem">
+          Cada sector tiene sus propias restricciones. Planning Core viene preconfigurado
+          con la lógica de tu industria.
+        </p>
+      </div>
+      <div class="sectors-grid">
+        {SECTORS.map(s => (
+          <a href={`/sectores/${s.slug}`} class="sector-card" style={`--acc:${s.accent}`}>
+            <div class="sector-card__icon">{s.icon}</div>
+            <div class="sector-card__body">
+              <h3>{s.short}</h3>
+              <p>{s.tagline}</p>
+              <div class="sector-card__meta">
+                <span>{s.price}</span>
+                <span class="sector-card__fit">Fit {s.fit}</span>
+              </div>
+            </div>
+            <div class="sector-card__arrow">→</div>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- VALUE PROPS -->
+  <section class="value">
+    <div class="container">
+      <div class="value__grid">
+        <div class="value__text">
+          <p class="section-label">Por qué Planning Core</p>
+          <h2 class="section-title">No es otro ERP.<br/>Es la capa que faltaba.</h2>
+          <p class="section-sub">
+            Tu ERP registra lo que pasó. Planning Core decide qué producir mañana.
+            Vive encima de tu sistema actual, sin migraciones, sin consultores, sin riesgo.
+          </p>
+          <div class="value__list">
+            <div class="value-item">
+              <span class="value-check">✓</span>
+              <div><strong>Sin reemplazar tu ERP</strong><span>Integración vía API en días, no meses.</span></div>
+            </div>
+            <div class="value-item">
+              <span class="value-check">✓</span>
+              <div><strong>100% personalizable</strong><span>Adaptado a tus recursos y restricciones reales.</span></div>
+            </div>
+            <div class="value-item">
+              <span class="value-check">✓</span>
+              <div><strong>Resultados medibles</strong><span>Scorecard de impacto desde la semana 1 del piloto.</span></div>
+            </div>
+            <div class="value-item">
+              <span class="value-check">✓</span>
+              <div><strong>Escala contigo</strong><span>Desde una máquina hasta cientos de recursos.</span></div>
+            </div>
+          </div>
+        </div>
+        <div class="value__visual">
+          <div class="comparison-card">
+            <div class="comparison-col comparison-col--old">
+              <div class="comparison-label comparison-label--red">Sin Planning Core</div>
+              <div class="comparison-row"><span class="icon-x">✗</span><span>Excel por turno, verdad por persona</span></div>
+              <div class="comparison-row"><span class="icon-x">✗</span><span>Cuello de botella detectado tarde</span></div>
+              <div class="comparison-row"><span class="icon-x">✗</span><span>Plan hecho el lunes, inútil el martes</span></div>
+              <div class="comparison-row"><span class="icon-x">✗</span><span>Reunión de 2h para replanificar</span></div>
+              <div class="comparison-row"><span class="icon-x">✗</span><span>El jefe lleva el plan en la cabeza</span></div>
+            </div>
+            <div class="comparison-col comparison-col--new">
+              <div class="comparison-label comparison-label--green">Con Planning Core</div>
+              <div class="comparison-row"><span class="icon-ok">✓</span><span>Plan único en tiempo real para todos</span></div>
+              <div class="comparison-row"><span class="icon-ok">✓</span><span>Alerta automática antes de que ocurra</span></div>
+              <div class="comparison-row"><span class="icon-ok">✓</span><span>Gantt que se actualiza solo</span></div>
+              <div class="comparison-row"><span class="icon-ok">✓</span><span>Replanificación en segundos</span></div>
+              <div class="comparison-row"><span class="icon-ok">✓</span><span>Visibilidad para todo el equipo</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PILOT CTA -->
+  <section class="pilot-cta">
+    <div class="container">
+      <div class="pilot-cta__inner">
+        <div>
+          <p class="section-label" style="color:rgba(255,255,255,.5)">Piloto 12 semanas</p>
+          <h2 class="section-title section-title--light">De Excel a Gantt inteligente<br/>en 12 semanas</h2>
+          <p style="color:var(--silver);max-width:520px;line-height:1.65;margin-top:.75rem">
+            Mapeamos tus recursos en la semana 1, validamos el plan en la semana 8
+            y hacemos go-live con métricas reales antes de la semana 12.
+          </p>
+        </div>
+        <div class="pilot-cta__actions">
+          <a href="/precios" class="btn btn--primary">Ver precios del piloto</a>
+          <a href="/contacto" class="btn btn--outline">Hablar con ventas</a>
+        </div>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .hero {
+    background: linear-gradient(145deg, #060F20 0%, #0B1C3A 55%, #0D2248 100%);
+    padding: 6rem 0 5rem;
+    overflow: hidden;
+  }
+  .hero__inner {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4rem;
+    align-items: center;
+  }
+  .hero__title {
+    font-size: clamp(2rem, 4vw, 3rem);
+    font-weight: 800;
+    color: #fff;
+    line-height: 1.1;
+    margin-bottom: 1.25rem;
+  }
+  .hero__accent { color: #8BC2C6; }
+  .hero__relief { color: #fff; font-weight: 700; }
+  .hero__sub {
+    color: rgba(255,255,255,.6);
+    font-size: 1.02rem;
+    line-height: 1.75;
+    margin-bottom: 2rem;
+    max-width: 520px;
+  }
+  .hero__ctas { display: flex; gap: 1rem; flex-wrap: wrap; margin-bottom: 1.75rem; }
+  .hero__trust { display: flex; gap: 1.25rem; flex-wrap: wrap; font-size: .8rem; color: rgba(255,255,255,.45); }
+
+  .gantt-preview {
+    background: rgba(255,255,255,.04);
+    border: 1px solid rgba(255,255,255,.1);
+    border-radius: 12px;
+    padding: 1.25rem;
+  }
+  .gantt-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; }
+  .gantt-title { font-size: .8rem; font-weight: 600; color: rgba(255,255,255,.6); }
+  .gantt-chips { display: flex; gap: .4rem; }
+  .chip { font-size: .65rem; font-weight: 600; padding: .2rem .6rem; border-radius: 999px; }
+  .chip--green { background: rgba(22,163,74,.2); color: #4ade80; }
+  .chip--blue  { background: rgba(30,77,183,.3); color: #93c5fd; }
+  .chip--gray  { background: rgba(255,255,255,.07); color: rgba(255,255,255,.4); }
+  .gantt-rows { display: flex; flex-direction: column; gap: .5rem; }
+  .gantt-row { display: flex; align-items: center; gap: .75rem; }
+  .gantt-row-label { width: 72px; flex-shrink: 0; font-size: .7rem; color: rgba(255,255,255,.4); }
+  .gantt-row-track {
+    flex: 1; height: 26px; background: rgba(255,255,255,.04);
+    border-radius: 4px; display: flex; align-items: center; padding: 0 2px; overflow: hidden;
+  }
+  .gantt-bar {
+    height: 22px; border-radius: 3px; display: flex; align-items: center;
+    padding: 0 .5rem; font-size: .6rem; font-weight: 600;
+    color: rgba(255,255,255,.9); white-space: nowrap; overflow: hidden;
+  }
+  .gantt-footer {
+    display: flex; gap: .5rem; margin-top: 1rem;
+    padding-top: .75rem; border-top: 1px solid rgba(255,255,255,.06);
+  }
+  .kpi-chip { font-size: .68rem; font-weight: 600; padding: .2rem .65rem; border-radius: 999px; background: rgba(255,255,255,.06); color: rgba(255,255,255,.55); }
+  .kpi-chip--warn { background: rgba(220,104,3,.2); color: #fb923c; }
+
+  .proof-bar { background: var(--navy); border-top: 1px solid rgba(255,255,255,.06); border-bottom: 1px solid rgba(255,255,255,.06); padding: 1.5rem 0; }
+  .proof-bar__inner { display: flex; align-items: center; justify-content: center; gap: 2rem; flex-wrap: wrap; }
+  .proof-item { text-align: center; }
+  .proof-item strong { display: block; font-size: 1.6rem; font-weight: 800; color: #fff; line-height: 1.1; }
+  .proof-item span { font-size: .75rem; color: var(--silver); }
+  .proof-divider { width: 1px; height: 36px; background: rgba(255,255,255,.1); }
+
+  .how { padding: 5rem 0; }
+  .how__steps { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.5rem; margin-top: .5rem; }
+  .how-step { background: var(--n90); border: 1px solid var(--n80); border-radius: var(--radius-lg); padding: 1.75rem 1.5rem; display: flex; flex-direction: column; align-items: center; text-align: center; }
+  .how-step__num { font-size: .7rem; font-weight: 700; letter-spacing: .1em; color: var(--brand); margin-bottom: 1rem; }
+  .how-step__icon {
+    width: 52px;
+    height: 52px;
+    border-radius: 14px;
+    background: rgba(27,63,139,.08);
+    border: 1px solid rgba(27,63,139,.12);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 1.25rem;
+    color: var(--navy);
+  }
+  .how-step__icon svg { width: 24px; height: 24px; }
+  .how-step h3 { font-size: 1rem; font-weight: 700; color: var(--navy); margin-bottom: .5rem; }
+  .how-step p { font-size: .9rem; color: var(--n30); line-height: 1.6; }
+
+  .sectors-sec { padding: 5rem 0; }
+  .sectors-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; }
+  .sector-card {
+    background: #fff; border: 1px solid var(--n80); border-radius: var(--radius-lg);
+    padding: 1.5rem 1.25rem; display: flex; flex-direction: column; gap: .75rem;
+    position: relative; overflow: hidden; transition: all var(--transition);
+    border-left: 3px solid var(--acc);
+  }
+  .sector-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-lg); }
+  .sector-card__icon { font-size: 1.5rem; }
+  .sector-card__body h3 { font-size: .95rem; font-weight: 700; color: var(--navy); margin-bottom: .3rem; }
+  .sector-card__body p { font-size: .82rem; color: var(--n30); line-height: 1.5; }
+  .sector-card__meta { display: flex; justify-content: space-between; align-items: center; margin-top: .5rem; font-size: .75rem; color: var(--n30); }
+  .sector-card__fit { font-size: .7rem; font-weight: 700; color: var(--acc); padding: .15rem .5rem; border-radius: 999px; border: 1px solid var(--acc); }
+  .sector-card__arrow { position: absolute; bottom: 1.25rem; right: 1.25rem; font-size: 1rem; color: var(--acc); opacity: 0; transition: opacity .2s; }
+  .sector-card:hover .sector-card__arrow { opacity: 1; }
+
+  .value { padding: 5rem 0; }
+  .value__grid { display: grid; grid-template-columns: 1fr 1fr; gap: 5rem; align-items: center; }
+  .value__list { margin-top: 1.75rem; display: flex; flex-direction: column; gap: 1rem; }
+  .value-item { display: flex; gap: .85rem; align-items: flex-start; }
+  .value-check { width: 22px; height: 22px; background: rgba(30,77,183,.1); color: var(--brand); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: .7rem; font-weight: 700; flex-shrink: 0; margin-top: 2px; }
+  .value-item strong { display: block; font-size: .95rem; color: var(--navy); margin-bottom: .15rem; }
+  .value-item span { font-size: .875rem; color: var(--n30); }
+
+  .comparison-card { display: grid; grid-template-columns: 1fr 1fr; border: 1px solid var(--n80); border-radius: var(--radius-lg); overflow: hidden; box-shadow: var(--shadow); }
+  .comparison-col { padding: 1.5rem; }
+  .comparison-col--old { background: #FFF5F5; border-right: 1px solid var(--n80); }
+  .comparison-col--new { background: #F0FDF4; }
+  .comparison-label { font-size: .7rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; margin-bottom: 1rem; }
+  .comparison-label--red { color: #DC2626; }
+  .comparison-label--green { color: #16A34A; }
+  .comparison-row { display: flex; gap: .6rem; align-items: flex-start; font-size: .82rem; color: #374151; margin-bottom: .65rem; line-height: 1.4; }
+  .icon-x { color: #DC2626; font-weight: 700; flex-shrink: 0; }
+  .icon-ok { color: #16A34A; font-weight: 700; flex-shrink: 0; }
+
+  .pilot-cta { background: linear-gradient(145deg, #060F20, #0B1C3A); padding: 5rem 0; }
+  .pilot-cta__inner { display: flex; justify-content: space-between; align-items: center; gap: 3rem; flex-wrap: wrap; }
+  .pilot-cta__actions { display: flex; flex-direction: column; gap: 1rem; flex-shrink: 0; }
+
+  @media (max-width: 1024px) {
+    .hero__inner { grid-template-columns: 1fr; }
+    .hero__visual { display: none; }
+    .how__steps { grid-template-columns: repeat(2, 1fr); }
+    .sectors-grid { grid-template-columns: repeat(2, 1fr); }
+    .value__grid { grid-template-columns: 1fr; gap: 2rem; }
+  }
+  @media (max-width: 600px) {
+    .hero { padding: 4rem 0 3rem; }
+    .how__steps { grid-template-columns: 1fr; }
+    .sectors-grid { grid-template-columns: 1fr; }
+    .comparison-card { grid-template-columns: 1fr; }
+    .proof-divider { display: none; }
+  }
+</style>

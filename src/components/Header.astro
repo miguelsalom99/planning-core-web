@@ -1,0 +1,154 @@
+---
+const nav = [
+  { href: '/', label: 'Inicio' },
+  { href: '/producto', label: 'Producto' },
+  { href: '/sectores', label: 'Sectores' },
+  { href: '/precios', label: 'Precios' },
+];
+const currentPath = Astro.url.pathname;
+---
+<header class="header" id="header">
+  <div class="container header__inner">
+    <a href="/" class="header__logo">
+      <img src="/images/logo-small.png" alt="" class="logo-icon" />
+      <span class="logo-wordmark">Planning<strong>Core</strong></span>
+    </a>
+
+    <nav class="header__nav" id="nav">
+      {nav.map(({ href, label }) => (
+        <a
+          href={href}
+          class={`nav-link ${currentPath === href || (href !== '/' && currentPath.startsWith(href)) ? 'nav-link--active' : ''}`}
+        >
+          {label}
+        </a>
+      ))}
+    </nav>
+
+    <div class="header__actions">
+      <a href="/contacto" class="btn btn--primary btn--sm">Solicitar demo</a>
+      <button class="nav-toggle" id="navToggle" aria-label="Menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<style>
+  .header {
+    position: sticky;
+    top: 0;
+    z-index: 200;
+    background: #0B1C3A;
+    border-bottom: 1px solid rgba(255,255,255,.07);
+    transition: box-shadow .2s;
+  }
+  .header.scrolled { box-shadow: 0 4px 24px rgba(0,0,0,.3); }
+
+  .header__inner {
+    display: flex;
+    align-items: center;
+    height: 68px;
+    gap: 2rem;
+  }
+
+  .header__logo {
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+    text-decoration: none;
+  }
+
+  .logo-icon {
+    height: 34px;
+    width: 34px;
+    border-radius: 8px;
+    object-fit: cover;
+    flex-shrink: 0;
+    /* fondo del PNG = #0B1C3A = mismo que el header → se integra sin blend */
+  }
+  .logo-wordmark {
+    font-size: 1rem;
+    font-weight: 400;
+    color: #fff;
+    letter-spacing: -.01em;
+    line-height: 1;
+  }
+  .logo-wordmark strong { font-weight: 700; }
+
+  .header__nav {
+    display: flex;
+    align-items: center;
+    gap: .25rem;
+    flex: 1;
+  }
+  .nav-link {
+    font-size: .875rem;
+    font-weight: 500;
+    color: rgba(255,255,255,.7);
+    padding: .45rem .85rem;
+    border-radius: 6px;
+    transition: all .15s;
+  }
+  .nav-link:hover { color: #fff; background: rgba(255,255,255,.07); }
+  .nav-link--active { color: #fff; }
+
+  .header__actions { display: flex; align-items: center; gap: .75rem; }
+  .btn--sm { padding: .5rem 1.25rem; font-size: .85rem; }
+
+  .nav-toggle {
+    display: none;
+    flex-direction: column;
+    gap: 5px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: .25rem;
+  }
+  .nav-toggle span {
+    display: block;
+    width: 22px;
+    height: 2px;
+    background: #fff;
+    border-radius: 2px;
+    transition: all .2s;
+  }
+
+  @media (max-width: 900px) {
+    .logo-img--full { display: none; }
+    .logo-img--icon { display: block; }
+  }
+
+  @media (max-width: 768px) {
+    .nav-toggle { display: flex; }
+    .header__nav {
+      position: fixed;
+      top: 68px;
+      left: 0;
+      right: 0;
+      background: #0B1C3A;
+      flex-direction: column;
+      align-items: stretch;
+      padding: 1rem 1.5rem;
+      border-bottom: 1px solid rgba(255,255,255,.1);
+      display: none;
+      gap: .25rem;
+    }
+    .header__nav.open { display: flex; }
+    .nav-link { padding: .75rem 1rem; }
+  }
+</style>
+
+<script>
+  const header = document.getElementById('header');
+  const toggle = document.getElementById('navToggle');
+  const nav = document.getElementById('nav');
+
+  window.addEventListener('scroll', () => {
+    header?.classList.toggle('scrolled', window.scrollY > 20);
+  });
+
+  toggle?.addEventListener('click', () => {
+    nav?.classList.toggle('open');
+  });
+</script>

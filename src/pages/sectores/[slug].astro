@@ -1,0 +1,331 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { SECTORS } from '../../data/sectors.js';
+
+export function getStaticPaths() {
+  return SECTORS.map(s => ({ params: { slug: s.slug }, props: { sector: s } }));
+}
+
+const { sector: s } = Astro.props;
+---
+<BaseLayout
+  title={`${s.name} — Planning Core`}
+  description={`Planning Core para ${s.name}. ${s.roiHeadline}`}
+  accent={s.accent}
+>
+  <!-- PAGE HERO -->
+  <section class="hero" style={`--acc:${s.accent}`}>
+    <div class="container hero__inner">
+      <div>
+        <div class="sector-badge-top">{s.badge}</div>
+        <div class="hero__icon">{s.icon}</div>
+        <h1 class="hero__title">{s.name}</h1>
+        <p class="hero__tagline">{s.tagline}</p>
+        <p class="hero__roi">{s.roiHeadline}</p>
+        <div class="hero__ctas">
+          <a href="/contacto" class="btn btn--primary" style={`background:${s.accent};border-color:${s.accent}`}>
+            Solicitar demo →
+          </a>
+          <a href="/precios" class="btn btn--outline">Ver piloto 12 semanas</a>
+        </div>
+      </div>
+      <div class="hero__meta-box">
+        <div class="meta-row">
+          <span class="meta-lbl">Mercado ES</span>
+          <span class="meta-val">{s.marketEs}</span>
+        </div>
+        <div class="meta-row">
+          <span class="meta-lbl">Mercado EU</span>
+          <span class="meta-val">{s.marketEu}</span>
+        </div>
+        <div class="meta-row">
+          <span class="meta-lbl">Precio</span>
+          <span class="meta-val">{s.price}</span>
+        </div>
+        <div class="meta-row">
+          <span class="meta-lbl">Ciclo venta</span>
+          <span class="meta-val">{s.cycle}</span>
+        </div>
+        <div class="meta-row">
+          <span class="meta-lbl">ICP</span>
+          <span class="meta-val">{s.icp}</span>
+        </div>
+        <div class="meta-row meta-row--fit">
+          <span class="meta-lbl">Fit</span>
+          <span class="meta-val meta-fit">{s.fit}</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PAINS -->
+  <section class="pains" style={`--acc:${s.accent}`}>
+    <div class="container">
+      <p class="section-label">El problema</p>
+      <h2 class="section-title">Los dolores de {s.short || s.name}</h2>
+      <div class="pains-grid">
+        {s.pains.map(([title, desc], i) => (
+          <div class="pain-card">
+            <div class="pain-num">0{i+1}</div>
+            <h3>{title}</h3>
+            <p>{desc}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- DIFFERENTIATORS -->
+  <section class="diffs" style={`background:var(--navy);--acc:${s.accent}`}>
+    <div class="container">
+      <p class="section-label" style="color:rgba(255,255,255,.45)">Por qué Planning Core</p>
+      <h2 class="section-title section-title--light">La solución que encaja</h2>
+      <div class="diffs-list">
+        {s.differentiators.map(([title, desc], i) => (
+          <div class="diff-row">
+            <div class="diff-num">{String(i+1).padStart(2,'0')}</div>
+            <div class="diff-body">
+              <h3>{title}</h3>
+              <p>{desc}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+      <div class="personalizable-bar">
+        ✓ &nbsp; 100% personalizable a vuestras necesidades y requerimientos &nbsp;—&nbsp; Sin código. Sin consultores. En semanas.
+      </div>
+    </div>
+  </section>
+
+  <!-- PILOT TIMELINE -->
+  <section class="pilot" style={`--acc:${s.accent}`}>
+    <div class="container">
+      <p class="section-label">Piloto 12 semanas</p>
+      <h2 class="section-title">De cero a producción en 3 meses</h2>
+      <div class="pilot-steps">
+        {s.pilotSteps.map(([phase, desc], i) => (
+          <div class={`pilot-step ${i === 0 ? 'pilot-step--active' : ''}`}>
+            <div class="pilot-step__num">{String(i+1).padStart(2,'0')}</div>
+            <div class="pilot-step__phase">{phase}</div>
+            <div class="pilot-step__desc">{desc}</div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- KPIs -->
+  <section class="kpis-sec" style={`background:var(--n90);--acc:${s.accent}`}>
+    <div class="container">
+      <p class="section-label">KPIs que se miden</p>
+      <h2 class="section-title">Impacto medible desde la semana 1</h2>
+      <div class="kpis-grid">
+        {s.kpis.map(kpi => (
+          <div class="kpi-card">
+            <span class="kpi-icon">📊</span>
+            <span>{kpi}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- COMPETITORS -->
+  <section class="competitors" style={`--acc:${s.accent}`}>
+    <div class="container">
+      <p class="section-label">Competencia</p>
+      <h2 class="section-title">Por qué no las alternativas</h2>
+      <div class="comp-table">
+        <div class="comp-header">
+          <span>Alternativa</span>
+          <span>Por qué no</span>
+        </div>
+        {s.competitors.map(([name, why]) => (
+          <div class="comp-row">
+            <span class="comp-name">{name}</span>
+            <span class="comp-why">{why}</span>
+          </div>
+        ))}
+        <div class="comp-row comp-row--us">
+          <span class="comp-name">Planning Core ✓</span>
+          <span class="comp-why">Gantt visual · Escenarios · Sin reemplazar ERP · Piloto en 12 sem</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- BOTTOM CTA -->
+  <section class="bottom-cta" style={`--acc:${s.accent};background:${s.accent}`}>
+    <div class="container bottom-cta__inner">
+      <div>
+        <h2 style="color:#fff;font-size:1.75rem;font-weight:800;margin-bottom:.5rem">
+          ¿Listo para empezar el piloto?
+        </h2>
+        <p style="color:rgba(255,255,255,.75);font-size:1rem">
+          12 semanas. Sin riesgo. ROI medible.
+        </p>
+      </div>
+      <a href="/contacto" class="btn" style="background:#fff;color:#0B1C3A;font-weight:700">
+        Solicitar demo gratuita →
+      </a>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .hero {
+    background: linear-gradient(145deg, #060F20, #0B1C3A);
+    padding: 5rem 0 4rem;
+  }
+  .hero__inner {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 4rem;
+    align-items: start;
+  }
+  .sector-badge-top {
+    display: inline-flex;
+    font-size: .7rem;
+    font-weight: 700;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    color: var(--acc);
+    background: color-mix(in srgb, var(--acc) 12%, transparent);
+    border: 1px solid color-mix(in srgb, var(--acc) 30%, transparent);
+    padding: .3rem .9rem;
+    border-radius: 999px;
+    margin-bottom: 1rem;
+  }
+  .hero__icon { font-size: 2.5rem; margin-bottom: .75rem; }
+  .hero__title { font-size: clamp(1.75rem, 3.5vw, 2.75rem); font-weight: 800; color: #fff; line-height: 1.1; margin-bottom: .75rem; }
+  .hero__tagline { font-size: 1.1rem; color: var(--acc); font-style: italic; margin-bottom: .75rem; }
+  .hero__roi { font-size: .9rem; color: var(--silver); margin-bottom: 2rem; line-height: 1.6; }
+  .hero__ctas { display: flex; gap: 1rem; flex-wrap: wrap; }
+
+  .hero__meta-box {
+    background: rgba(255,255,255,.04);
+    border: 1px solid rgba(255,255,255,.1);
+    border-radius: var(--radius-lg);
+    padding: 1.5rem;
+    min-width: 240px;
+    flex-shrink: 0;
+  }
+  .meta-row { display: flex; justify-content: space-between; gap: 1rem; padding: .6rem 0; border-bottom: 1px solid rgba(255,255,255,.06); }
+  .meta-row:last-child { border-bottom: none; }
+  .meta-lbl { font-size: .72rem; font-weight: 600; color: rgba(255,255,255,.35); text-transform: uppercase; letter-spacing: .06em; }
+  .meta-val { font-size: .82rem; color: rgba(255,255,255,.8); font-weight: 500; text-align: right; }
+  .meta-fit { color: var(--acc); font-weight: 700; }
+
+  /* PAINS */
+  .pains { padding: 5rem 0; }
+  .pains-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.25rem; margin-top: 2rem; }
+  .pain-card {
+    background: var(--n90);
+    border: 1px solid var(--n80);
+    border-left: 3px solid var(--acc);
+    border-radius: var(--radius-lg);
+    padding: 1.5rem;
+  }
+  .pain-num {
+    font-size: .7rem;
+    font-weight: 700;
+    color: var(--acc);
+    background: color-mix(in srgb, var(--acc) 10%, transparent);
+    width: 28px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+    margin-bottom: .75rem;
+  }
+  .pain-card h3 { font-size: 1rem; font-weight: 700; color: var(--navy); margin-bottom: .5rem; }
+  .pain-card p { font-size: .9rem; color: var(--n30); line-height: 1.65; }
+
+  /* DIFFS */
+  .diffs { padding: 5rem 0; }
+  .diffs-list { display: flex; flex-direction: column; gap: 1px; margin-top: 2rem; }
+  .diff-row {
+    display: flex;
+    gap: 2rem;
+    align-items: flex-start;
+    background: rgba(255,255,255,.03);
+    border: 1px solid rgba(255,255,255,.06);
+    border-radius: var(--radius);
+    padding: 1.5rem;
+    margin-bottom: .75rem;
+  }
+  .diff-num { font-size: 1.5rem; font-weight: 800; color: var(--acc); flex-shrink: 0; width: 48px; text-align: center; }
+  .diff-body h3 { font-size: 1rem; font-weight: 700; color: #fff; margin-bottom: .35rem; }
+  .diff-body p { font-size: .9rem; color: var(--silver); line-height: 1.65; }
+
+  .personalizable-bar {
+    margin-top: 2rem;
+    background: var(--acc);
+    color: #fff;
+    text-align: center;
+    font-size: .9rem;
+    font-weight: 700;
+    padding: .85rem 1.5rem;
+    border-radius: var(--radius);
+  }
+
+  /* PILOT */
+  .pilot { padding: 5rem 0; }
+  .pilot-steps { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0; margin-top: 2rem; border: 1px solid var(--n80); border-radius: var(--radius-lg); overflow: hidden; }
+  .pilot-step {
+    padding: 1.75rem 1.5rem;
+    border-right: 1px solid var(--n80);
+    background: var(--n90);
+  }
+  .pilot-step:last-child { border-right: none; }
+  .pilot-step--active { background: var(--navy); }
+  .pilot-step__num { font-size: .65rem; font-weight: 700; color: var(--acc); margin-bottom: .4rem; }
+  .pilot-step__phase { font-size: .95rem; font-weight: 700; color: var(--navy); margin-bottom: .5rem; }
+  .pilot-step--active .pilot-step__phase { color: #fff; }
+  .pilot-step__desc { font-size: .82rem; color: var(--n30); line-height: 1.55; }
+  .pilot-step--active .pilot-step__desc { color: var(--silver); }
+
+  /* KPIS */
+  .kpis-sec { padding: 5rem 0; }
+  .kpis-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; margin-top: 2rem; }
+  .kpi-card {
+    display: flex;
+    align-items: center;
+    gap: .85rem;
+    background: #fff;
+    border: 1px solid var(--n80);
+    border-radius: var(--radius);
+    padding: 1.1rem 1.25rem;
+    font-size: .9rem;
+    color: var(--navy);
+    font-weight: 500;
+  }
+  .kpi-icon { font-size: 1.1rem; }
+
+  /* COMPETITORS */
+  .competitors { padding: 5rem 0; }
+  .comp-table { margin-top: 2rem; border: 1px solid var(--n80); border-radius: var(--radius-lg); overflow: hidden; }
+  .comp-header { display: grid; grid-template-columns: 220px 1fr; gap: 1rem; padding: .75rem 1.5rem; background: var(--n90); font-size: .72rem; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; color: var(--silver); }
+  .comp-row { display: grid; grid-template-columns: 220px 1fr; gap: 1rem; padding: 1rem 1.5rem; border-top: 1px solid var(--n80); align-items: center; }
+  .comp-row--us { background: color-mix(in srgb, var(--acc) 5%, transparent); border-top: 2px solid var(--acc); }
+  .comp-name { font-size: .9rem; font-weight: 600; color: var(--navy); }
+  .comp-row--us .comp-name { color: var(--acc); }
+  .comp-why { font-size: .87rem; color: var(--n30); }
+  .comp-row--us .comp-why { color: var(--n30); font-weight: 500; }
+
+  /* BOTTOM CTA */
+  .bottom-cta { padding: 3.5rem 0; }
+  .bottom-cta__inner { display: flex; justify-content: space-between; align-items: center; gap: 2rem; flex-wrap: wrap; }
+
+  @media (max-width: 900px) {
+    .hero__inner { grid-template-columns: 1fr; }
+    .hero__meta-box { width: 100%; }
+    .pains-grid { grid-template-columns: 1fr; }
+    .pilot-steps { grid-template-columns: 1fr; }
+    .pilot-step { border-right: none; border-bottom: 1px solid var(--n80); }
+    .kpis-grid { grid-template-columns: 1fr; }
+    .comp-header, .comp-row { grid-template-columns: 1fr; gap: .25rem; }
+    .comp-header span:first-child { display: none; }
+  }
+</style>
