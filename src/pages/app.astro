@@ -230,6 +230,40 @@
       border: 1.5px solid var(--navy);
     }
 
+    .settings-dropdown {
+      display: none;
+      position: absolute;
+      top: calc(100% + 8px);
+      right: 0;
+      min-width: 200px;
+      background: var(--white);
+      border: 1px solid var(--n90);
+      border-radius: var(--radius-md);
+      box-shadow: 0 8px 24px rgba(0,0,0,.15);
+      z-index: 600;
+      padding: .35rem;
+      text-align: left;
+    }
+    .settings-dropdown.open { display: block; }
+    .settings-dropdown__item {
+      display: flex;
+      align-items: center;
+      gap: .55rem;
+      padding: .55rem .75rem;
+      font-size: .82rem;
+      font-weight: 500;
+      color: var(--n20);
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background .12s;
+      white-space: nowrap;
+    }
+    .settings-dropdown__item:hover { background: var(--n95); }
+    .settings-dropdown__item svg { opacity: .6; flex-shrink: 0; }
+    .settings-dropdown__divider { height: 1px; background: var(--n90); margin: .3rem .4rem; }
+    .settings-dropdown__item--danger { color: var(--red); }
+    .settings-dropdown__item--danger:hover { background: var(--red-bg); }
+
     .user-pill {
       display: flex;
       align-items: center;
@@ -534,6 +568,124 @@
       transition: all var(--transition);
     }
     .alert-banner__cta:hover { background: #FEF9C3; }
+
+    /* ───── HISTORY BANNER ───── */
+    .hist-banner {
+      display: flex;
+      align-items: center;
+      gap: .75rem;
+      padding: .65rem 1rem;
+      margin-bottom: .75rem;
+      border-radius: var(--radius-md);
+      background: #EEF2FF;
+      border: 1px solid #C7D2FE;
+      font-size: .82rem;
+    }
+    .hist-banner__icon {
+      width: 28px; height: 28px;
+      border-radius: 50%;
+      background: #C7D2FE;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+    .hist-banner__body { color: #3730A3; flex: 1; line-height: 1.4; }
+    .hist-banner__body strong { font-weight: 700; }
+    .hist-banner__cta {
+      font-size: .73rem; font-weight: 700;
+      color: var(--brand); white-space: nowrap; cursor: pointer;
+      padding: .3rem .65rem; border-radius: 6px;
+      background: #C7D2FE; border: 1px solid #A5B4FC;
+      transition: all var(--transition);
+    }
+    .hist-banner__cta:hover { background: #A5B4FC; }
+
+    /* ───── MRP PANEL ───── */
+    .mrp-tabs { display: flex; gap: .25rem; margin-bottom: 1.25rem; border-bottom: 1px solid var(--n90); padding-bottom: .5rem; }
+    .mrp-tab {
+      font-size: .82rem; font-weight: 600; padding: .45rem 1rem;
+      border-radius: 6px; border: none; background: none;
+      color: var(--n40); cursor: pointer; transition: all .15s;
+    }
+    .mrp-tab:hover { background: var(--n95); color: var(--n20); }
+    .mrp-tab--active { background: var(--brand); color: #fff; }
+
+    .mrp-dropzone {
+      border: 2px dashed var(--n80); border-radius: var(--radius-lg);
+      padding: 2.5rem 1.5rem; text-align: center; cursor: pointer;
+      transition: all .2s; background: var(--n98); margin-bottom: 1.25rem;
+    }
+    .mrp-dropzone:hover, .mrp-dropzone.drag-over { border-color: var(--brand); background: #EEF2FF; }
+    .mrp-dropzone__icon { width: 40px; height: 40px; background: var(--n90); border-radius: 10px; display: flex; align-items: center; justify-content: center; margin: 0 auto .75rem; }
+    .mrp-dropzone__title { font-size: .9rem; font-weight: 600; color: var(--n20); margin-bottom: .3rem; }
+    .mrp-dropzone__sub { font-size: .78rem; color: var(--n40); }
+    .mrp-dropzone__sub a { color: var(--brand); text-decoration: underline; cursor: pointer; }
+
+    .mrp-toolbar { display: flex; align-items: center; gap: .75rem; margin-bottom: .75rem; flex-wrap: wrap; }
+    .mrp-count { font-size: .8rem; color: var(--n40); margin-left: auto; }
+
+    .mrp-table-wrap { overflow-x: auto; border-radius: var(--radius-md); border: 1px solid var(--n90); }
+    .mrp-table { width: 100%; border-collapse: collapse; font-size: .82rem; }
+    .mrp-table th { background: var(--n98); padding: .6rem .85rem; text-align: left; font-weight: 600; color: var(--n40); font-size: .74rem; text-transform: uppercase; letter-spacing: .04em; border-bottom: 1px solid var(--n90); white-space: nowrap; }
+    .mrp-table td { padding: .6rem .85rem; border-bottom: 1px solid var(--n95); vertical-align: middle; }
+    .mrp-table tr:last-child td { border-bottom: none; }
+    .mrp-table tr:hover td { background: var(--n98); }
+    .mrp-urgente { color: var(--red); font-weight: 700; }
+    .mrp-ok { color: var(--green); }
+
+    /* ── Time editor ── */
+    .time-section-title { font-size: .82rem; font-weight: 700; color: var(--n20); margin-bottom: .75rem; margin-top: 1.5rem; }
+    .time-section-title:first-of-type { margin-top: 0; }
+    .time-table-wrap { overflow-x: auto; border-radius: var(--radius-md); border: 1px solid var(--n90); margin-bottom: 1.25rem; }
+    .time-table { width: 100%; border-collapse: collapse; font-size: .83rem; }
+    .time-table th { background: var(--n98); padding: .55rem .85rem; text-align: left; font-weight: 600; color: var(--n40); font-size: .72rem; text-transform: uppercase; letter-spacing: .04em; border-bottom: 1px solid var(--n90); }
+    .time-table td { padding: .45rem .75rem; border-bottom: 1px solid var(--n95); vertical-align: middle; }
+    .time-table tr:last-child td { border-bottom: none; }
+    .time-input {
+      width: 72px; padding: .3rem .5rem; border: 1px solid var(--n80);
+      border-radius: 6px; font-size: .82rem; font-family: inherit;
+      text-align: right; background: var(--white); color: var(--n10);
+      transition: border .15s;
+    }
+    .time-input:focus { outline: none; border-color: var(--brand); box-shadow: 0 0 0 2px rgba(27,63,139,.12); }
+    .time-impact { display: flex; align-items: center; gap: .4rem; }
+    .time-impact-bar { height: 6px; border-radius: 3px; background: var(--n90); flex: 1; max-width: 80px; overflow: hidden; }
+    .time-impact-fill { height: 100%; border-radius: 3px; background: var(--brand); transition: width .3s; }
+    .time-impact-fill--warn { background: var(--amber); }
+    .time-impact-fill--danger { background: var(--red); }
+    .time-resource-badge { display: inline-flex; align-items: center; gap: .35rem; font-weight: 600; font-size: .82rem; }
+    .time-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+
+    /* Shift schedule */
+    .shift-name-badge { display: inline-flex; align-items: center; gap: .45rem; font-weight: 600; font-size: .82rem; }
+    .shift-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+    .shift-days { display: flex; gap: .25rem; }
+    .shift-day {
+      width: 26px; height: 26px; border-radius: 50%; border: 1.5px solid var(--n80);
+      font-size: .68rem; font-weight: 700; color: var(--n40);
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; transition: all .15s; user-select: none;
+    }
+    .shift-day.active { background: var(--brand); border-color: var(--brand); color: #fff; }
+    .shift-toggle {
+      position: relative; display: inline-flex; align-items: center;
+      width: 36px; height: 20px; cursor: pointer;
+    }
+    .shift-toggle input { opacity: 0; width: 0; height: 0; position: absolute; }
+    .shift-toggle__track {
+      position: absolute; inset: 0; border-radius: 20px;
+      background: var(--n80); transition: background .2s;
+    }
+    .shift-toggle__thumb {
+      position: absolute; top: 3px; left: 3px;
+      width: 14px; height: 14px; border-radius: 50%;
+      background: #fff; transition: transform .2s;
+      box-shadow: 0 1px 3px rgba(0,0,0,.2);
+    }
+    .shift-toggle input:checked ~ .shift-toggle__track { background: var(--brand); }
+    .shift-toggle input:checked ~ .shift-toggle__thumb { transform: translateX(16px); }
+    .shift-duration { font-size: .8rem; font-weight: 600; color: var(--n20); }
+    .time-hm { width: 72px; padding: .3rem .5rem; border: 1px solid var(--n80); border-radius: 6px; font-size: .82rem; font-family: inherit; background: var(--white); color: var(--n10); transition: border .15s; }
+    .time-hm:focus { outline: none; border-color: var(--brand); box-shadow: 0 0 0 2px rgba(27,63,139,.12); }
 
     /* ───── KPI GRID ───── */
     .kpi-grid {
@@ -1565,12 +1717,32 @@
       <div class="icon-btn" title="Buscar">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.7)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
       </div>
-      <div class="icon-btn" title="Notificaciones">
+      <div class="icon-btn" id="notifBtn" title="Notificaciones">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.7)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
-        <div class="notif-badge"></div>
+        <div class="notif-badge" id="notifBadge"></div>
       </div>
-      <div class="icon-btn" title="Ajustes">
+      <div class="icon-btn" id="settingsBtn" title="Ajustes" style="position:relative">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.7)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+        <!-- Settings dropdown -->
+        <div class="settings-dropdown" id="settingsDropdown">
+          <div class="settings-dropdown__item" data-settings-action="mrp">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+            MRP &amp; Tiempos
+          </div>
+          <div class="settings-dropdown__item" data-settings-action="historial">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            Historial de planes
+          </div>
+          <div class="settings-dropdown__item" data-settings-action="tiempos">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            Tiempos de proceso
+          </div>
+          <div class="settings-dropdown__divider"></div>
+          <div class="settings-dropdown__item settings-dropdown__item--danger" data-settings-action="logout">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+            Cerrar sesión
+          </div>
+        </div>
       </div>
       <div class="user-pill" id="user-pill">
         <div class="user-avatar" id="user-initials">—</div>
@@ -1625,6 +1797,17 @@
         <a class="nav-item" href="#" data-panel="disrupciones">
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
           Disrupciones
+        </a>
+        <a class="nav-item" href="#" data-panel="mrp">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+          MRP &amp; Tiempos
+        </a>
+      </div>
+      <div class="nav-section">
+        <div class="nav-section__label">Auditoría</div>
+        <a class="nav-item" href="#" data-panel="historial">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          Historial de planes
         </a>
       </div>
 
@@ -1875,6 +2058,10 @@
             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
             Exportar
           </button>
+          <button class="btn-ui" id="savePlanBtn">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+            Guardar plan
+          </button>
           <button class="btn-ui">
             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M15 3h6v6"/><path d="M10 14 21 3"/></svg>
             Escenarios
@@ -1884,6 +2071,17 @@
             Replanificar IA
           </button>
         </div>
+      </div>
+
+      <!-- History mode banner (hidden by default) -->
+      <div class="hist-banner" id="histBanner" style="display:none">
+        <div class="hist-banner__icon">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#1B3F8B" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        </div>
+        <div class="hist-banner__body">
+          Modo historial — viendo: <strong id="histBannerNombre"></strong> · <span id="histBannerFecha"></span>
+        </div>
+        <button class="hist-banner__cta" id="histBannerDismiss">Volver al plan actual →</button>
       </div>
 
       <!-- Alert banner -->
@@ -2583,12 +2781,12 @@
         </div>
         <div class="gantt-card">
           <div class="orders-toolbar">
-            <input class="orders-search" type="text" placeholder="Buscar por ID, descripción o recurso…" />
-            <div class="filter-chips">
-              <span class="chip chip--active">Todas</span>
-              <span class="chip">En plazo</span>
-              <span class="chip">Riesgo</span>
-              <span class="chip">Completadas</span>
+            <input class="orders-search" id="ordersSearch" type="text" placeholder="Buscar por ID, descripción o recurso…" />
+            <div class="filter-chips" id="ordersChips">
+              <span class="chip chip--active" data-estado="todas">Todas</span>
+              <span class="chip" data-estado="ok">En plazo</span>
+              <span class="chip" data-estado="riesgo">Riesgo</span>
+              <span class="chip" data-estado="completada">Completadas</span>
             </div>
           </div>
           <table class="orders-table">
@@ -2603,43 +2801,43 @@
                 <th>Estado</th>
               </tr>
             </thead>
-            <tbody>
-              <tr>
+            <tbody id="ordersBody">
+              <tr data-estado="ok">
                 <td>OF-2038</td><td>Carcasa A — Lote 24B</td><td>CNC-1 / Acabados</td><td>Lun 19</td><td>Vie 23</td>
                 <td><div style="display:flex;align-items:center;gap:.5rem"><div class="progress-track" style="width:72px"><div class="progress-fill" style="width:82%"></div></div><span class="progress-pct">82%</span></div></td>
                 <td><span class="status-pill sp--ok">En plazo</span></td>
               </tr>
-              <tr>
+              <tr data-estado="ok">
                 <td>OF-2039</td><td>Placa base — Prototipo X</td><td>CNC-2</td><td>Lun 19</td><td>Mar 20</td>
                 <td><div style="display:flex;align-items:center;gap:.5rem"><div class="progress-track" style="width:72px"><div class="progress-fill" style="width:61%"></div></div><span class="progress-pct">61%</span></div></td>
                 <td><span class="status-pill sp--ok">En plazo</span></td>
               </tr>
-              <tr>
+              <tr data-estado="completada">
                 <td>OF-2040</td><td>Marco soldado — Serie A</td><td>Soldadura</td><td>Mar 20</td><td>Mié 21</td>
                 <td><div style="display:flex;align-items:center;gap:.5rem"><div class="progress-track" style="width:72px"><div class="progress-fill" style="width:95%"></div></div><span class="progress-pct">95%</span></div></td>
-                <td><span class="status-pill sp--ok">En plazo</span></td>
+                <td><span class="status-pill sp--ok">Completada</span></td>
               </tr>
-              <tr>
+              <tr data-estado="riesgo">
                 <td>OF-2041</td><td>Soporte B — Serie 200</td><td>CNC-1</td><td>Mar 20</td><td>Jue 22</td>
                 <td><div style="display:flex;align-items:center;gap:.5rem"><div class="progress-track" style="width:72px"><div class="progress-fill" style="width:45%;background:#D97706"></div></div><span class="progress-pct">45%</span></div></td>
                 <td><span class="status-pill sp--risk">Riesgo</span></td>
               </tr>
-              <tr>
+              <tr data-estado="riesgo">
                 <td>OF-2042</td><td>Brida C — Cliente AZ</td><td>CNC-2</td><td>Mié 21</td><td>Jue 22</td>
                 <td><div style="display:flex;align-items:center;gap:.5rem"><div class="progress-track" style="width:72px"><div class="progress-fill" style="width:30%;background:#D97706"></div></div><span class="progress-pct">30%</span></div></td>
                 <td><span class="status-pill sp--risk">Riesgo</span></td>
               </tr>
-              <tr>
+              <tr data-estado="ok">
                 <td>OF-2043</td><td>Depósito hidráulico</td><td>Soldadura</td><td>Jue 22</td><td>Vie 23</td>
                 <td><div style="display:flex;align-items:center;gap:.5rem"><div class="progress-track" style="width:72px"><div class="progress-fill" style="width:0%"></div></div><span class="progress-pct">0%</span></div></td>
                 <td><span class="status-pill sp--ok">En plazo</span></td>
               </tr>
-              <tr>
+              <tr data-estado="ok">
                 <td>OF-2044</td><td>Eje motor — Urgente</td><td>CNC-1</td><td>Jue 22</td><td>Vie 23</td>
                 <td><div style="display:flex;align-items:center;gap:.5rem"><div class="progress-track" style="width:72px"><div class="progress-fill" style="width:10%"></div></div><span class="progress-pct">10%</span></div></td>
                 <td><span class="status-pill sp--ok">En plazo</span></td>
               </tr>
-              <tr>
+              <tr data-estado="ok">
                 <td>OF-2047</td><td>Pieza especial — Pedido AZ</td><td>CNC-2</td><td>Vie 23</td><td>Vie 23</td>
                 <td><div style="display:flex;align-items:center;gap:.5rem"><div class="progress-track" style="width:72px"><div class="progress-fill" style="width:0%"></div></div><span class="progress-pct">0%</span></div></td>
                 <td><span class="status-pill sp--ok">En plazo</span></td>
@@ -2938,7 +3136,196 @@
       </div>
     </div><!-- /#panel-disrupciones -->
 
+    <!-- ── PANEL: HISTORIAL ── -->
+    <div id="panel-historial" class="dash-panel" style="display:none">
+      <div class="panel-page">
+        <div class="panel-page-header">
+          <div>
+            <div class="panel-page-title">Historial de planificaciones</div>
+            <div class="panel-page-sub" id="historialSub">Cargando…</div>
+          </div>
+          <div style="display:flex;gap:.5rem;align-items:center">
+            <button class="btn-ui" id="historialExportAll" style="font-size:.78rem">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+              Exportar todo
+            </button>
+            <button class="btn-ui" id="historialRefresh" style="font-size:.78rem">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+              Actualizar
+            </button>
+          </div>
+        </div>
+        <div class="gantt-card" style="padding:0;overflow:hidden">
+          <table class="orders-table" style="width:100%">
+            <thead>
+              <tr>
+                <th>Nombre</th>
+                <th>Descripción</th>
+                <th>Escenario</th>
+                <th>Órdenes</th>
+                <th>Guardado por</th>
+                <th>Fecha</th>
+                <th style="width:120px">Acciones</th>
+              </tr>
+            </thead>
+            <tbody id="historialBody">
+              <tr id="historialEmpty">
+                <td colspan="7" style="text-align:center;padding:2.5rem;color:var(--n40);font-size:.85rem">
+                  Aún no hay planificaciones guardadas. Usa "Guardar plan" para crear el primer registro.
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div><!-- /#panel-historial -->
+
+    <!-- ── PANEL: MRP & TIEMPOS ── -->
+    <div id="panel-mrp" class="dash-panel" style="display:none">
+      <div class="panel-page">
+        <div class="panel-page-header">
+          <div>
+            <div class="panel-page-title">MRP &amp; Tiempos de proceso</div>
+            <div class="panel-page-sub" id="mrpSub">Carga tu plan de materiales y ajusta los tiempos por recurso</div>
+          </div>
+        </div>
+
+        <!-- Tabs -->
+        <div class="mrp-tabs">
+          <button class="mrp-tab mrp-tab--active" data-mrptab="mrp">Plan MRP</button>
+          <button class="mrp-tab" data-mrptab="tiempos">Tiempos de proceso</button>
+        </div>
+
+        <!-- ── TAB: MRP ── -->
+        <div id="mrpTabMrp">
+          <!-- Drop zone -->
+          <div class="mrp-dropzone" id="mrpDropzone">
+            <input type="file" id="mrpFileInput" accept=".csv,.xlsx,.xls" style="display:none" />
+            <div class="mrp-dropzone__icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--n40)"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+            </div>
+            <div class="mrp-dropzone__title">Arrastra tu CSV aquí o <span id="mrpBrowse" style="color:var(--brand);text-decoration:underline;cursor:pointer">selecciona archivo</span></div>
+            <div class="mrp-dropzone__sub">Formato esperado: OF, Descripción, Cantidad, Unidad, Fecha necesidad, Stock actual, Lead time (días) · <span id="mrpTemplateLink">Descargar plantilla</span></div>
+          </div>
+
+          <!-- Toolbar (hidden until data loaded) -->
+          <div class="mrp-toolbar" id="mrpToolbar" style="display:none">
+            <button class="btn-ui" id="mrpClear" style="font-size:.78rem">Limpiar</button>
+            <button class="btn-ui btn-ui--primary" id="mrpApply" style="font-size:.78rem">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 9h18M8 4v5M16 4v5"/></svg>
+              Volcar al Gantt
+            </button>
+            <span class="mrp-count" id="mrpCount"></span>
+          </div>
+
+          <!-- Table -->
+          <div class="mrp-table-wrap" id="mrpTableWrap" style="display:none">
+            <table class="mrp-table" id="mrpTable">
+              <thead>
+                <tr>
+                  <th>OF / Material</th>
+                  <th>Descripción</th>
+                  <th>Cant.</th>
+                  <th>Unidad</th>
+                  <th>Fecha necesidad</th>
+                  <th>Stock actual</th>
+                  <th>Lead time</th>
+                  <th>Estado</th>
+                </tr>
+              </thead>
+              <tbody id="mrpBody"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- ── TAB: TIEMPOS ── -->
+        <div id="mrpTabTiempos" style="display:none">
+          <div class="time-section-title">Tiempos estándar por recurso</div>
+          <div class="time-table-wrap">
+            <table class="time-table" id="timeTable">
+              <thead>
+                <tr>
+                  <th>Recurso</th>
+                  <th>Setup (min)</th>
+                  <th>Ciclo (min/ud)</th>
+                  <th>Buffer (%)</th>
+                  <th>Turnos</th>
+                  <th>Operarios/turno</th>
+                  <th>Ud/jornada</th>
+                  <th>Carga</th>
+                </tr>
+              </thead>
+              <tbody id="timeBody"></tbody>
+            </table>
+          </div>
+          <div style="display:flex;gap:.75rem;align-items:center;flex-wrap:wrap">
+            <button class="btn-ui btn-ui--primary" id="timeSave">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+              Guardar y recalcular
+            </button>
+            <button class="btn-ui" id="timeReset" style="font-size:.78rem">Restablecer valores por defecto</button>
+            <span id="timeSaveStatus" style="font-size:.78rem;color:var(--n40)"></span>
+          </div>
+
+          <!-- Shift schedule -->
+          <div class="time-section-title" style="margin-top:2rem">Horarios de turno</div>
+          <div class="time-table-wrap">
+            <table class="time-table" id="shiftTable">
+              <thead>
+                <tr>
+                  <th>Turno</th>
+                  <th>Inicio</th>
+                  <th>Fin</th>
+                  <th>Duración</th>
+                  <th>Días activos</th>
+                  <th>Estado</th>
+                </tr>
+              </thead>
+              <tbody id="shiftBody"></tbody>
+            </table>
+          </div>
+          <div style="display:flex;gap:.75rem;align-items:center;flex-wrap:wrap">
+            <button class="btn-ui btn-ui--primary" id="shiftSave">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+              Guardar horarios
+            </button>
+            <button class="btn-ui" id="shiftReset" style="font-size:.78rem">Restablecer horarios</button>
+            <span id="shiftSaveStatus" style="font-size:.78rem;color:var(--n40)"></span>
+          </div>
+        </div>
+
+      </div>
+    </div><!-- /#panel-mrp -->
+
     </div><!-- /#dashboard-view -->
+
+    <!-- ── MODAL: GUARDAR PLANIFICACIÓN ── -->
+    <div class="modal-backdrop" id="savePlanModal">
+      <div class="modal__box" style="max-width:440px">
+        <div class="modal__header">
+          <h3 class="modal__title">Guardar planificación</h3>
+          <button class="modal__close" id="savePlanClose">×</button>
+        </div>
+        <div class="modal__body" style="display:flex;flex-direction:column;gap:1rem">
+          <div class="form-group">
+            <label class="form-label">Nombre <span style="color:var(--red)">*</span></label>
+            <input class="form-input" id="savePlanNombre" type="text" placeholder="Ej. Plan semana 22 – revisión A" maxlength="200" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Descripción (opcional)</label>
+            <textarea class="form-input" id="savePlanDesc" rows="3" placeholder="Notas sobre este estado del plan…" style="resize:vertical;font-family:inherit;font-size:.85rem"></textarea>
+          </div>
+          <div id="savePlanStatus" style="font-size:.8rem;color:var(--n40);min-height:1.2em"></div>
+        </div>
+        <div class="modal__footer">
+          <button class="btn-ui" id="savePlanCancel">Cancelar</button>
+          <button class="btn-ui btn-ui--primary" id="savePlanSubmit">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+            Guardar
+          </button>
+        </div>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -3304,6 +3691,952 @@
         card.querySelector('button:not([disabled])').click();
       });
     });
+
+    // 8c. Orders panel — filter chips + search
+    const ordersSearch = document.getElementById('ordersSearch');
+
+    function filterOrders() {
+      const activeChip = document.querySelector('#ordersChips .chip--active');
+      const estado = activeChip ? activeChip.dataset.estado : 'todas';
+      const query  = ordersSearch ? ordersSearch.value.toLowerCase().trim() : '';
+      let visible = 0;
+      document.querySelectorAll('#ordersBody tr').forEach(row => {
+        const matchEstado = estado === 'todas' || row.dataset.estado === estado;
+        const matchSearch = !query || row.textContent.toLowerCase().includes(query);
+        const show = matchEstado && matchSearch;
+        row.style.display = show ? '' : 'none';
+        if (show) visible++;
+      });
+      // Empty state
+      let emptyRow = document.getElementById('ordersEmptyRow');
+      if (visible === 0) {
+        if (!emptyRow) {
+          emptyRow = document.createElement('tr');
+          emptyRow.id = 'ordersEmptyRow';
+          emptyRow.innerHTML = `<td colspan="7" style="text-align:center;padding:2rem;color:var(--n40);font-size:.85rem">Sin órdenes que coincidan</td>`;
+          document.getElementById('ordersBody')?.appendChild(emptyRow);
+        }
+        emptyRow.style.display = '';
+      } else if (emptyRow) {
+        emptyRow.style.display = 'none';
+      }
+    }
+
+    document.querySelectorAll('#ordersChips .chip').forEach(chip => {
+      chip.addEventListener('click', () => {
+        document.querySelectorAll('#ordersChips .chip').forEach(c => c.classList.remove('chip--active'));
+        chip.classList.add('chip--active');
+        filterOrders();
+      });
+    });
+
+    ordersSearch && ordersSearch.addEventListener('input', filterOrders);
+
+    // 8d. Historial de planificaciones — guardar + listar + eliminar
+    const API_BASE = 'https://composite-replanning-api.vercel.app';
+    const LS_KEY   = 'pc_historial';
+
+    function getLocalHistory(): any[] {
+      try { return JSON.parse(localStorage.getItem(LS_KEY) || '[]'); } catch { return []; }
+    }
+    function saveLocalHistory(list: any[]) {
+      localStorage.setItem(LS_KEY, JSON.stringify(list));
+    }
+
+    function captureSnapshot() {
+      const escenario = document.querySelector('#panel-escenarios .scenario-card--active .scenario-badge')
+        ?.childNodes[0]?.textContent?.trim() ?? '—';
+      const ordenes: any[] = [];
+      document.querySelectorAll('#ordersBody tr[data-estado]').forEach(tr => {
+        const cells = tr.querySelectorAll('td');
+        if (cells.length >= 6) {
+          ordenes.push({
+            id:      cells[0].textContent?.trim(),
+            desc:    cells[1].textContent?.trim(),
+            recurso: cells[2].textContent?.trim(),
+            inicio:  cells[3].textContent?.trim(),
+            fin:     cells[4].textContent?.trim(),
+            estado:  (tr as HTMLElement).dataset.estado,
+          });
+        }
+      });
+      return { escenario, ordenes, timestamp: new Date().toISOString() };
+    }
+
+    async function savePlanToBackend(entry: any) {
+      const token = localStorage.getItem('pc_token');
+      if (!token) return null;
+      try {
+        const res = await fetch(`${API_BASE}/planificaciones`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+          body: JSON.stringify({ nombre: entry.nombre, descripcion: entry.descripcion, datos: entry.datos }),
+        });
+        if (!res.ok) return null;
+        return await res.json();
+      } catch { return null; }
+    }
+
+    async function fetchHistorialFromBackend(): Promise<any[]> {
+      const token = localStorage.getItem('pc_token');
+      if (!token) return [];
+      try {
+        const res = await fetch(`${API_BASE}/planificaciones`, {
+          headers: { 'Authorization': `Bearer ${token}` },
+        });
+        if (!res.ok) return [];
+        return await res.json();
+      } catch { return []; }
+    }
+
+    async function deleteFromBackend(id: number) {
+      const token = localStorage.getItem('pc_token');
+      if (!token) return;
+      try {
+        await fetch(`${API_BASE}/planificaciones/${id}`, {
+          method: 'DELETE',
+          headers: { 'Authorization': `Bearer ${token}` },
+        });
+      } catch {}
+    }
+
+    function renderHistorial(entries: any[]) {
+      const tbody = document.getElementById('historialBody')!;
+      const emptyRow = document.getElementById('historialEmpty');
+      // remove all non-empty rows
+      tbody.querySelectorAll('tr:not(#historialEmpty)').forEach(r => r.remove());
+
+      const sub = document.getElementById('historialSub');
+      if (entries.length === 0) {
+        if (emptyRow) emptyRow.style.display = '';
+        if (sub) sub.textContent = 'Sin registros guardados';
+        return;
+      }
+      if (emptyRow) emptyRow.style.display = 'none';
+      if (sub) sub.textContent = `${entries.length} registro${entries.length !== 1 ? 's' : ''} · ordenados por fecha desc.`;
+
+      entries.forEach(e => {
+        const datos = e.datos || {};
+        const fecha = new Date(e.creado_en).toLocaleString('es-ES', { dateStyle: 'short', timeStyle: 'short' });
+        const tr = document.createElement('tr');
+        tr.dataset.entryId = String(e.id ?? e.localId ?? '');
+        tr.dataset.localId = String(e.localId ?? '');
+        tr.innerHTML = `
+          <td style="font-weight:600;max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${e.nombre}">${e.nombre}</td>
+          <td style="color:var(--n40);font-size:.8rem;max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${e.descripcion || '—'}</td>
+          <td><span class="chip" style="font-size:.72rem;padding:.2rem .55rem">${datos.escenario || '—'}</span></td>
+          <td style="font-size:.82rem">${(datos.ordenes || []).length} órdenes</td>
+          <td style="font-size:.78rem;color:var(--n40)">${e.usuario_email || localStorage.getItem('pc_email') || '—'}</td>
+          <td style="font-size:.78rem;white-space:nowrap">${fecha}</td>
+          <td style="display:flex;gap:.35rem;padding:.5rem .75rem">
+            <button class="btn-ui btn-ui--primary" style="font-size:.72rem;padding:.3rem .6rem" data-action="load">Cargar</button>
+            <button class="btn-ui" style="font-size:.72rem;padding:.3rem .6rem" data-action="export">JSON</button>
+            <button class="btn-ui" style="font-size:.72rem;padding:.3rem .6rem;color:var(--red);border-color:var(--red-bg)" data-action="delete">×</button>
+          </td>`;
+
+        tr.querySelector('[data-action="load"]')?.addEventListener('click', () => {
+          restoreSnapshot(e);
+        });
+
+        tr.querySelector('[data-action="export"]')?.addEventListener('click', () => {
+          const blob = new Blob([JSON.stringify(e, null, 2)], { type: 'application/json' });
+          const url  = URL.createObjectURL(blob);
+          const a    = Object.assign(document.createElement('a'), { href: url, download: `planificacion-${e.nombre.replace(/\s+/g,'-')}.json` });
+          a.click();
+          URL.revokeObjectURL(url);
+        });
+
+        tr.querySelector('[data-action="delete"]')?.addEventListener('click', async () => {
+          if (!confirm(`¿Eliminar "${e.nombre}"?`)) return;
+          // remove from localStorage
+          const local = getLocalHistory().filter((x: any) => x.localId !== e.localId);
+          saveLocalHistory(local);
+          // remove from backend if has server id
+          if (e.id) await deleteFromBackend(e.id);
+          tr.remove();
+          const remaining = tbody.querySelectorAll('tr:not(#historialEmpty)').length;
+          if (remaining === 0 && emptyRow) emptyRow.style.display = '';
+          if (sub) sub.textContent = remaining === 0 ? 'Sin registros guardados' : `${remaining} registro${remaining !== 1 ? 's' : ''}`;
+        });
+
+        tbody.appendChild(tr);
+      });
+    }
+
+    // Snapshot of "live" order rows so we can restore them when dismissing history mode
+    let _liveOrdersSnapshot: string | null = null;
+
+    function restoreSnapshot(entry: any) {
+      const datos = entry.datos || {};
+      const ordenes: any[] = datos.ordenes || [];
+
+      // 1. Save live state if not already in history mode
+      const histBanner = document.getElementById('histBanner');
+      if (histBanner && histBanner.style.display === 'none') {
+        _liveOrdersSnapshot = document.getElementById('ordersBody')?.innerHTML ?? null;
+      }
+
+      // 2. Update orders table rows
+      const tbody = document.getElementById('ordersBody');
+      if (tbody && ordenes.length > 0) {
+        const rows = tbody.querySelectorAll('tr[data-estado]');
+        rows.forEach(row => {
+          const idCell = row.querySelector('td:first-child');
+          if (!idCell) return;
+          const ofId = idCell.textContent?.trim();
+          const saved = ordenes.find((o: any) => o.id === ofId);
+          if (!saved) return;
+
+          // Update cells
+          const cells = row.querySelectorAll('td');
+          if (cells[2]) cells[2].textContent = saved.recurso || cells[2].textContent;
+          if (cells[3]) cells[3].textContent = saved.inicio  || cells[3].textContent;
+          if (cells[4]) cells[4].textContent = saved.fin     || cells[4].textContent;
+
+          // Update estado
+          const estado = saved.estado || 'ok';
+          (row as HTMLElement).dataset.estado = estado;
+
+          const pill = row.querySelector('.status-pill');
+          if (pill) {
+            pill.className = 'status-pill ' + (estado === 'riesgo' ? 'sp--risk' : 'sp--ok');
+            pill.textContent = estado === 'riesgo' ? 'Riesgo' : estado === 'completada' ? 'Completada' : 'En plazo';
+          }
+        });
+      }
+
+      // 3. Activate matching scenario
+      if (datos.escenario) {
+        document.querySelectorAll('#panel-escenarios .scenario-card').forEach(card => {
+          const badge = card.querySelector('.scenario-badge');
+          const name  = badge?.childNodes[0]?.textContent?.trim();
+          const btn   = card.querySelector('button');
+          if (!btn) return;
+          if (name === datos.escenario) {
+            card.classList.add('scenario-card--active');
+            btn.className = 'btn-ui btn-ui--primary';
+            (btn as HTMLButtonElement).disabled = true;
+            btn.style.cssText = 'width:100%;justify-content:center';
+            const existing = badge?.querySelector('.scenario-active-chip');
+            if (!existing) {
+              const chip = document.createElement('span');
+              chip.className = 'scenario-active-chip';
+              chip.textContent = 'Activo';
+              badge?.appendChild(chip);
+            }
+          } else {
+            card.classList.remove('scenario-card--active');
+            btn.className = 'btn-ui';
+            (btn as HTMLButtonElement).disabled = false;
+            btn.style.cssText = 'width:100%;justify-content:center';
+            btn.textContent = 'Aplicar este escenario';
+            badge?.querySelector('.scenario-active-chip')?.remove();
+          }
+        });
+      }
+
+      // 4. Show history mode banner
+      const banner = document.getElementById('histBanner');
+      const bannerNombre = document.getElementById('histBannerNombre');
+      const bannerFecha  = document.getElementById('histBannerFecha');
+      if (banner) {
+        banner.style.display = 'flex';
+        if (bannerNombre) bannerNombre.textContent = entry.nombre;
+        if (bannerFecha)  bannerFecha.textContent  = new Date(entry.creado_en).toLocaleString('es-ES', { dateStyle: 'short', timeStyle: 'short' });
+      }
+
+      // 5. Navigate to Gantt panel
+      document.querySelectorAll('.nav-item[data-panel]').forEach(n => n.classList.remove('nav-item--active'));
+      document.querySelector('.nav-item[data-panel="gantt"]')?.classList.add('nav-item--active');
+      document.querySelectorAll('.dash-panel').forEach(p => (p as HTMLElement).style.display = 'none');
+      const ganttPanel = document.getElementById('panel-gantt');
+      if (ganttPanel) ganttPanel.style.display = '';
+
+      showToast(`✓ Planificación "${entry.nombre}" cargada en modo historial`);
+    }
+
+    function dismissHistoryMode() {
+      // Restore live orders
+      const tbody = document.getElementById('ordersBody');
+      if (tbody && _liveOrdersSnapshot) {
+        tbody.innerHTML = _liveOrdersSnapshot;
+        _liveOrdersSnapshot = null;
+        // Re-attach chip/search filters
+        filterOrders();
+      }
+      // Hide banner
+      const banner = document.getElementById('histBanner');
+      if (banner) banner.style.display = 'none';
+      showToast('Plan actual restaurado');
+    }
+
+    document.getElementById('histBannerDismiss')?.addEventListener('click', dismissHistoryMode);
+
+    async function loadHistorial() {
+      const sub = document.getElementById('historialSub');
+      if (sub) sub.textContent = 'Sincronizando…';
+      const [remoteEntries, localEntries] = await Promise.all([fetchHistorialFromBackend(), Promise.resolve(getLocalHistory())]);
+
+      // Merge: remote entries take precedence; local-only entries (no id) fill the rest
+      const remoteIds = new Set(remoteEntries.map((e: any) => e.localId).filter(Boolean));
+      const localOnly = localEntries.filter((e: any) => !e.id && !remoteIds.has(e.localId));
+      const merged = [...remoteEntries, ...localOnly].sort((a: any, b: any) =>
+        new Date(b.creado_en).getTime() - new Date(a.creado_en).getTime()
+      );
+      renderHistorial(merged);
+    }
+
+    // Save plan modal wiring
+    const savePlanModal  = document.getElementById('savePlanModal');
+    const savePlanBtn    = document.getElementById('savePlanBtn');
+    const savePlanClose  = document.getElementById('savePlanClose');
+    const savePlanCancel = document.getElementById('savePlanCancel');
+    const savePlanSubmit = document.getElementById('savePlanSubmit');
+    const savePlanNombre = document.getElementById('savePlanNombre') as HTMLInputElement | null;
+    const savePlanDesc   = document.getElementById('savePlanDesc') as HTMLTextAreaElement | null;
+    const savePlanStatus = document.getElementById('savePlanStatus');
+
+    function openSavePlanModal() {
+      if (!savePlanModal) return;
+      if (savePlanNombre) savePlanNombre.value = '';
+      if (savePlanDesc)   savePlanDesc.value   = '';
+      if (savePlanStatus) savePlanStatus.textContent = '';
+      savePlanModal.classList.add('open');
+      savePlanNombre?.focus();
+    }
+    function closeSavePlanModal() { savePlanModal?.classList.remove('open'); }
+
+    savePlanBtn    && savePlanBtn.addEventListener('click', openSavePlanModal);
+    savePlanClose  && savePlanClose.addEventListener('click', closeSavePlanModal);
+    savePlanCancel && savePlanCancel.addEventListener('click', closeSavePlanModal);
+    savePlanModal  && savePlanModal.addEventListener('click', (e: MouseEvent) => {
+      if (e.target === savePlanModal) closeSavePlanModal();
+    });
+
+    savePlanSubmit && savePlanSubmit.addEventListener('click', async () => {
+      const nombre = savePlanNombre?.value.trim();
+      if (!nombre) {
+        if (savePlanStatus) savePlanStatus.textContent = 'El nombre es obligatorio.';
+        savePlanNombre?.focus();
+        return;
+      }
+      if (savePlanSubmit) { (savePlanSubmit as HTMLButtonElement).disabled = true; savePlanSubmit.textContent = 'Guardando…'; }
+      if (savePlanStatus) savePlanStatus.textContent = '';
+
+      const entry: any = {
+        localId:     `local-${Date.now()}`,
+        nombre,
+        descripcion: savePlanDesc?.value.trim() || null,
+        datos:       captureSnapshot(),
+        usuario_email: localStorage.getItem('pc_email') || null,
+        creado_en:   new Date().toISOString(),
+      };
+
+      // 1. Save to localStorage immediately
+      const local = getLocalHistory();
+      local.unshift(entry);
+      saveLocalHistory(local);
+
+      // 2. Attempt backend sync
+      const remote = await savePlanToBackend(entry);
+      if (remote) {
+        entry.id = remote.id;
+        // update localStorage with server id
+        const updated = getLocalHistory().map((x: any) => x.localId === entry.localId ? { ...x, id: remote.id } : x);
+        saveLocalHistory(updated);
+        if (savePlanStatus) savePlanStatus.textContent = '✓ Guardado en servidor y local.';
+      } else {
+        if (savePlanStatus) savePlanStatus.textContent = '✓ Guardado localmente (sin sesión activa).';
+      }
+
+      if (savePlanSubmit) { (savePlanSubmit as HTMLButtonElement).disabled = false; savePlanSubmit.innerHTML = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg> Guardar'; }
+      showToast(`✓ Plan "${nombre}" guardado`);
+
+      setTimeout(closeSavePlanModal, 1200);
+    });
+
+    // Historial panel buttons
+    document.getElementById('historialRefresh')?.addEventListener('click', loadHistorial);
+    document.getElementById('historialExportAll')?.addEventListener('click', () => {
+      const local = getLocalHistory();
+      if (local.length === 0) { showToast('No hay registros para exportar'); return; }
+      const blob = new Blob([JSON.stringify(local, null, 2)], { type: 'application/json' });
+      const url  = URL.createObjectURL(blob);
+      const a    = Object.assign(document.createElement('a'), { href: url, download: `historial-planificaciones-${new Date().toISOString().slice(0,10)}.json` });
+      a.click();
+      URL.revokeObjectURL(url);
+      showToast('Historial exportado');
+    });
+
+    // Load historial when panel is opened
+    document.querySelectorAll('.nav-item[data-panel]').forEach(item => {
+      item.addEventListener('click', () => {
+        const p = (item as HTMLElement).dataset.panel;
+        if (p === 'historial') loadHistorial();
+        if (p === 'mrp') initMrpPanel();
+      });
+    });
+
+    // ── 8e. MRP & Tiempos panel ─────────────────────────────────────
+    const MRP_LS  = 'pc_mrp_rows';
+    const TIME_LS = 'pc_process_times';
+
+    const DEFAULT_TIMES = [
+      { id: 'cnc-1',    label: 'CNC-1',    color: '#3B82F6', setup: 30, ciclo: 45, buffer: 10, turnos: 2, operarios: 2 },
+      { id: 'cnc-2',    label: 'CNC-2',    color: '#8B5CF6', setup: 25, ciclo: 40, buffer: 10, turnos: 2, operarios: 2 },
+      { id: 'soldadura',label: 'Soldadura',color: '#10B981', setup: 20, ciclo: 60, buffer: 15, turnos: 1, operarios: 3 },
+      { id: 'acabados', label: 'Acabados', color: '#6B7280', setup: 15, ciclo: 30, buffer: 20, turnos: 2, operarios: 1 },
+      { id: 'embalaje', label: 'Embalaje', color: '#F59E0B', setup: 10, ciclo: 15, buffer:  5, turnos: 1, operarios: 2 },
+    ];
+
+    function getProcessTimes() {
+      try {
+        const saved = JSON.parse(localStorage.getItem(TIME_LS) || '[]');
+        if (saved.length === DEFAULT_TIMES.length) return saved;
+      } catch {}
+      return DEFAULT_TIMES.map(d => ({ ...d }));
+    }
+
+    function getMrpRows(): any[] {
+      try { return JSON.parse(localStorage.getItem(MRP_LS) || '[]'); } catch { return []; }
+    }
+
+    // ── CSV helpers ────────────────────────────────────────────────
+    function parseCsv(text: string): any[] {
+      const lines = text.trim().split(/\r?\n/);
+      if (lines.length < 2) return [];
+      // Skip header row
+      return lines.slice(1).map(line => {
+        const cols = line.split(/,(?=(?:[^"]*"[^"]*")*[^"]*$)/).map(c => c.replace(/^"|"$/g, '').trim());
+        const [of_, desc, cant, unidad, fecha, stock, lead] = cols;
+        if (!of_) return null;
+        return { of: of_, desc: desc || '', cant: parseFloat(cant) || 0, unidad: unidad || 'ud', fecha: fecha || '', stock: parseFloat(stock) || 0, lead: parseInt(lead) || 0 };
+      }).filter(Boolean);
+    }
+
+    function rowStatus(row: any): { label: string; cls: string } {
+      if (!row.fecha) return { label: '—', cls: '' };
+      const need = new Date(row.fecha);
+      const now  = new Date();
+      const days  = Math.round((need.getTime() - now.getTime()) / 86400000);
+      if (days < 0)  return { label: 'Vencida',  cls: 'mrp-urgente' };
+      if (days <= 3) return { label: `${days}d`,  cls: 'mrp-urgente' };
+      if (days <= 7) return { label: `${days}d`,  cls: '' };
+      return { label: `${days}d`, cls: 'mrp-ok' };
+    }
+
+    function downloadTemplate() {
+      const csv = [
+        'OF,Descripcion,Cantidad,Unidad,Fecha_necesidad,Stock_actual,Lead_time_dias',
+        'OF-2050,Carcasa motor B,10,piezas,2026-06-05,3,3',
+        'OF-2051,Placa soporte XL,5,piezas,2026-06-08,0,5',
+        'OF-2052,Valvula hidraulica,20,piezas,2026-06-10,12,2',
+      ].join('\n');
+      const blob = new Blob([csv], { type: 'text/csv' });
+      const url  = URL.createObjectURL(blob);
+      Object.assign(document.createElement('a'), { href: url, download: 'plantilla_mrp.csv' }).click();
+      URL.revokeObjectURL(url);
+    }
+
+    // ── Render MRP table ──────────────────────────────────────────
+    function renderMrpTable(rows: any[]) {
+      const tbody   = document.getElementById('mrpBody')!;
+      const toolbar = document.getElementById('mrpToolbar')!;
+      const wrap    = document.getElementById('mrpTableWrap')!;
+      const count   = document.getElementById('mrpCount');
+      tbody.innerHTML = '';
+
+      if (rows.length === 0) {
+        toolbar.style.display = 'none';
+        wrap.style.display    = 'none';
+        return;
+      }
+
+      toolbar.style.display = 'flex';
+      wrap.style.display    = '';
+      if (count) count.textContent = `${rows.length} líneas cargadas`;
+
+      rows.forEach(row => {
+        const st  = rowStatus(row);
+        const net = row.cant - row.stock;
+        const tr  = document.createElement('tr');
+        tr.innerHTML = `
+          <td style="font-weight:600">${row.of}</td>
+          <td>${row.desc}</td>
+          <td style="text-align:right;font-variant-numeric:tabular-nums">${row.cant}</td>
+          <td style="color:var(--n40)">${row.unidad}</td>
+          <td style="white-space:nowrap">${row.fecha || '—'}</td>
+          <td style="text-align:right">${row.stock}</td>
+          <td style="text-align:right">${row.lead}d</td>
+          <td><span class="${st.cls}" style="font-size:.78rem;font-weight:600">${st.label}</span></td>`;
+        tbody.appendChild(tr);
+      });
+    }
+
+    // ── Render time editor ────────────────────────────────────────
+    // Approximate base loads from the current Gantt (static demo values)
+    const BASE_LOADS: Record<string, number> = { 'cnc-1': 78, 'cnc-2': 91, 'soldadura': 62, 'acabados': 55, 'embalaje': 30 };
+    const SHIFT_MINUTES = 480; // 8 h per shift
+
+    function calcUdsJornada(t: any): number {
+      // Net productive minutes = (shift_min - setup) * (1 - buffer/100) * operarios * turnos
+      const netMin = Math.max(0, (SHIFT_MINUTES - t.setup) * (1 - (t.buffer || 0) / 100)) * (t.operarios || 1) * t.turnos;
+      return Math.floor(netMin / (t.ciclo || 1));
+    }
+
+    function calcLoad(t: any, idx: number): number {
+      const baseDef  = DEFAULT_TIMES[idx];
+      const baseUds  = calcUdsJornada(baseDef);
+      const newUds   = calcUdsJornada(t);
+      const baseLoad = BASE_LOADS[t.id] ?? 70;
+      // Load scales inversely with throughput increase
+      return Math.min(Math.round(baseLoad * (baseUds / (newUds || 1))), 100);
+    }
+
+    function updateTimeRow(tbody: HTMLElement, t: any, idx: number) {
+      const row = tbody.querySelector(`tr[data-id="${t.id}"]`);
+      if (!row) return;
+      const adjLoad = calcLoad(t, idx);
+      const fillCls = adjLoad >= 90 ? 'time-impact-fill--danger' : adjLoad >= 75 ? 'time-impact-fill--warn' : '';
+      const fill    = row.querySelector('.time-impact-fill') as HTMLElement;
+      const pct     = row.querySelector('.time-impact span') as HTMLElement;
+      const uds     = row.querySelector('.time-uds') as HTMLElement;
+      if (fill) { fill.style.width = `${adjLoad}%`; fill.className = `time-impact-fill ${fillCls}`; }
+      if (pct)  { pct.textContent = `${adjLoad}%`; pct.style.color = adjLoad>=90?'var(--red)':adjLoad>=75?'var(--amber)':'var(--green)'; }
+      if (uds)  { uds.textContent = `${calcUdsJornada(t)} ud`; }
+    }
+
+    function renderTimeTable(times: any[]) {
+      const tbody = document.getElementById('timeBody')!;
+      tbody.innerHTML = '';
+
+      times.forEach((t, idx) => {
+        const adjLoad = calcLoad(t, idx);
+        const fillCls = adjLoad >= 90 ? 'time-impact-fill--danger' : adjLoad >= 75 ? 'time-impact-fill--warn' : '';
+        const uds     = calcUdsJornada(t);
+        const ops     = t.operarios ?? 1;
+
+        const tr = document.createElement('tr');
+        tr.dataset.id = t.id;
+        tr.innerHTML = `
+          <td>
+            <div class="time-resource-badge">
+              <span class="time-dot" style="background:${t.color}"></span>
+              ${t.label}
+            </div>
+          </td>
+          <td><input class="time-input" data-field="setup"     data-idx="${idx}" type="number" min="0"  max="480" step="5" value="${t.setup}"  /></td>
+          <td><input class="time-input" data-field="ciclo"     data-idx="${idx}" type="number" min="1"  max="999" step="1" value="${t.ciclo}"  /></td>
+          <td><input class="time-input" data-field="buffer"    data-idx="${idx}" type="number" min="0"  max="100" step="5" value="${t.buffer}" /></td>
+          <td>
+            <select class="time-input" data-field="turnos" data-idx="${idx}" style="width:88px;text-align:left">
+              <option value="1" ${t.turnos===1?'selected':''}>1 turno</option>
+              <option value="2" ${t.turnos===2?'selected':''}>2 turnos</option>
+              <option value="3" ${t.turnos===3?'selected':''}>3 turnos</option>
+            </select>
+          </td>
+          <td>
+            <div style="display:flex;align-items:center;gap:.4rem">
+              <input class="time-input" data-field="operarios" data-idx="${idx}" type="number" min="1" max="50" step="1" value="${ops}" style="width:56px" />
+              <span style="font-size:.75rem;color:var(--n40)">op.</span>
+            </div>
+          </td>
+          <td style="font-size:.82rem;font-weight:600"><span class="time-uds">${uds} ud</span></td>
+          <td>
+            <div class="time-impact">
+              <div class="time-impact-bar"><div class="time-impact-fill ${fillCls}" style="width:${adjLoad}%"></div></div>
+              <span style="font-size:.75rem;font-weight:600;color:${adjLoad>=90?'var(--red)':adjLoad>=75?'var(--amber)':'var(--green)'}">${adjLoad}%</span>
+            </div>
+          </td>`;
+        tbody.appendChild(tr);
+      });
+
+      // Live recalc on any input change
+      tbody.querySelectorAll('.time-input').forEach(input => {
+        input.addEventListener('input', () => {
+          const el    = input as HTMLInputElement | HTMLSelectElement;
+          const idx   = parseInt(el.dataset.idx!);
+          const field = el.dataset.field!;
+          const val   = field === 'turnos' ? parseInt(el.value) : parseFloat(el.value) || 0;
+          times[idx][field] = val;
+          updateTimeRow(tbody, times[idx], idx);
+        });
+      });
+    }
+
+    // ── Apply times to Gantt ──────────────────────────────────────
+    function applyTimesToGantt(oldTimes: any[], newTimes: any[]) {
+      newTimes.forEach((nt, idx) => {
+        const ot = oldTimes[idx];
+        if (ot.ciclo === nt.ciclo && ot.turnos === nt.turnos && ot.operarios === nt.operarios) return;
+        // Throughput ratio: old_uds / new_uds — block widths scale inversely
+        const oldUds = calcUdsJornada(ot);
+        const newUds = calcUdsJornada(nt);
+        const ratio  = (newUds || 1) / (oldUds || 1);
+        // Scale blocks for this resource in Semana view
+        document.querySelectorAll(`.gantt-block[data-recurso="${nt.label}"]`).forEach(b => {
+          const el  = b as HTMLElement;
+          const cur = parseFloat(el.style.width) || 50;
+          el.style.width = `${Math.min(cur * ratio, 100)}%`;
+        });
+        // Scale turno blocks
+        document.querySelectorAll(`.turno-row[data-resource="${nt.id}"] .turno-block`).forEach(b => {
+          const el  = b as HTMLElement;
+          const cw  = parseFloat(el.style.width) || 20;
+          const cl  = parseFloat(el.style.left)  || 0;
+          const nw  = Math.min(cw * ratio, 100 - cl);
+          el.style.width = `${nw}%`;
+        });
+      });
+    }
+
+    // ── Panel init ────────────────────────────────────────────────
+    let _mrpInited = false;
+    function initMrpPanel() {
+      if (_mrpInited) return;
+      _mrpInited = true;
+
+      // Tab switching
+      document.querySelectorAll('.mrp-tab').forEach(tab => {
+        tab.addEventListener('click', () => {
+          document.querySelectorAll('.mrp-tab').forEach(t => t.classList.remove('mrp-tab--active'));
+          tab.classList.add('mrp-tab--active');
+          const which = (tab as HTMLElement).dataset.mrptab;
+          document.getElementById('mrpTabMrp')!.style.display    = which === 'mrp'     ? '' : 'none';
+          document.getElementById('mrpTabTiempos')!.style.display = which === 'tiempos' ? '' : 'none';
+        });
+      });
+
+      // ── MRP tab setup ──
+      const dropzone   = document.getElementById('mrpDropzone')!;
+      const fileInput  = document.getElementById('mrpFileInput') as HTMLInputElement;
+      const browse     = document.getElementById('mrpBrowse');
+      const tplLink    = document.getElementById('mrpTemplateLink');
+
+      browse?.addEventListener('click', () => fileInput.click());
+      tplLink?.addEventListener('click', downloadTemplate);
+      dropzone.addEventListener('click', e => { if (e.target === dropzone || (e.target as HTMLElement).closest('.mrp-dropzone__icon')) fileInput.click(); });
+
+      dropzone.addEventListener('dragover', e => { e.preventDefault(); dropzone.classList.add('drag-over'); });
+      dropzone.addEventListener('dragleave', ()   => dropzone.classList.remove('drag-over'));
+      dropzone.addEventListener('drop', e => {
+        e.preventDefault(); dropzone.classList.remove('drag-over');
+        const file = e.dataTransfer?.files[0];
+        if (file) loadFile(file);
+      });
+
+      fileInput.addEventListener('change', () => {
+        if (fileInput.files?.[0]) loadFile(fileInput.files[0]);
+      });
+
+      function loadFile(file: File) {
+        if (!file.name.match(/\.(csv|txt)$/i)) { showToast('Usa un archivo CSV (.csv)'); return; }
+        const reader = new FileReader();
+        reader.onload = e => {
+          const rows = parseCsv(e.target?.result as string);
+          if (rows.length === 0) { showToast('No se encontraron filas válidas en el CSV'); return; }
+          localStorage.setItem(MRP_LS, JSON.stringify(rows));
+          renderMrpTable(rows);
+          showToast(`✓ ${rows.length} líneas MRP cargadas`);
+          const sub = document.getElementById('mrpSub');
+          if (sub) sub.textContent = `${rows.length} líneas · ${file.name}`;
+        };
+        reader.readAsText(file, 'UTF-8');
+      }
+
+      document.getElementById('mrpClear')?.addEventListener('click', () => {
+        localStorage.removeItem(MRP_LS);
+        renderMrpTable([]);
+        const sub = document.getElementById('mrpSub');
+        if (sub) sub.textContent = 'Carga tu plan de materiales y ajusta los tiempos por recurso';
+        showToast('MRP limpiado');
+      });
+
+      document.getElementById('mrpApply')?.addEventListener('click', () => {
+        const rows = getMrpRows();
+        if (rows.length === 0) return;
+        // Add MRP rows to the Orders panel that don't already exist
+        const existing = new Set(Array.from(document.querySelectorAll('#ordersBody tr td:first-child')).map(td => td.textContent?.trim()));
+        let added = 0;
+        rows.forEach(row => {
+          if (existing.has(row.of)) return;
+          const tr = document.createElement('tr');
+          const estado = row.cant > row.stock ? 'riesgo' : 'ok';
+          tr.dataset.estado = estado;
+          const st = rowStatus(row);
+          tr.innerHTML = `
+            <td>${row.of}</td>
+            <td>${row.desc}</td>
+            <td>—</td>
+            <td>${row.fecha || '—'}</td>
+            <td>—</td>
+            <td><div style="display:flex;align-items:center;gap:.5rem"><div class="progress-track" style="width:72px"><div class="progress-fill" style="width:0%"></div></div><span class="progress-pct">0%</span></div></td>
+            <td><span class="status-pill ${estado==='riesgo'?'sp--risk':'sp--ok'}">${estado==='riesgo'?'Riesgo':'En plazo'}</span></td>`;
+          document.getElementById('ordersBody')?.appendChild(tr);
+          added++;
+        });
+        showToast(added > 0 ? `✓ ${added} orden${added!==1?'es':''} añadida${added!==1?'s':''} al panel de Órdenes` : 'Todas las órdenes ya estaban en el panel');
+      });
+
+      // Load existing rows
+      renderMrpTable(getMrpRows());
+
+      // ── Tiempos tab setup ──
+      const times = getProcessTimes();
+      renderTimeTable(times);
+
+      document.getElementById('timeSave')?.addEventListener('click', () => {
+        const oldTimes = getProcessTimes();
+        // Read current input values
+        document.querySelectorAll('#timeBody .time-input').forEach(input => {
+          const el    = input as HTMLInputElement | HTMLSelectElement;
+          const idx   = parseInt(el.dataset.idx!);
+          const field = el.dataset.field!;
+          times[idx][field] = field === 'turnos' ? parseInt(el.value) : parseFloat(el.value) || 0;
+        });
+        localStorage.setItem(TIME_LS, JSON.stringify(times));
+        applyTimesToGantt(oldTimes, times);
+        renderTimeTable(times); // refresh capacity bars
+
+        const status = document.getElementById('timeSaveStatus');
+        if (status) { status.textContent = '✓ Guardado y aplicado al Gantt'; setTimeout(() => { status.textContent = ''; }, 3000); }
+        showToast('✓ Tiempos de proceso actualizados · Gantt recalculado');
+      });
+
+      document.getElementById('timeReset')?.addEventListener('click', () => {
+        if (!confirm('¿Restablecer todos los tiempos a los valores por defecto?')) return;
+        localStorage.removeItem(TIME_LS);
+        const defaults = DEFAULT_TIMES.map(d => ({ ...d }));
+        renderTimeTable(defaults);
+        showToast('Tiempos restablecidos');
+      });
+
+      // ── Shift schedule ────────────────────────────────────────────
+      const SHIFT_LS = 'pc_shift_schedule';
+      const DAYS     = ['L','M','X','J','V','S','D'];
+
+      const DEFAULT_SHIFTS = [
+        { id: 1, label: 'Mañana',  color: '#F59E0B', start: '06:00', end: '14:00', days: [0,1,2,3,4],     active: true  },
+        { id: 2, label: 'Tarde',   color: '#3B82F6', start: '14:00', end: '22:00', days: [0,1,2,3,4],     active: true  },
+        { id: 3, label: 'Noche',   color: '#6366F1', start: '22:00', end: '06:00', days: [0,1,2,3,4,5],   active: false },
+      ];
+
+      function getShifts(): any[] {
+        try {
+          const s = JSON.parse(localStorage.getItem(SHIFT_LS) || '[]');
+          if (s.length === 3) return s;
+        } catch {}
+        return DEFAULT_SHIFTS.map(s => ({ ...s, days: [...s.days] }));
+      }
+
+      function parseHM(hm: string): number {
+        const [h, m] = hm.split(':').map(Number);
+        return (h || 0) * 60 + (m || 0);
+      }
+
+      function shiftDuration(s: any): number {
+        let start = parseHM(s.start), end = parseHM(s.end);
+        if (end <= start) end += 1440; // overnight
+        return end - start;
+      }
+
+      function fmtDuration(min: number): string {
+        const h = Math.floor(min / 60), m = min % 60;
+        return m ? `${h}h ${m}min` : `${h}h`;
+      }
+
+      function renderShiftTable(shifts: any[]) {
+        const tbody = document.getElementById('shiftBody')!;
+        tbody.innerHTML = '';
+
+        shifts.forEach((s, si) => {
+          const dur = shiftDuration(s);
+          const tr  = document.createElement('tr');
+          tr.dataset.si = String(si);
+          if (!s.active) tr.style.opacity = '.5';
+
+          tr.innerHTML = `
+            <td>
+              <div class="shift-name-badge">
+                <span class="shift-dot" style="background:${s.color}"></span>
+                Turno ${s.id} — ${s.label}
+              </div>
+            </td>
+            <td><input class="time-hm" data-sfield="start" data-si="${si}" type="time" value="${s.start}" ${!s.active?'disabled':''} /></td>
+            <td><input class="time-hm" data-sfield="end"   data-si="${si}" type="time" value="${s.end}"   ${!s.active?'disabled':''} /></td>
+            <td><span class="shift-duration" id="shift-dur-${si}">${fmtDuration(dur)}</span></td>
+            <td>
+              <div class="shift-days" id="shift-days-${si}">
+                ${DAYS.map((d, di) => `<div class="shift-day ${s.days.includes(di)?'active':''} ${!s.active?'disabled-day':''}" data-si="${si}" data-di="${di}">${d}</div>`).join('')}
+              </div>
+            </td>
+            <td>
+              <label class="shift-toggle">
+                <input type="checkbox" data-sfield="active" data-si="${si}" ${s.active?'checked':''} />
+                <div class="shift-toggle__track"></div>
+                <div class="shift-toggle__thumb"></div>
+              </label>
+            </td>`;
+          tbody.appendChild(tr);
+        });
+
+        // Day pill toggles
+        tbody.querySelectorAll('.shift-day:not(.disabled-day)').forEach(pill => {
+          pill.addEventListener('click', () => {
+            const si = parseInt((pill as HTMLElement).dataset.si!);
+            const di = parseInt((pill as HTMLElement).dataset.di!);
+            if (!shifts[si].active) return;
+            const idx = shifts[si].days.indexOf(di);
+            if (idx === -1) shifts[si].days.push(di);
+            else           shifts[si].days.splice(idx, 1);
+            pill.classList.toggle('active');
+          });
+        });
+
+        // Time inputs
+        tbody.querySelectorAll('.time-hm').forEach(input => {
+          input.addEventListener('input', () => {
+            const el    = input as HTMLInputElement;
+            const si    = parseInt(el.dataset.si!);
+            const field = el.dataset.sfield!;
+            shifts[si][field] = el.value;
+            const dur   = shiftDuration(shifts[si]);
+            const durEl = document.getElementById(`shift-dur-${si}`);
+            if (durEl) durEl.textContent = fmtDuration(dur);
+            // Refresh resource table uds/jornada
+            refreshUdsFromShifts(shifts);
+          });
+        });
+
+        // Active toggle
+        tbody.querySelectorAll('input[data-sfield="active"]').forEach(cb => {
+          cb.addEventListener('change', () => {
+            const el = cb as HTMLInputElement;
+            const si = parseInt(el.dataset.si!);
+            shifts[si].active = el.checked;
+            renderShiftTable(shifts); // re-render to enable/disable inputs
+            refreshUdsFromShifts(shifts);
+          });
+        });
+      }
+
+      // Recalculate Ud/jornada in the resource table using real shift durations
+      function refreshUdsFromShifts(shifts: any[]) {
+        const times  = getProcessTimes();
+        const tbody  = document.getElementById('timeBody');
+        if (!tbody) return;
+
+        times.forEach((t, idx) => {
+          // Total minutes available = sum of active shift durations * operarios
+          const activeShifts = shifts.filter(s => s.active);
+          // Match number of active shifts to the configured turnos for this resource
+          const usedShifts   = activeShifts.slice(0, t.turnos);
+          const totalMin     = usedShifts.reduce((acc: number, s: any) => acc + shiftDuration(s), 0);
+          const netMin       = Math.max(0, (totalMin - t.setup * t.turnos) * (1 - (t.buffer || 0) / 100)) * (t.operarios || 1);
+          const uds          = Math.floor(netMin / (t.ciclo || 1));
+
+          const row  = tbody.querySelector(`tr[data-id="${t.id}"]`);
+          if (row) {
+            const udsEl = row.querySelector('.time-uds') as HTMLElement;
+            if (udsEl) udsEl.textContent = `${uds} ud`;
+          }
+        });
+      }
+
+      const shifts = getShifts();
+      renderShiftTable(shifts);
+
+      document.getElementById('shiftSave')?.addEventListener('click', () => {
+        // Read current input values before saving
+        document.querySelectorAll('#shiftBody .time-hm').forEach(input => {
+          const el    = input as HTMLInputElement;
+          const si    = parseInt(el.dataset.si!);
+          const field = el.dataset.sfield!;
+          shifts[si][field] = el.value;
+        });
+        localStorage.setItem(SHIFT_LS, JSON.stringify(shifts));
+        refreshUdsFromShifts(shifts);
+        const st = document.getElementById('shiftSaveStatus');
+        if (st) { st.textContent = '✓ Horarios guardados'; setTimeout(() => { st.textContent = ''; }, 3000); }
+        showToast('✓ Horarios de turno actualizados');
+      });
+
+      document.getElementById('shiftReset')?.addEventListener('click', () => {
+        if (!confirm('¿Restablecer los horarios por defecto?')) return;
+        localStorage.removeItem(SHIFT_LS);
+        const def = DEFAULT_SHIFTS.map(s => ({ ...s, days: [...s.days] }));
+        renderShiftTable(def);
+        showToast('Horarios restablecidos');
+      });
+    }
+
+    // ── Topbar: notifications & settings buttons ─────────────────
+    function navToPanel(panelId: string) {
+      document.querySelectorAll('.nav-item[data-panel]').forEach(n => n.classList.remove('nav-item--active'));
+      document.querySelector(`.nav-item[data-panel="${panelId}"]`)?.classList.add('nav-item--active');
+      document.querySelectorAll('.dash-panel').forEach(p => (p as HTMLElement).style.display = 'none');
+      const target = document.getElementById(`panel-${panelId}`);
+      if (target) target.style.display = '';
+    }
+
+    // Bell → open Alertas panel
+    document.getElementById('notifBtn')?.addEventListener('click', () => {
+      if (document.getElementById('dashboard-view')?.style.display === 'none') return;
+      navToPanel('alertas');
+    });
+
+    // Gear → dropdown
+    const settingsBtn      = document.getElementById('settingsBtn');
+    const settingsDropdown = document.getElementById('settingsDropdown');
+
+    settingsBtn?.addEventListener('click', e => {
+      e.stopPropagation();
+      settingsDropdown?.classList.toggle('open');
+    });
+
+    document.addEventListener('click', e => {
+      if (settingsDropdown && !settingsDropdown.contains(e.target as Node) && e.target !== settingsBtn) {
+        settingsDropdown.classList.remove('open');
+      }
+    });
+
+    settingsDropdown?.querySelectorAll('[data-settings-action]').forEach(item => {
+      item.addEventListener('click', () => {
+        settingsDropdown.classList.remove('open');
+        const action = (item as HTMLElement).dataset.settingsAction;
+        if (action === 'mrp') {
+          navToPanel('mrp');
+          initMrpPanel();
+        } else if (action === 'historial') {
+          navToPanel('historial');
+          loadHistorial();
+        } else if (action === 'tiempos') {
+          navToPanel('mrp');
+          initMrpPanel();
+          // Switch to tiempos tab
+          setTimeout(() => {
+            document.querySelector('.mrp-tab[data-mrptab="tiempos"]')?.dispatchEvent(new MouseEvent('click'));
+          }, 50);
+        } else if (action === 'logout') {
+          localStorage.removeItem('pc_token');
+          localStorage.removeItem('pc_email');
+          showToast('Sesión cerrada');
+          setTimeout(() => { window.location.href = '/'; }, 1000);
+        }
+      });
+    });
+
+    // Sync notif badge with alert count
+    function syncNotifBadge() {
+      const active = document.querySelectorAll('#alertList .alert-row:not(.alert-row--resolved)').length;
+      const badge  = document.getElementById('notifBadge');
+      if (badge) badge.style.display = active > 0 ? '' : 'none';
+    }
+    // Run once and re-run whenever alerts change (observe the list)
+    syncNotifBadge();
+    const _alertObserver = new MutationObserver(syncNotifBadge);
+    const _alertList = document.getElementById('alertList');
+    if (_alertList) _alertObserver.observe(_alertList, { childList: true, subtree: true, attributes: true, attributeFilter: ['class'] });
 
     // 3. Alert banner — "Ver sugerencia"
     const alertCTA    = document.querySelector('.alert-banner__cta');

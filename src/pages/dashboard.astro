@@ -1,0 +1,824 @@
+---
+// Standalone dashboard mockup — no BaseLayout, full app shell
+---
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dashboard — Planning Core</title>
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon.png" />
+  <link rel="shortcut icon" href="/favicon.ico" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --navy: #0B1C3A;
+      --navy2: #112347;
+      --blue: #1E4DB7;
+      --blue-lt: #2563EB;
+      --silver: #8BC2C6;
+      --n90: #F4F6F9;
+      --n80: #E2E8F0;
+      --n30: #475569;
+      --n20: #334155;
+      --white: #fff;
+      --green: #16A34A;
+      --green-lt: #DCFCE7;
+      --amber: #D97706;
+      --amber-lt: #FEF3C7;
+      --red: #DC2626;
+      --red-lt: #FEE2E2;
+      --sidebar: 220px;
+      --topbar: 60px;
+      --radius: 10px;
+      --shadow: 0 1px 3px rgba(0,0,0,.08), 0 1px 2px rgba(0,0,0,.06);
+      --shadow-md: 0 4px 12px rgba(0,0,0,.1);
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: var(--n90);
+      color: var(--n20);
+      height: 100vh;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ── TOPBAR ── */
+    .topbar {
+      height: var(--topbar);
+      background: var(--navy);
+      display: flex;
+      align-items: center;
+      padding: 0 1.25rem;
+      gap: 1rem;
+      flex-shrink: 0;
+      border-bottom: 1px solid rgba(255,255,255,.07);
+    }
+    .topbar__logo {
+      display: flex;
+      align-items: center;
+      gap: .5rem;
+      flex-shrink: 0;
+      text-decoration: none;
+    }
+    .topbar__logo img { height: 28px; width: 28px; border-radius: 6px; object-fit: cover; }
+    .topbar__logo span { font-size: .9rem; font-weight: 400; color: #fff; }
+    .topbar__logo strong { font-weight: 700; }
+    .topbar__divider { width: 1px; height: 28px; background: rgba(255,255,255,.1); flex-shrink: 0; }
+
+    .topbar__company {
+      display: flex;
+      align-items: center;
+      gap: .5rem;
+      flex: 1;
+    }
+    .company-avatar {
+      width: 28px; height: 28px;
+      background: rgba(139,194,198,.2);
+      border: 1px solid rgba(139,194,198,.3);
+      border-radius: 6px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: .65rem; font-weight: 700; color: var(--silver);
+    }
+    .company-name { font-size: .82rem; color: rgba(255,255,255,.8); font-weight: 500; }
+
+    .topbar__pilot {
+      display: flex;
+      align-items: center;
+      gap: .75rem;
+      background: rgba(255,255,255,.05);
+      border: 1px solid rgba(255,255,255,.1);
+      border-radius: 8px;
+      padding: .35rem .85rem;
+    }
+    .pilot-label { font-size: .7rem; color: rgba(255,255,255,.45); font-weight: 600; text-transform: uppercase; letter-spacing: .06em; }
+    .pilot-weeks { font-size: .78rem; color: #fff; font-weight: 700; }
+    .pilot-bar-wrap { width: 80px; height: 4px; background: rgba(255,255,255,.1); border-radius: 2px; }
+    .pilot-bar { height: 4px; width: 58.3%; background: var(--silver); border-radius: 2px; }
+
+    .topbar__right {
+      display: flex; align-items: center; gap: .75rem;
+    }
+    .notif-btn {
+      width: 32px; height: 32px;
+      background: rgba(255,255,255,.06);
+      border: 1px solid rgba(255,255,255,.1);
+      border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; position: relative;
+    }
+    .notif-dot {
+      position: absolute; top: 6px; right: 7px;
+      width: 6px; height: 6px;
+      background: #f97316; border-radius: 50%;
+      border: 1px solid var(--navy);
+    }
+    .user-avatar {
+      width: 32px; height: 32px;
+      background: var(--blue);
+      border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: .72rem; font-weight: 700; color: #fff;
+    }
+
+    /* ── APP BODY ── */
+    .app-body {
+      display: flex;
+      flex: 1;
+      overflow: hidden;
+    }
+
+    /* ── SIDEBAR ── */
+    .sidebar {
+      width: var(--sidebar);
+      background: var(--white);
+      border-right: 1px solid var(--n80);
+      display: flex;
+      flex-direction: column;
+      flex-shrink: 0;
+      overflow-y: auto;
+    }
+    .sidebar-section { padding: 1rem .75rem .25rem; }
+    .sidebar-section-label { font-size: .62rem; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; color: #94A3B8; padding: 0 .5rem; margin-bottom: .25rem; }
+
+    .nav-item {
+      display: flex; align-items: center; gap: .65rem;
+      padding: .5rem .75rem;
+      border-radius: 8px;
+      font-size: .82rem; font-weight: 500;
+      color: var(--n30);
+      cursor: pointer;
+      text-decoration: none;
+      transition: all .12s;
+    }
+    .nav-item:hover { background: var(--n90); color: var(--n20); }
+    .nav-item--active { background: rgba(30,77,183,.08); color: var(--blue); font-weight: 600; }
+    .nav-item svg { flex-shrink: 0; opacity: .7; }
+    .nav-item--active svg { opacity: 1; }
+    .nav-badge {
+      margin-left: auto;
+      font-size: .62rem; font-weight: 700;
+      background: #FEF3C7; color: #92400E;
+      border-radius: 999px; padding: .1rem .45rem;
+    }
+    .nav-badge--red { background: #FEE2E2; color: var(--red); }
+
+    .sidebar__bottom {
+      margin-top: auto;
+      padding: 1rem .75rem;
+      border-top: 1px solid var(--n80);
+    }
+    .scorecard-mini {
+      background: var(--n90);
+      border-radius: 10px;
+      padding: .85rem;
+    }
+    .sc-label { font-size: .62rem; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: #94A3B8; margin-bottom: .6rem; }
+    .sc-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: .4rem; }
+    .sc-row:last-child { margin-bottom: 0; }
+    .sc-name { font-size: .72rem; color: var(--n30); }
+    .sc-val { font-size: .72rem; font-weight: 700; }
+    .sc-val--green { color: var(--green); }
+    .sc-val--amber { color: var(--amber); }
+
+    /* ── MAIN ── */
+    .main {
+      flex: 1;
+      overflow-y: auto;
+      padding: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+    }
+
+    /* ── PAGE HEADER ── */
+    .page-header {
+      display: flex; justify-content: space-between; align-items: center;
+    }
+    .page-header h1 { font-size: 1rem; font-weight: 700; color: var(--navy); }
+    .page-header__sub { font-size: .78rem; color: var(--n30); margin-top: .1rem; }
+    .header-actions { display: flex; gap: .5rem; }
+    .btn-app {
+      display: flex; align-items: center; gap: .4rem;
+      padding: .45rem .9rem; border-radius: 7px;
+      font-size: .78rem; font-weight: 600; cursor: pointer;
+      border: 1px solid var(--n80); background: var(--white);
+      color: var(--n20); transition: all .12s;
+    }
+    .btn-app:hover { background: var(--n90); }
+    .btn-app--primary { background: var(--blue); color: #fff; border-color: var(--blue); }
+    .btn-app--primary:hover { background: var(--blue-lt); border-color: var(--blue-lt); }
+
+    /* ── ALERT STRIP ── */
+    .alert-strip {
+      background: #FFF7ED;
+      border: 1px solid #FED7AA;
+      border-radius: var(--radius);
+      padding: .6rem 1rem;
+      display: flex; align-items: center; gap: .75rem;
+      font-size: .8rem;
+    }
+    .alert-strip__icon { color: var(--amber); font-size: 1rem; flex-shrink: 0; }
+    .alert-strip strong { color: #92400E; }
+    .alert-strip span { color: #78350F; }
+    .alert-strip__action { margin-left: auto; font-size: .75rem; font-weight: 600; color: var(--amber); cursor: pointer; white-space: nowrap; }
+
+    /* ── KPI CARDS ── */
+    .kpi-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; }
+    .kpi-card {
+      background: var(--white);
+      border: 1px solid var(--n80);
+      border-radius: var(--radius);
+      padding: 1rem 1.1rem;
+      box-shadow: var(--shadow);
+    }
+    .kpi-card__label { font-size: .68rem; font-weight: 600; text-transform: uppercase; letter-spacing: .07em; color: #94A3B8; margin-bottom: .5rem; }
+    .kpi-card__val { font-size: 1.6rem; font-weight: 800; color: var(--navy); line-height: 1; margin-bottom: .3rem; }
+    .kpi-card__delta {
+      display: inline-flex; align-items: center; gap: .25rem;
+      font-size: .72rem; font-weight: 600;
+      padding: .15rem .45rem; border-radius: 999px;
+    }
+    .kpi-card__delta--up { background: var(--green-lt); color: var(--green); }
+    .kpi-card__delta--down { background: var(--red-lt); color: var(--red); }
+    .kpi-card__delta--neutral { background: var(--n90); color: var(--n30); }
+    .kpi-card__target { font-size: .7rem; color: #94A3B8; margin-top: .35rem; }
+
+    /* ── GANTT ── */
+    .gantt-card {
+      background: var(--white);
+      border: 1px solid var(--n80);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+    .gantt-card__header {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: .9rem 1.25rem;
+      border-bottom: 1px solid var(--n80);
+    }
+    .gantt-card__title { font-size: .88rem; font-weight: 700; color: var(--navy); }
+    .gantt-card__subtitle { font-size: .72rem; color: var(--n30); margin-top: .1rem; }
+    .gantt-tabs { display: flex; gap: .25rem; }
+    .gantt-tab {
+      font-size: .72rem; font-weight: 600; padding: .3rem .7rem;
+      border-radius: 6px; cursor: pointer; border: 1px solid transparent;
+      color: var(--n30);
+    }
+    .gantt-tab--active { background: rgba(30,77,183,.08); color: var(--blue); border-color: rgba(30,77,183,.15); }
+
+    /* Gantt grid */
+    .gantt-grid {
+      display: grid;
+      grid-template-columns: 130px 1fr;
+      overflow-x: auto;
+    }
+    .gantt-col-labels {
+      grid-column: 2;
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      border-bottom: 1px solid var(--n80);
+      background: var(--n90);
+    }
+    .gantt-col-label {
+      padding: .4rem .5rem;
+      font-size: .65rem; font-weight: 700; text-transform: uppercase; letter-spacing: .07em;
+      color: #94A3B8; text-align: center;
+      border-right: 1px solid var(--n80);
+    }
+    .gantt-col-label--today { color: var(--blue); background: rgba(30,77,183,.04); }
+    .gantt-col-label:last-child { border-right: none; }
+
+    .gantt-row-label-col { grid-column: 1; }
+    .gantt-body-col { grid-column: 2; }
+
+    .gantt-row {
+      display: contents;
+    }
+    .gantt-machine {
+      display: flex; align-items: center; gap: .6rem;
+      padding: .6rem .9rem;
+      border-bottom: 1px solid var(--n80);
+      border-right: 1px solid var(--n80);
+      background: var(--white);
+    }
+    .gantt-machine:last-child { border-bottom: none; }
+    .machine-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+    .machine-dot--green { background: var(--green); }
+    .machine-dot--amber { background: var(--amber); }
+    .machine-dot--blue { background: var(--blue); }
+    .machine-name { font-size: .75rem; font-weight: 600; color: var(--navy); }
+    .machine-sub { font-size: .62rem; color: #94A3B8; }
+
+    .gantt-timeline {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      border-bottom: 1px solid var(--n80);
+      min-height: 48px;
+      position: relative;
+    }
+    .gantt-timeline:last-child { border-bottom: none; }
+    .gantt-day-cell {
+      border-right: 1px solid var(--n80);
+      padding: .35rem .3rem;
+      position: relative;
+    }
+    .gantt-day-cell:last-child { border-right: none; }
+    .gantt-day-cell--today { background: rgba(30,77,183,.03); }
+
+    .gantt-block {
+      height: 26px;
+      border-radius: 5px;
+      display: flex; align-items: center;
+      padding: 0 .5rem;
+      font-size: .62rem; font-weight: 600;
+      color: #fff;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      cursor: pointer;
+      position: relative;
+    }
+    .gantt-block--blue { background: var(--blue); }
+    .gantt-block--teal { background: #0891B2; }
+    .gantt-block--green { background: var(--green); }
+    .gantt-block--purple { background: #7C3AED; }
+    .gantt-block--amber { background: var(--amber); }
+    .gantt-block--gray { background: #64748B; }
+    .gantt-block--span2 { /* handled inline */ }
+
+    /* today marker */
+    .today-marker {
+      position: absolute;
+      top: 0; bottom: 0;
+      width: 2px; background: var(--blue);
+      z-index: 10;
+      left: 40%;
+    }
+    .today-marker::before {
+      content: 'HOY';
+      position: absolute; top: -18px; left: 50%;
+      transform: translateX(-50%);
+      font-size: .55rem; font-weight: 800;
+      color: var(--blue); letter-spacing: .06em;
+    }
+
+    /* ── BOTTOM ROW ── */
+    .bottom-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+
+    .card {
+      background: var(--white);
+      border: 1px solid var(--n80);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
+    .card__header {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: .85rem 1.1rem;
+      border-bottom: 1px solid var(--n80);
+    }
+    .card__title { font-size: .85rem; font-weight: 700; color: var(--navy); }
+    .card__body { padding: 1rem 1.1rem; }
+
+    /* orders list */
+    .order-row {
+      display: flex; align-items: center; gap: .75rem;
+      padding: .5rem 0;
+      border-bottom: 1px solid var(--n80);
+      font-size: .78rem;
+    }
+    .order-row:last-child { border-bottom: none; }
+    .order-id { font-weight: 700; color: var(--navy); min-width: 64px; }
+    .order-product { color: var(--n30); flex: 1; }
+    .order-progress-wrap { width: 60px; height: 5px; background: var(--n80); border-radius: 3px; }
+    .order-progress { height: 5px; border-radius: 3px; background: var(--blue); }
+    .order-pct { font-size: .68rem; font-weight: 600; color: var(--n30); min-width: 30px; text-align: right; }
+    .order-status {
+      font-size: .65rem; font-weight: 700; padding: .15rem .5rem;
+      border-radius: 999px; white-space: nowrap;
+    }
+    .status--ok { background: var(--green-lt); color: var(--green); }
+    .status--risk { background: var(--amber-lt); color: var(--amber); }
+    .status--late { background: var(--red-lt); color: var(--red); }
+
+    /* capacity bars */
+    .cap-row {
+      display: flex; align-items: center; gap: .75rem;
+      margin-bottom: .65rem;
+    }
+    .cap-row:last-child { margin-bottom: 0; }
+    .cap-name { font-size: .75rem; font-weight: 600; color: var(--navy); min-width: 70px; }
+    .cap-bar-wrap { flex: 1; height: 8px; background: var(--n80); border-radius: 4px; }
+    .cap-bar { height: 8px; border-radius: 4px; }
+    .cap-bar--ok { background: var(--green); }
+    .cap-bar--warn { background: var(--amber); }
+    .cap-bar--over { background: var(--red); }
+    .cap-pct { font-size: .72rem; font-weight: 700; min-width: 36px; text-align: right; }
+    .cap-pct--ok { color: var(--green); }
+    .cap-pct--warn { color: var(--amber); }
+    .cap-pct--over { color: var(--red); }
+
+    /* legend */
+    .gantt-legend {
+      display: flex; gap: 1rem; align-items: center;
+      padding: .6rem 1.25rem;
+      border-top: 1px solid var(--n80);
+      background: var(--n90);
+    }
+    .legend-item { display: flex; align-items: center; gap: .35rem; font-size: .65rem; color: var(--n30); }
+    .legend-dot { width: 8px; height: 8px; border-radius: 2px; }
+  </style>
+</head>
+<body>
+
+  <!-- TOPBAR -->
+  <div class="topbar">
+    <a href="/" class="topbar__logo">
+      <img src="/images/logo-small.png" alt="Planning Core" />
+      <span>Planning<strong>Core</strong></span>
+    </a>
+    <div class="topbar__divider"></div>
+    <div class="topbar__company">
+      <div class="company-avatar">AN</div>
+      <span class="company-name">Aceros del Norte S.A.</span>
+    </div>
+
+    <div class="topbar__pilot">
+      <span class="pilot-label">Piloto</span>
+      <span class="pilot-weeks">Semana 7 / 12</span>
+      <div class="pilot-bar-wrap"><div class="pilot-bar"></div></div>
+    </div>
+
+    <div class="topbar__right">
+      <div class="notif-btn">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.6)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+        </svg>
+        <div class="notif-dot"></div>
+      </div>
+      <div class="user-avatar">MS</div>
+    </div>
+  </div>
+
+  <div class="app-body">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+      <div class="sidebar-section">
+        <div class="sidebar-section-label">Planificación</div>
+        <a class="nav-item nav-item--active" href="#">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 9h18"/><path d="M8 4v5M16 4v5"/></svg>
+          Gantt semanal
+        </a>
+        <a class="nav-item" href="#">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M7 16l4-4 4 4 4-6"/></svg>
+          Capacidad
+        </a>
+        <a class="nav-item" href="#">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M4.22 4.22l2.12 2.12M17.66 17.66l2.12 2.12M2 12h3M19 12h3M4.22 19.78l2.12-2.12M17.66 6.34l2.12-2.12"/></svg>
+          Escenarios
+          <span class="nav-badge">2</span>
+        </a>
+        <a class="nav-item" href="#">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+          Alertas
+          <span class="nav-badge nav-badge--red">3</span>
+        </a>
+      </div>
+
+      <div class="sidebar-section">
+        <div class="sidebar-section-label">Operaciones</div>
+        <a class="nav-item" href="#">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+          Órdenes
+        </a>
+        <a class="nav-item" href="#">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
+          Recursos
+        </a>
+        <a class="nav-item" href="#">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><rect x="7" y="10" width="3" height="8"/><rect x="13" y="6" width="3" height="12"/></svg>
+          KPIs del piloto
+        </a>
+      </div>
+
+      <div class="sidebar__bottom">
+        <div class="scorecard-mini">
+          <div class="sc-label">Scorecard semana 7</div>
+          <div class="sc-row">
+            <span class="sc-name">OEE</span>
+            <span class="sc-val sc-val--green">87% ↑</span>
+          </div>
+          <div class="sc-row">
+            <span class="sc-name">Cumpl. plan</span>
+            <span class="sc-val sc-val--green">94% ↑</span>
+          </div>
+          <div class="sc-row">
+            <span class="sc-name">Setup medio</span>
+            <span class="sc-val sc-val--green">−18% ↓</span>
+          </div>
+          <div class="sc-row">
+            <span class="sc-name">Lead time</span>
+            <span class="sc-val sc-val--amber">−6% ↓</span>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main class="main">
+
+      <!-- Page header -->
+      <div class="page-header">
+        <div>
+          <h1>Planificación semanal</h1>
+          <div class="page-header__sub">19–23 mayo 2026 · Turno mañana + tarde</div>
+        </div>
+        <div class="header-actions">
+          <button class="btn-app">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            Exportar
+          </button>
+          <button class="btn-app">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M4.22 4.22l2.12 2.12M17.66 17.66l2.12 2.12M2 12h3M19 12h3M4.22 19.78l2.12-2.12M17.66 6.34l2.12-2.12"/></svg>
+            Ver escenarios
+          </button>
+          <button class="btn-app btn-app--primary">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+            Replanificar
+          </button>
+        </div>
+      </div>
+
+      <!-- Alert -->
+      <div class="alert-strip">
+        <span class="alert-strip__icon">⚠</span>
+        <div><strong>Cuello de botella detectado:</strong> <span>CNC-2 alcanza 96% de capacidad el miércoles. Se recomienda reasignar OF-2041 al turno de tarde.</span></div>
+        <span class="alert-strip__action">Ver sugerencia →</span>
+      </div>
+
+      <!-- KPI cards -->
+      <div class="kpi-row">
+        <div class="kpi-card">
+          <div class="kpi-card__label">OEE acumulado</div>
+          <div class="kpi-card__val">87%</div>
+          <span class="kpi-card__delta kpi-card__delta--up">↑ +5 pp vs. inicio</span>
+          <div class="kpi-card__target">Objetivo piloto: 82%</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-card__label">Cumplimiento plan</div>
+          <div class="kpi-card__val">94%</div>
+          <span class="kpi-card__delta kpi-card__delta--up">↑ +12 pp vs. sem. 1</span>
+          <div class="kpi-card__target">Objetivo piloto: 85%</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-card__label">Tiempo de setup</div>
+          <div class="kpi-card__val">−18%</div>
+          <span class="kpi-card__delta kpi-card__delta--up">↑ Mejora sostenida</span>
+          <div class="kpi-card__target">Objetivo piloto: −10%</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-card__label">Órdenes en riesgo</div>
+          <div class="kpi-card__val">2</div>
+          <span class="kpi-card__delta kpi-card__delta--neutral">= igual que sem. 6</span>
+          <div class="kpi-card__target">Objetivo piloto: 0</div>
+        </div>
+      </div>
+
+      <!-- GANTT -->
+      <div class="gantt-card">
+        <div class="gantt-card__header">
+          <div>
+            <div class="gantt-card__title">Gantt de producción</div>
+            <div class="gantt-card__subtitle">5 recursos · 12 órdenes activas</div>
+          </div>
+          <div style="display:flex;gap:.5rem;align-items:center">
+            <div class="gantt-tabs">
+              <span class="gantt-tab gantt-tab--active">Semana</span>
+              <span class="gantt-tab">Mes</span>
+              <span class="gantt-tab">Turno</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="gantt-grid" style="position:relative">
+          <!-- Column labels row -->
+          <div style="background:var(--n90);border-bottom:1px solid var(--n80);border-right:1px solid var(--n80);padding:.4rem .9rem;display:flex;align-items:center">
+            <span style="font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:#94A3B8">Recurso</span>
+          </div>
+          <div class="gantt-col-labels">
+            <div class="gantt-col-label">LUN 19</div>
+            <div class="gantt-col-label">MAR 20</div>
+            <div class="gantt-col-label gantt-col-label--today">MIÉ 21 ●</div>
+            <div class="gantt-col-label">JUE 22</div>
+            <div class="gantt-col-label">VIE 23</div>
+          </div>
+
+          <!-- Row 1: CNC-1 -->
+          <div class="gantt-machine">
+            <div class="machine-dot machine-dot--green"></div>
+            <div><div class="machine-name">CNC-1</div><div class="machine-sub">Fresado</div></div>
+          </div>
+          <div class="gantt-timeline">
+            <div class="gantt-day-cell">
+              <div class="gantt-block gantt-block--blue" style="width:100%">OF-2038 · Carcasa A</div>
+            </div>
+            <div class="gantt-day-cell">
+              <div class="gantt-block gantt-block--blue" style="width:55%">OF-2038</div>
+              <div class="gantt-block gantt-block--teal" style="width:40%;margin-top:1px">OF-2041</div>
+            </div>
+            <div class="gantt-day-cell gantt-day-cell--today" style="position:relative">
+              <div class="today-marker"></div>
+              <div class="gantt-block gantt-block--teal" style="width:100%">OF-2041 · Soporte B</div>
+            </div>
+            <div class="gantt-day-cell">
+              <div class="gantt-block gantt-block--green" style="width:70%">OF-2044</div>
+            </div>
+            <div class="gantt-day-cell">
+              <div class="gantt-block gantt-block--green" style="width:90%">OF-2044 · Eje motor</div>
+            </div>
+          </div>
+
+          <!-- Row 2: CNC-2 -->
+          <div class="gantt-machine">
+            <div class="machine-dot machine-dot--amber"></div>
+            <div><div class="machine-name">CNC-2</div><div class="machine-sub">Torneado · ⚠ 96%</div></div>
+          </div>
+          <div class="gantt-timeline">
+            <div class="gantt-day-cell">
+              <div class="gantt-block gantt-block--purple" style="width:100%">OF-2039 · Placa base</div>
+            </div>
+            <div class="gantt-day-cell">
+              <div class="gantt-block gantt-block--purple" style="width:100%">OF-2039</div>
+            </div>
+            <div class="gantt-day-cell gantt-day-cell--today">
+              <div class="gantt-block gantt-block--amber" style="width:100%">OF-2042 · Brida C</div>
+            </div>
+            <div class="gantt-day-cell">
+              <div class="gantt-block gantt-block--amber" style="width:100%">OF-2042</div>
+            </div>
+            <div class="gantt-day-cell">
+              <div class="gantt-block gantt-block--blue" style="width:60%">OF-2047</div>
+            </div>
+          </div>
+
+          <!-- Row 3: Soldadura -->
+          <div class="gantt-machine">
+            <div class="machine-dot machine-dot--blue"></div>
+            <div><div class="machine-name">Soldadura</div><div class="machine-sub">Robot MIG</div></div>
+          </div>
+          <div class="gantt-timeline">
+            <div class="gantt-day-cell"></div>
+            <div class="gantt-day-cell">
+              <div class="gantt-block gantt-block--green" style="width:100%">OF-2040 · Marco</div>
+            </div>
+            <div class="gantt-day-cell gantt-day-cell--today">
+              <div class="gantt-block gantt-block--green" style="width:100%">OF-2040</div>
+            </div>
+            <div class="gantt-day-cell">
+              <div class="gantt-block gantt-block--teal" style="width:100%">OF-2043 · Depósito</div>
+            </div>
+            <div class="gantt-day-cell">
+              <div class="gantt-block gantt-block--teal" style="width:80%">OF-2043</div>
+            </div>
+          </div>
+
+          <!-- Row 4: Acabados -->
+          <div class="gantt-machine">
+            <div class="machine-dot machine-dot--green"></div>
+            <div><div class="machine-name">Acabados</div><div class="machine-sub">Pintura + QC</div></div>
+          </div>
+          <div class="gantt-timeline">
+            <div class="gantt-day-cell"></div>
+            <div class="gantt-day-cell"></div>
+            <div class="gantt-day-cell gantt-day-cell--today">
+              <div class="gantt-block gantt-block--gray" style="width:100%">OF-2038 · QC</div>
+            </div>
+            <div class="gantt-day-cell">
+              <div class="gantt-block gantt-block--gray" style="width:100%">OF-2038 · Pintura</div>
+            </div>
+            <div class="gantt-day-cell">
+              <div class="gantt-block gantt-block--purple" style="width:70%">OF-2039 · QC</div>
+            </div>
+          </div>
+
+          <!-- Row 5: Embalaje -->
+          <div class="gantt-machine">
+            <div class="machine-dot machine-dot--green"></div>
+            <div><div class="machine-name">Embalaje</div><div class="machine-sub">Expedición</div></div>
+          </div>
+          <div class="gantt-timeline">
+            <div class="gantt-day-cell"></div>
+            <div class="gantt-day-cell">
+              <div class="gantt-block gantt-block--green" style="width:50%">OF-2036</div>
+            </div>
+            <div class="gantt-day-cell gantt-day-cell--today"></div>
+            <div class="gantt-day-cell"></div>
+            <div class="gantt-day-cell">
+              <div class="gantt-block gantt-block--blue" style="width:100%">OF-2038 · Envío</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="gantt-legend">
+          <div class="legend-item"><div class="legend-dot" style="background:#1E4DB7"></div>En curso</div>
+          <div class="legend-item"><div class="legend-dot" style="background:#0891B2"></div>Programado</div>
+          <div class="legend-item"><div class="legend-dot" style="background:#16A34A"></div>Completado</div>
+          <div class="legend-item"><div class="legend-dot" style="background:#D97706"></div>En riesgo</div>
+          <div class="legend-item"><div class="legend-dot" style="background:#64748B"></div>QC / Acabados</div>
+          <div style="margin-left:auto;font-size:.65rem;color:#94A3B8">Última actualización: hace 12 min</div>
+        </div>
+      </div>
+
+      <!-- Bottom row -->
+      <div class="bottom-row">
+
+        <!-- Orders -->
+        <div class="card">
+          <div class="card__header">
+            <span class="card__title">Órdenes activas</span>
+            <span style="font-size:.72rem;color:var(--n30)">12 en curso</span>
+          </div>
+          <div class="card__body" style="padding:0 1.1rem">
+            <div class="order-row">
+              <span class="order-id">OF-2038</span>
+              <span class="order-product">Carcasa A — Lote 24B</span>
+              <div class="order-progress-wrap"><div class="order-progress" style="width:82%"></div></div>
+              <span class="order-pct">82%</span>
+              <span class="order-status status--ok">En plazo</span>
+            </div>
+            <div class="order-row">
+              <span class="order-id">OF-2039</span>
+              <span class="order-product">Placa base — Prototipo X</span>
+              <div class="order-progress-wrap"><div class="order-progress" style="width:61%"></div></div>
+              <span class="order-pct">61%</span>
+              <span class="order-status status--ok">En plazo</span>
+            </div>
+            <div class="order-row">
+              <span class="order-id">OF-2041</span>
+              <span class="order-product">Soporte B — Serie 200</span>
+              <div class="order-progress-wrap"><div class="order-progress" style="width:45%"></div></div>
+              <span class="order-pct">45%</span>
+              <span class="order-status status--risk">Riesgo</span>
+            </div>
+            <div class="order-row">
+              <span class="order-id">OF-2042</span>
+              <span class="order-product">Brida C — Cliente AZ</span>
+              <div class="order-progress-wrap"><div class="order-progress" style="width:30%"></div></div>
+              <span class="order-pct">30%</span>
+              <span class="order-status status--risk">Riesgo</span>
+            </div>
+            <div class="order-row">
+              <span class="order-id">OF-2044</span>
+              <span class="order-product">Eje motor — Urgente</span>
+              <div class="order-progress-wrap"><div class="order-progress" style="width:10%"></div></div>
+              <span class="order-pct">10%</span>
+              <span class="order-status status--ok">En plazo</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Capacity -->
+        <div class="card">
+          <div class="card__header">
+            <span class="card__title">Capacidad esta semana</span>
+            <span style="font-size:.72rem;color:var(--n30)">% ocupación prevista</span>
+          </div>
+          <div class="card__body">
+            <div class="cap-row">
+              <span class="cap-name">CNC-1</span>
+              <div class="cap-bar-wrap"><div class="cap-bar cap-bar--ok" style="width:78%"></div></div>
+              <span class="cap-pct cap-pct--ok">78%</span>
+            </div>
+            <div class="cap-row">
+              <span class="cap-name">CNC-2</span>
+              <div class="cap-bar-wrap"><div class="cap-bar cap-bar--over" style="width:96%"></div></div>
+              <span class="cap-pct cap-pct--over">96%</span>
+            </div>
+            <div class="cap-row">
+              <span class="cap-name">Soldadura</span>
+              <div class="cap-bar-wrap"><div class="cap-bar cap-bar--warn" style="width:85%"></div></div>
+              <span class="cap-pct cap-pct--warn">85%</span>
+            </div>
+            <div class="cap-row">
+              <span class="cap-name">Acabados</span>
+              <div class="cap-bar-wrap"><div class="cap-bar cap-bar--ok" style="width:62%"></div></div>
+              <span class="cap-pct cap-pct--ok">62%</span>
+            </div>
+            <div class="cap-row">
+              <span class="cap-name">Embalaje</span>
+              <div class="cap-bar-wrap"><div class="cap-bar cap-bar--ok" style="width:40%"></div></div>
+              <span class="cap-pct cap-pct--ok">40%</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </main>
+  </div>
+
+</body>
+</html>
