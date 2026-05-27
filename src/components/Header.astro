@@ -1,11 +1,12 @@
 ---
-const nav = [
-  { href: '/', label: 'Inicio' },
-  { href: '/producto', label: 'Producto' },
-  { href: '/sectores', label: 'Sectores' },
-  { href: '/precios', label: 'Piloto' },
-];
 const currentPath = Astro.url.pathname;
+
+const industries = [
+  { href: '/sectores/impresion-packaging',  label: 'Impresión & Packaging' },
+  { href: '/sectores/fundicion-metalurgia', label: 'Fundición & Metalurgia' },
+  { href: '/sectores/composites-aero',      label: 'Composites & Aeroespacial' },
+  { href: '/sectores/automocion',           label: 'Automoción' },
+];
 ---
 <header class="header" id="header">
   <div class="container header__inner">
@@ -15,14 +16,24 @@ const currentPath = Astro.url.pathname;
     </a>
 
     <nav class="header__nav" id="nav">
-      {nav.map(({ href, label }) => (
-        <a
-          href={href}
-          class={`nav-link ${currentPath === href || (href !== '/' && currentPath.startsWith(href)) ? 'nav-link--active' : ''}`}
-        >
-          {label}
-        </a>
-      ))}
+      <a href="/" class={`nav-link ${currentPath === '/' ? 'nav-link--active' : ''}`}>Inicio</a>
+      <a href="/producto" class={`nav-link ${currentPath.startsWith('/producto') ? 'nav-link--active' : ''}`}>Producto</a>
+
+      <div class="nav-dropdown">
+        <button class={`nav-link nav-link--btn ${currentPath.startsWith('/sectores') ? 'nav-link--active' : ''}`}>
+          Industrias
+          <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="dropdown-menu">
+          {industries.map(({ href, label }) => (
+            <a href={href} class="dropdown-item">{label}</a>
+          ))}
+          <div class="dropdown-divider"></div>
+          <a href="/sectores" class="dropdown-item dropdown-item--all">Ver todos los sectores →</a>
+        </div>
+      </div>
+
+      <a href="/precios" class={`nav-link ${currentPath.startsWith('/precios') ? 'nav-link--active' : ''}`}>Piloto</a>
     </nav>
 
     <div class="header__actions">
@@ -90,9 +101,51 @@ const currentPath = Astro.url.pathname;
     padding: .45rem .85rem;
     border-radius: 6px;
     transition: all .15s;
+    white-space: nowrap;
   }
   .nav-link:hover { color: #fff; background: rgba(255,255,255,.07); }
   .nav-link--active { color: #fff; }
+
+  /* Dropdown */
+  .nav-dropdown { position: relative; }
+  .nav-link--btn {
+    display: flex;
+    align-items: center;
+    gap: .35rem;
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-family: inherit;
+  }
+  .nav-link--btn svg { transition: transform .15s; opacity: .6; }
+  .nav-dropdown:hover .nav-link--btn svg { transform: rotate(180deg); }
+  .dropdown-menu {
+    display: none;
+    position: absolute;
+    top: calc(100% + 8px);
+    left: 0;
+    min-width: 220px;
+    background: #112347;
+    border: 1px solid rgba(255,255,255,.1);
+    border-radius: 10px;
+    padding: .4rem;
+    box-shadow: 0 8px 32px rgba(0,0,0,.35);
+    z-index: 300;
+  }
+  .nav-dropdown:hover .dropdown-menu { display: block; }
+  .dropdown-item {
+    display: block;
+    padding: .5rem .8rem;
+    font-size: .82rem;
+    font-weight: 500;
+    color: rgba(255,255,255,.75);
+    border-radius: 6px;
+    transition: all .12s;
+  }
+  .dropdown-item:hover { background: rgba(255,255,255,.07); color: #fff; }
+  .dropdown-divider { height: 1px; background: rgba(255,255,255,.08); margin: .3rem .4rem; }
+  .dropdown-item--all { color: rgba(139,194,198,.9); font-size: .78rem; }
+  .dropdown-item--all:hover { color: #8BC2C6; background: rgba(139,194,198,.07); }
 
   .header__actions { display: flex; align-items: center; gap: .75rem; }
   .btn--sm { padding: .5rem 1.25rem; font-size: .85rem; }

@@ -6,6 +6,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex, nofollow" />
   <title>Planning Core — App</title>
   <link rel="icon" type="image/png" sizes="32x32" href="/favicon.png" />
   <link rel="shortcut icon" href="/favicon.ico" />
@@ -308,6 +309,9 @@
       font-weight: 600;
     }
     .nav-item--active svg { opacity: 1 !important; }
+    .nav-item--danger { color: #EF4444; }
+    .nav-item--danger svg { opacity: .6; }
+    .nav-item--danger:hover { background: #FEE2E2; color: #DC2626; }
     .nav-item--active::before {
       content: '';
       position: absolute;
@@ -1063,8 +1067,37 @@
       </div>
 
       <div class="nav-section">
+        <div class="nav-section__label">Industrias</div>
+        <a class="nav-item" href="#">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+          Composites & Aeroespacial
+          <span class="nav-badge nav-badge--blue">Activo</span>
+        </a>
+        <a class="nav-item" href="#">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M6.3 6.3a8 8 0 1 0 11.4 0"/><path d="M12 2v4"/></svg>
+          Fundición & Metalurgia
+        </a>
+        <a class="nav-item" href="#">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
+          Impresión & Packaging
+        </a>
+        <a class="nav-item" href="#">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 17H3a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11a2 2 0 0 1 2 2v3"/><rect x="9" y="11" width="14" height="10" rx="1"/><circle cx="12" cy="21" r="1"/><circle cx="20" cy="21" r="1"/></svg>
+          Automoción
+        </a>
+      </div>
+
+      <div class="nav-section">
         <div class="nav-section__label">Sistema</div>
-        <a class="nav-item" href="/" id="nav-logout">
+        <a class="nav-item" href="#">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+          Configuración
+        </a>
+        <a class="nav-item" href="#">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+          Ayuda & soporte
+        </a>
+        <a class="nav-item nav-item--danger" href="#" id="nav-logout">
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
           Cerrar sesión
         </a>
@@ -1494,7 +1527,7 @@
 
     } catch {
       localStorage.removeItem('pc_token');
-      window.location.href = '/login';
+      window.location.href = 'https://composite-replanning-api.vercel.app/login?next=https://planning-core-web.vercel.app/app';
       return;
     }
 
