@@ -1466,7 +1466,7 @@
   async function init() {
     const token = localStorage.getItem('pc_token');
     if (!token) {
-      window.location.href = '/login';
+      window.location.href = 'https://composite-replanning-api.vercel.app/login?next=https://planning-core-web.vercel.app/app';
       return;
     }
 

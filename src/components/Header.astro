@@ -3,7 +3,7 @@ const nav = [
   { href: '/', label: 'Inicio' },
   { href: '/producto', label: 'Producto' },
   { href: '/sectores', label: 'Sectores' },
-  { href: '/precios', label: 'Precios' },
+  { href: '/precios', label: 'Piloto' },
 ];
 const currentPath = Astro.url.pathname;
 ---
@@ -26,6 +26,7 @@ const currentPath = Astro.url.pathname;
     </nav>
 
     <div class="header__actions">
+      <a href="https://composite-replanning-api.vercel.app/login?next=https://planning-core-web.vercel.app/app" class="btn btn--ghost btn--sm" id="loginBtn">Iniciar sesión</a>
       <a href="/contacto" class="btn btn--primary btn--sm">Solicitar demo</a>
       <button class="nav-toggle" id="navToggle" aria-label="Menu">
         <span></span><span></span><span></span>
@@ -95,6 +96,17 @@ const currentPath = Astro.url.pathname;
 
   .header__actions { display: flex; align-items: center; gap: .75rem; }
   .btn--sm { padding: .5rem 1.25rem; font-size: .85rem; }
+  .btn--ghost {
+    background: transparent;
+    color: rgba(255,255,255,.8);
+    border: 1.5px solid rgba(255,255,255,.2);
+  }
+  .btn--ghost:hover {
+    background: rgba(255,255,255,.08);
+    color: #fff;
+    border-color: rgba(255,255,255,.4);
+    transform: none;
+  }
 
   .nav-toggle {
     display: none;
@@ -143,6 +155,7 @@ const currentPath = Astro.url.pathname;
   const header = document.getElementById('header');
   const toggle = document.getElementById('navToggle');
   const nav = document.getElementById('nav');
+  const loginBtn = document.getElementById('loginBtn') as HTMLAnchorElement | null;
 
   window.addEventListener('scroll', () => {
     header?.classList.toggle('scrolled', window.scrollY > 20);
@@ -151,4 +164,12 @@ const currentPath = Astro.url.pathname;
   toggle?.addEventListener('click', () => {
     nav?.classList.toggle('open');
   });
+
+  // If already logged in, show "Mi panel" linking to /app
+  if (loginBtn && localStorage.getItem('pc_token')) {
+    loginBtn.textContent = 'Mi panel →';
+    loginBtn.href = '/app';
+    loginBtn.style.borderColor = 'rgba(139,194,198,.4)';
+    loginBtn.style.color = '#8BC2C6';
+  }
 </script>
