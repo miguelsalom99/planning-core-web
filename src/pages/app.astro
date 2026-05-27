@@ -1093,6 +1093,15 @@
     .alert-desc { flex: 1; font-size: .78rem; color: var(--n30); line-height: 1.4; }
     .alert-action { font-size: .7rem; font-weight: 600; color: var(--brand); white-space: nowrap; padding: .3rem .65rem; border-radius: 6px; background: rgba(27,63,139,.07); border: 1px solid rgba(27,63,139,.15); cursor: pointer; transition: all .15s; flex-shrink: 0; }
     .alert-action:hover { background: rgba(27,63,139,.12); }
+    .alert-dismiss { background: none; border: none; cursor: pointer; color: #CBD5E1; font-size: 1.05rem; line-height: 1; padding: .1rem .2rem; transition: color .12s; flex-shrink: 0; }
+    .alert-dismiss:hover { color: var(--n50); }
+    .alert-row { transition: opacity .3s, max-height .35s; overflow: hidden; }
+    .alert-row--resolved { opacity: .45; background: var(--n90) !important; pointer-events: none; }
+    .alert-resolved-chip { font-size: .62rem; font-weight: 700; background: var(--green-bg); color: var(--green); padding: .18rem .5rem; border-radius: 999px; flex-shrink: 0; }
+    .alert-detail { max-height: 0; overflow: hidden; transition: max-height .3s ease, padding .3s; padding: 0 1.25rem; background: #F8FAFC; border-top: 0px solid var(--n80); font-size: .75rem; color: var(--n50); line-height: 1.7; }
+    .alert-detail.open { max-height: 120px; padding: .75rem 1.25rem; border-top: 1px solid var(--n80); }
+    .alert-filter-bar { display: flex; align-items: center; gap: .4rem; padding: .6rem 1.25rem; border-bottom: 1px solid var(--n80); background: var(--n90); }
+    .alert-count-badge { margin-left: auto; font-size: .68rem; font-weight: 700; color: var(--n50); }
 
     /* Orders panel */
     .orders-toolbar { display: flex; align-items: center; gap: .75rem; padding: 1rem 1.25rem; border-bottom: 1px solid var(--n80); }
@@ -2503,36 +2512,60 @@
         <div class="panel-page-header">
           <div>
             <div class="panel-page-title">Alertas activas</div>
-            <div class="panel-page-sub">5 alertas · 2 de prioridad alta</div>
+            <div class="panel-page-sub" id="alertSubtitle">5 alertas · 2 de prioridad alta</div>
           </div>
+          <button class="btn-ui" id="resolveAllAlerts" style="font-size:.78rem">Marcar todas resueltas</button>
         </div>
         <div class="gantt-card">
-          <div class="alert-list">
-            <div class="alert-row">
+          <div class="alert-filter-bar">
+            <span class="chip chip--active" data-sev="todas">Todas</span>
+            <span class="chip" data-sev="alta">Alta</span>
+            <span class="chip" data-sev="media">Media</span>
+            <span class="chip" data-sev="baja">Baja</span>
+            <span class="alert-count-badge" id="alertCount">5 alertas activas</span>
+          </div>
+          <div class="alert-list" id="alertList">
+
+            <div class="alert-row" data-sev="alta" data-action="gantt">
               <span class="alert-sev alert-sev--alta">⚠ ALTA</span>
-              <div class="alert-desc">CNC-2 al 96% de capacidad el miércoles. Se recomienda reasignar OF-2041 al turno de tarde para evitar retrasos.</div>
-              <span class="alert-action">Reasignar OF-2041</span>
+              <div class="alert-desc"><strong>CNC-2 saturada al 96%</strong> — Reasignar OF-2041 al turno tarde libera capacidad el miércoles y evita retrasos en cadena.</div>
+              <span class="alert-action">Ir al Gantt</span>
+              <button class="alert-dismiss" title="Descartar">×</button>
             </div>
-            <div class="alert-row">
-              <span class="alert-sev alert-sev--media">⚠ MEDIA</span>
-              <div class="alert-desc">OF-2041 en riesgo de retraso — 45% completada con 2 días restantes. Velocidad de avance insuficiente.</div>
+            <div class="alert-detail">Impacto: retraso 4h en OF-2042 si no se actúa antes del mié 21 a las 12:00. IA sugiere mover OF-2041 al turno tarde → libera 18% capacidad CNC-2.</div>
+
+            <div class="alert-row" data-sev="alta" data-action="ordenes">
+              <span class="alert-sev alert-sev--alta">⚠ ALTA</span>
+              <div class="alert-desc"><strong>OF-2041 en riesgo de retraso</strong> — 45% completada, 2 días restantes. Velocidad insuficiente para cumplir fecha compromiso.</div>
               <span class="alert-action">Ver orden</span>
+              <button class="alert-dismiss" title="Descartar">×</button>
             </div>
-            <div class="alert-row">
-              <span class="alert-sev alert-sev--baja">ℹ BAJA</span>
-              <div class="alert-desc">Mantenimiento preventivo CNC-1 programado para el viernes 23 mayo · Duración estimada: 2h · Sin impacto en órdenes activas.</div>
-              <span class="alert-action">Confirmar</span>
-            </div>
-            <div class="alert-row">
+            <div class="alert-detail">Fecha compromiso: Jue 22 mayo · Progreso necesario: +27% diario · Recurso: CNC-1. Se recomienda turno doble el miércoles y prioridad máxima.</div>
+
+            <div class="alert-row" data-sev="media" data-action="capacidad">
               <span class="alert-sev alert-sev--media">⚠ MEDIA</span>
-              <div class="alert-desc">Tiempo de setup en CNC-2 supera la media semanal en un 23% (38 min vs 31 min objetivo). Revisar secuencia de cambio de herramienta.</div>
-              <span class="alert-action">Analizar</span>
+              <div class="alert-desc"><strong>Setup CNC-2 un 23% sobre objetivo</strong> — 38 min vs 31 min objetivo semanal. Revisar secuencia de cambio de herramienta.</div>
+              <span class="alert-action">Ver capacidad</span>
+              <button class="alert-dismiss" title="Descartar">×</button>
             </div>
-            <div class="alert-row">
+            <div class="alert-detail">Acumulado semana: +34 min no planificados · Impacto OEE: −1.8 pp · Causa probable: cambio manual en lugar de automático (ver SOP-CNC-07).</div>
+
+            <div class="alert-row" data-sev="baja" data-action="confirmar">
               <span class="alert-sev alert-sev--baja">ℹ BAJA</span>
-              <div class="alert-desc">Expedición OF-2038 confirmada para el viernes 23 mayo · Cliente notificado · Packaging en curso en Embalaje.</div>
-              <span class="alert-action">Ver detalles</span>
+              <div class="alert-desc"><strong>Mantenimiento preventivo CNC-1</strong> programado para el viernes 23 mayo. Duración estimada 2h. Sin impacto en órdenes activas.</div>
+              <span class="alert-action">Confirmar</span>
+              <button class="alert-dismiss" title="Descartar">×</button>
             </div>
+            <div class="alert-detail">Ventana: Vie 23 · 06:00–08:00 · Técnico: M. García · Repuestos: en stock · Última revisión: hace 42 días (ciclo 45d).</div>
+
+            <div class="alert-row" data-sev="baja" data-action="detalles">
+              <span class="alert-sev alert-sev--baja">ℹ BAJA</span>
+              <div class="alert-desc"><strong>Expedición OF-2038 confirmada</strong> para el viernes 23 mayo. Cliente notificado. Packaging en curso en Embalaje (80%).</div>
+              <span class="alert-action">Ver detalles</span>
+              <button class="alert-dismiss" title="Descartar">×</button>
+            </div>
+            <div class="alert-detail">Cliente: Aeronova S.A. · Ref: CNT-2024-118 · Transportista: DHL Express · Nº seguimiento: pendiente emisión · Packaging: 80% completado.</div>
+
           </div>
         </div>
       </div>
@@ -3119,6 +3152,105 @@
         const target = document.getElementById('panel-' + panel);
         if (target) target.style.display = '';
       });
+    });
+
+    // 8a. Alerts panel — filters, actions, dismiss
+    function updateAlertCount() {
+      const rows = document.querySelectorAll('#alertList .alert-row:not(.alert-row--resolved)');
+      const total = rows.length;
+      const alta  = document.querySelectorAll('#alertList .alert-row:not(.alert-row--resolved) [data-sev="alta"], #alertList .alert-row[data-sev="alta"]:not(.alert-row--resolved)').length;
+      const subtitleEl = document.getElementById('alertSubtitle');
+      const countEl    = document.getElementById('alertCount');
+      if (subtitleEl) subtitleEl.textContent = `${total} alerta${total !== 1 ? 's' : ''} · ${document.querySelectorAll('#alertList .alert-row[data-sev="alta"]:not(.alert-row--resolved)').length} de prioridad alta`;
+      if (countEl)    countEl.textContent    = `${total} alerta${total !== 1 ? 's' : ''} activas`;
+      // Update sidebar badge
+      const sidebarBadge = document.querySelector('.nav-item[data-panel="alertas"] .nav-badge');
+      if (sidebarBadge) sidebarBadge.textContent = total;
+    }
+
+    function resolveAlertRow(row) {
+      if (row.classList.contains('alert-row--resolved')) return;
+      // Close detail if open
+      const detail = row.nextElementSibling;
+      if (detail && detail.classList.contains('alert-detail')) detail.classList.remove('open');
+      // Replace action with resolved chip
+      const action = row.querySelector('.alert-action');
+      if (action) { action.outerHTML = '<span class="alert-resolved-chip">✓ Resuelta</span>'; }
+      row.querySelector('.alert-dismiss') && (row.querySelector('.alert-dismiss').style.display = 'none');
+      row.classList.add('alert-row--resolved');
+      updateAlertCount();
+    }
+
+    // Filter chips
+    document.querySelectorAll('.alert-filter-bar .chip').forEach(chip => {
+      chip.addEventListener('click', () => {
+        document.querySelectorAll('.alert-filter-bar .chip').forEach(c => c.classList.remove('chip--active'));
+        chip.classList.add('chip--active');
+        const sev = chip.dataset.sev;
+        document.querySelectorAll('#alertList .alert-row').forEach(row => {
+          const detail = row.nextElementSibling;
+          const show = sev === 'todas' || row.dataset.sev === sev;
+          row.style.display = show ? '' : 'none';
+          if (detail && detail.classList.contains('alert-detail')) detail.style.display = show ? '' : 'none';
+        });
+      });
+    });
+
+    // Action buttons
+    document.querySelectorAll('#alertList .alert-action').forEach(btn => {
+      btn.addEventListener('click', e => {
+        const row    = btn.closest('.alert-row');
+        const action = row.dataset.action;
+        const detail = row.nextElementSibling;
+
+        if (action === 'gantt') {
+          document.querySelector('.nav-item[data-panel="gantt"]').click();
+          showToast('Gantt abierto · Revisa la asignación de OF-2041');
+        } else if (action === 'ordenes') {
+          document.querySelector('.nav-item[data-panel="ordenes"]').click();
+          showToast('Abriendo Órdenes de fabricación');
+        } else if (action === 'capacidad') {
+          document.querySelector('.nav-item[data-panel="capacidad"]').click();
+          showToast('Abriendo panel de Capacidad');
+        } else if (action === 'confirmar') {
+          btn.textContent = 'Confirmando…';
+          btn.style.opacity = '.6';
+          setTimeout(() => resolveAlertRow(row), 900);
+          showToast('✓ Mantenimiento CNC-1 confirmado · Notificación enviada a M. García');
+        } else if (action === 'detalles') {
+          if (detail && detail.classList.contains('alert-detail')) {
+            detail.classList.toggle('open');
+            btn.textContent = detail.classList.contains('open') ? 'Ocultar' : 'Ver detalles';
+          }
+        }
+      });
+    });
+
+    // Detail expand on row click (except on buttons)
+    document.querySelectorAll('#alertList .alert-row').forEach(row => {
+      row.style.cursor = 'pointer';
+      row.addEventListener('click', e => {
+        if (e.target.closest('button, .alert-action')) return;
+        const detail = row.nextElementSibling;
+        if (detail && detail.classList.contains('alert-detail')) {
+          detail.classList.toggle('open');
+        }
+      });
+    });
+
+    // Dismiss buttons
+    document.querySelectorAll('#alertList .alert-dismiss').forEach(btn => {
+      btn.addEventListener('click', e => {
+        e.stopPropagation();
+        resolveAlertRow(btn.closest('.alert-row'));
+      });
+    });
+
+    // Resolve all
+    const resolveAllBtn = document.getElementById('resolveAllAlerts');
+    resolveAllBtn && resolveAllBtn.addEventListener('click', () => {
+      document.querySelectorAll('#alertList .alert-row:not(.alert-row--resolved)').forEach(row => resolveAlertRow(row));
+      showToast('✓ Todas las alertas marcadas como resueltas');
     });
 
     // 8b. Scenarios panel — apply / switch
