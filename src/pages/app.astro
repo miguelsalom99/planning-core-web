@@ -872,30 +872,147 @@
       color: #94A3B8;
     }
 
-    /* ───── GANTT TURNO VIEW ───── */
-    .gantt-grid--turno { grid-template-columns: 148px 1fr; }
-    .gantt-days--turno { grid-template-columns: repeat(3, 1fr); }
-    .gantt-timeline--turno { grid-template-columns: repeat(3, 1fr); }
+    /* ───── GANTT TURNO VIEW (hour-based timeline) ───── */
+    .turno-track { position: relative; height: 52px; border-bottom: 1px solid var(--n80); background: var(--white); }
+    .turno-track:last-child { border-bottom: none; }
+    .turno-band-m { position: absolute; left: 0; width: 50%; height: 100%; background: rgba(27,63,139,.025); }
+    .turno-band-t { position: absolute; left: 50%; width: 50%; height: 100%; background: rgba(217,119,6,.02); }
+    .turno-divider { position: absolute; left: 50%; top: 0; bottom: 0; width: 1px; background: rgba(27,63,139,.15); }
+    .turno-now { position: absolute; left: 18.75%; top: 0; bottom: 0; width: 2px; background: var(--brand); z-index: 5; }
+    .turno-now::before { content: '09:00'; position: absolute; top: 4px; left: 4px; font-size: .55rem; font-weight: 800; color: var(--brand); }
+    .turno-block { position: absolute; height: 26px; top: 13px; border-radius: 5px; display: flex; align-items: center; padding: 0 .5rem; font-size: .62rem; font-weight: 600; color: #fff; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; cursor: grab; transition: filter .15s, opacity .15s; }
+    .turno-block:hover { filter: brightness(1.1); }
+    .turno-block.dragging { opacity: .3; cursor: grabbing; }
+    .turno-hour-header { display: flex; border-bottom: 1px solid var(--n80); background: var(--n90); }
+    .turno-hour-cell { flex: 1; text-align: center; font-size: .6rem; font-weight: 700; color: #94A3B8; padding: .4rem 0; border-right: 1px solid var(--n80); letter-spacing: .04em; }
+    .turno-hour-cell:last-child { border-right: none; }
+    .turno-hour-cell--now { color: var(--brand); background: rgba(27,63,139,.04); }
+    .turno-row { display: grid; grid-template-columns: 148px 1fr; border-bottom: 1px solid var(--n80); }
+    .turno-row:last-child { border-bottom: none; }
+    .turno-resource { display: flex; align-items: center; gap: .6rem; padding: .65rem .9rem; border-right: 1px solid var(--n80); background: var(--white); }
+    .turno-shift-labels { position: relative; height: 20px; margin-left: 148px; }
+    .turno-shift-label { position: absolute; font-size: .6rem; font-weight: 700; text-transform: uppercase; letter-spacing: .07em; }
+    .turno-shift-label--m { left: 1%; color: rgba(27,63,139,.5); }
+    .turno-shift-label--t { left: 51%; color: rgba(217,119,6,.6); }
+    .turno-empty-track { display: flex; align-items: center; justify-content: center; height: 52px; border-bottom: 1px solid var(--n80); }
+    .turno-empty-text { font-size: .72rem; color: #CBD5E1; font-style: italic; }
+    .turno-track.drop-target { background: rgba(27,63,139,.07); outline: 2px dashed rgba(27,63,139,.35); outline-offset: -3px; }
 
-    .now-pip {
-      display: inline-block;
-      margin-left: .4rem;
-      font-size: .55rem;
-      font-weight: 800;
-      letter-spacing: .08em;
-      background: var(--brand);
-      color: #fff;
-      padding: .1rem .35rem;
-      border-radius: 4px;
-      vertical-align: middle;
-    }
-    .shift-empty { background: repeating-linear-gradient(45deg, transparent, transparent 4px, rgba(0,0,0,.02) 4px, rgba(0,0,0,.02) 8px); }
-    .shift-idle {
-      font-size: .62rem;
-      color: #CBD5E1;
-      font-style: italic;
-      padding: .25rem .4rem;
-    }
+    /* ───── DASH PANELS ───── */
+    .dash-panel { flex: 1; overflow-y: auto; display: flex; flex-direction: column; }
+    .panel-page { padding: 1.5rem; display: flex; flex-direction: column; gap: 1.25rem; }
+    .panel-page-header { display: flex; align-items: center; justify-content: space-between; }
+    .panel-page-title { font-size: 1.05rem; font-weight: 700; color: var(--navy); letter-spacing: -.02em; }
+    .panel-page-sub { font-size: .75rem; color: var(--n50); margin-top: .2rem; }
+
+    /* Capacity panel */
+    .cap-cards-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 1rem; }
+    .cap-card { background: var(--white); border: 1px solid var(--n80); border-radius: var(--radius-md); padding: 1.1rem 1.25rem; box-shadow: var(--shadow-sm); }
+    .cap-card__name { font-size: .82rem; font-weight: 700; color: var(--navy); margin-bottom: .15rem; }
+    .cap-card__type { font-size: .68rem; color: #94A3B8; margin-bottom: .75rem; }
+    .cap-card__bar-wrap { position: relative; height: 10px; background: var(--n80); border-radius: 5px; overflow: hidden; margin-bottom: .5rem; }
+    .cap-card__bar { height: 10px; border-radius: 5px; }
+    .cap-card__bar--ok   { background: var(--green); }
+    .cap-card__bar--warn { background: var(--amber); }
+    .cap-card__bar--over { background: var(--red); }
+    .cap-card__meta { display: flex; justify-content: space-between; align-items: center; }
+    .cap-card__pct { font-size: .88rem; font-weight: 800; }
+    .cap-card__pct--ok   { color: var(--green); }
+    .cap-card__pct--warn { color: var(--amber); }
+    .cap-card__pct--over { color: var(--red); }
+    .cap-pill { font-size: .6rem; font-weight: 700; padding: .15rem .45rem; border-radius: 999px; }
+    .cap-pill--ok   { background: var(--green-bg); color: var(--green); }
+    .cap-pill--warn { background: var(--amber-bg); color: #92400E; }
+    .cap-pill--over { background: var(--red-bg); color: var(--red); }
+    .cap-card__orders { font-size: .65rem; color: #94A3B8; margin-top: .45rem; }
+    .cap-table { background: var(--white); border: 1px solid var(--n80); border-radius: var(--radius-md); overflow: hidden; box-shadow: var(--shadow-sm); }
+    .cap-table table { width: 100%; border-collapse: collapse; font-size: .75rem; }
+    .cap-table th { background: var(--n90); padding: .5rem .85rem; text-align: left; font-size: .65rem; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; color: #94A3B8; border-bottom: 1px solid var(--n80); }
+    .cap-table td { padding: .55rem .85rem; border-bottom: 1px solid var(--n80); color: var(--n30); }
+    .cap-table tr:last-child td { border-bottom: none; }
+    .cap-table td:first-child { font-weight: 600; color: var(--navy); }
+
+    /* Scenarios panel */
+    .scenario-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.25rem; }
+    .scenario-card { background: var(--white); border: 1.5px solid var(--n80); border-radius: var(--radius-lg); padding: 1.5rem; box-shadow: var(--shadow-sm); position: relative; overflow: hidden; }
+    .scenario-card--active { border-color: var(--brand); box-shadow: 0 0 0 3px rgba(27,63,139,.08), var(--shadow); }
+    .scenario-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; border-radius: var(--radius-lg) var(--radius-lg) 0 0; }
+    .scenario-card--green::before { background: var(--green); }
+    .scenario-card--blue::before  { background: var(--brand); }
+    .scenario-card--gray::before  { background: #94A3B8; }
+    .scenario-badge { display: inline-flex; align-items: center; gap: .3rem; font-size: .7rem; font-weight: 700; padding: .25rem .65rem; border-radius: 999px; margin-bottom: 1rem; }
+    .scenario-badge--green { background: var(--green-bg); color: var(--green); }
+    .scenario-badge--blue  { background: rgba(27,63,139,.1); color: var(--brand); }
+    .scenario-badge--gray  { background: var(--n90); color: var(--n50); }
+    .scenario-active-chip { font-size: .6rem; font-weight: 700; background: var(--brand); color: #fff; padding: .1rem .45rem; border-radius: 999px; margin-left: .4rem; vertical-align: middle; }
+    .scenario-kpis { display: flex; flex-direction: column; gap: .55rem; margin-bottom: 1.25rem; }
+    .scenario-kpi { display: flex; justify-content: space-between; align-items: center; font-size: .78rem; }
+    .scenario-kpi__label { color: var(--n50); }
+    .scenario-kpi__val { font-weight: 700; color: var(--navy); }
+    .scenario-bar { height: 6px; background: var(--n80); border-radius: 3px; margin-bottom: 1.25rem; overflow: hidden; }
+    .scenario-bar__fill { height: 6px; border-radius: 3px; }
+
+    /* Alerts panel */
+    .alert-list { display: flex; flex-direction: column; gap: 0; }
+    .alert-row { display: flex; align-items: center; gap: 1rem; padding: .9rem 1.25rem; border-bottom: 1px solid var(--n80); background: var(--white); }
+    .alert-row:last-child { border-bottom: none; }
+    .alert-sev { font-size: .62rem; font-weight: 800; padding: .2rem .55rem; border-radius: 999px; white-space: nowrap; flex-shrink: 0; }
+    .alert-sev--alta  { background: var(--red-bg); color: var(--red); }
+    .alert-sev--media { background: var(--amber-bg); color: #92400E; }
+    .alert-sev--baja  { background: rgba(27,63,139,.08); color: var(--brand); }
+    .alert-desc { flex: 1; font-size: .78rem; color: var(--n30); line-height: 1.4; }
+    .alert-action { font-size: .7rem; font-weight: 600; color: var(--brand); white-space: nowrap; padding: .3rem .65rem; border-radius: 6px; background: rgba(27,63,139,.07); border: 1px solid rgba(27,63,139,.15); cursor: pointer; transition: all .15s; flex-shrink: 0; }
+    .alert-action:hover { background: rgba(27,63,139,.12); }
+
+    /* Orders panel */
+    .orders-toolbar { display: flex; align-items: center; gap: .75rem; padding: 1rem 1.25rem; border-bottom: 1px solid var(--n80); }
+    .orders-search { flex: 1; padding: .42rem .85rem; border: 1px solid var(--n80); border-radius: var(--radius); font-size: .78rem; font-family: inherit; background: var(--n90); color: var(--n20); outline: none; }
+    .orders-search:focus { border-color: var(--brand); background: var(--white); }
+    .filter-chips { display: flex; gap: .4rem; }
+    .chip { font-size: .68rem; font-weight: 600; padding: .25rem .6rem; border-radius: 999px; cursor: pointer; border: 1px solid var(--n80); background: var(--n90); color: var(--n50); transition: all .15s; }
+    .chip--active { background: rgba(27,63,139,.1); color: var(--brand); border-color: rgba(27,63,139,.25); }
+    .orders-table { width: 100%; border-collapse: collapse; font-size: .75rem; }
+    .orders-table th { background: var(--n90); padding: .5rem .9rem; text-align: left; font-size: .65rem; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; color: #94A3B8; border-bottom: 1px solid var(--n80); }
+    .orders-table td { padding: .6rem .9rem; border-bottom: 1px solid var(--n80); color: var(--n30); vertical-align: middle; }
+    .orders-table tr:last-child td { border-bottom: none; }
+    .orders-table td:first-child { font-weight: 700; color: var(--navy); font-variant-numeric: tabular-nums; }
+
+    /* Resources panel */
+    .res-cards-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; }
+    .res-card { background: var(--white); border: 1px solid var(--n80); border-radius: var(--radius-md); padding: 1.1rem 1.25rem; box-shadow: var(--shadow-sm); }
+    .res-card__header { display: flex; align-items: center; gap: .7rem; margin-bottom: .9rem; }
+    .res-card__icon { width: 36px; height: 36px; border-radius: var(--radius); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .res-card__name { font-size: .85rem; font-weight: 700; color: var(--navy); }
+    .res-card__type { font-size: .68rem; color: #94A3B8; }
+    .res-card__order { font-size: .72rem; color: var(--n30); margin-bottom: .65rem; padding: .35rem .6rem; background: var(--n90); border-radius: 5px; }
+    .res-card__util-label { font-size: .65rem; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; color: #94A3B8; margin-bottom: .3rem; }
+    .res-card__bar-wrap { height: 7px; background: var(--n80); border-radius: 4px; overflow: hidden; margin-bottom: .35rem; }
+    .res-card__bar { height: 7px; border-radius: 4px; }
+    .res-card__footer { display: flex; justify-content: space-between; align-items: center; font-size: .68rem; }
+    .res-card__maint { color: #94A3B8; }
+
+    /* KPIs panel */
+    .kpis-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; }
+    .kpi-full-card { background: var(--white); border: 1px solid var(--n80); border-radius: var(--radius-md); padding: 1.1rem 1.25rem; box-shadow: var(--shadow-sm); }
+    .kpi-full-card__label { font-size: .65rem; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; color: #94A3B8; margin-bottom: .3rem; }
+    .kpi-full-card__val { font-size: 1.5rem; font-weight: 800; color: var(--navy); letter-spacing: -.03em; line-height: 1; margin-bottom: .2rem; }
+    .kpi-full-card__target { font-size: .65rem; color: #94A3B8; margin-bottom: .75rem; }
+    .kpi-trend { display: flex; align-items: flex-end; gap: 3px; height: 28px; }
+    .kpi-trend__bar { flex: 1; border-radius: 2px 2px 0 0; min-height: 4px; }
+
+    /* Disruptions panel */
+    .disrupt-list { display: flex; flex-direction: column; }
+    .disrupt-row { display: flex; align-items: flex-start; gap: 1rem; padding: 1rem 1.25rem; border-bottom: 1px solid var(--n80); background: var(--white); }
+    .disrupt-row:last-child { border-bottom: none; }
+    .disrupt-time { font-size: .65rem; font-weight: 700; color: #94A3B8; white-space: nowrap; min-width: 72px; padding-top: 2px; }
+    .disrupt-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; margin-top: 4px; }
+    .disrupt-body { flex: 1; }
+    .disrupt-title { font-size: .8rem; font-weight: 700; color: var(--navy); margin-bottom: .2rem; }
+    .disrupt-detail { font-size: .72rem; color: var(--n50); line-height: 1.4; }
+    .disrupt-status { font-size: .62rem; font-weight: 700; padding: .2rem .55rem; border-radius: 999px; white-space: nowrap; flex-shrink: 0; }
+    .disrupt-status--resuelta  { background: var(--green-bg); color: var(--green); }
+    .disrupt-status--cerrada   { background: var(--n90); color: var(--n50); }
+    .disrupt-status--integrada { background: rgba(27,63,139,.1); color: var(--brand); }
 
     /* ───── BOTTOM ROW ───── */
     .bottom-grid {
@@ -1332,20 +1449,20 @@
     <nav class="sidebar hidden" id="sidebar">
       <div class="nav-section">
         <div class="nav-section__label">Planificación</div>
-        <a class="nav-item nav-item--active" href="#">
+        <a class="nav-item nav-item--active" href="#" data-panel="gantt">
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 9h18M8 4v5M16 4v5"/></svg>
           Gantt semanal
         </a>
-        <a class="nav-item" href="#">
+        <a class="nav-item" href="#" data-panel="capacidad">
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18M7 16l4-4 4 4 4-6"/></svg>
           Capacidad
         </a>
-        <a class="nav-item" href="#">
+        <a class="nav-item" href="#" data-panel="escenarios">
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M15 3h6v6"/><path d="M10 14 21 3"/></svg>
           Escenarios
           <span class="nav-badge nav-badge--blue">2</span>
         </a>
-        <a class="nav-item" href="#">
+        <a class="nav-item" href="#" data-panel="alertas">
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
           Alertas
           <span class="nav-badge nav-badge--red">3</span>
@@ -1354,19 +1471,19 @@
 
       <div class="nav-section">
         <div class="nav-section__label">Operaciones</div>
-        <a class="nav-item" href="#">
+        <a class="nav-item" href="#" data-panel="ordenes">
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
           Órdenes de fabricación
         </a>
-        <a class="nav-item" href="#">
+        <a class="nav-item" href="#" data-panel="recursos">
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
           Recursos y máquinas
         </a>
-        <a class="nav-item" href="#">
+        <a class="nav-item" href="#" data-panel="kpis">
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><rect x="7" y="10" width="3" height="8"/><rect x="13" y="6" width="3" height="12"/></svg>
           KPIs del piloto
         </a>
-        <a class="nav-item" href="#">
+        <a class="nav-item" href="#" data-panel="disrupciones">
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
           Disrupciones
         </a>
@@ -1600,6 +1717,7 @@
 
     <!-- ── DASHBOARD VIEW (shown after industry selected) ── -->
     <div id="dashboard-view">
+    <div id="panel-gantt" class="dash-panel">
     <main class="main">
 
       <!-- Page header -->
@@ -1855,102 +1973,100 @@
         </div>
         </div><!-- /#gantt-semana -->
 
-        <!-- Vista Turno — Miércoles 21 mayo, turnos mañana/tarde/noche -->
+        <!-- Vista Turno — Miércoles 21 mayo, hora por hora 06:00–22:00 -->
         <div id="gantt-turno" style="display:none">
-        <div class="gantt-grid gantt-grid--turno">
-          <div class="gantt-grid__corner"><span>Recurso</span></div>
-          <div class="gantt-days gantt-days--turno">
-            <div class="gantt-day gantt-day--today">T. MAÑANA · 06–14h <span class="now-pip">AHORA</span></div>
-            <div class="gantt-day">T. TARDE · 14–22h</div>
-            <div class="gantt-day">T. NOCHE · 22–06h</div>
+          <!-- Shift labels row -->
+          <div class="turno-shift-labels">
+            <span class="turno-shift-label turno-shift-label--m">T. Mañana · 06:00–14:00</span>
+            <span class="turno-shift-label turno-shift-label--t">T. Tarde · 14:00–22:00</span>
           </div>
-
+          <!-- Hour header -->
+          <div style="display:grid;grid-template-columns:148px 1fr;">
+            <div style="background:var(--n90);border-bottom:1px solid var(--n80);border-right:1px solid var(--n80);display:flex;align-items:center;padding:0 .9rem;">
+              <span style="font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#94A3B8;">Recurso</span>
+            </div>
+            <div class="turno-hour-header">
+              <div class="turno-hour-cell">06:00</div>
+              <div class="turno-hour-cell">08:00</div>
+              <div class="turno-hour-cell turno-hour-cell--now">10:00</div>
+              <div class="turno-hour-cell">12:00</div>
+              <div class="turno-hour-cell">14:00</div>
+              <div class="turno-hour-cell">16:00</div>
+              <div class="turno-hour-cell">18:00</div>
+              <div class="turno-hour-cell">20:00</div>
+              <div class="turno-hour-cell">22:00</div>
+            </div>
+          </div>
           <!-- CNC-1 -->
-          <div class="gantt-resource">
-            <div class="res-indicator res-indicator--green"></div>
-            <div><div class="res-name">CNC-1</div><div class="res-sub">Fresado · 78%</div></div>
+          <div class="turno-row">
+            <div class="turno-resource">
+              <div class="res-indicator res-indicator--green"></div>
+              <div><div class="res-name">CNC-1</div><div class="res-sub">Fresado · 78%</div></div>
+            </div>
+            <div class="turno-track">
+              <div class="turno-band-m"></div><div class="turno-band-t"></div><div class="turno-divider"></div>
+              <div class="turno-now"></div>
+              <!-- OF-2041: 06:00-14:00 = left:0%, width:50% -->
+              <div class="turno-block gb--teal" draggable="true" style="left:0%;width:49.5%">OF-2041 · Soporte B</div>
+              <!-- OF-2044: 14:00-20:30 = left:50%, width:40.6% -->
+              <div class="turno-block gb--green" draggable="true" style="left:50.5%;width:40.6%">OF-2044 · Eje motor</div>
+            </div>
           </div>
-          <div class="gantt-timeline gantt-timeline--turno">
-            <div class="gantt-cell gantt-cell--today">
-              <div class="gantt-block gb--teal" style="width:100%">OF-2041 · Soporte B</div>
-            </div>
-            <div class="gantt-cell">
-              <div class="gantt-block gb--green" style="width:85%">OF-2044 · Eje motor</div>
-            </div>
-            <div class="gantt-cell shift-empty">
-              <span class="shift-idle">Sin asignación</span>
-            </div>
-          </div>
-
           <!-- CNC-2 -->
-          <div class="gantt-resource">
-            <div class="res-indicator res-indicator--amber"></div>
-            <div><div class="res-name">CNC-2</div><div class="res-sub">Torneado · ⚠ 96%</div></div>
-          </div>
-          <div class="gantt-timeline gantt-timeline--turno">
-            <div class="gantt-cell gantt-cell--today">
-              <div class="gantt-block gb--amber" style="width:100%">OF-2042 · Brida C</div>
+          <div class="turno-row">
+            <div class="turno-resource">
+              <div class="res-indicator res-indicator--amber"></div>
+              <div><div class="res-name">CNC-2</div><div class="res-sub">Torneado · ⚠ 96%</div></div>
             </div>
-            <div class="gantt-cell">
-              <div class="gantt-block gb--amber" style="width:60%">OF-2042</div>
-              <div class="gantt-block gb--blue" style="width:38%;margin-top:2px">OF-2047</div>
-            </div>
-            <div class="gantt-cell shift-empty">
-              <span class="shift-idle">Sin asignación</span>
+            <div class="turno-track">
+              <div class="turno-band-m"></div><div class="turno-band-t"></div><div class="turno-divider"></div>
+              <div class="turno-now"></div>
+              <!-- OF-2042: 06:00-15:00 = left:0%, width:56.25% -->
+              <div class="turno-block gb--amber" draggable="true" style="left:0%;width:55.75%">OF-2042 · Brida C</div>
+              <!-- OF-2047: 15:00-22:00 = left:56.25%, width:43.75% -->
+              <div class="turno-block gb--blue" draggable="true" style="left:56.25%;width:43.25%">OF-2047</div>
             </div>
           </div>
-
           <!-- Soldadura -->
-          <div class="gantt-resource">
-            <div class="res-indicator res-indicator--blue"></div>
-            <div><div class="res-name">Soldadura</div><div class="res-sub">Robot MIG · 85%</div></div>
+          <div class="turno-row">
+            <div class="turno-resource">
+              <div class="res-indicator res-indicator--blue"></div>
+              <div><div class="res-name">Soldadura</div><div class="res-sub">Robot MIG · 85%</div></div>
+            </div>
+            <div class="turno-track">
+              <div class="turno-band-m"></div><div class="turno-band-t"></div><div class="turno-divider"></div>
+              <div class="turno-now"></div>
+              <!-- OF-2040 fin: 06:00-09:00 = left:0%, width:18.75% -->
+              <div class="turno-block gb--green" draggable="true" style="left:0%;width:18.25%">OF-2040 · fin</div>
+              <!-- OF-2043: 13:00-22:00 = left:43.75%, width:56.25% -->
+              <div class="turno-block gb--teal" draggable="true" style="left:43.75%;width:55.75%">OF-2043 · Depósito</div>
+            </div>
           </div>
-          <div class="gantt-timeline gantt-timeline--turno">
-            <div class="gantt-cell gantt-cell--today">
-              <div class="gantt-block gb--green" style="width:100%">OF-2040 · Marco (fin)</div>
-            </div>
-            <div class="gantt-cell">
-              <div class="gantt-block gb--teal" style="width:100%">OF-2043 · Depósito</div>
-            </div>
-            <div class="gantt-cell shift-empty">
-              <span class="shift-idle">Sin asignación</span>
-            </div>
-          </div>
-
           <!-- Acabados -->
-          <div class="gantt-resource">
-            <div class="res-indicator res-indicator--green"></div>
-            <div><div class="res-name">Acabados</div><div class="res-sub">Pintura + QC · 62%</div></div>
+          <div class="turno-row">
+            <div class="turno-resource">
+              <div class="res-indicator res-indicator--green"></div>
+              <div><div class="res-name">Acabados</div><div class="res-sub">Pintura + QC · 62%</div></div>
+            </div>
+            <div class="turno-track">
+              <div class="turno-band-m"></div><div class="turno-band-t"></div><div class="turno-divider"></div>
+              <div class="turno-now"></div>
+              <!-- QC: 06:00-11:00 = left:0%, width:31.25% -->
+              <div class="turno-block gb--gray" draggable="true" style="left:0%;width:30.75%">OF-2038 · QC</div>
+              <!-- Pintura: 12:00-20:00 = left:37.5%, width:50% -->
+              <div class="turno-block gb--gray" draggable="true" style="left:37.5%;width:49.5%">OF-2038 · Pintura</div>
+            </div>
           </div>
-          <div class="gantt-timeline gantt-timeline--turno">
-            <div class="gantt-cell gantt-cell--today">
-              <div class="gantt-block gb--gray" style="width:100%">OF-2038 · QC</div>
-            </div>
-            <div class="gantt-cell">
-              <div class="gantt-block gb--gray" style="width:100%">OF-2038 · Pintura</div>
-            </div>
-            <div class="gantt-cell shift-empty">
-              <span class="shift-idle">Sin asignación</span>
-            </div>
-          </div>
-
           <!-- Embalaje -->
-          <div class="gantt-resource">
-            <div class="res-indicator res-indicator--gray"></div>
-            <div><div class="res-name">Embalaje</div><div class="res-sub">Expedición · 40%</div></div>
-          </div>
-          <div class="gantt-timeline gantt-timeline--turno">
-            <div class="gantt-cell gantt-cell--today shift-empty">
-              <span class="shift-idle">Sin asignación</span>
+          <div class="turno-row">
+            <div class="turno-resource">
+              <div class="res-indicator res-indicator--gray"></div>
+              <div><div class="res-name">Embalaje</div><div class="res-sub">Expedición · 40%</div></div>
             </div>
-            <div class="gantt-cell shift-empty">
-              <span class="shift-idle">Sin asignación</span>
-            </div>
-            <div class="gantt-cell shift-empty">
-              <span class="shift-idle">Sin asignación</span>
+            <div class="turno-empty-track">
+              <span class="turno-empty-text">Sin órdenes programadas hoy</span>
             </div>
           </div>
-        </div>
         </div><!-- /#gantt-turno -->
 
         <div class="gantt-legend">
@@ -2059,6 +2175,559 @@
 
       </div>
     </main>
+    </div><!-- /#panel-gantt -->
+
+    <!-- ── PANEL: CAPACIDAD ── -->
+    <div id="panel-capacidad" class="dash-panel" style="display:none">
+      <div class="panel-page">
+        <div class="panel-page-header">
+          <div>
+            <div class="panel-page-title">Capacidad de planta</div>
+            <div class="panel-page-sub">Semana 21 · 5 recursos monitorizados</div>
+          </div>
+          <button class="btn-ui">Exportar informe</button>
+        </div>
+        <div class="cap-cards-grid">
+          <!-- CNC-1 -->
+          <div class="cap-card">
+            <div class="cap-card__name">CNC-1</div>
+            <div class="cap-card__type">Fresado CNC</div>
+            <div class="cap-card__bar-wrap"><div class="cap-card__bar cap-card__bar--ok" style="width:78%"></div></div>
+            <div class="cap-card__meta">
+              <span class="cap-card__pct cap-card__pct--ok">78%</span>
+              <span class="cap-pill cap-pill--ok">OK</span>
+            </div>
+            <div class="cap-card__orders">3 órdenes esta semana</div>
+          </div>
+          <!-- CNC-2 -->
+          <div class="cap-card">
+            <div class="cap-card__name">CNC-2</div>
+            <div class="cap-card__type">Torneado CNC</div>
+            <div class="cap-card__bar-wrap"><div class="cap-card__bar cap-card__bar--over" style="width:96%"></div></div>
+            <div class="cap-card__meta">
+              <span class="cap-card__pct cap-card__pct--over">96%</span>
+              <span class="cap-pill cap-pill--over">Saturado</span>
+            </div>
+            <div class="cap-card__orders">4 órdenes esta semana</div>
+          </div>
+          <!-- Soldadura -->
+          <div class="cap-card">
+            <div class="cap-card__name">Soldadura</div>
+            <div class="cap-card__type">Robot MIG</div>
+            <div class="cap-card__bar-wrap"><div class="cap-card__bar cap-card__bar--warn" style="width:85%"></div></div>
+            <div class="cap-card__meta">
+              <span class="cap-card__pct cap-card__pct--warn">85%</span>
+              <span class="cap-pill cap-pill--warn">Riesgo</span>
+            </div>
+            <div class="cap-card__orders">2 órdenes esta semana</div>
+          </div>
+          <!-- Acabados -->
+          <div class="cap-card">
+            <div class="cap-card__name">Acabados</div>
+            <div class="cap-card__type">Pintura + QC</div>
+            <div class="cap-card__bar-wrap"><div class="cap-card__bar cap-card__bar--ok" style="width:62%"></div></div>
+            <div class="cap-card__meta">
+              <span class="cap-card__pct cap-card__pct--ok">62%</span>
+              <span class="cap-pill cap-pill--ok">OK</span>
+            </div>
+            <div class="cap-card__orders">2 órdenes esta semana</div>
+          </div>
+          <!-- Embalaje -->
+          <div class="cap-card">
+            <div class="cap-card__name">Embalaje</div>
+            <div class="cap-card__type">Expedición</div>
+            <div class="cap-card__bar-wrap"><div class="cap-card__bar cap-card__bar--ok" style="width:40%"></div></div>
+            <div class="cap-card__meta">
+              <span class="cap-card__pct cap-card__pct--ok">40%</span>
+              <span class="cap-pill cap-pill--ok">OK</span>
+            </div>
+            <div class="cap-card__orders">1 orden esta semana</div>
+          </div>
+        </div>
+        <!-- Utilización diaria -->
+        <div class="cap-table">
+          <table>
+            <thead>
+              <tr>
+                <th>Recurso</th>
+                <th>LUN 19</th>
+                <th>MAR 20</th>
+                <th>MIÉ 21</th>
+                <th>JUE 22</th>
+                <th>VIE 23</th>
+                <th>Media</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td>CNC-1</td><td>72%</td><td>80%</td><td>85%</td><td>75%</td><td>70%</td><td style="font-weight:700;color:var(--green)">78%</td></tr>
+              <tr><td>CNC-2</td><td>90%</td><td>95%</td><td>100%</td><td>98%</td><td>92%</td><td style="font-weight:700;color:var(--red)">96%</td></tr>
+              <tr><td>Soldadura</td><td>0%</td><td>100%</td><td>100%</td><td>100%</td><td>80%</td><td style="font-weight:700;color:var(--amber)">85%</td></tr>
+              <tr><td>Acabados</td><td>0%</td><td>0%</td><td>100%</td><td>100%</td><td>70%</td><td style="font-weight:700;color:var(--green)">62%</td></tr>
+              <tr><td>Embalaje</td><td>0%</td><td>50%</td><td>0%</td><td>0%</td><td>100%</td><td style="font-weight:700;color:var(--green)">40%</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div><!-- /#panel-capacidad -->
+
+    <!-- ── PANEL: ESCENARIOS ── -->
+    <div id="panel-escenarios" class="dash-panel" style="display:none">
+      <div class="panel-page">
+        <div class="panel-page-header">
+          <div>
+            <div class="panel-page-title">Escenarios de planificación</div>
+            <div class="panel-page-sub">Compara alternativas y aplica el escenario óptimo</div>
+          </div>
+        </div>
+        <div class="scenario-grid">
+          <!-- Óptimo -->
+          <div class="scenario-card scenario-card--green">
+            <span class="scenario-badge scenario-badge--green">Escenario Óptimo</span>
+            <div class="scenario-kpis">
+              <div class="scenario-kpi"><span class="scenario-kpi__label">OEE proyectado</span><span class="scenario-kpi__val" style="color:var(--green)">91%</span></div>
+              <div class="scenario-kpi"><span class="scenario-kpi__label">Cumplimiento plan</span><span class="scenario-kpi__val" style="color:var(--green)">97%</span></div>
+              <div class="scenario-kpi"><span class="scenario-kpi__label">Reducción setup</span><span class="scenario-kpi__val" style="color:var(--green)">−24%</span></div>
+              <div class="scenario-kpi"><span class="scenario-kpi__label">Órdenes en riesgo</span><span class="scenario-kpi__val">0</span></div>
+            </div>
+            <div class="scenario-bar"><div class="scenario-bar__fill" style="width:91%;background:var(--green)"></div></div>
+            <button class="btn-ui" style="width:100%;justify-content:center">Aplicar escenario</button>
+          </div>
+          <!-- Equilibrado (activo) -->
+          <div class="scenario-card scenario-card--blue scenario-card--active">
+            <span class="scenario-badge scenario-badge--blue">Escenario Equilibrado <span class="scenario-active-chip">Activo</span></span>
+            <div class="scenario-kpis">
+              <div class="scenario-kpi"><span class="scenario-kpi__label">OEE proyectado</span><span class="scenario-kpi__val" style="color:var(--brand)">87%</span></div>
+              <div class="scenario-kpi"><span class="scenario-kpi__label">Cumplimiento plan</span><span class="scenario-kpi__val" style="color:var(--brand)">94%</span></div>
+              <div class="scenario-kpi"><span class="scenario-kpi__label">Reducción setup</span><span class="scenario-kpi__val" style="color:var(--brand)">−18%</span></div>
+              <div class="scenario-kpi"><span class="scenario-kpi__label">Órdenes en riesgo</span><span class="scenario-kpi__val">2</span></div>
+            </div>
+            <div class="scenario-bar"><div class="scenario-bar__fill" style="width:87%;background:var(--brand)"></div></div>
+            <button class="btn-ui btn-ui--primary" style="width:100%;justify-content:center" disabled>Escenario activo</button>
+          </div>
+          <!-- Conservador -->
+          <div class="scenario-card scenario-card--gray">
+            <span class="scenario-badge scenario-badge--gray">Escenario Conservador</span>
+            <div class="scenario-kpis">
+              <div class="scenario-kpi"><span class="scenario-kpi__label">OEE proyectado</span><span class="scenario-kpi__val">82%</span></div>
+              <div class="scenario-kpi"><span class="scenario-kpi__label">Cumplimiento plan</span><span class="scenario-kpi__val">89%</span></div>
+              <div class="scenario-kpi"><span class="scenario-kpi__label">Reducción setup</span><span class="scenario-kpi__val">−11%</span></div>
+              <div class="scenario-kpi"><span class="scenario-kpi__label">Órdenes en riesgo</span><span class="scenario-kpi__val">4</span></div>
+            </div>
+            <div class="scenario-bar"><div class="scenario-bar__fill" style="width:82%;background:#94A3B8"></div></div>
+            <button class="btn-ui" style="width:100%;justify-content:center">Aplicar escenario</button>
+          </div>
+        </div>
+      </div>
+    </div><!-- /#panel-escenarios -->
+
+    <!-- ── PANEL: ALERTAS ── -->
+    <div id="panel-alertas" class="dash-panel" style="display:none">
+      <div class="panel-page">
+        <div class="panel-page-header">
+          <div>
+            <div class="panel-page-title">Alertas activas</div>
+            <div class="panel-page-sub">5 alertas · 2 de prioridad alta</div>
+          </div>
+        </div>
+        <div class="gantt-card">
+          <div class="alert-list">
+            <div class="alert-row">
+              <span class="alert-sev alert-sev--alta">⚠ ALTA</span>
+              <div class="alert-desc">CNC-2 al 96% de capacidad el miércoles. Se recomienda reasignar OF-2041 al turno de tarde para evitar retrasos.</div>
+              <span class="alert-action">Reasignar OF-2041</span>
+            </div>
+            <div class="alert-row">
+              <span class="alert-sev alert-sev--media">⚠ MEDIA</span>
+              <div class="alert-desc">OF-2041 en riesgo de retraso — 45% completada con 2 días restantes. Velocidad de avance insuficiente.</div>
+              <span class="alert-action">Ver orden</span>
+            </div>
+            <div class="alert-row">
+              <span class="alert-sev alert-sev--baja">ℹ BAJA</span>
+              <div class="alert-desc">Mantenimiento preventivo CNC-1 programado para el viernes 23 mayo · Duración estimada: 2h · Sin impacto en órdenes activas.</div>
+              <span class="alert-action">Confirmar</span>
+            </div>
+            <div class="alert-row">
+              <span class="alert-sev alert-sev--media">⚠ MEDIA</span>
+              <div class="alert-desc">Tiempo de setup en CNC-2 supera la media semanal en un 23% (38 min vs 31 min objetivo). Revisar secuencia de cambio de herramienta.</div>
+              <span class="alert-action">Analizar</span>
+            </div>
+            <div class="alert-row">
+              <span class="alert-sev alert-sev--baja">ℹ BAJA</span>
+              <div class="alert-desc">Expedición OF-2038 confirmada para el viernes 23 mayo · Cliente notificado · Packaging en curso en Embalaje.</div>
+              <span class="alert-action">Ver detalles</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div><!-- /#panel-alertas -->
+
+    <!-- ── PANEL: ÓRDENES ── -->
+    <div id="panel-ordenes" class="dash-panel" style="display:none">
+      <div class="panel-page">
+        <div class="panel-page-header">
+          <div>
+            <div class="panel-page-title">Órdenes de fabricación</div>
+            <div class="panel-page-sub">8 órdenes activas · Semana 21</div>
+          </div>
+          <button class="btn-ui btn-ui--primary">Nueva orden</button>
+        </div>
+        <div class="gantt-card">
+          <div class="orders-toolbar">
+            <input class="orders-search" type="text" placeholder="Buscar por ID, descripción o recurso…" />
+            <div class="filter-chips">
+              <span class="chip chip--active">Todas</span>
+              <span class="chip">En plazo</span>
+              <span class="chip">Riesgo</span>
+              <span class="chip">Completadas</span>
+            </div>
+          </div>
+          <table class="orders-table">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Descripción</th>
+                <th>Recurso</th>
+                <th>Inicio</th>
+                <th>Fin</th>
+                <th>Progreso</th>
+                <th>Estado</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>OF-2038</td><td>Carcasa A — Lote 24B</td><td>CNC-1 / Acabados</td><td>Lun 19</td><td>Vie 23</td>
+                <td><div style="display:flex;align-items:center;gap:.5rem"><div class="progress-track" style="width:72px"><div class="progress-fill" style="width:82%"></div></div><span class="progress-pct">82%</span></div></td>
+                <td><span class="status-pill sp--ok">En plazo</span></td>
+              </tr>
+              <tr>
+                <td>OF-2039</td><td>Placa base — Prototipo X</td><td>CNC-2</td><td>Lun 19</td><td>Mar 20</td>
+                <td><div style="display:flex;align-items:center;gap:.5rem"><div class="progress-track" style="width:72px"><div class="progress-fill" style="width:61%"></div></div><span class="progress-pct">61%</span></div></td>
+                <td><span class="status-pill sp--ok">En plazo</span></td>
+              </tr>
+              <tr>
+                <td>OF-2040</td><td>Marco soldado — Serie A</td><td>Soldadura</td><td>Mar 20</td><td>Mié 21</td>
+                <td><div style="display:flex;align-items:center;gap:.5rem"><div class="progress-track" style="width:72px"><div class="progress-fill" style="width:95%"></div></div><span class="progress-pct">95%</span></div></td>
+                <td><span class="status-pill sp--ok">En plazo</span></td>
+              </tr>
+              <tr>
+                <td>OF-2041</td><td>Soporte B — Serie 200</td><td>CNC-1</td><td>Mar 20</td><td>Jue 22</td>
+                <td><div style="display:flex;align-items:center;gap:.5rem"><div class="progress-track" style="width:72px"><div class="progress-fill" style="width:45%;background:#D97706"></div></div><span class="progress-pct">45%</span></div></td>
+                <td><span class="status-pill sp--risk">Riesgo</span></td>
+              </tr>
+              <tr>
+                <td>OF-2042</td><td>Brida C — Cliente AZ</td><td>CNC-2</td><td>Mié 21</td><td>Jue 22</td>
+                <td><div style="display:flex;align-items:center;gap:.5rem"><div class="progress-track" style="width:72px"><div class="progress-fill" style="width:30%;background:#D97706"></div></div><span class="progress-pct">30%</span></div></td>
+                <td><span class="status-pill sp--risk">Riesgo</span></td>
+              </tr>
+              <tr>
+                <td>OF-2043</td><td>Depósito hidráulico</td><td>Soldadura</td><td>Jue 22</td><td>Vie 23</td>
+                <td><div style="display:flex;align-items:center;gap:.5rem"><div class="progress-track" style="width:72px"><div class="progress-fill" style="width:0%"></div></div><span class="progress-pct">0%</span></div></td>
+                <td><span class="status-pill sp--ok">En plazo</span></td>
+              </tr>
+              <tr>
+                <td>OF-2044</td><td>Eje motor — Urgente</td><td>CNC-1</td><td>Jue 22</td><td>Vie 23</td>
+                <td><div style="display:flex;align-items:center;gap:.5rem"><div class="progress-track" style="width:72px"><div class="progress-fill" style="width:10%"></div></div><span class="progress-pct">10%</span></div></td>
+                <td><span class="status-pill sp--ok">En plazo</span></td>
+              </tr>
+              <tr>
+                <td>OF-2047</td><td>Pieza especial — Pedido AZ</td><td>CNC-2</td><td>Vie 23</td><td>Vie 23</td>
+                <td><div style="display:flex;align-items:center;gap:.5rem"><div class="progress-track" style="width:72px"><div class="progress-fill" style="width:0%"></div></div><span class="progress-pct">0%</span></div></td>
+                <td><span class="status-pill sp--ok">En plazo</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div><!-- /#panel-ordenes -->
+
+    <!-- ── PANEL: RECURSOS ── -->
+    <div id="panel-recursos" class="dash-panel" style="display:none">
+      <div class="panel-page">
+        <div class="panel-page-header">
+          <div>
+            <div class="panel-page-title">Recursos y máquinas</div>
+            <div class="panel-page-sub">5 recursos · Estado en tiempo real</div>
+          </div>
+        </div>
+        <div class="res-cards-grid">
+          <!-- CNC-1 -->
+          <div class="res-card">
+            <div class="res-card__header">
+              <div class="res-card__icon" style="background:rgba(22,163,74,.1)">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#16A34A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
+              </div>
+              <div>
+                <div class="res-card__name">CNC-1</div>
+                <div class="res-card__type">Centro de fresado · 5 ejes</div>
+              </div>
+            </div>
+            <div class="res-card__order">Orden activa: <strong>OF-2041 · Soporte B</strong></div>
+            <div class="res-card__util-label">Utilización semanal</div>
+            <div class="res-card__bar-wrap"><div class="res-card__bar" style="width:78%;background:var(--green)"></div></div>
+            <div class="res-card__footer">
+              <span class="cap-pill cap-pill--ok">78% · OK</span>
+              <span class="res-card__maint">Mant. Vie 23</span>
+            </div>
+          </div>
+          <!-- CNC-2 -->
+          <div class="res-card">
+            <div class="res-card__header">
+              <div class="res-card__icon" style="background:rgba(217,119,6,.1)">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#D97706" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
+              </div>
+              <div>
+                <div class="res-card__name">CNC-2</div>
+                <div class="res-card__type">Torno CNC · Alta precisión</div>
+              </div>
+            </div>
+            <div class="res-card__order">Orden activa: <strong>OF-2042 · Brida C</strong></div>
+            <div class="res-card__util-label">Utilización semanal</div>
+            <div class="res-card__bar-wrap"><div class="res-card__bar" style="width:96%;background:var(--red)"></div></div>
+            <div class="res-card__footer">
+              <span class="cap-pill cap-pill--over">96% · Saturado</span>
+              <span class="res-card__maint">Mant. sem. siguiente</span>
+            </div>
+          </div>
+          <!-- Soldadura -->
+          <div class="res-card">
+            <div class="res-card__header">
+              <div class="res-card__icon" style="background:rgba(27,63,139,.1)">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1B3F8B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22V12M12 12C12 12 7 9 7 4a5 5 0 0 1 10 0c0 5-5 8-5 8z"/></svg>
+              </div>
+              <div>
+                <div class="res-card__name">Soldadura</div>
+                <div class="res-card__type">Robot MIG · Kuka KR10</div>
+              </div>
+            </div>
+            <div class="res-card__order">Orden activa: <strong>OF-2040 · Marco (fin)</strong></div>
+            <div class="res-card__util-label">Utilización semanal</div>
+            <div class="res-card__bar-wrap"><div class="res-card__bar" style="width:85%;background:var(--amber)"></div></div>
+            <div class="res-card__footer">
+              <span class="cap-pill cap-pill--warn">85% · Riesgo</span>
+              <span class="res-card__maint">Mant. Lun 26</span>
+            </div>
+          </div>
+          <!-- Acabados -->
+          <div class="res-card">
+            <div class="res-card__header">
+              <div class="res-card__icon" style="background:rgba(22,163,74,.1)">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#16A34A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/></svg>
+              </div>
+              <div>
+                <div class="res-card__name">Acabados</div>
+                <div class="res-card__type">Cabina pintura + QC</div>
+              </div>
+            </div>
+            <div class="res-card__order">Orden activa: <strong>OF-2038 · QC</strong></div>
+            <div class="res-card__util-label">Utilización semanal</div>
+            <div class="res-card__bar-wrap"><div class="res-card__bar" style="width:62%;background:var(--green)"></div></div>
+            <div class="res-card__footer">
+              <span class="cap-pill cap-pill--ok">62% · OK</span>
+              <span class="res-card__maint">Sin mant. previsto</span>
+            </div>
+          </div>
+          <!-- Embalaje -->
+          <div class="res-card">
+            <div class="res-card__header">
+              <div class="res-card__icon" style="background:rgba(148,163,184,.15)">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#64748B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/></svg>
+              </div>
+              <div>
+                <div class="res-card__name">Embalaje</div>
+                <div class="res-card__type">Área expedición</div>
+              </div>
+            </div>
+            <div class="res-card__order" style="color:#94A3B8;font-style:italic">Sin orden activa hoy</div>
+            <div class="res-card__util-label">Utilización semanal</div>
+            <div class="res-card__bar-wrap"><div class="res-card__bar" style="width:40%;background:var(--green)"></div></div>
+            <div class="res-card__footer">
+              <span class="cap-pill cap-pill--ok">40% · OK</span>
+              <span class="res-card__maint">Sin mant. previsto</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div><!-- /#panel-recursos -->
+
+    <!-- ── PANEL: KPIs ── -->
+    <div id="panel-kpis" class="dash-panel" style="display:none">
+      <div class="panel-page">
+        <div class="panel-page-header">
+          <div>
+            <div class="panel-page-title">KPIs del piloto</div>
+            <div class="panel-page-sub">Semana 7 de 12 · Evolución acumulada desde inicio del piloto</div>
+          </div>
+        </div>
+        <div class="kpis-grid">
+          <!-- OEE -->
+          <div class="kpi-full-card">
+            <div class="kpi-full-card__label">OEE acumulado</div>
+            <div class="kpi-full-card__val">87%</div>
+            <div class="kpi-full-card__target">Objetivo: 82%  ·  <span style="color:var(--green);font-weight:700">+5 pp</span></div>
+            <div class="kpi-trend">
+              <div class="kpi-trend__bar" style="height:44%;background:var(--n80)"></div>
+              <div class="kpi-trend__bar" style="height:55%;background:var(--n80)"></div>
+              <div class="kpi-trend__bar" style="height:67%;background:var(--n80)"></div>
+              <div class="kpi-trend__bar" style="height:78%;background:var(--brand);opacity:.5"></div>
+              <div class="kpi-trend__bar" style="height:100%;background:var(--brand)"></div>
+            </div>
+          </div>
+          <!-- Cumplimiento -->
+          <div class="kpi-full-card">
+            <div class="kpi-full-card__label">Cumplimiento plan</div>
+            <div class="kpi-full-card__val">94%</div>
+            <div class="kpi-full-card__target">Objetivo: 85%  ·  <span style="color:var(--green);font-weight:700">+9 pp</span></div>
+            <div class="kpi-trend">
+              <div class="kpi-trend__bar" style="height:44%;background:var(--n80)"></div>
+              <div class="kpi-trend__bar" style="height:55%;background:var(--n80)"></div>
+              <div class="kpi-trend__bar" style="height:67%;background:var(--n80)"></div>
+              <div class="kpi-trend__bar" style="height:80%;background:var(--green);opacity:.5"></div>
+              <div class="kpi-trend__bar" style="height:100%;background:var(--green)"></div>
+            </div>
+          </div>
+          <!-- Setup -->
+          <div class="kpi-full-card">
+            <div class="kpi-full-card__label">Reducción setup</div>
+            <div class="kpi-full-card__val">−18%</div>
+            <div class="kpi-full-card__target">Objetivo: −10%  ·  <span style="color:var(--green);font-weight:700">Superado</span></div>
+            <div class="kpi-trend">
+              <div class="kpi-trend__bar" style="height:28%;background:var(--n80)"></div>
+              <div class="kpi-trend__bar" style="height:50%;background:var(--n80)"></div>
+              <div class="kpi-trend__bar" style="height:67%;background:var(--n80)"></div>
+              <div class="kpi-trend__bar" style="height:83%;background:var(--green);opacity:.5"></div>
+              <div class="kpi-trend__bar" style="height:100%;background:var(--green)"></div>
+            </div>
+          </div>
+          <!-- Lead time -->
+          <div class="kpi-full-card">
+            <div class="kpi-full-card__label">Lead time</div>
+            <div class="kpi-full-card__val">−6%</div>
+            <div class="kpi-full-card__target">Objetivo: −15%  ·  <span style="color:var(--amber);font-weight:700">En progreso</span></div>
+            <div class="kpi-trend">
+              <div class="kpi-trend__bar" style="height:7%;background:var(--n80)"></div>
+              <div class="kpi-trend__bar" style="height:13%;background:var(--n80)"></div>
+              <div class="kpi-trend__bar" style="height:27%;background:var(--n80)"></div>
+              <div class="kpi-trend__bar" style="height:67%;background:var(--amber);opacity:.5"></div>
+              <div class="kpi-trend__bar" style="height:100%;background:var(--amber)"></div>
+            </div>
+          </div>
+          <!-- Órdenes riesgo -->
+          <div class="kpi-full-card">
+            <div class="kpi-full-card__label">Órdenes en riesgo</div>
+            <div class="kpi-full-card__val">2</div>
+            <div class="kpi-full-card__target">Objetivo: 0  ·  <span style="color:var(--amber);font-weight:700">−4 desde sem. 1</span></div>
+            <div class="kpi-trend">
+              <div class="kpi-trend__bar" style="height:100%;background:var(--n80)"></div>
+              <div class="kpi-trend__bar" style="height:83%;background:var(--n80)"></div>
+              <div class="kpi-trend__bar" style="height:67%;background:var(--n80)"></div>
+              <div class="kpi-trend__bar" style="height:50%;background:var(--amber);opacity:.5"></div>
+              <div class="kpi-trend__bar" style="height:33%;background:var(--amber)"></div>
+            </div>
+          </div>
+          <!-- Utilización media -->
+          <div class="kpi-full-card">
+            <div class="kpi-full-card__label">Utiliz. media recursos</div>
+            <div class="kpi-full-card__val">72%</div>
+            <div class="kpi-full-card__target">Objetivo: 80%  ·  <span style="color:var(--amber);font-weight:700">−8 pp</span></div>
+            <div class="kpi-trend">
+              <div class="kpi-trend__bar" style="height:85%;background:var(--n80)"></div>
+              <div class="kpi-trend__bar" style="height:86%;background:var(--n80)"></div>
+              <div class="kpi-trend__bar" style="height:88%;background:var(--n80)"></div>
+              <div class="kpi-trend__bar" style="height:89%;background:var(--amber);opacity:.5"></div>
+              <div class="kpi-trend__bar" style="height:100%;background:var(--amber)"></div>
+            </div>
+          </div>
+          <!-- Coordinación -->
+          <div class="kpi-full-card">
+            <div class="kpi-full-card__label">Tiempo coordinación</div>
+            <div class="kpi-full-card__val">−35%</div>
+            <div class="kpi-full-card__target">Referencia: −0%  ·  <span style="color:var(--green);font-weight:700">Excelente</span></div>
+            <div class="kpi-trend">
+              <div class="kpi-trend__bar" style="height:29%;background:var(--n80)"></div>
+              <div class="kpi-trend__bar" style="height:51%;background:var(--n80)"></div>
+              <div class="kpi-trend__bar" style="height:69%;background:var(--n80)"></div>
+              <div class="kpi-trend__bar" style="height:86%;background:var(--green);opacity:.5"></div>
+              <div class="kpi-trend__bar" style="height:100%;background:var(--green)"></div>
+            </div>
+          </div>
+          <!-- Turno noche -->
+          <div class="kpi-full-card">
+            <div class="kpi-full-card__label">Eficiencia turno noche</div>
+            <div class="kpi-full-card__val">61%</div>
+            <div class="kpi-full-card__target">Referencia: 55%  ·  <span style="color:var(--green);font-weight:700">+6 pp</span></div>
+            <div class="kpi-trend">
+              <div class="kpi-trend__bar" style="height:55%;background:var(--n80)"></div>
+              <div class="kpi-trend__bar" style="height:68%;background:var(--n80)"></div>
+              <div class="kpi-trend__bar" style="height:76%;background:var(--n80)"></div>
+              <div class="kpi-trend__bar" style="height:90%;background:var(--brand);opacity:.5"></div>
+              <div class="kpi-trend__bar" style="height:100%;background:var(--brand)"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div><!-- /#panel-kpis -->
+
+    <!-- ── PANEL: DISRUPCIONES ── -->
+    <div id="panel-disrupciones" class="dash-panel" style="display:none">
+      <div class="panel-page">
+        <div class="panel-page-header">
+          <div>
+            <div class="panel-page-title">Registro de disrupciones</div>
+            <div class="panel-page-sub">5 eventos · 2 activos resueltos hoy</div>
+          </div>
+        </div>
+        <div class="gantt-card">
+          <div class="disrupt-list">
+            <div class="disrupt-row">
+              <div class="disrupt-time">Hoy 08:23</div>
+              <div class="disrupt-dot" style="background:var(--green)"></div>
+              <div class="disrupt-body">
+                <div class="disrupt-title">Avería CNC-2</div>
+                <div class="disrupt-detail">Duración estimada: resuelta en 45 min · Impacto: OF-2042 retrasada 2h · Causa: fallo sensor posición eje Z</div>
+              </div>
+              <span class="disrupt-status disrupt-status--resuelta">RESUELTA</span>
+            </div>
+            <div class="disrupt-row">
+              <div class="disrupt-time">Hoy 06:45</div>
+              <div class="disrupt-dot" style="background:var(--green)"></div>
+              <div class="disrupt-body">
+                <div class="disrupt-title">Material llegada tarde</div>
+                <div class="disrupt-detail">Soporte B — Lote 200 · Retraso proveedor 1h · Impacto: CNC-1 parada 1h · Sin impacto en fecha entrega final</div>
+              </div>
+              <span class="disrupt-status disrupt-status--resuelta">RESUELTA</span>
+            </div>
+            <div class="disrupt-row">
+              <div class="disrupt-time">Ayer</div>
+              <div class="disrupt-dot" style="background:#94A3B8"></div>
+              <div class="disrupt-body">
+                <div class="disrupt-title">Setup prolongado CNC-2</div>
+                <div class="disrupt-detail">+2h sobre tiempo estimado de cambio · Impacto: 3 órdenes retrasadas 1h · Acción tomada: refuerzo operario tarde</div>
+              </div>
+              <span class="disrupt-status disrupt-status--cerrada">CERRADA</span>
+            </div>
+            <div class="disrupt-row">
+              <div class="disrupt-time">Lun 19</div>
+              <div class="disrupt-dot" style="background:#94A3B8"></div>
+              <div class="disrupt-body">
+                <div class="disrupt-title">Fallo sensor temperatura autoclave</div>
+                <div class="disrupt-detail">Parada 4h turno mañana · Impacto: OF-2039 retrasada al día siguiente · Sensor sustituido por mantenimiento</div>
+              </div>
+              <span class="disrupt-status disrupt-status--cerrada">CERRADA</span>
+            </div>
+            <div class="disrupt-row">
+              <div class="disrupt-time">Sem 6</div>
+              <div class="disrupt-dot" style="background:var(--brand)"></div>
+              <div class="disrupt-body">
+                <div class="disrupt-title">Pedido urgente OF-2047 — Cliente AZ</div>
+                <div class="disrupt-detail">Inserción urgente en plan semanal · Impacto: replanning completo jueves-viernes · 2 órdenes desplazadas a semana 8</div>
+              </div>
+              <span class="disrupt-status disrupt-status--integrada">INTEGRADA</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div><!-- /#panel-disrupciones -->
+
     </div><!-- /#dashboard-view -->
   </div>
 </div>
@@ -2184,12 +2853,12 @@
         } else {
           ganttSemana.style.display = 'none';
           ganttTurno.style.display  = '';
-          ganttSub.textContent = 'Miércoles 21 mayo · Mañana / Tarde / Noche';
+          ganttSub.textContent = 'Miércoles 21 mayo · Vista por horas · T.Mañana 06–14h · T.Tarde 14–22h';
         }
       });
     });
 
-    // 2. Gantt drag & drop
+    // 2. Gantt drag & drop (semana blocks)
     let draggedBlock = null;
 
     document.querySelectorAll('.gantt-block').forEach(block => {
@@ -2230,6 +2899,59 @@
         if (draggedBlock.parentElement === cell) return;
         cell.appendChild(draggedBlock);
         showToast('Orden replanificada manualmente · Plan actualizado');
+      });
+    });
+
+    // 2b. Turno blocks drag & drop
+    document.querySelectorAll('.turno-block').forEach(block => {
+      block.addEventListener('dragstart', e => {
+        draggedBlock = block;
+        e.dataTransfer.effectAllowed = 'move';
+        setTimeout(() => block.classList.add('dragging'), 0);
+      });
+
+      block.addEventListener('dragend', () => {
+        block.classList.remove('dragging');
+        document.querySelectorAll('.turno-track').forEach(t => t.classList.remove('drop-target'));
+        draggedBlock = null;
+      });
+    });
+
+    document.querySelectorAll('.turno-track').forEach(track => {
+      track.addEventListener('dragover', e => {
+        e.preventDefault();
+        e.dataTransfer.dropEffect = 'move';
+        track.classList.add('drop-target');
+      });
+
+      track.addEventListener('dragleave', e => {
+        if (!track.contains(e.relatedTarget)) {
+          track.classList.remove('drop-target');
+        }
+      });
+
+      track.addEventListener('drop', e => {
+        e.preventDefault();
+        track.classList.remove('drop-target');
+        if (!draggedBlock || !draggedBlock.classList.contains('turno-block')) return;
+        if (draggedBlock.parentElement === track) return;
+        track.appendChild(draggedBlock);
+        showToast('Orden reasignada · Turno actualizado');
+      });
+    });
+
+    // 8. Nav panel switching
+    document.querySelectorAll('[data-panel]').forEach(item => {
+      item.addEventListener('click', e => {
+        e.preventDefault();
+        const panel = item.dataset.panel;
+        // Update nav active state
+        document.querySelectorAll('.nav-item[data-panel]').forEach(n => n.classList.remove('nav-item--active'));
+        item.classList.add('nav-item--active');
+        // Show correct panel
+        document.querySelectorAll('.dash-panel').forEach(p => p.style.display = 'none');
+        const target = document.getElementById('panel-' + panel);
+        if (target) target.style.display = '';
       });
     });
 
