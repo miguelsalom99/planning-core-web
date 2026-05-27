@@ -279,6 +279,7 @@
     }
 
     /* ───── SIDEBAR ───── */
+    .sidebar.hidden { display: none; }
     .sidebar {
       width: var(--sidebar-w);
       background: var(--white);
@@ -1269,7 +1270,7 @@
   <div class="app-body">
 
     <!-- ── SIDEBAR ── -->
-    <nav class="sidebar">
+    <nav class="sidebar hidden" id="sidebar">
       <div class="nav-section">
         <div class="nav-section__label">Planificación</div>
         <a class="nav-item nav-item--active" href="#">
@@ -1914,10 +1915,12 @@
   const industriesPanelEl = document.getElementById('industriesPanel');
   const backBtn           = document.getElementById('backToSelector');
   const backSep           = document.querySelector('.back-sep');
+  const sidebarEl         = document.getElementById('sidebar');
 
   function showSelector() {
     selectorEl.classList.remove('hidden');
     dashboardEl.classList.remove('visible');
+    sidebarEl.classList.add('hidden');
     industriesPanelEl.classList.add('hidden');
     backBtn.classList.add('hidden');
     backSep.classList.add('hidden');
@@ -1927,6 +1930,7 @@
   function showDashboard(industry) {
     selectorEl.classList.add('hidden');
     dashboardEl.classList.add('visible');
+    sidebarEl.classList.remove('hidden');
     industriesPanelEl.classList.remove('hidden');
     backBtn.classList.remove('hidden');
     backSep.classList.remove('hidden');
