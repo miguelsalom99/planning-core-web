@@ -841,6 +841,62 @@
     .gantt-card--expanded #gantt-turno { flex: 1; overflow: auto; }
     .gantt-card--expanded .gantt-legend { flex-shrink: 0; }
 
+    /* ── ADD ORDER MODAL ── */
+    .modal-backdrop {
+      position: fixed; inset: 0;
+      background: rgba(6,15,32,.55);
+      z-index: 700;
+      display: flex; align-items: center; justify-content: center;
+      backdrop-filter: blur(3px);
+      opacity: 0; pointer-events: none;
+      transition: opacity .2s;
+    }
+    .modal-backdrop.open { opacity: 1; pointer-events: auto; }
+    .modal {
+      background: var(--white);
+      border-radius: var(--radius-lg);
+      box-shadow: 0 24px 64px rgba(11,28,58,.28);
+      width: 480px; max-width: calc(100vw - 2rem);
+      overflow: hidden;
+      transform: translateY(8px);
+      transition: transform .2s;
+    }
+    .modal-backdrop.open .modal { transform: translateY(0); }
+    .modal__header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 1rem 1.25rem;
+      border-bottom: 1px solid var(--n80);
+    }
+    .modal__title { font-size: .92rem; font-weight: 700; color: var(--navy); }
+    .modal__close { background: none; border: none; cursor: pointer; color: #94A3B8; font-size: 1.3rem; line-height: 1; padding: .1rem .3rem; transition: color .15s; }
+    .modal__close:hover { color: var(--n20); }
+    .modal__body { padding: 1.25rem; display: flex; flex-direction: column; gap: .85rem; }
+    .modal__footer { padding: .85rem 1.25rem; border-top: 1px solid var(--n80); display: flex; gap: .5rem; justify-content: flex-end; }
+    .form-field { display: flex; flex-direction: column; gap: .3rem; }
+    .form-label { font-size: .62rem; font-weight: 700; text-transform: uppercase; letter-spacing: .09em; color: #94A3B8; }
+    .form-input, .form-select {
+      padding: .52rem .75rem;
+      border: 1px solid var(--n80); border-radius: var(--radius);
+      font-size: .82rem; font-family: inherit;
+      color: var(--n20); background: var(--white); outline: none;
+      transition: border-color var(--transition), box-shadow var(--transition);
+    }
+    .form-input:focus, .form-select:focus {
+      border-color: var(--brand);
+      box-shadow: 0 0 0 3px rgba(27,63,139,.08);
+    }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: .75rem; }
+    .color-picker { display: flex; gap: .5rem; flex-wrap: wrap; }
+    .color-opt {
+      width: 26px; height: 26px; border-radius: 7px;
+      cursor: pointer; border: 2.5px solid transparent;
+      transition: all .12s; flex-shrink: 0;
+    }
+    .color-opt:hover { transform: scale(1.15); }
+    .color-opt.selected { border-color: var(--n20); box-shadow: 0 0 0 1.5px white inset; }
+    .modal-view-section { display: flex; flex-direction: column; gap: .85rem; }
+    .modal-view-section[hidden] { display: none; }
+
     /* ── BLOCK DETAIL POPOVER ── */
     .block-popover {
       position: fixed;
@@ -1913,6 +1969,10 @@
             </div>
             <button class="expand-btn" id="expandGantt" title="Ampliar Gantt">
               <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/><line x1="21" y1="3" x2="14" y2="10"/><line x1="3" y1="21" x2="10" y2="14"/></svg>
+            </button>
+            <button class="btn-ui" id="addOrderBtn" style="padding:.3rem .75rem;font-size:.72rem;gap:.3rem">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              Nueva orden
             </button>
             <div class="filter-wrapper">
               <button class="btn-ui" id="filterBtn" style="padding:.3rem .7rem;font-size:.72rem">
@@ -2987,40 +3047,42 @@
       });
     });
 
-    // 2. Gantt drag & drop (semana blocks)
+    // 2. Drag & drop helpers (reusable for static + dynamic blocks)
     let draggedBlock = null;
 
-    document.querySelectorAll('.gantt-block').forEach(block => {
+    function initGanttBlock(block) {
       block.setAttribute('draggable', 'true');
-
       block.addEventListener('dragstart', e => {
         draggedBlock = block;
         e.dataTransfer.effectAllowed = 'move';
         setTimeout(() => block.classList.add('dragging'), 0);
       });
-
       block.addEventListener('dragend', () => {
         block.classList.remove('dragging');
-        document.querySelectorAll('.gantt-cell').forEach(c => {
-          c.classList.remove('drop-target', 'drop-target--invalid');
-        });
+        document.querySelectorAll('.gantt-cell').forEach(c => c.classList.remove('drop-target', 'drop-target--invalid'));
         draggedBlock = null;
       });
-    });
+    }
+
+    function initTurnoBlock(block) {
+      block.setAttribute('draggable', 'true');
+      block.addEventListener('dragstart', e => {
+        draggedBlock = block;
+        e.dataTransfer.effectAllowed = 'move';
+        setTimeout(() => block.classList.add('dragging'), 0);
+      });
+      block.addEventListener('dragend', () => {
+        block.classList.remove('dragging');
+        document.querySelectorAll('.turno-track').forEach(t => t.classList.remove('drop-target'));
+        draggedBlock = null;
+      });
+    }
+
+    document.querySelectorAll('.gantt-block').forEach(b => initGanttBlock(b));
 
     document.querySelectorAll('.gantt-cell').forEach(cell => {
-      cell.addEventListener('dragover', e => {
-        e.preventDefault();
-        e.dataTransfer.dropEffect = 'move';
-        cell.classList.add('drop-target');
-      });
-
-      cell.addEventListener('dragleave', e => {
-        if (!cell.contains(e.relatedTarget)) {
-          cell.classList.remove('drop-target', 'drop-target--invalid');
-        }
-      });
-
+      cell.addEventListener('dragover', e => { e.preventDefault(); e.dataTransfer.dropEffect = 'move'; cell.classList.add('drop-target'); });
+      cell.addEventListener('dragleave', e => { if (!cell.contains(e.relatedTarget)) cell.classList.remove('drop-target', 'drop-target--invalid'); });
       cell.addEventListener('drop', e => {
         e.preventDefault();
         cell.classList.remove('drop-target', 'drop-target--invalid');
@@ -3031,34 +3093,11 @@
       });
     });
 
-    // 2b. Turno blocks drag & drop
-    document.querySelectorAll('.turno-block').forEach(block => {
-      block.addEventListener('dragstart', e => {
-        draggedBlock = block;
-        e.dataTransfer.effectAllowed = 'move';
-        setTimeout(() => block.classList.add('dragging'), 0);
-      });
-
-      block.addEventListener('dragend', () => {
-        block.classList.remove('dragging');
-        document.querySelectorAll('.turno-track').forEach(t => t.classList.remove('drop-target'));
-        draggedBlock = null;
-      });
-    });
+    document.querySelectorAll('.turno-block').forEach(b => initTurnoBlock(b));
 
     document.querySelectorAll('.turno-track').forEach(track => {
-      track.addEventListener('dragover', e => {
-        e.preventDefault();
-        e.dataTransfer.dropEffect = 'move';
-        track.classList.add('drop-target');
-      });
-
-      track.addEventListener('dragleave', e => {
-        if (!track.contains(e.relatedTarget)) {
-          track.classList.remove('drop-target');
-        }
-      });
-
+      track.addEventListener('dragover', e => { e.preventDefault(); e.dataTransfer.dropEffect = 'move'; track.classList.add('drop-target'); });
+      track.addEventListener('dragleave', e => { if (!track.contains(e.relatedTarget)) track.classList.remove('drop-target'); });
       track.addEventListener('drop', e => {
         e.preventDefault();
         track.classList.remove('drop-target');
@@ -3250,20 +3289,131 @@
       blockPopover.classList.add('open');
     }
 
-    document.querySelectorAll('.gantt-block[data-of], .turno-block[data-of]').forEach(block => {
+    function attachBlockClick(block) {
       block.addEventListener('click', e => {
         if (block.classList.contains('dragging')) return;
         e.stopPropagation();
         showBlockPopover(block, e);
       });
-    });
+    }
+    document.querySelectorAll('.gantt-block[data-of], .turno-block[data-of]').forEach(b => attachBlockClick(b));
 
     blockPopoverClose && blockPopoverClose.addEventListener('click', () => blockPopover.classList.remove('open'));
     document.addEventListener('click', e => {
       if (blockPopover && !blockPopover.contains(e.target)) blockPopover.classList.remove('open');
     });
 
-    // 10. ZOOM ── ±
+    // 10. ADD ORDER MODAL
+    const orderModal  = document.getElementById('orderModal');
+    const addOrderBtn = document.getElementById('addOrderBtn');
+    const modalClose2 = document.getElementById('modalClose');
+    const modalCancel = document.getElementById('modalCancel');
+    const modalSubmit = document.getElementById('modalSubmit');
+    const DIAS = ['Lun 19','Mar 20','Mié 21','Jue 22','Vie 23'];
+
+    // Populate hour selects once
+    const startSel = document.getElementById('f-start');
+    const endSel   = document.getElementById('f-end');
+    for (let h = 6; h <= 22; h++) {
+      const t = String(h).padStart(2,'0') + ':00';
+      startSel.add(new Option(t, h));
+      endSel.add(new Option(t, h));
+    }
+    startSel.value = 8;
+    endSel.value   = 14;
+
+    // Color picker
+    let selectedColor = 'blue';
+    document.querySelectorAll('.color-opt').forEach(opt => {
+      opt.addEventListener('click', () => {
+        document.querySelectorAll('.color-opt').forEach(o => o.classList.remove('selected'));
+        opt.classList.add('selected');
+        selectedColor = opt.dataset.color;
+      });
+    });
+
+    function openOrderModal() {
+      const isTurno = ganttTurno.style.display !== 'none';
+      document.getElementById('modal-semana').hidden = isTurno;
+      document.getElementById('modal-turno').hidden  = !isTurno;
+
+      // Auto-generate next order ID
+      const nums = Array.from(document.querySelectorAll('[data-of]'))
+        .map(el => parseInt(el.dataset.of.replace('OF-','')))
+        .filter(n => !isNaN(n));
+      const nextNum = nums.length ? Math.max(...nums) + 1 : 2050;
+      document.getElementById('f-of').value = `OF-${nextNum}`;
+      document.getElementById('f-desc').value = '';
+
+      orderModal.classList.add('open');
+    }
+
+    function closeOrderModal() { orderModal.classList.remove('open'); }
+
+    addOrderBtn && addOrderBtn.addEventListener('click', openOrderModal);
+    modalClose2 && modalClose2.addEventListener('click', closeOrderModal);
+    modalCancel && modalCancel.addEventListener('click', closeOrderModal);
+    orderModal.addEventListener('click', e => { if (e.target === orderModal) closeOrderModal(); });
+    document.addEventListener('keydown', e => { if (e.key === 'Escape' && orderModal.classList.contains('open')) closeOrderModal(); });
+
+    modalSubmit && modalSubmit.addEventListener('click', () => {
+      const of       = document.getElementById('f-of').value.trim()   || `OF-${Date.now()}`;
+      const desc     = document.getElementById('f-desc').value.trim();
+      const resource = document.getElementById('f-recurso').value;
+      const label    = desc ? `${of} · ${desc}` : of;
+      const isTurno  = ganttTurno.style.display !== 'none';
+
+      if (isTurno) {
+        const startH = parseInt(startSel.value);
+        const endH   = parseInt(endSel.value);
+        if (endH <= startH) { showToast('⚠ La hora de fin debe ser posterior al inicio'); return; }
+        const totalHours = 16;
+        const leftPct  = (startH - 6) / totalHours * 100;
+        const widthPct = (endH - startH) / totalHours * 100;
+
+        const block = document.createElement('div');
+        block.className = `turno-block gb--${selectedColor}`;
+        block.style.left  = leftPct + '%';
+        block.style.width = (widthPct - 0.5) + '%';
+        block.textContent = label;
+        block.dataset.of      = of;
+        block.dataset.recurso = resource;
+        block.dataset.inicio  = `Mié 21 · ${String(startH).padStart(2,'0')}:00`;
+        block.dataset.fin     = `Mié 21 · ${String(endH).padStart(2,'0')}:00`;
+        block.dataset.pct     = '0%';
+        block.dataset.estado  = 'En plazo';
+
+        const track = document.querySelector(`.turno-row[data-resource="${resource}"] .turno-track`);
+        if (track) { track.appendChild(block); initTurnoBlock(block); attachBlockClick(block); }
+
+      } else {
+        const dayIdx = parseInt(document.getElementById('f-dia').value);
+        const dur    = document.getElementById('f-dur').value;
+
+        const block = document.createElement('div');
+        block.className = `gantt-block gb--${selectedColor}`;
+        block.style.width     = dur + '%';
+        block.style.marginTop = '2px';
+        block.textContent     = label;
+        block.dataset.of      = of;
+        block.dataset.recurso = resource;
+        block.dataset.inicio  = DIAS[dayIdx] + ' · 06:00';
+        block.dataset.fin     = DIAS[dayIdx] + ' · 22:00';
+        block.dataset.pct     = '0%';
+        block.dataset.estado  = 'En plazo';
+
+        const row = document.querySelector(`.gantt-row[data-resource="${resource}"]`);
+        if (row) {
+          const cells = row.querySelector('.gantt-timeline').querySelectorAll('.gantt-cell');
+          if (cells[dayIdx]) { cells[dayIdx].appendChild(block); initGanttBlock(block); attachBlockClick(block); }
+        }
+      }
+
+      showToast(`✓ ${of} añadida al Gantt`);
+      closeOrderModal();
+    });
+
+    // 11. ZOOM ── ±
     const ZOOM_STEPS = [50, 75, 100, 140, 190, 260];
     const BASE_COL_PX = 160; // px per column at 100%
     let zoomIdx = 2; // index for 100%
@@ -3308,7 +3458,7 @@
     zoomInBtn  && zoomInBtn.addEventListener('click',  () => { if (zoomIdx < ZOOM_STEPS.length - 1) { zoomIdx++; applyZoom(); } });
     zoomOutBtn && zoomOutBtn.addEventListener('click', () => { if (zoomIdx > 0)                     { zoomIdx--; applyZoom(); } });
 
-    // 11. EXPAND ── fullscreen toggle
+    // 12. EXPAND ── fullscreen toggle
     const expandBtn  = document.getElementById('expandGantt');
     const ganttCard2 = document.querySelector('.gantt-card');
     const expandIconOpen  = `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/><line x1="21" y1="3" x2="14" y2="10"/><line x1="3" y1="21" x2="10" y2="14"/></svg>`;
@@ -3351,6 +3501,90 @@
 
   init();
 </script>
+
+<!-- ── ADD ORDER MODAL ── -->
+<div class="modal-backdrop" id="orderModal">
+  <div class="modal">
+    <div class="modal__header">
+      <span class="modal__title">Añadir orden al Gantt</span>
+      <button class="modal__close" id="modalClose">×</button>
+    </div>
+    <div class="modal__body">
+      <div class="form-row">
+        <div class="form-field">
+          <label class="form-label">ID de orden</label>
+          <input class="form-input" id="f-of" placeholder="OF-2050" />
+        </div>
+        <div class="form-field">
+          <label class="form-label">Descripción</label>
+          <input class="form-input" id="f-desc" placeholder="Carcasa B · Serie 300" />
+        </div>
+      </div>
+      <div class="form-field">
+        <label class="form-label">Recurso</label>
+        <select class="form-select" id="f-recurso">
+          <option value="cnc-1">CNC-1 — Fresado</option>
+          <option value="cnc-2">CNC-2 — Torneado</option>
+          <option value="soldadura">Soldadura (Robot MIG)</option>
+          <option value="acabados">Acabados (Pintura + QC)</option>
+          <option value="embalaje">Embalaje / Expedición</option>
+        </select>
+      </div>
+      <!-- Semana-specific fields -->
+      <div class="modal-view-section" id="modal-semana">
+        <div class="form-row">
+          <div class="form-field">
+            <label class="form-label">Día</label>
+            <select class="form-select" id="f-dia">
+              <option value="0">Lunes 19</option>
+              <option value="1">Martes 20</option>
+              <option value="2">Miércoles 21</option>
+              <option value="3">Jueves 22</option>
+              <option value="4">Viernes 23</option>
+            </select>
+          </div>
+          <div class="form-field">
+            <label class="form-label">Duración en celda</label>
+            <select class="form-select" id="f-dur">
+              <option value="100">Todo el día (100%)</option>
+              <option value="75">75%</option>
+              <option value="50">Media jornada (50%)</option>
+              <option value="25">25%</option>
+            </select>
+          </div>
+        </div>
+      </div>
+      <!-- Turno-specific fields -->
+      <div class="modal-view-section" id="modal-turno" hidden>
+        <div class="form-row">
+          <div class="form-field">
+            <label class="form-label">Hora inicio</label>
+            <select class="form-select" id="f-start"></select>
+          </div>
+          <div class="form-field">
+            <label class="form-label">Hora fin</label>
+            <select class="form-select" id="f-end"></select>
+          </div>
+        </div>
+      </div>
+      <div class="form-field">
+        <label class="form-label">Color</label>
+        <div class="color-picker" id="colorPicker">
+          <div class="color-opt selected" data-color="blue"   style="background:#1B3F8B"></div>
+          <div class="color-opt"          data-color="teal"   style="background:#0891B2"></div>
+          <div class="color-opt"          data-color="green"  style="background:#16A34A"></div>
+          <div class="color-opt"          data-color="purple" style="background:#7C3AED"></div>
+          <div class="color-opt"          data-color="amber"  style="background:#D97706"></div>
+          <div class="color-opt"          data-color="gray"   style="background:#64748B"></div>
+        </div>
+      </div>
+    </div>
+    <div class="modal__footer">
+      <button class="btn-ui" id="modalCancel">Cancelar</button>
+      <button class="btn-ui btn-ui--primary" id="modalSubmit">Añadir al Gantt</button>
+    </div>
+  </div>
+</div>
 
 </body>
 </html>
