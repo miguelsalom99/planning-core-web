@@ -949,6 +949,7 @@
       border-bottom: 1px solid var(--n80);
       background: #F8FAFC;
     }
+    .industries-panel.hidden { display: none; }
     .industries-panel__toggle {
       width: 100%;
       display: flex;
@@ -1287,7 +1288,7 @@
       </div>
 
       <!-- Industries panel — separate collapsible menu -->
-      <div class="industries-panel" id="industriesPanel">
+      <div class="industries-panel hidden" id="industriesPanel">
         <button class="industries-panel__toggle" id="industriesToggle" aria-expanded="true">
           <div class="industries-panel__left">
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
@@ -1885,15 +1886,19 @@
   const selectorEl  = document.getElementById('industry-selector');
   const dashboardEl = document.getElementById('dashboard-view');
 
+  const industriesPanelEl = document.getElementById('industriesPanel');
+
   function showSelector() {
     selectorEl.classList.remove('hidden');
     dashboardEl.classList.remove('visible');
+    industriesPanelEl.classList.add('hidden');
     document.querySelectorAll('.ind-item').forEach(el => el.classList.remove('ind-item--active'));
   }
 
   function showDashboard(industry) {
     selectorEl.classList.add('hidden');
     dashboardEl.classList.add('visible');
+    industriesPanelEl.classList.remove('hidden');
     document.querySelectorAll('.ind-item').forEach(el => {
       el.classList.toggle('ind-item--active', el.dataset.industry === industry);
     });
