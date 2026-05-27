@@ -872,6 +872,31 @@
       color: #94A3B8;
     }
 
+    /* ───── GANTT TURNO VIEW ───── */
+    .gantt-grid--turno { grid-template-columns: 148px 1fr; }
+    .gantt-days--turno { grid-template-columns: repeat(3, 1fr); }
+    .gantt-timeline--turno { grid-template-columns: repeat(3, 1fr); }
+
+    .now-pip {
+      display: inline-block;
+      margin-left: .4rem;
+      font-size: .55rem;
+      font-weight: 800;
+      letter-spacing: .08em;
+      background: var(--brand);
+      color: #fff;
+      padding: .1rem .35rem;
+      border-radius: 4px;
+      vertical-align: middle;
+    }
+    .shift-empty { background: repeating-linear-gradient(45deg, transparent, transparent 4px, rgba(0,0,0,.02) 4px, rgba(0,0,0,.02) 8px); }
+    .shift-idle {
+      font-size: .62rem;
+      color: #CBD5E1;
+      font-style: italic;
+      padding: .25rem .4rem;
+    }
+
     /* ───── BOTTOM ROW ───── */
     .bottom-grid {
       display: grid;
@@ -1685,10 +1710,9 @@
             <div class="gantt-header__sub">5 recursos · 12 órdenes activas</div>
           </div>
           <div class="gantt-header__right">
-            <div class="tab-group">
-              <span class="tab tab--active">Semana</span>
-              <span class="tab">Mes</span>
-              <span class="tab">Turno</span>
+            <div class="tab-group" id="ganttTabs">
+              <span class="tab tab--active" data-view="semana">Semana</span>
+              <span class="tab" data-view="turno">Turno</span>
             </div>
             <button class="btn-ui" style="padding:.3rem .7rem;font-size:.72rem">
               <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="6" x2="20" y2="6"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="18" x2="20" y2="18"/></svg>
@@ -1697,6 +1721,7 @@
           </div>
         </div>
 
+        <div id="gantt-semana">
         <div class="gantt-grid">
           <!-- Header row -->
           <div class="gantt-grid__corner"><span>Recurso</span></div>
@@ -1828,6 +1853,105 @@
             </div>
           </div>
         </div>
+        </div><!-- /#gantt-semana -->
+
+        <!-- Vista Turno — Miércoles 21 mayo, turnos mañana/tarde/noche -->
+        <div id="gantt-turno" style="display:none">
+        <div class="gantt-grid gantt-grid--turno">
+          <div class="gantt-grid__corner"><span>Recurso</span></div>
+          <div class="gantt-days gantt-days--turno">
+            <div class="gantt-day gantt-day--today">T. MAÑANA · 06–14h <span class="now-pip">AHORA</span></div>
+            <div class="gantt-day">T. TARDE · 14–22h</div>
+            <div class="gantt-day">T. NOCHE · 22–06h</div>
+          </div>
+
+          <!-- CNC-1 -->
+          <div class="gantt-resource">
+            <div class="res-indicator res-indicator--green"></div>
+            <div><div class="res-name">CNC-1</div><div class="res-sub">Fresado · 78%</div></div>
+          </div>
+          <div class="gantt-timeline gantt-timeline--turno">
+            <div class="gantt-cell gantt-cell--today">
+              <div class="gantt-block gb--teal" style="width:100%">OF-2041 · Soporte B</div>
+            </div>
+            <div class="gantt-cell">
+              <div class="gantt-block gb--green" style="width:85%">OF-2044 · Eje motor</div>
+            </div>
+            <div class="gantt-cell shift-empty">
+              <span class="shift-idle">Sin asignación</span>
+            </div>
+          </div>
+
+          <!-- CNC-2 -->
+          <div class="gantt-resource">
+            <div class="res-indicator res-indicator--amber"></div>
+            <div><div class="res-name">CNC-2</div><div class="res-sub">Torneado · ⚠ 96%</div></div>
+          </div>
+          <div class="gantt-timeline gantt-timeline--turno">
+            <div class="gantt-cell gantt-cell--today">
+              <div class="gantt-block gb--amber" style="width:100%">OF-2042 · Brida C</div>
+            </div>
+            <div class="gantt-cell">
+              <div class="gantt-block gb--amber" style="width:60%">OF-2042</div>
+              <div class="gantt-block gb--blue" style="width:38%;margin-top:2px">OF-2047</div>
+            </div>
+            <div class="gantt-cell shift-empty">
+              <span class="shift-idle">Sin asignación</span>
+            </div>
+          </div>
+
+          <!-- Soldadura -->
+          <div class="gantt-resource">
+            <div class="res-indicator res-indicator--blue"></div>
+            <div><div class="res-name">Soldadura</div><div class="res-sub">Robot MIG · 85%</div></div>
+          </div>
+          <div class="gantt-timeline gantt-timeline--turno">
+            <div class="gantt-cell gantt-cell--today">
+              <div class="gantt-block gb--green" style="width:100%">OF-2040 · Marco (fin)</div>
+            </div>
+            <div class="gantt-cell">
+              <div class="gantt-block gb--teal" style="width:100%">OF-2043 · Depósito</div>
+            </div>
+            <div class="gantt-cell shift-empty">
+              <span class="shift-idle">Sin asignación</span>
+            </div>
+          </div>
+
+          <!-- Acabados -->
+          <div class="gantt-resource">
+            <div class="res-indicator res-indicator--green"></div>
+            <div><div class="res-name">Acabados</div><div class="res-sub">Pintura + QC · 62%</div></div>
+          </div>
+          <div class="gantt-timeline gantt-timeline--turno">
+            <div class="gantt-cell gantt-cell--today">
+              <div class="gantt-block gb--gray" style="width:100%">OF-2038 · QC</div>
+            </div>
+            <div class="gantt-cell">
+              <div class="gantt-block gb--gray" style="width:100%">OF-2038 · Pintura</div>
+            </div>
+            <div class="gantt-cell shift-empty">
+              <span class="shift-idle">Sin asignación</span>
+            </div>
+          </div>
+
+          <!-- Embalaje -->
+          <div class="gantt-resource">
+            <div class="res-indicator res-indicator--gray"></div>
+            <div><div class="res-name">Embalaje</div><div class="res-sub">Expedición · 40%</div></div>
+          </div>
+          <div class="gantt-timeline gantt-timeline--turno">
+            <div class="gantt-cell gantt-cell--today shift-empty">
+              <span class="shift-idle">Sin asignación</span>
+            </div>
+            <div class="gantt-cell shift-empty">
+              <span class="shift-idle">Sin asignación</span>
+            </div>
+            <div class="gantt-cell shift-empty">
+              <span class="shift-idle">Sin asignación</span>
+            </div>
+          </div>
+        </div>
+        </div><!-- /#gantt-turno -->
 
         <div class="gantt-legend">
           <div class="legend-item"><div class="legend-dot" style="background:#1B3F8B"></div>En curso</div>
@@ -2043,13 +2167,25 @@
     if (dashboardReady) return;
     dashboardReady = true;
 
-    // 1. Tab group switching
-    document.querySelectorAll('.tab-group').forEach(group => {
-      group.querySelectorAll('.tab').forEach(tab => {
-        tab.addEventListener('click', () => {
-          group.querySelectorAll('.tab').forEach(t => t.classList.remove('tab--active'));
-          tab.classList.add('tab--active');
-        });
+    // 1. Gantt tab switching (Semana / Turno)
+    const ganttSemana  = document.getElementById('gantt-semana');
+    const ganttTurno   = document.getElementById('gantt-turno');
+    const ganttSub     = document.querySelector('.gantt-header__sub');
+
+    document.querySelectorAll('#ganttTabs .tab').forEach(tab => {
+      tab.addEventListener('click', () => {
+        document.querySelectorAll('#ganttTabs .tab').forEach(t => t.classList.remove('tab--active'));
+        tab.classList.add('tab--active');
+        const view = tab.dataset.view;
+        if (view === 'semana') {
+          ganttSemana.style.display = '';
+          ganttTurno.style.display  = 'none';
+          ganttSub.textContent = '5 recursos · 12 órdenes activas';
+        } else {
+          ganttSemana.style.display = 'none';
+          ganttTurno.style.display  = '';
+          ganttSub.textContent = 'Miércoles 21 mayo · Mañana / Tarde / Noche';
+        }
       });
     });
 
