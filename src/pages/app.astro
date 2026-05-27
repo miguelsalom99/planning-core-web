@@ -3121,6 +3121,58 @@
       });
     });
 
+    // 8b. Scenarios panel — apply / switch
+    document.querySelectorAll('#panel-escenarios .scenario-card button').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        if (btn.disabled) return;
+        const card = btn.closest('.scenario-card');
+        const badge = card.querySelector('.scenario-badge');
+        const scenarioName = badge.childNodes[0].textContent.trim();
+
+        const origText = btn.textContent.trim();
+        btn.disabled = true;
+        btn.innerHTML = `<svg class="spin-icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg> Aplicando…`;
+
+        await new Promise(r => setTimeout(r, 1400));
+
+        // Reset all cards to inactive
+        document.querySelectorAll('#panel-escenarios .scenario-card').forEach(c => {
+          c.classList.remove('scenario-card--active');
+          const b = c.querySelector('button');
+          b.className = 'btn-ui';
+          b.style.cssText = 'width:100%;justify-content:center';
+          b.disabled = false;
+          b.textContent = 'Aplicar escenario';
+          const chip = c.querySelector('.scenario-active-chip');
+          if (chip) chip.remove();
+        });
+
+        // Activate selected card
+        card.classList.add('scenario-card--active');
+        btn.className = 'btn-ui btn-ui--primary';
+        btn.style.cssText = 'width:100%;justify-content:center';
+        btn.disabled = true;
+        btn.textContent = 'Escenario activo';
+        if (!badge.querySelector('.scenario-active-chip')) {
+          const chip = document.createElement('span');
+          chip.className = 'scenario-active-chip';
+          chip.textContent = 'Activo';
+          badge.appendChild(chip);
+        }
+
+        showToast(`✓ ${scenarioName} activado · Gantt actualizado con nuevos parámetros`, 4500);
+      });
+    });
+
+    // Card body click → visual preview (highlight without applying)
+    document.querySelectorAll('#panel-escenarios .scenario-card').forEach(card => {
+      card.style.cursor = 'pointer';
+      card.addEventListener('click', e => {
+        if (e.target.closest('button')) return;
+        card.querySelector('button:not([disabled])').click();
+      });
+    });
+
     // 3. Alert banner — "Ver sugerencia"
     const alertCTA    = document.querySelector('.alert-banner__cta');
     const alertBanner = document.querySelector('.alert-banner');
