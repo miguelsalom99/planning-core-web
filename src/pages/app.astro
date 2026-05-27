@@ -943,6 +943,91 @@
     .cap-pct--warn { color: var(--amber); }
     .cap-pct--over { color: var(--red); }
 
+    /* ───── INDUSTRIES PANEL (sidebar) ───── */
+    .industries-panel {
+      border-top: 1px solid var(--n80);
+      border-bottom: 1px solid var(--n80);
+      background: #F8FAFC;
+    }
+    .industries-panel__toggle {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: .6rem .75rem;
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-family: inherit;
+      transition: background var(--transition);
+    }
+    .industries-panel__toggle:hover { background: var(--n90); }
+    .industries-panel__left {
+      display: flex;
+      align-items: center;
+      gap: .45rem;
+      font-size: .62rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .1em;
+      color: #94A3B8;
+    }
+    .industries-panel__left svg { opacity: .6; }
+    .industries-panel__right { display: flex; align-items: center; gap: .3rem; }
+    .industries-panel__count {
+      font-size: .6rem;
+      font-weight: 700;
+      background: rgba(27,63,139,.1);
+      color: var(--brand);
+      padding: .1rem .4rem;
+      border-radius: 999px;
+    }
+    .industries-panel__chevron {
+      color: #94A3B8;
+      transition: transform .2s;
+    }
+    .industries-panel.collapsed .industries-panel__chevron { transform: rotate(-90deg); }
+
+    .industries-panel__list {
+      padding: .25rem .5rem .5rem;
+      overflow: hidden;
+    }
+    .industries-panel.collapsed .industries-panel__list { display: none; }
+
+    .ind-item {
+      display: flex;
+      align-items: center;
+      gap: .55rem;
+      padding: .38rem .5rem;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background var(--transition);
+      text-decoration: none;
+    }
+    .ind-item:hover { background: var(--n90); }
+    .ind-item--active { background: rgba(27,63,139,.07); }
+    .ind-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+    .ind-name {
+      font-size: .77rem;
+      font-weight: 500;
+      color: var(--n30);
+      flex: 1;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .ind-item--active .ind-name { color: var(--brand); font-weight: 600; }
+    .ind-badge {
+      font-size: .45rem;
+      color: var(--brand);
+      opacity: .7;
+    }
+
     /* ───── INDUSTRY SELECTOR ───── */
     #industry-selector {
       flex: 1;
@@ -977,9 +1062,9 @@
     .industry-grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
-      gap: 1.25rem;
+      gap: 1rem;
       width: 100%;
-      max-width: 860px;
+      max-width: 900px;
     }
 
     .industry-card {
@@ -1201,21 +1286,57 @@
         </a>
       </div>
 
-      <div class="nav-section">
-        <div class="nav-section__label">Industrias</div>
-        <a class="nav-item" id="nav-industry-composites" href="#" data-industry="composites">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
-          Composites & Aero
-          <span class="nav-badge nav-badge--blue">Activo</span>
-        </a>
-        <a class="nav-item" id="nav-industry-impresion" href="#" data-industry="impresion">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
-          Impresión & Packaging
-        </a>
-        <a class="nav-item" id="nav-industry-fundicion" href="#" data-industry="fundicion">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M6.3 6.3a8 8 0 1 0 11.4 0"/><path d="M12 2v4"/></svg>
-          Fundición & Metalurgia
-        </a>
+      <!-- Industries panel — separate collapsible menu -->
+      <div class="industries-panel" id="industriesPanel">
+        <button class="industries-panel__toggle" id="industriesToggle" aria-expanded="true">
+          <div class="industries-panel__left">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+            <span>Industrias</span>
+          </div>
+          <div class="industries-panel__right">
+            <span class="industries-panel__count">9</span>
+            <svg class="industries-panel__chevron" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+          </div>
+        </button>
+        <div class="industries-panel__list" id="industriesList">
+          <a class="ind-item" href="#" data-industry="composites">
+            <span class="ind-dot" style="background:#1B3F8B"></span>
+            <span class="ind-name">Composites & Aeroespacial</span>
+            <span class="ind-badge">●</span>
+          </a>
+          <a class="ind-item" href="#" data-industry="impresion">
+            <span class="ind-dot" style="background:#1E4DB7"></span>
+            <span class="ind-name">Impresión & Packaging</span>
+          </a>
+          <a class="ind-item" href="#" data-industry="fundicion">
+            <span class="ind-dot" style="background:#DC6803"></span>
+            <span class="ind-name">Fundición & Metalurgia</span>
+          </a>
+          <a class="ind-item" href="#" data-industry="muebles">
+            <span class="ind-dot" style="background:#16A34A"></span>
+            <span class="ind-name">Muebles & Madera</span>
+          </a>
+          <a class="ind-item" href="#" data-industry="medtech">
+            <span class="ind-dot" style="background:#7C3AED"></span>
+            <span class="ind-name">MedTech & Dispositivos</span>
+          </a>
+          <a class="ind-item" href="#" data-industry="ferroviario">
+            <span class="ind-dot" style="background:#0891B2"></span>
+            <span class="ind-name">Ferroviario MRO</span>
+          </a>
+          <a class="ind-item" href="#" data-industry="agroalimentario">
+            <span class="ind-dot" style="background:#D97706"></span>
+            <span class="ind-name">Agroalimentaria</span>
+          </a>
+          <a class="ind-item" href="#" data-industry="naval">
+            <span class="ind-dot" style="background:#055E8A"></span>
+            <span class="ind-name">Naval & Astilleros</span>
+          </a>
+          <a class="ind-item" href="#" data-industry="construccion">
+            <span class="ind-dot" style="background:#78351F"></span>
+            <span class="ind-name">Construcción Industrial</span>
+          </a>
+        </div>
       </div>
 
       <div class="nav-section">
@@ -1273,11 +1394,11 @@
             <svg width="7" height="7" viewBox="0 0 8 8" fill="currentColor"><circle cx="4" cy="4" r="4"/></svg>
             Piloto activo
           </span>
-          <div class="industry-card__icon icon--blue">
+          <div class="industry-card__icon" style="background:rgba(27,63,139,.1)">
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#1B3F8B" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
           </div>
           <div class="industry-card__name">Composites &amp;<br/>Aeroespacial</div>
-          <div class="industry-card__desc">Planificación de laminados, curado en autoclave y secuenciación de moldes. Replanificación IA ante disrupciones.</div>
+          <div class="industry-card__desc">Laminados, curado en autoclave y secuenciación de moldes. Replanificación IA ante disrupciones.</div>
           <div class="industry-card__cta">
             <span class="industry-card__link">Abrir panel</span>
             <span class="industry-card__kpis">OEE · Setup · Lead time</span>
@@ -1286,11 +1407,11 @@
 
         <div class="industry-card" data-industry="impresion">
           <span class="industry-card__badge badge--available">Disponible</span>
-          <div class="industry-card__icon icon--teal">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#0891B2" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
+          <div class="industry-card__icon" style="background:rgba(30,77,183,.1)">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#1E4DB7" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
           </div>
           <div class="industry-card__name">Impresión &amp;<br/>Packaging</div>
-          <div class="industry-card__desc">Gantt de tiradas, optimización de secuencia de colores y gestión de capacidad de prensa en tiempo real.</div>
+          <div class="industry-card__desc">Gantt de tiradas, optimización de secuencia de colores y capacidad de prensa en tiempo real.</div>
           <div class="industry-card__cta">
             <span class="industry-card__link">Abrir panel</span>
             <span class="industry-card__kpis">Setup · OEE · Tiradas</span>
@@ -1299,14 +1420,92 @@
 
         <div class="industry-card" data-industry="fundicion">
           <span class="industry-card__badge badge--available">Disponible</span>
-          <div class="industry-card__icon icon--orange">
+          <div class="industry-card__icon" style="background:rgba(220,104,3,.1)">
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#DC6803" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M6.3 6.3a8 8 0 1 0 11.4 0"/><path d="M12 2v4"/></svg>
           </div>
           <div class="industry-card__name">Fundición &amp;<br/>Metalurgia</div>
-          <div class="industry-card__desc">Batching inteligente de coladas, coordinación de 3 turnos y visibilidad de capacidad de hornos 24h.</div>
+          <div class="industry-card__desc">Batching inteligente de coladas, coordinación de 3 turnos y visibilidad de hornos 24h.</div>
           <div class="industry-card__cta">
             <span class="industry-card__link">Abrir panel</span>
             <span class="industry-card__kpis">Hornos · Aleaciones · Turnos</span>
+          </div>
+        </div>
+
+        <div class="industry-card" data-industry="muebles">
+          <span class="industry-card__badge badge--available">Disponible</span>
+          <div class="industry-card__icon" style="background:rgba(22,163,74,.1)">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#16A34A" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
+          </div>
+          <div class="industry-card__name">Muebles &amp;<br/>Madera</div>
+          <div class="industry-card__desc">Cabinas de pintura, CNC coordinados y seguimiento de fechas de entrega a cliente.</div>
+          <div class="industry-card__cta">
+            <span class="industry-card__link">Abrir panel</span>
+            <span class="industry-card__kpis">OTD · Cabinas · CNC</span>
+          </div>
+        </div>
+
+        <div class="industry-card" data-industry="medtech">
+          <span class="industry-card__badge badge--available">Disponible</span>
+          <div class="industry-card__icon" style="background:rgba(124,58,237,.1)">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#7C3AED" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+          </div>
+          <div class="industry-card__name">MedTech &amp;<br/>Dispositivos Médicos</div>
+          <div class="industry-card__desc">Trazabilidad por lote, restricciones regulatorias y plan sin romper validaciones GxP.</div>
+          <div class="industry-card__cta">
+            <span class="industry-card__link">Abrir panel</span>
+            <span class="industry-card__kpis">Trazabilidad · OEE · Auditoría</span>
+          </div>
+        </div>
+
+        <div class="industry-card" data-industry="ferroviario">
+          <span class="industry-card__badge badge--available">Disponible</span>
+          <div class="industry-card__icon" style="background:rgba(8,145,178,.1)">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#0891B2" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="3" width="16" height="13" rx="2"/><path d="M4 11h16M8 3v8M16 3v8M8 19l-2 3M16 19l2 3M12 16v3"/></svg>
+          </div>
+          <div class="industry-card__name">Ferroviario<br/>MRO</div>
+          <div class="industry-card__desc">Ventanas de mantenimiento nocturnas, coordinación multi-taller y cero multas por indisponibilidad.</div>
+          <div class="industry-card__cta">
+            <span class="industry-card__link">Abrir panel</span>
+            <span class="industry-card__kpis">Ventanas · MTTR · Flota</span>
+          </div>
+        </div>
+
+        <div class="industry-card" data-industry="agroalimentario">
+          <span class="industry-card__badge badge--available">Disponible</span>
+          <div class="industry-card__icon" style="background:rgba(217,119,6,.1)">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#D97706" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22V12M12 12C12 12 7 9 7 4a5 5 0 0 1 10 0c0 5-5 8-5 8z"/></svg>
+          </div>
+          <div class="industry-card__name">Industria<br/>Agroalimentaria</div>
+          <div class="industry-card__desc">Caducidad integrada en el plan, trazabilidad APPCC automática y OTD en temporada alta.</div>
+          <div class="industry-card__cta">
+            <span class="industry-card__link">Abrir panel</span>
+            <span class="industry-card__kpis">Merma · OTD · Trazabilidad</span>
+          </div>
+        </div>
+
+        <div class="industry-card" data-industry="naval">
+          <span class="industry-card__badge badge--available">Disponible</span>
+          <div class="industry-card__icon" style="background:rgba(5,94,138,.1)">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#055E8A" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="5" r="3"/><line x1="12" y1="22" x2="12" y2="8"/><path d="M5 12H2a10 10 0 0 0 20 0h-3"/></svg>
+          </div>
+          <div class="industry-card__name">Naval &amp;<br/>Astilleros</div>
+          <div class="industry-card__desc">Dique siempre ocupado, subcontratistas en el Gantt y coste de dique visible en dashboard.</div>
+          <div class="industry-card__cta">
+            <span class="industry-card__link">Abrir panel</span>
+            <span class="industry-card__kpis">Dique · Subcontratas · OTD</span>
+          </div>
+        </div>
+
+        <div class="industry-card" data-industry="construccion">
+          <span class="industry-card__badge badge--available">Disponible</span>
+          <div class="industry-card__icon" style="background:rgba(120,53,31,.1)">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#78351F" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+          </div>
+          <div class="industry-card__name">Construcción<br/>Industrial</div>
+          <div class="industry-card__desc">Moldes y grúas sin colisiones, coordinación planta-comercial y entrega a obra garantizada.</div>
+          <div class="industry-card__cta">
+            <span class="industry-card__link">Abrir panel</span>
+            <span class="industry-card__kpis">OTD · Moldes · Grúas</span>
           </div>
         </div>
 
@@ -1689,14 +1888,14 @@
   function showSelector() {
     selectorEl.classList.remove('hidden');
     dashboardEl.classList.remove('visible');
-    document.querySelectorAll('[data-industry]').forEach(el => el.classList.remove('nav-item--active'));
+    document.querySelectorAll('.ind-item').forEach(el => el.classList.remove('ind-item--active'));
   }
 
   function showDashboard(industry) {
     selectorEl.classList.add('hidden');
     dashboardEl.classList.add('visible');
-    document.querySelectorAll('[data-industry]').forEach(el => {
-      el.classList.toggle('nav-item--active', el.dataset.industry === industry);
+    document.querySelectorAll('.ind-item').forEach(el => {
+      el.classList.toggle('ind-item--active', el.dataset.industry === industry);
     });
   }
 
@@ -1740,12 +1939,22 @@
     card.addEventListener('click', () => showDashboard(card.dataset.industry));
   });
 
-  // Industry links in sidebar
-  document.querySelectorAll('[data-industry]').forEach(link => {
+  // Industry links in sidebar panel
+  document.querySelectorAll('.ind-item').forEach(link => {
     link.addEventListener('click', e => {
       e.preventDefault();
       showDashboard(link.dataset.industry);
     });
+  });
+
+  // Toggle industries panel collapse
+  const industriesToggle = document.getElementById('industriesToggle');
+  const industriesPanel  = document.getElementById('industriesPanel');
+  industriesToggle.addEventListener('click', () => {
+    industriesPanel.classList.toggle('collapsed');
+    industriesToggle.setAttribute('aria-expanded',
+      !industriesPanel.classList.contains('collapsed') ? 'true' : 'false'
+    );
   });
 
   // Logout
