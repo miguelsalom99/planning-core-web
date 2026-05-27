@@ -815,6 +815,32 @@
     .filter-badge { font-size: .58rem; font-weight: 800; background: var(--brand); color: #fff; padding: .1rem .35rem; border-radius: 999px; margin-left: .15rem; }
     .filter-btn--active { background: rgba(27,63,139,.08) !important; border-color: rgba(27,63,139,.3) !important; color: var(--brand) !important; }
 
+    /* ── GANTT ZOOM + EXPAND ── */
+    .gantt-zoom-group { display: flex; align-items: center; gap: 1px; }
+    .zoom-btn { display: inline-flex; align-items: center; justify-content: center; width: 26px; height: 26px; font-size: .85rem; font-weight: 700; border: 1px solid var(--n80); background: var(--white); color: var(--n30); border-radius: var(--radius); cursor: pointer; transition: all var(--transition); box-shadow: var(--shadow-sm); font-family: inherit; }
+    .zoom-btn:hover:not(:disabled) { background: var(--n90); }
+    .zoom-btn:disabled { opacity: .35; cursor: default; }
+    .zoom-label { font-size: .68rem; font-weight: 700; color: var(--n50); min-width: 34px; text-align: center; }
+    .expand-btn { display: inline-flex; align-items: center; justify-content: center; width: 26px; height: 26px; border: 1px solid var(--n80); background: var(--white); color: var(--n50); border-radius: var(--radius); cursor: pointer; transition: all var(--transition); box-shadow: var(--shadow-sm); }
+    .expand-btn:hover { background: var(--n90); color: var(--n20); }
+    #gantt-semana { overflow-x: auto; }
+    #gantt-turno  { overflow-x: auto; }
+    .gantt-card--expanded {
+      position: fixed;
+      top: var(--topbar-h);
+      left: var(--sidebar-w);
+      right: 0;
+      bottom: 0;
+      z-index: 200;
+      border-radius: 0;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+    .gantt-card--expanded #gantt-semana,
+    .gantt-card--expanded #gantt-turno { flex: 1; overflow: auto; }
+    .gantt-card--expanded .gantt-legend { flex-shrink: 0; }
+
     /* ── BLOCK DETAIL POPOVER ── */
     .block-popover {
       position: fixed;
@@ -1880,6 +1906,14 @@
               <span class="tab tab--active" data-view="semana">Semana</span>
               <span class="tab" data-view="turno">Turno</span>
             </div>
+            <div class="gantt-zoom-group">
+              <button class="zoom-btn" id="zoomOut" title="Alejar" disabled>−</button>
+              <span class="zoom-label" id="zoomLabel">100%</span>
+              <button class="zoom-btn" id="zoomIn" title="Acercar">+</button>
+            </div>
+            <button class="expand-btn" id="expandGantt" title="Ampliar Gantt">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/><line x1="21" y1="3" x2="14" y2="10"/><line x1="3" y1="21" x2="10" y2="14"/></svg>
+            </button>
             <div class="filter-wrapper">
               <button class="btn-ui" id="filterBtn" style="padding:.3rem .7rem;font-size:.72rem">
                 <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="6" x2="20" y2="6"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="18" x2="20" y2="18"/></svg>
@@ -3227,6 +3261,74 @@
     blockPopoverClose && blockPopoverClose.addEventListener('click', () => blockPopover.classList.remove('open'));
     document.addEventListener('click', e => {
       if (blockPopover && !blockPopover.contains(e.target)) blockPopover.classList.remove('open');
+    });
+
+    // 10. ZOOM ── ±
+    const ZOOM_STEPS = [50, 75, 100, 140, 190, 260];
+    const BASE_COL_PX = 160; // px per column at 100%
+    let zoomIdx = 2; // index for 100%
+    const zoomInBtn  = document.getElementById('zoomIn');
+    const zoomOutBtn = document.getElementById('zoomOut');
+    const zoomLbl    = document.getElementById('zoomLabel');
+
+    function applyZoom() {
+      const pct = ZOOM_STEPS[zoomIdx];
+      zoomLbl.textContent = pct + '%';
+      zoomOutBtn.disabled = zoomIdx === 0;
+      zoomInBtn.disabled  = zoomIdx === ZOOM_STEPS.length - 1;
+
+      if (zoomIdx === 2) {
+        // Reset to fluid layout
+        document.querySelectorAll('.gantt-grid').forEach(g => g.style.gridTemplateColumns = '');
+        document.querySelectorAll('.gantt-days, .gantt-timeline').forEach(el => el.style.gridTemplateColumns = '');
+        document.querySelectorAll('.turno-track, .turno-empty-track').forEach(el => el.style.minWidth = '');
+        document.querySelectorAll('.turno-hour-header').forEach(el => el.style.minWidth = '');
+        document.querySelectorAll('#gantt-turno [style*="grid-template-columns"]').forEach(el => el.style.gridTemplateColumns = '');
+      } else {
+        const colW  = Math.round(BASE_COL_PX * pct / 100);
+        const totalW = 5 * colW;
+        document.querySelectorAll('.gantt-grid').forEach(g => {
+          g.style.gridTemplateColumns = `148px ${totalW}px`;
+        });
+        document.querySelectorAll('.gantt-days, .gantt-timeline').forEach(el => {
+          el.style.gridTemplateColumns = `repeat(5, ${colW}px)`;
+        });
+        // Turno: make tracks wide enough
+        const turnoMinW = Math.round(800 * pct / 100);
+        document.querySelectorAll('.turno-track, .turno-empty-track, .turno-hour-header').forEach(el => {
+          el.style.minWidth = turnoMinW + 'px';
+        });
+        // Turno grid header
+        document.querySelectorAll('#gantt-turno > div[style*="grid-template-columns"]').forEach(el => {
+          el.style.gridTemplateColumns = `148px ${turnoMinW}px`;
+        });
+      }
+    }
+
+    zoomInBtn  && zoomInBtn.addEventListener('click',  () => { if (zoomIdx < ZOOM_STEPS.length - 1) { zoomIdx++; applyZoom(); } });
+    zoomOutBtn && zoomOutBtn.addEventListener('click', () => { if (zoomIdx > 0)                     { zoomIdx--; applyZoom(); } });
+
+    // 11. EXPAND ── fullscreen toggle
+    const expandBtn  = document.getElementById('expandGantt');
+    const ganttCard2 = document.querySelector('.gantt-card');
+    const expandIconOpen  = `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/><line x1="21" y1="3" x2="14" y2="10"/><line x1="3" y1="21" x2="10" y2="14"/></svg>`;
+    const expandIconClose = `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="4 14 10 14 10 20"/><polyline points="20 10 14 10 14 4"/><line x1="10" y1="14" x2="3" y2="21"/><line x1="21" y1="3" x2="14" y2="10"/></svg>`;
+    let ganttExpanded = false;
+
+    expandBtn && expandBtn.addEventListener('click', () => {
+      ganttExpanded = !ganttExpanded;
+      ganttCard2.classList.toggle('gantt-card--expanded', ganttExpanded);
+      expandBtn.innerHTML = ganttExpanded ? expandIconClose : expandIconOpen;
+      expandBtn.title = ganttExpanded ? 'Reducir' : 'Ampliar Gantt';
+    });
+
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Escape' && ganttExpanded) {
+        ganttExpanded = false;
+        ganttCard2.classList.remove('gantt-card--expanded');
+        expandBtn.innerHTML = expandIconOpen;
+        expandBtn.title = 'Ampliar Gantt';
+      }
     });
   }
 
