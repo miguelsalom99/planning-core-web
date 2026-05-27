@@ -114,6 +114,26 @@
       padding: 0 1.25rem;
     }
 
+    .back-btn {
+      display: flex;
+      align-items: center;
+      gap: .35rem;
+      font-size: .78rem;
+      font-weight: 500;
+      color: rgba(255,255,255,.55);
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-family: inherit;
+      padding: .3rem .5rem;
+      border-radius: 6px;
+      transition: all .15s;
+      white-space: nowrap;
+    }
+    .back-btn:hover { color: rgba(255,255,255,.9); background: rgba(255,255,255,.07); }
+    .back-btn svg { flex-shrink: 0; }
+    .back-btn.hidden, .back-sep.hidden { display: none; }
+
     .topbar__company {
       display: flex;
       align-items: center;
@@ -1206,6 +1226,11 @@
     </a>
 
     <div class="topbar__center">
+      <button class="back-btn hidden" id="backToSelector">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+        Industrias
+      </button>
+      <div class="topbar__sep back-sep hidden"></div>
       <div class="topbar__company">
         <div class="company-avatar" id="co-initials">—</div>
         <span class="company-name" id="co-name">Cargando…</span>
@@ -1887,11 +1912,15 @@
   const dashboardEl = document.getElementById('dashboard-view');
 
   const industriesPanelEl = document.getElementById('industriesPanel');
+  const backBtn           = document.getElementById('backToSelector');
+  const backSep           = document.querySelector('.back-sep');
 
   function showSelector() {
     selectorEl.classList.remove('hidden');
     dashboardEl.classList.remove('visible');
     industriesPanelEl.classList.add('hidden');
+    backBtn.classList.add('hidden');
+    backSep.classList.add('hidden');
     document.querySelectorAll('.ind-item').forEach(el => el.classList.remove('ind-item--active'));
   }
 
@@ -1899,6 +1928,8 @@
     selectorEl.classList.add('hidden');
     dashboardEl.classList.add('visible');
     industriesPanelEl.classList.remove('hidden');
+    backBtn.classList.remove('hidden');
+    backSep.classList.remove('hidden');
     document.querySelectorAll('.ind-item').forEach(el => {
       el.classList.toggle('ind-item--active', el.dataset.industry === industry);
     });
@@ -1951,6 +1982,9 @@
       showDashboard(link.dataset.industry);
     });
   });
+
+  // Back to selector
+  backBtn.addEventListener('click', showSelector);
 
   // Toggle industries panel collapse
   const industriesToggle = document.getElementById('industriesToggle');
