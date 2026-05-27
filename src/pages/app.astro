@@ -774,10 +774,44 @@
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
-      cursor: pointer;
-      transition: filter var(--transition), transform var(--transition);
+      cursor: grab;
+      transition: filter var(--transition), transform var(--transition), opacity var(--transition);
+      user-select: none;
     }
     .gantt-block:hover { filter: brightness(1.1); transform: scaleY(1.05); }
+    .gantt-block.dragging { opacity: .3; cursor: grabbing; transform: none; filter: none; }
+    .gantt-cell.drop-target {
+      background: rgba(27,63,139,.07);
+      outline: 2px dashed rgba(27,63,139,.35);
+      outline-offset: -3px;
+      border-radius: 4px;
+    }
+    .gantt-cell.drop-target--invalid { outline-color: rgba(220,38,38,.35); background: rgba(220,38,38,.04); }
+
+    /* Replan loading */
+    @keyframes spin-btn { to { transform: rotate(360deg); } }
+    .spin-icon { animation: spin-btn .7s linear infinite; }
+
+    /* Toast */
+    .toast {
+      position: fixed;
+      bottom: 1.75rem;
+      left: 50%;
+      transform: translateX(-50%) translateY(12px);
+      background: #1E293B;
+      color: #fff;
+      font-size: .8rem;
+      font-weight: 500;
+      padding: .65rem 1.25rem;
+      border-radius: 8px;
+      box-shadow: 0 4px 24px rgba(0,0,0,.3);
+      z-index: 9999;
+      opacity: 0;
+      transition: opacity .2s, transform .2s;
+      white-space: nowrap;
+      pointer-events: none;
+    }
+    .toast.visible { opacity: 1; transform: translateX(-50%) translateY(0); }
 
     .gb--blue   { background: var(--brand); }
     .gb--teal   { background: #0891B2; }
@@ -1905,6 +1939,8 @@
   </div>
 </div>
 
+<div class="toast" id="toast"></div>
+
 <script>
   const API = 'https://composite-replanning-api.vercel.app';
   const LOGIN_URL = 'https://composite-replanning-api.vercel.app/login?next=https://planning-core-web.vercel.app/app';
@@ -1937,6 +1973,7 @@
     document.querySelectorAll('.ind-item').forEach(el => {
       el.classList.toggle('ind-item--active', el.dataset.industry === industry);
     });
+    initDashboard();
   }
 
   async function init() {
@@ -1989,6 +2026,129 @@
 
   // Back to selector
   backBtn.addEventListener('click', showSelector);
+
+  // ── Toast ──────────────────────────────────────────────
+  function showToast(msg, duration = 3000) {
+    const toast = document.getElementById('toast');
+    toast.textContent = msg;
+    toast.classList.add('visible');
+    clearTimeout(toast._timer);
+    toast._timer = setTimeout(() => toast.classList.remove('visible'), duration);
+  }
+
+  // ── Dashboard interactivity (init once dashboard is shown) ──
+  let dashboardReady = false;
+
+  function initDashboard() {
+    if (dashboardReady) return;
+    dashboardReady = true;
+
+    // 1. Tab group switching
+    document.querySelectorAll('.tab-group').forEach(group => {
+      group.querySelectorAll('.tab').forEach(tab => {
+        tab.addEventListener('click', () => {
+          group.querySelectorAll('.tab').forEach(t => t.classList.remove('tab--active'));
+          tab.classList.add('tab--active');
+        });
+      });
+    });
+
+    // 2. Gantt drag & drop
+    let draggedBlock = null;
+
+    document.querySelectorAll('.gantt-block').forEach(block => {
+      block.setAttribute('draggable', 'true');
+
+      block.addEventListener('dragstart', e => {
+        draggedBlock = block;
+        e.dataTransfer.effectAllowed = 'move';
+        setTimeout(() => block.classList.add('dragging'), 0);
+      });
+
+      block.addEventListener('dragend', () => {
+        block.classList.remove('dragging');
+        document.querySelectorAll('.gantt-cell').forEach(c => {
+          c.classList.remove('drop-target', 'drop-target--invalid');
+        });
+        draggedBlock = null;
+      });
+    });
+
+    document.querySelectorAll('.gantt-cell').forEach(cell => {
+      cell.addEventListener('dragover', e => {
+        e.preventDefault();
+        e.dataTransfer.dropEffect = 'move';
+        cell.classList.add('drop-target');
+      });
+
+      cell.addEventListener('dragleave', e => {
+        if (!cell.contains(e.relatedTarget)) {
+          cell.classList.remove('drop-target', 'drop-target--invalid');
+        }
+      });
+
+      cell.addEventListener('drop', e => {
+        e.preventDefault();
+        cell.classList.remove('drop-target', 'drop-target--invalid');
+        if (!draggedBlock) return;
+        if (draggedBlock.parentElement === cell) return;
+        cell.appendChild(draggedBlock);
+        showToast('Orden replanificada manualmente · Plan actualizado');
+      });
+    });
+
+    // 3. Alert banner — "Ver sugerencia"
+    const alertCTA    = document.querySelector('.alert-banner__cta');
+    const alertBanner = document.querySelector('.alert-banner');
+    if (alertCTA && alertBanner) {
+      alertCTA.addEventListener('click', () => {
+        alertBanner.style.transition = 'opacity .25s, transform .25s';
+        alertBanner.style.opacity = '0';
+        alertBanner.style.transform = 'translateY(-6px)';
+        setTimeout(() => { alertBanner.style.display = 'none'; }, 260);
+        showToast('✓ Sugerencia aplicada · OF-2041 movida al turno tarde');
+      });
+    }
+
+    // 4. Replanificar IA
+    const replanBtn = document.querySelector('.btn-ui--primary');
+    if (replanBtn) {
+      replanBtn.addEventListener('click', async () => {
+        if (replanBtn.disabled) return;
+        const original = replanBtn.innerHTML;
+        replanBtn.disabled = true;
+        replanBtn.innerHTML = `<svg class="spin-icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg> Calculando…`;
+        await new Promise(r => setTimeout(r, 2200));
+        replanBtn.innerHTML = original;
+        replanBtn.disabled = false;
+        showToast('✓ Plan optimizado · 3 órdenes reordenadas · CNC-2 pasa al 81%', 4000);
+      });
+    }
+
+    // 5. Exportar
+    const exportBtn = document.querySelector('.header-actions .btn-ui:first-child');
+    if (exportBtn) {
+      exportBtn.addEventListener('click', () => {
+        showToast('Plan exportado · Descarga iniciada');
+      });
+    }
+
+    // 6. Escenarios
+    const scenariosBtn = document.querySelector('.header-actions .btn-ui:nth-child(2)');
+    if (scenariosBtn) {
+      scenariosBtn.addEventListener('click', () => {
+        showToast('Escenarios: función disponible próximamente');
+      });
+    }
+
+    // 7. Filtrar
+    const filterBtn = document.querySelector('.gantt-header__right .btn-ui');
+    if (filterBtn) {
+      filterBtn.addEventListener('click', () => {
+        showToast('Filtro aplicado · Mostrando recursos con >70% ocupación');
+      });
+    }
+  }
 
   // Toggle industries panel collapse
   const industriesToggle = document.getElementById('industriesToggle');
