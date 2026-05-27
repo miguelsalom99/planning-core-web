@@ -788,6 +788,54 @@
     }
     .gantt-cell.drop-target--invalid { outline-color: rgba(220,38,38,.35); background: rgba(220,38,38,.04); }
 
+    /* ── FILTER DROPDOWN ── */
+    .gantt-row--hidden { display: none !important; }
+    .filter-wrapper { position: relative; }
+    .filter-dropdown {
+      position: absolute;
+      top: calc(100% + 8px);
+      right: 0;
+      background: var(--white);
+      border: 1px solid var(--n80);
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-md);
+      z-index: 400;
+      min-width: 230px;
+      padding: .85rem;
+      display: none;
+    }
+    .filter-dropdown.open { display: block; }
+    .filter-section { margin-bottom: .75rem; }
+    .filter-section__label { font-size: .6rem; font-weight: 700; text-transform: uppercase; letter-spacing: .1em; color: #94A3B8; margin-bottom: .45rem; }
+    .filter-check-row { display: flex; align-items: center; gap: .55rem; padding: .28rem 0; cursor: pointer; user-select: none; }
+    .filter-check-row input[type=checkbox] { accent-color: var(--brand); width: 13px; height: 13px; cursor: pointer; flex-shrink: 0; }
+    .filter-check-row span { font-size: .78rem; color: var(--n30); display: flex; align-items: center; gap: .4rem; }
+    .filter-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+    .filter-actions { display: flex; gap: .5rem; padding-top: .65rem; border-top: 1px solid var(--n80); margin-top: .65rem; }
+    .filter-badge { font-size: .58rem; font-weight: 800; background: var(--brand); color: #fff; padding: .1rem .35rem; border-radius: 999px; margin-left: .15rem; }
+    .filter-btn--active { background: rgba(27,63,139,.08) !important; border-color: rgba(27,63,139,.3) !important; color: var(--brand) !important; }
+
+    /* ── BLOCK DETAIL POPOVER ── */
+    .block-popover {
+      position: fixed;
+      background: var(--white);
+      border: 1px solid var(--n80);
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-md);
+      z-index: 500;
+      min-width: 210px;
+      padding: .9rem 1rem;
+      display: none;
+    }
+    .block-popover.open { display: block; }
+    .block-popover__head { display: flex; align-items: center; justify-content: space-between; margin-bottom: .6rem; }
+    .block-popover__title { font-size: .82rem; font-weight: 700; color: var(--navy); }
+    .block-popover__close { background: none; border: none; cursor: pointer; color: #94A3B8; font-size: 1.1rem; line-height: 1; padding: 0 .15rem; }
+    .block-popover__row { display: flex; justify-content: space-between; font-size: .72rem; padding: .22rem 0; border-bottom: 1px solid var(--n80); }
+    .block-popover__row:last-child { border-bottom: none; }
+    .block-popover__label { color: var(--n50); }
+    .block-popover__val { font-weight: 600; color: var(--n20); }
+
     /* Replan loading */
     @keyframes spin-btn { to { transform: rotate(360deg); } }
     .spin-icon { animation: spin-btn .7s linear infinite; }
@@ -1832,10 +1880,35 @@
               <span class="tab tab--active" data-view="semana">Semana</span>
               <span class="tab" data-view="turno">Turno</span>
             </div>
-            <button class="btn-ui" style="padding:.3rem .7rem;font-size:.72rem">
-              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="6" x2="20" y2="6"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="18" x2="20" y2="18"/></svg>
-              Filtrar
-            </button>
+            <div class="filter-wrapper">
+              <button class="btn-ui" id="filterBtn" style="padding:.3rem .7rem;font-size:.72rem">
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="6" x2="20" y2="6"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="18" x2="20" y2="18"/></svg>
+                Filtrar
+                <span class="filter-badge" id="filterBadge" style="display:none">0</span>
+              </button>
+              <div class="filter-dropdown" id="filterDropdown">
+                <div class="filter-section">
+                  <div class="filter-section__label">Recursos</div>
+                  <label class="filter-check-row"><input type="checkbox" data-resource="cnc-1" checked><span><span class="filter-dot" style="background:var(--green)"></span>CNC-1 — Fresado</span></label>
+                  <label class="filter-check-row"><input type="checkbox" data-resource="cnc-2" checked><span><span class="filter-dot" style="background:var(--amber)"></span>CNC-2 — Torneado</span></label>
+                  <label class="filter-check-row"><input type="checkbox" data-resource="soldadura" checked><span><span class="filter-dot" style="background:var(--brand)"></span>Soldadura</span></label>
+                  <label class="filter-check-row"><input type="checkbox" data-resource="acabados" checked><span><span class="filter-dot" style="background:var(--green)"></span>Acabados</span></label>
+                  <label class="filter-check-row"><input type="checkbox" data-resource="embalaje" checked><span><span class="filter-dot" style="background:#94A3B8"></span>Embalaje</span></label>
+                </div>
+                <div class="filter-section">
+                  <div class="filter-section__label">Estado</div>
+                  <div class="filter-chips">
+                    <span class="chip chip--active" data-status="todos">Todos</span>
+                    <span class="chip" data-status="riesgo">En riesgo</span>
+                    <span class="chip" data-status="ok">En plazo</span>
+                  </div>
+                </div>
+                <div class="filter-actions">
+                  <button class="btn-ui" id="filterClear" style="flex:1;font-size:.75rem">Limpiar</button>
+                  <button class="btn-ui btn-ui--primary" id="filterApply" style="flex:1;font-size:.75rem">Aplicar</button>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -1852,6 +1925,7 @@
           </div>
 
           <!-- CNC-1 -->
+          <div class="gantt-row" data-resource="cnc-1">
           <div class="gantt-resource">
             <div class="res-indicator res-indicator--green"></div>
             <div>
@@ -1861,25 +1935,27 @@
           </div>
           <div class="gantt-timeline">
             <div class="gantt-cell">
-              <div class="gantt-block gb--blue" style="width:100%">OF-2038 · Carcasa A</div>
+              <div class="gantt-block gb--blue" style="width:100%" data-of="OF-2038" data-recurso="CNC-1" data-inicio="Lun 19 · 06:00" data-fin="Mar 20 · 12:00" data-pct="82%" data-estado="En plazo">OF-2038 · Carcasa A</div>
             </div>
             <div class="gantt-cell">
-              <div class="gantt-block gb--blue" style="width:55%">OF-2038</div>
-              <div class="gantt-block gb--teal" style="width:42%;margin-top:2px">OF-2041</div>
+              <div class="gantt-block gb--blue" style="width:55%" data-of="OF-2038" data-recurso="CNC-1" data-inicio="Lun 19 · 06:00" data-fin="Mar 20 · 12:00" data-pct="82%" data-estado="En plazo">OF-2038</div>
+              <div class="gantt-block gb--teal" style="width:42%;margin-top:2px" data-of="OF-2041" data-recurso="CNC-1" data-inicio="Mar 20 · 14:00" data-fin="Mié 21 · 22:00" data-pct="45%" data-estado="En riesgo">OF-2041</div>
             </div>
             <div class="gantt-cell gantt-cell--today" style="position:relative">
               <div class="today-line"></div>
-              <div class="gantt-block gb--teal" style="width:100%">OF-2041 · Soporte B</div>
+              <div class="gantt-block gb--teal" style="width:100%" data-of="OF-2041" data-recurso="CNC-1" data-inicio="Mar 20 · 14:00" data-fin="Mié 21 · 22:00" data-pct="45%" data-estado="En riesgo">OF-2041 · Soporte B</div>
             </div>
             <div class="gantt-cell">
-              <div class="gantt-block gb--green" style="width:70%">OF-2044</div>
+              <div class="gantt-block gb--green" style="width:70%" data-of="OF-2044" data-recurso="CNC-1" data-inicio="Jue 22 · 06:00" data-fin="Vie 23 · 18:00" data-pct="10%" data-estado="En plazo">OF-2044</div>
             </div>
             <div class="gantt-cell">
-              <div class="gantt-block gb--green" style="width:90%">OF-2044 · Eje motor</div>
+              <div class="gantt-block gb--green" style="width:90%" data-of="OF-2044" data-recurso="CNC-1" data-inicio="Jue 22 · 06:00" data-fin="Vie 23 · 18:00" data-pct="10%" data-estado="En plazo">OF-2044 · Eje motor</div>
             </div>
+          </div>
           </div>
 
           <!-- CNC-2 -->
+          <div class="gantt-row" data-resource="cnc-2">
           <div class="gantt-resource">
             <div class="res-indicator res-indicator--amber"></div>
             <div>
@@ -1889,23 +1965,25 @@
           </div>
           <div class="gantt-timeline">
             <div class="gantt-cell">
-              <div class="gantt-block gb--purple" style="width:100%">OF-2039 · Placa base</div>
+              <div class="gantt-block gb--purple" style="width:100%" data-of="OF-2039" data-recurso="CNC-2" data-inicio="Lun 19 · 06:00" data-fin="Mar 20 · 22:00" data-pct="61%" data-estado="En plazo">OF-2039 · Placa base</div>
             </div>
             <div class="gantt-cell">
-              <div class="gantt-block gb--purple" style="width:100%">OF-2039</div>
+              <div class="gantt-block gb--purple" style="width:100%" data-of="OF-2039" data-recurso="CNC-2" data-inicio="Lun 19 · 06:00" data-fin="Mar 20 · 22:00" data-pct="61%" data-estado="En plazo">OF-2039</div>
             </div>
             <div class="gantt-cell gantt-cell--today">
-              <div class="gantt-block gb--amber" style="width:100%">OF-2042 · Brida C</div>
+              <div class="gantt-block gb--amber" style="width:100%" data-of="OF-2042" data-recurso="CNC-2" data-inicio="Mié 21 · 06:00" data-fin="Jue 22 · 15:00" data-pct="30%" data-estado="En riesgo">OF-2042 · Brida C</div>
             </div>
             <div class="gantt-cell">
-              <div class="gantt-block gb--amber" style="width:100%">OF-2042</div>
+              <div class="gantt-block gb--amber" style="width:100%" data-of="OF-2042" data-recurso="CNC-2" data-inicio="Mié 21 · 06:00" data-fin="Jue 22 · 15:00" data-pct="30%" data-estado="En riesgo">OF-2042</div>
             </div>
             <div class="gantt-cell">
-              <div class="gantt-block gb--blue" style="width:60%">OF-2047</div>
+              <div class="gantt-block gb--blue" style="width:60%" data-of="OF-2047" data-recurso="CNC-2" data-inicio="Vie 23 · 06:00" data-fin="Vie 23 · 14:00" data-pct="0%" data-estado="En plazo">OF-2047</div>
             </div>
+          </div>
           </div>
 
           <!-- Soldadura -->
+          <div class="gantt-row" data-resource="soldadura">
           <div class="gantt-resource">
             <div class="res-indicator res-indicator--blue"></div>
             <div>
@@ -1916,20 +1994,22 @@
           <div class="gantt-timeline">
             <div class="gantt-cell"></div>
             <div class="gantt-cell">
-              <div class="gantt-block gb--green" style="width:100%">OF-2040 · Marco</div>
+              <div class="gantt-block gb--green" style="width:100%" data-of="OF-2040" data-recurso="Soldadura" data-inicio="Mar 20 · 06:00" data-fin="Mié 21 · 22:00" data-pct="72%" data-estado="En plazo">OF-2040 · Marco</div>
             </div>
             <div class="gantt-cell gantt-cell--today">
-              <div class="gantt-block gb--green" style="width:100%">OF-2040</div>
+              <div class="gantt-block gb--green" style="width:100%" data-of="OF-2040" data-recurso="Soldadura" data-inicio="Mar 20 · 06:00" data-fin="Mié 21 · 22:00" data-pct="72%" data-estado="En plazo">OF-2040</div>
             </div>
             <div class="gantt-cell">
-              <div class="gantt-block gb--teal" style="width:100%">OF-2043 · Depósito</div>
+              <div class="gantt-block gb--teal" style="width:100%" data-of="OF-2043" data-recurso="Soldadura" data-inicio="Jue 22 · 06:00" data-fin="Vie 23 · 16:00" data-pct="0%" data-estado="En plazo">OF-2043 · Depósito</div>
             </div>
             <div class="gantt-cell">
-              <div class="gantt-block gb--teal" style="width:80%">OF-2043</div>
+              <div class="gantt-block gb--teal" style="width:80%" data-of="OF-2043" data-recurso="Soldadura" data-inicio="Jue 22 · 06:00" data-fin="Vie 23 · 16:00" data-pct="0%" data-estado="En plazo">OF-2043</div>
             </div>
+          </div>
           </div>
 
           <!-- Acabados -->
+          <div class="gantt-row" data-resource="acabados">
           <div class="gantt-resource">
             <div class="res-indicator res-indicator--green"></div>
             <div>
@@ -1941,17 +2021,19 @@
             <div class="gantt-cell"></div>
             <div class="gantt-cell"></div>
             <div class="gantt-cell gantt-cell--today">
-              <div class="gantt-block gb--gray" style="width:100%">OF-2038 · QC</div>
+              <div class="gantt-block gb--gray" style="width:100%" data-of="OF-2038" data-recurso="Acabados" data-inicio="Mié 21 · 06:00" data-fin="Mié 21 · 14:00" data-pct="90%" data-estado="En plazo">OF-2038 · QC</div>
             </div>
             <div class="gantt-cell">
-              <div class="gantt-block gb--gray" style="width:100%">OF-2038 · Pintura</div>
+              <div class="gantt-block gb--gray" style="width:100%" data-of="OF-2038" data-recurso="Acabados" data-inicio="Jue 22 · 06:00" data-fin="Jue 22 · 22:00" data-pct="15%" data-estado="En plazo">OF-2038 · Pintura</div>
             </div>
             <div class="gantt-cell">
-              <div class="gantt-block gb--purple" style="width:70%">OF-2039 · QC</div>
+              <div class="gantt-block gb--purple" style="width:70%" data-of="OF-2039" data-recurso="Acabados" data-inicio="Vie 23 · 06:00" data-fin="Vie 23 · 14:00" data-pct="0%" data-estado="En plazo">OF-2039 · QC</div>
             </div>
+          </div>
           </div>
 
           <!-- Embalaje -->
+          <div class="gantt-row" data-resource="embalaje">
           <div class="gantt-resource">
             <div class="res-indicator res-indicator--gray"></div>
             <div>
@@ -1962,13 +2044,14 @@
           <div class="gantt-timeline">
             <div class="gantt-cell"></div>
             <div class="gantt-cell">
-              <div class="gantt-block gb--green" style="width:50%">OF-2036</div>
+              <div class="gantt-block gb--green" style="width:50%" data-of="OF-2036" data-recurso="Embalaje" data-inicio="Mar 20 · 06:00" data-fin="Mar 20 · 14:00" data-pct="100%" data-estado="En plazo">OF-2036</div>
             </div>
             <div class="gantt-cell gantt-cell--today"></div>
             <div class="gantt-cell"></div>
             <div class="gantt-cell">
-              <div class="gantt-block gb--blue" style="width:100%">OF-2038 · Envío</div>
+              <div class="gantt-block gb--blue" style="width:100%" data-of="OF-2038" data-recurso="Embalaje" data-inicio="Vie 23 · 06:00" data-fin="Vie 23 · 22:00" data-pct="0%" data-estado="En plazo">OF-2038 · Envío</div>
             </div>
+          </div>
           </div>
         </div>
         </div><!-- /#gantt-semana -->
@@ -1998,7 +2081,7 @@
             </div>
           </div>
           <!-- CNC-1 -->
-          <div class="turno-row">
+          <div class="turno-row" data-resource="cnc-1">
             <div class="turno-resource">
               <div class="res-indicator res-indicator--green"></div>
               <div><div class="res-name">CNC-1</div><div class="res-sub">Fresado · 78%</div></div>
@@ -2013,7 +2096,7 @@
             </div>
           </div>
           <!-- CNC-2 -->
-          <div class="turno-row">
+          <div class="turno-row" data-resource="cnc-2">
             <div class="turno-resource">
               <div class="res-indicator res-indicator--amber"></div>
               <div><div class="res-name">CNC-2</div><div class="res-sub">Torneado · ⚠ 96%</div></div>
@@ -2028,7 +2111,7 @@
             </div>
           </div>
           <!-- Soldadura -->
-          <div class="turno-row">
+          <div class="turno-row" data-resource="soldadura">
             <div class="turno-resource">
               <div class="res-indicator res-indicator--blue"></div>
               <div><div class="res-name">Soldadura</div><div class="res-sub">Robot MIG · 85%</div></div>
@@ -2043,7 +2126,7 @@
             </div>
           </div>
           <!-- Acabados -->
-          <div class="turno-row">
+          <div class="turno-row" data-resource="acabados">
             <div class="turno-resource">
               <div class="res-indicator res-indicator--green"></div>
               <div><div class="res-name">Acabados</div><div class="res-sub">Pintura + QC · 62%</div></div>
@@ -2058,7 +2141,7 @@
             </div>
           </div>
           <!-- Embalaje -->
-          <div class="turno-row">
+          <div class="turno-row" data-resource="embalaje">
             <div class="turno-resource">
               <div class="res-indicator res-indicator--gray"></div>
               <div><div class="res-name">Embalaje</div><div class="res-sub">Expedición · 40%</div></div>
@@ -2732,6 +2815,18 @@
   </div>
 </div>
 
+<div class="block-popover" id="blockPopover">
+  <div class="block-popover__head">
+    <span class="block-popover__title" id="bpTitle">OF-XXXX</span>
+    <button class="block-popover__close" id="blockPopoverClose">×</button>
+  </div>
+  <div class="block-popover__row"><span class="block-popover__label">Recurso</span><span class="block-popover__val" id="bpResource">—</span></div>
+  <div class="block-popover__row"><span class="block-popover__label">Inicio</span><span class="block-popover__val" id="bpStart">—</span></div>
+  <div class="block-popover__row"><span class="block-popover__label">Fin</span><span class="block-popover__val" id="bpEnd">—</span></div>
+  <div class="block-popover__row"><span class="block-popover__label">Progreso</span><span class="block-popover__val" id="bpPct">—</span></div>
+  <div class="block-popover__row"><span class="block-popover__label">Estado</span><span class="block-popover__val" id="bpStatus">—</span></div>
+</div>
+
 <div class="toast" id="toast"></div>
 
 <script>
@@ -2945,10 +3040,8 @@
       item.addEventListener('click', e => {
         e.preventDefault();
         const panel = item.dataset.panel;
-        // Update nav active state
         document.querySelectorAll('.nav-item[data-panel]').forEach(n => n.classList.remove('nav-item--active'));
         item.classList.add('nav-item--active');
-        // Show correct panel
         document.querySelectorAll('.dash-panel').forEach(p => p.style.display = 'none');
         const target = document.getElementById('panel-' + panel);
         if (target) target.style.display = '';
@@ -2999,13 +3092,142 @@
       });
     }
 
-    // 7. Filtrar
-    const filterBtn = document.querySelector('.gantt-header__right .btn-ui');
-    if (filterBtn) {
-      filterBtn.addEventListener('click', () => {
-        showToast('Filtro aplicado · Mostrando recursos con >70% ocupación');
+    // 7. FILTRAR — real filter dropdown
+    const filterBtn     = document.getElementById('filterBtn');
+    const filterDropdown = document.getElementById('filterDropdown');
+    const filterBadge   = document.getElementById('filterBadge');
+    const filterApply   = document.getElementById('filterApply');
+    const filterClear   = document.getElementById('filterClear');
+    const ganttSub2     = document.querySelector('.gantt-header__sub');
+
+    // Status chip toggle
+    document.querySelectorAll('#filterDropdown [data-status]').forEach(chip => {
+      chip.addEventListener('click', () => {
+        document.querySelectorAll('#filterDropdown [data-status]').forEach(c => c.classList.remove('chip--active'));
+        chip.classList.add('chip--active');
       });
+    });
+
+    filterBtn && filterBtn.addEventListener('click', e => {
+      e.stopPropagation();
+      filterDropdown.classList.toggle('open');
+    });
+
+    document.addEventListener('click', e => {
+      if (filterDropdown && !filterDropdown.contains(e.target) && e.target !== filterBtn) {
+        filterDropdown.classList.remove('open');
+      }
+    });
+
+    function applyFilters() {
+      const checkboxes = document.querySelectorAll('#filterDropdown input[type=checkbox]');
+      const statusChip = document.querySelector('#filterDropdown [data-status].chip--active');
+      const activeStatus = statusChip ? statusChip.dataset.status : 'todos';
+
+      const unchecked = Array.from(checkboxes).filter(cb => !cb.checked).map(cb => cb.dataset.resource);
+
+      // Filter semana rows
+      document.querySelectorAll('.gantt-grid .gantt-row').forEach(row => {
+        const res = row.dataset.resource;
+        if (unchecked.includes(res)) {
+          row.classList.add('gantt-row--hidden');
+        } else {
+          // Apply status filter to blocks inside
+          if (activeStatus !== 'todos') {
+            const blocks = row.querySelectorAll('.gantt-block');
+            let hasMatch = false;
+            blocks.forEach(b => {
+              const match = activeStatus === 'riesgo'
+                ? b.dataset.estado === 'En riesgo'
+                : b.dataset.estado === 'En plazo';
+              b.style.opacity = match ? '1' : '0.2';
+              if (match) hasMatch = true;
+            });
+            row.classList.toggle('gantt-row--hidden', !hasMatch);
+          } else {
+            row.querySelectorAll('.gantt-block').forEach(b => b.style.opacity = '1');
+            row.classList.remove('gantt-row--hidden');
+          }
+        }
+      });
+
+      // Filter turno rows
+      document.querySelectorAll('.turno-row').forEach(row => {
+        const res = row.dataset.resource;
+        row.style.display = unchecked.includes(res) ? 'none' : '';
+      });
+
+      // Update badge + button state
+      const totalHidden = unchecked.length + (activeStatus !== 'todos' ? 1 : 0);
+      if (totalHidden > 0) {
+        filterBadge.textContent = totalHidden;
+        filterBadge.style.display = '';
+        filterBtn.classList.add('filter-btn--active');
+      } else {
+        filterBadge.style.display = 'none';
+        filterBtn.classList.remove('filter-btn--active');
+      }
+
+      // Update subtitle
+      const visibleSemana = document.querySelectorAll('.gantt-grid .gantt-row:not(.gantt-row--hidden)').length;
+      if (ganttSub2) ganttSub2.textContent = `${visibleSemana} recursos · 12 órdenes activas`;
+
+      filterDropdown.classList.remove('open');
     }
+
+    function clearFilters() {
+      document.querySelectorAll('#filterDropdown input[type=checkbox]').forEach(cb => cb.checked = true);
+      document.querySelectorAll('#filterDropdown [data-status]').forEach(c => c.classList.remove('chip--active'));
+      document.querySelector('#filterDropdown [data-status="todos"]').classList.add('chip--active');
+      document.querySelectorAll('.gantt-grid .gantt-row').forEach(r => {
+        r.classList.remove('gantt-row--hidden');
+        r.querySelectorAll('.gantt-block').forEach(b => b.style.opacity = '1');
+      });
+      document.querySelectorAll('.turno-row').forEach(r => r.style.display = '');
+      filterBadge.style.display = 'none';
+      filterBtn.classList.remove('filter-btn--active');
+      if (ganttSub2) ganttSub2.textContent = '5 recursos · 12 órdenes activas';
+      filterDropdown.classList.remove('open');
+    }
+
+    filterApply && filterApply.addEventListener('click', applyFilters);
+    filterClear && filterClear.addEventListener('click', clearFilters);
+
+    // 9. Block click — detail popover
+    const blockPopover     = document.getElementById('blockPopover');
+    const blockPopoverClose = document.getElementById('blockPopoverClose');
+
+    function showBlockPopover(block, e) {
+      const d = block.dataset;
+      if (!d.of) return;
+      document.getElementById('bpTitle').textContent    = d.of + (block.textContent.includes('·') ? ' · ' + block.textContent.split('·')[1].trim() : '');
+      document.getElementById('bpResource').textContent = d.recurso || '—';
+      document.getElementById('bpStart').textContent    = d.inicio  || '—';
+      document.getElementById('bpEnd').textContent      = d.fin     || '—';
+      document.getElementById('bpPct').textContent      = d.pct     || '—';
+      document.getElementById('bpStatus').textContent   = d.estado  || '—';
+
+      const vw = window.innerWidth, vh = window.innerHeight;
+      let x = e.clientX + 12, y = e.clientY + 12;
+      if (x + 230 > vw) x = e.clientX - 242;
+      if (y + 180 > vh) y = e.clientY - 182;
+      blockPopover.style.left = x + 'px';
+      blockPopover.style.top  = y + 'px';
+      blockPopover.classList.add('open');
+    }
+
+    document.querySelectorAll('.gantt-block[data-of], .turno-block[data-of]').forEach(block => {
+      block.addEventListener('click', e => {
+        if (block.classList.contains('dragging')) return;
+        e.stopPropagation();
+        showBlockPopover(block, e);
+      });
+    });
+
+    blockPopoverClose && blockPopoverClose.addEventListener('click', () => blockPopover.classList.remove('open'));
+    document.addEventListener('click', e => {
+      if (blockPopover && !blockPopover.contains(e.target)) blockPopover.classList.remove('open');
+    });
   }
 
   // Toggle industries panel collapse
