@@ -1732,7 +1732,10 @@
 
 <!-- Auth overlay — shows spinner while validating, login form if no token -->
 <div id="auth-overlay">
-  <div class="spinner" id="auth-spinner"></div>
+  <div style="display:flex;flex-direction:column;align-items:center;gap:1rem" id="auth-spinner">
+    <div class="spinner"></div>
+    <p id="auth-spinner-msg" style="color:rgba(255,255,255,.35);font-size:.8rem;font-family:'Inter',sans-serif"></p>
+  </div>
   <div class="login-card" id="login-card">
     <div class="login-logo">
       <div class="login-logo__box">PC</div>
@@ -3660,19 +3663,22 @@
     btn.disabled = true;
     btn.textContent = 'Verificando…';
     errEl.style.display = 'none';
+    const loginHint = setTimeout(() => { btn.textContent = 'Iniciando servidor…'; }, 3000);
     try {
       const res = await fetch(`${API}/auth/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password }),
       });
+      clearTimeout(loginHint);
       const data = await res.json();
       if (!res.ok) throw new Error(data.detail || 'Credenciales incorrectas');
       localStorage.setItem('pc_token', data.access_token);
       document.getElementById('login-card')!.classList.remove('visible');
       document.getElementById('auth-spinner')!.style.display = '';
-      await applyUser(data.user);
+      await applyUser(data.user);  // data.user comes from login response — no extra round-trip
     } catch (e: any) {
+      clearTimeout(loginHint);
       errEl.textContent = e.message || 'Error de autenticación';
       errEl.style.display = 'block';
       btn.disabled = false;
@@ -3698,15 +3704,24 @@
     showSelector();
   }
 
+  function slowLoadHint(msgEl: HTMLElement | null, delay = 3000) {
+    return setTimeout(() => {
+      if (msgEl) msgEl.textContent = 'Iniciando servidor… puede tardar unos segundos';
+    }, delay);
+  }
+
   async function init() {
     const token = localStorage.getItem('pc_token');
     if (!token) { showLoginForm(); return; }
+    const hint = slowLoadHint(document.getElementById('auth-spinner-msg'));
     try {
       const res = await fetch(`${API}/auth/me`, { headers: { Authorization: `Bearer ${token}` } });
+      clearTimeout(hint);
       if (!res.ok) throw new Error('Token inválido');
       const user = await res.json();
       await applyUser(user);
     } catch {
+      clearTimeout(hint);
       localStorage.removeItem('pc_token');
       showLoginForm('Tu sesión ha expirado. Vuelve a iniciar sesión.');
     }
