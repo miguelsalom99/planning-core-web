@@ -632,6 +632,19 @@
     .mrp-urgente { color: var(--red); font-weight: 700; }
     .mrp-ok { color: var(--green); }
 
+    /* ── Admin tabs ── */
+    .admin-tab { background:none; border:none; border-bottom:2px solid transparent; padding:.6rem 1rem; font-size:.82rem; font-weight:600; color:var(--n50); cursor:pointer; font-family:inherit; transition:color .15s,border-color .15s; }
+    .admin-tab:hover { color:var(--n20); }
+    .admin-tab--active { color:var(--brand); border-bottom-color:var(--brand); }
+    .admin-action-btn { background:none; border:1px solid var(--n80); color:var(--n50); font-size:.72rem; font-weight:600; padding:3px 8px; border-radius:4px; cursor:pointer; font-family:inherit; margin-left:.25rem; }
+    .admin-action-btn:hover { color:var(--n20); border-color:var(--n50); }
+    .admin-action-btn.del:hover { color:var(--red); border-color:var(--red); }
+    .admin-badge { display:inline-block; font-size:.68rem; font-weight:700; padding:2px 7px; border-radius:999px; }
+    .admin-badge--active { background:var(--green-bg); color:var(--green); }
+    .admin-badge--inactive { background:var(--red-bg); color:var(--red); }
+    .admin-badge--admin { background:#FEF3C7; color:var(--amber); }
+    .admin-badge--plan { background:rgba(27,63,139,.08); color:var(--brand); border:1px solid rgba(27,63,139,.15); }
+
     /* ── Time editor ── */
     .time-section-title { font-size: .82rem; font-weight: 700; color: var(--n20); margin-bottom: .75rem; margin-top: 1.5rem; }
     .time-section-title:first-of-type { margin-top: 0; }
@@ -1876,6 +1889,14 @@
             <span class="ind-name">Construcción Industrial</span>
           </a>
         </div>
+      </div>
+
+      <div class="nav-section" id="nav-admin-section" style="display:none">
+        <div class="nav-section__label">Administración</div>
+        <a class="nav-item" href="#" data-panel="admin">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          Empresas y usuarios
+        </a>
       </div>
 
       <div class="nav-section">
@@ -3325,6 +3346,176 @@
       </div>
     </div><!-- /#panel-mrp -->
 
+    <!-- ── PANEL: ADMIN ── -->
+    <div id="panel-admin" class="dash-panel" style="display:none">
+      <div class="panel-page">
+        <div class="panel-page-header">
+          <div>
+            <div class="panel-page-title">Administración</div>
+            <div class="panel-page-sub">Gestión de empresas clientes y usuarios</div>
+          </div>
+        </div>
+
+        <!-- Admin tabs -->
+        <div style="display:flex;gap:0;border-bottom:1px solid var(--n80);margin-bottom:1.25rem">
+          <button class="admin-tab admin-tab--active" data-atab="companies" id="adminTabCompanies">Empresas</button>
+          <button class="admin-tab" data-atab="users" id="adminTabUsers">Usuarios</button>
+        </div>
+
+        <!-- Empresas -->
+        <div id="adminPanelCompanies">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem">
+            <span style="font-size:.85rem;color:var(--n30);font-weight:600">Empresas registradas</span>
+            <button class="btn-ui btn-ui--primary" id="newCompanyBtn" style="font-size:.78rem">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              Nueva empresa
+            </button>
+          </div>
+          <div class="time-table-wrap">
+            <table class="time-table" id="companiesTable">
+              <thead><tr>
+                <th>Empresa</th>
+                <th>Industria</th>
+                <th>Plan</th>
+                <th>Usuarios</th>
+                <th>Alta</th>
+                <th></th>
+              </tr></thead>
+              <tbody id="companiesBody"><tr><td colspan="6" style="text-align:center;padding:2rem;color:var(--n50)">Cargando…</td></tr></tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Usuarios -->
+        <div id="adminPanelUsers" style="display:none">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem">
+            <span style="font-size:.85rem;color:var(--n30);font-weight:600">Usuarios registrados</span>
+            <button class="btn-ui btn-ui--primary" id="newUserBtn" style="font-size:.78rem">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              Nuevo usuario
+            </button>
+          </div>
+          <div class="time-table-wrap">
+            <table class="time-table" id="usersTable">
+              <thead><tr>
+                <th>Usuario</th>
+                <th>Empresa</th>
+                <th>Sectores</th>
+                <th>Rol</th>
+                <th>Estado</th>
+                <th>Último acceso</th>
+                <th></th>
+              </tr></thead>
+              <tbody id="usersBody"><tr><td colspan="7" style="text-align:center;padding:2rem;color:var(--n50)">Cargando…</td></tr></tbody>
+            </table>
+          </div>
+        </div>
+
+      </div>
+    </div><!-- /#panel-admin -->
+
+    <!-- ── MODAL: EMPRESA ── -->
+    <div class="modal-backdrop" id="companyModal">
+      <div class="modal__box" style="max-width:420px">
+        <div class="modal__header">
+          <h3 class="modal__title" id="companyModalTitle">Nueva empresa</h3>
+          <button class="modal__close" id="companyModalClose">×</button>
+        </div>
+        <div class="modal__body" style="display:flex;flex-direction:column;gap:1rem">
+          <div class="form-group">
+            <label class="form-label">Nombre <span style="color:var(--red)">*</span></label>
+            <input class="form-input" id="cmp-name" placeholder="Airbus España S.L." maxlength="200"/>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Industria / Sector</label>
+            <select class="form-input" id="cmp-industry">
+              <option value="">— Sin asignar —</option>
+              <option value="composites-aeronautica">✈️ Composites & Aeronáutica</option>
+              <option value="impresion-packaging">🖨️ Impresión & Packaging</option>
+              <option value="fundicion-metalurgia">⚙️ Fundición & Metalurgia</option>
+              <option value="fabricacion-muebles">🪑 Fabricación de Muebles</option>
+              <option value="medtech-dispositivos">💊 MedTech & Dispositivos</option>
+              <option value="ferroviario-mro">🚆 Ferroviario MRO</option>
+              <option value="agroalimentario">🌾 Agroalimentaria</option>
+              <option value="naval-astilleros">⚓ Naval & Astilleros</option>
+              <option value="construccion-industrial">🏗️ Construcción Industrial</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Plan contratado</label>
+            <select class="form-input" id="cmp-plan">
+              <option value="">— Sin asignar —</option>
+              <option value="starter">Starter</option>
+              <option value="pro">Pro</option>
+              <option value="enterprise">Enterprise</option>
+            </select>
+          </div>
+          <div id="companyModalErr" style="font-size:.8rem;color:var(--red);min-height:1rem"></div>
+        </div>
+        <div class="modal__footer">
+          <button class="btn-ui" id="companyModalCancel">Cancelar</button>
+          <button class="btn-ui btn-ui--primary" id="companyModalSave">Guardar empresa</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── MODAL: USUARIO ADMIN ── -->
+    <div class="modal-backdrop" id="adminUserModal">
+      <div class="modal__box" style="max-width:460px">
+        <div class="modal__header">
+          <h3 class="modal__title" id="adminUserModalTitle">Nuevo usuario</h3>
+          <button class="modal__close" id="adminUserModalClose">×</button>
+        </div>
+        <div class="modal__body" style="display:flex;flex-direction:column;gap:.9rem">
+          <div class="form-group">
+            <label class="form-label">Nombre <span style="color:var(--red)">*</span></label>
+            <input class="form-input" id="au-name" placeholder="Ana García"/>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Email <span style="color:var(--red)">*</span></label>
+            <input class="form-input" id="au-email" type="email" placeholder="ana@empresa.com"/>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Empresa</label>
+            <select class="form-input" id="au-company-id">
+              <option value="">— Sin empresa —</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Planificadores asignados</label>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:.4rem;padding:.5rem 0" id="au-sectors">
+              <label style="display:flex;align-items:center;gap:.5rem;font-size:.8rem;cursor:pointer"><input type="checkbox" value="composites-aeronautica" style="accent-color:var(--brand)"> ✈️ Composites</label>
+              <label style="display:flex;align-items:center;gap:.5rem;font-size:.8rem;cursor:pointer"><input type="checkbox" value="impresion-packaging" style="accent-color:var(--brand)"> 🖨️ Impresión</label>
+              <label style="display:flex;align-items:center;gap:.5rem;font-size:.8rem;cursor:pointer"><input type="checkbox" value="fundicion-metalurgia" style="accent-color:var(--brand)"> ⚙️ Fundición</label>
+              <label style="display:flex;align-items:center;gap:.5rem;font-size:.8rem;cursor:pointer"><input type="checkbox" value="fabricacion-muebles" style="accent-color:var(--brand)"> 🪑 Muebles</label>
+              <label style="display:flex;align-items:center;gap:.5rem;font-size:.8rem;cursor:pointer"><input type="checkbox" value="medtech-dispositivos" style="accent-color:var(--brand)"> 💊 MedTech</label>
+              <label style="display:flex;align-items:center;gap:.5rem;font-size:.8rem;cursor:pointer"><input type="checkbox" value="ferroviario-mro" style="accent-color:var(--brand)"> 🚆 Ferroviario</label>
+              <label style="display:flex;align-items:center;gap:.5rem;font-size:.8rem;cursor:pointer"><input type="checkbox" value="agroalimentario" style="accent-color:var(--brand)"> 🌾 Agroalimentaria</label>
+              <label style="display:flex;align-items:center;gap:.5rem;font-size:.8rem;cursor:pointer"><input type="checkbox" value="naval-astilleros" style="accent-color:var(--brand)"> ⚓ Naval</label>
+              <label style="display:flex;align-items:center;gap:.5rem;font-size:.8rem;cursor:pointer"><input type="checkbox" value="construccion-industrial" style="accent-color:var(--brand)"> 🏗️ Construcción</label>
+            </div>
+            <div style="font-size:.72rem;color:var(--n50)">Los admins tienen acceso completo sin selección</div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Contraseña <span style="color:var(--red)">*</span></label>
+            <input class="form-input" id="au-password" type="password" placeholder="Mínimo 8 caracteres"/>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Rol</label>
+            <select class="form-input" id="au-role">
+              <option value="false">Cliente</option>
+              <option value="true">Administrador</option>
+            </select>
+          </div>
+          <div id="adminUserModalErr" style="font-size:.8rem;color:var(--red);min-height:1rem"></div>
+        </div>
+        <div class="modal__footer">
+          <button class="btn-ui" id="adminUserModalCancel">Cancelar</button>
+          <button class="btn-ui btn-ui--primary" id="adminUserModalSave">Guardar usuario</button>
+        </div>
+      </div>
+    </div>
+
     </div><!-- /#dashboard-view -->
 
     <!-- ── MODAL: GUARDAR PLANIFICACIÓN ── -->
@@ -3441,6 +3632,7 @@
       document.getElementById('user-initials').textContent = initials;
       document.getElementById('user-name').textContent = user.name || user.email;
       document.getElementById('user-role').textContent = user.is_admin ? 'Administrador' : 'Usuario';
+      if (user.is_admin) initAdminPanel(true);
 
       const company = user.company || 'Mi empresa';
       const coInitials = company.split(' ').map(w => w[0]).slice(0,2).join('').toUpperCase();
@@ -4749,6 +4941,225 @@
         const def = DEFAULT_SHIFTS.map(s => ({ ...s, days: [...s.days] }));
         renderShiftTable(def);
         showToast('Horarios restablecidos');
+      });
+    }
+
+    // ── Admin panel ───────────────────────────────────────────────
+    function initAdminPanel(isAdmin: boolean) {
+      if (!isAdmin) return;
+      const navSection = document.getElementById('nav-admin-section');
+      if (navSection) navSection.style.display = '';
+
+      const INDUSTRY_LABELS: Record<string, string> = {
+        'composites-aeronautica': '✈️ Composites & Aeronáutica',
+        'impresion-packaging': '🖨️ Impresión & Packaging',
+        'fundicion-metalurgia': '⚙️ Fundición & Metalurgia',
+        'fabricacion-muebles': '🪑 Muebles & Madera',
+        'medtech-dispositivos': '💊 MedTech',
+        'ferroviario-mro': '🚆 Ferroviario MRO',
+        'agroalimentario': '🌾 Agroalimentaria',
+        'naval-astilleros': '⚓ Naval & Astilleros',
+        'construccion-industrial': '🏗️ Construcción Industrial',
+      };
+      const PLAN_LABELS: Record<string, string> = { starter: 'Starter', pro: 'Pro', enterprise: 'Enterprise' };
+
+      let adminCompanies: any[] = [];
+      let editingCompanyId: number | null = null;
+
+      // Tab switching
+      document.querySelectorAll('.admin-tab').forEach(btn => {
+        btn.addEventListener('click', () => {
+          document.querySelectorAll('.admin-tab').forEach(b => b.classList.remove('admin-tab--active'));
+          btn.classList.add('admin-tab--active');
+          const tab = (btn as HTMLElement).dataset.atab;
+          document.getElementById('adminPanelCompanies')!.style.display = tab === 'companies' ? '' : 'none';
+          document.getElementById('adminPanelUsers')!.style.display = tab === 'users' ? '' : 'none';
+          if (tab === 'users') loadAdminUsers();
+        });
+      });
+
+      // ── Companies ──
+      async function loadAdminCompanies() {
+        const token = localStorage.getItem('pc_token');
+        if (!token) return;
+        try {
+          const res = await fetch(`${API_BASE}/admin/companies`, { headers: { Authorization: `Bearer ${token}` } });
+          adminCompanies = await res.json();
+        } catch { adminCompanies = []; }
+        renderCompanies();
+        populateCompanySelect();
+      }
+
+      function renderCompanies() {
+        const tbody = document.getElementById('companiesBody')!;
+        if (!adminCompanies.length) {
+          tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:2rem;color:var(--n50)">No hay empresas. Crea la primera.</td></tr>';
+          return;
+        }
+        tbody.innerHTML = adminCompanies.map(c => `
+          <tr>
+            <td style="font-weight:600">${c.name}</td>
+            <td style="font-size:.78rem;color:var(--n30)">${c.industry ? (INDUSTRY_LABELS[c.industry] || c.industry) : '<span style="color:var(--n80)">—</span>'}</td>
+            <td>${c.plan ? `<span class="admin-badge admin-badge--plan">${PLAN_LABELS[c.plan] || c.plan}</span>` : '<span style="color:var(--n80)">—</span>'}</td>
+            <td style="font-size:.78rem;color:var(--n50)">${c.user_count} usuario${c.user_count !== 1 ? 's' : ''}</td>
+            <td style="font-size:.78rem;color:var(--n50)">${new Date(c.created_at).toLocaleDateString('es-ES')}</td>
+            <td>
+              <button class="admin-action-btn" data-edit-company="${c.id}">Editar</button>
+              <button class="admin-action-btn del" data-del-company="${c.id}" data-del-company-name="${c.name}">Eliminar</button>
+            </td>
+          </tr>`).join('');
+
+        tbody.querySelectorAll('[data-edit-company]').forEach(btn => {
+          btn.addEventListener('click', () => openCompanyModal(parseInt((btn as HTMLElement).dataset.editCompany!)));
+        });
+        tbody.querySelectorAll('[data-del-company]').forEach(btn => {
+          const el = btn as HTMLElement;
+          btn.addEventListener('click', () => deleteCompany(parseInt(el.dataset.delCompany!), el.dataset.delCompanyName!));
+        });
+      }
+
+      function populateCompanySelect() {
+        const sel = document.getElementById('au-company-id')!;
+        const cur = (sel as HTMLSelectElement).value;
+        sel.innerHTML = '<option value="">— Sin empresa —</option>' +
+          adminCompanies.map(c => `<option value="${c.id}">${c.name}${c.industry ? ' · ' + (INDUSTRY_LABELS[c.industry] || c.industry) : ''}</option>`).join('');
+        (sel as HTMLSelectElement).value = cur;
+      }
+
+      function openCompanyModal(id?: number) {
+        editingCompanyId = id || null;
+        document.getElementById('companyModalTitle')!.textContent = id ? 'Editar empresa' : 'Nueva empresa';
+        document.getElementById('companyModalErr')!.textContent = '';
+        const c = id ? adminCompanies.find(x => x.id === id) : null;
+        (document.getElementById('cmp-name') as HTMLInputElement).value = c?.name || '';
+        (document.getElementById('cmp-industry') as HTMLSelectElement).value = c?.industry || '';
+        (document.getElementById('cmp-plan') as HTMLSelectElement).value = c?.plan || '';
+        document.getElementById('companyModal')!.style.display = 'flex';
+      }
+
+      function closeCompanyModal() { document.getElementById('companyModal')!.style.display = 'none'; }
+
+      async function saveCompany() {
+        const token = localStorage.getItem('pc_token');
+        const name = (document.getElementById('cmp-name') as HTMLInputElement).value.trim();
+        const industry = (document.getElementById('cmp-industry') as HTMLSelectElement).value || null;
+        const plan = (document.getElementById('cmp-plan') as HTMLSelectElement).value || null;
+        const errEl = document.getElementById('companyModalErr')!;
+        if (!name) { errEl.textContent = 'El nombre es obligatorio'; return; }
+        errEl.textContent = '';
+        const url = editingCompanyId ? `${API_BASE}/admin/companies/${editingCompanyId}` : `${API_BASE}/admin/companies`;
+        const method = editingCompanyId ? 'PATCH' : 'POST';
+        const res = await fetch(url, { method, headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' }, body: JSON.stringify({ name, industry, plan }) });
+        if (!res.ok) { const d = await res.json(); errEl.textContent = d.detail || 'Error al guardar'; return; }
+        closeCompanyModal();
+        loadAdminCompanies();
+        showToast(editingCompanyId ? '✓ Empresa actualizada' : '✓ Empresa creada');
+      }
+
+      async function deleteCompany(id: number, name: string) {
+        if (!confirm(`¿Eliminar "${name}"?\nLos usuarios vinculados quedarán sin empresa.`)) return;
+        const token = localStorage.getItem('pc_token');
+        await fetch(`${API_BASE}/admin/companies/${id}`, { method: 'DELETE', headers: { Authorization: `Bearer ${token}` } });
+        loadAdminCompanies();
+        showToast('Empresa eliminada');
+      }
+
+      document.getElementById('newCompanyBtn')?.addEventListener('click', () => openCompanyModal());
+      document.getElementById('companyModalClose')?.addEventListener('click', closeCompanyModal);
+      document.getElementById('companyModalCancel')?.addEventListener('click', closeCompanyModal);
+      document.getElementById('companyModalSave')?.addEventListener('click', saveCompany);
+
+      // ── Users ──
+      async function loadAdminUsers() {
+        const token = localStorage.getItem('pc_token');
+        if (!token) return;
+        await loadAdminCompanies();
+        try {
+          const res = await fetch(`${API_BASE}/admin/users`, { headers: { Authorization: `Bearer ${token}` } });
+          const users = await res.json();
+          renderAdminUsers(users);
+        } catch { document.getElementById('usersBody')!.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:2rem;color:var(--red)">Error al cargar usuarios</td></tr>'; }
+      }
+
+      function renderAdminUsers(users: any[]) {
+        const tbody = document.getElementById('usersBody')!;
+        if (!users.length) { tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:2rem;color:var(--n50)">No hay usuarios todavía</td></tr>'; return; }
+        tbody.innerHTML = users.map(u => {
+          const companyName = u.company_id ? (adminCompanies.find((c: any) => c.id === u.company_id)?.name || u.company || '—') : (u.company || '—');
+          const sectors = u.is_admin ? '<span style="color:var(--amber);font-size:.72rem">Todos</span>'
+            : (u.sector ? u.sector.split(',').map((s: string) => s.trim()).join(', ') : '<span style="color:var(--red);font-size:.72rem">Sin asignar</span>');
+          return `<tr>
+            <td><div style="font-weight:600">${u.name}</div><div style="font-size:.72rem;color:var(--n50)">${u.email}</div></td>
+            <td style="font-size:.78rem;color:var(--n30)">${companyName}</td>
+            <td style="font-size:.78rem;color:var(--n50)">${sectors}</td>
+            <td><span class="admin-badge ${u.is_admin ? 'admin-badge--admin' : ''}" style="${!u.is_admin ? 'background:var(--n90);color:var(--n50)' : ''}">${u.is_admin ? 'Admin' : 'Cliente'}</span></td>
+            <td><span class="admin-badge ${u.is_active ? 'admin-badge--active' : 'admin-badge--inactive'}">${u.is_active ? 'Activo' : 'Inactivo'}</span></td>
+            <td style="font-size:.72rem;color:var(--n50)">${u.last_login ? new Date(u.last_login).toLocaleDateString('es-ES') : 'Nunca'}</td>
+            <td>
+              <button class="admin-action-btn" data-toggle-user="${u.id}" data-toggle-active="${u.is_active}">${u.is_active ? 'Desactivar' : 'Activar'}</button>
+              <button class="admin-action-btn del" data-del-user="${u.id}" data-del-user-name="${u.name}">Eliminar</button>
+            </td>
+          </tr>`;
+        }).join('');
+
+        tbody.querySelectorAll('[data-toggle-user]').forEach(btn => {
+          btn.addEventListener('click', async () => {
+            const el = btn as HTMLElement;
+            const token = localStorage.getItem('pc_token');
+            await fetch(`${API_BASE}/admin/users/${el.dataset.toggleUser}`, { method: 'PATCH', headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' }, body: JSON.stringify({ is_active: el.dataset.toggleActive === 'true' ? false : true }) });
+            loadAdminUsers();
+          });
+        });
+        tbody.querySelectorAll('[data-del-user]').forEach(btn => {
+          const el = btn as HTMLElement;
+          btn.addEventListener('click', async () => {
+            if (!confirm(`¿Eliminar a ${el.dataset.delUserName}?`)) return;
+            const token = localStorage.getItem('pc_token');
+            await fetch(`${API_BASE}/admin/users/${el.dataset.delUser}`, { method: 'DELETE', headers: { Authorization: `Bearer ${token}` } });
+            loadAdminUsers();
+          });
+        });
+      }
+
+      function openUserModal() {
+        document.getElementById('adminUserModalErr')!.textContent = '';
+        (document.getElementById('au-name') as HTMLInputElement).value = '';
+        (document.getElementById('au-email') as HTMLInputElement).value = '';
+        (document.getElementById('au-password') as HTMLInputElement).value = '';
+        (document.getElementById('au-role') as HTMLSelectElement).value = 'false';
+        (document.getElementById('au-company-id') as HTMLSelectElement).value = '';
+        document.querySelectorAll('#au-sectors input').forEach(i => (i as HTMLInputElement).checked = false);
+        populateCompanySelect();
+        document.getElementById('adminUserModal')!.style.display = 'flex';
+      }
+
+      async function saveAdminUser() {
+        const token = localStorage.getItem('pc_token');
+        const errEl = document.getElementById('adminUserModalErr')!;
+        const name = (document.getElementById('au-name') as HTMLInputElement).value.trim();
+        const email = (document.getElementById('au-email') as HTMLInputElement).value.trim();
+        const password = (document.getElementById('au-password') as HTMLInputElement).value;
+        const companyIdRaw = (document.getElementById('au-company-id') as HTMLSelectElement).value;
+        const sectors = [...document.querySelectorAll('#au-sectors input:checked')].map(i => (i as HTMLInputElement).value).join(',') || null;
+        const is_admin = (document.getElementById('au-role') as HTMLSelectElement).value === 'true';
+        if (!name || !email || !password) { errEl.textContent = 'Nombre, email y contraseña son obligatorios'; return; }
+        errEl.textContent = '';
+        const body = { name, email, password, company_id: companyIdRaw ? parseInt(companyIdRaw) : null, sector: sectors, is_admin };
+        const res = await fetch(`${API_BASE}/admin/users`, { method: 'POST', headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+        if (!res.ok) { const d = await res.json(); errEl.textContent = d.detail || 'Error al crear usuario'; return; }
+        document.getElementById('adminUserModal')!.style.display = 'none';
+        loadAdminUsers();
+        showToast('✓ Usuario creado');
+      }
+
+      document.getElementById('newUserBtn')?.addEventListener('click', openUserModal);
+      document.getElementById('adminUserModalClose')?.addEventListener('click', () => { document.getElementById('adminUserModal')!.style.display = 'none'; });
+      document.getElementById('adminUserModalCancel')?.addEventListener('click', () => { document.getElementById('adminUserModal')!.style.display = 'none'; });
+      document.getElementById('adminUserModalSave')?.addEventListener('click', saveAdminUser);
+
+      // Load on panel open
+      document.querySelector('.nav-item[data-panel="admin"]')?.addEventListener('click', () => {
+        loadAdminCompanies();
       });
     }
 
