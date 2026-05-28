@@ -654,6 +654,20 @@
     .time-impact-fill--danger { background: var(--red); }
     .time-resource-badge { display: inline-flex; align-items: center; gap: .35rem; font-weight: 600; font-size: .82rem; }
     .time-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+    .time-name-input {
+      width: 100%; padding: .3rem .5rem; border: 1px solid transparent;
+      border-radius: 6px; font-size: .82rem; font-weight: 600;
+      font-family: inherit; background: transparent; color: var(--n10);
+      transition: border .15s, background .15s;
+    }
+    .time-name-input:hover { border-color: var(--n80); background: var(--n98); }
+    .time-name-input:focus { outline: none; border-color: var(--brand); background: var(--white); box-shadow: 0 0 0 2px rgba(27,63,139,.12); }
+    .time-delete-btn {
+      width: 26px; height: 26px; border-radius: 6px; border: 1px solid transparent;
+      background: none; color: var(--n60); cursor: pointer; display: flex;
+      align-items: center; justify-content: center; transition: all .15s;
+    }
+    .time-delete-btn:hover { background: var(--red-bg); border-color: var(--red-bg); color: var(--red); }
 
     /* Shift schedule */
     .shift-name-badge { display: inline-flex; align-items: center; gap: .45rem; font-weight: 600; font-size: .82rem; }
@@ -3200,12 +3214,12 @@
         <div id="mrpTabMrp">
           <!-- Drop zone -->
           <div class="mrp-dropzone" id="mrpDropzone">
-            <input type="file" id="mrpFileInput" accept=".csv,.xlsx,.xls" style="display:none" />
+            <input type="file" id="mrpFileInput" accept=".csv,.xlsx,.xls,.ods" style="display:none" />
             <div class="mrp-dropzone__icon">
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--n40)"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
             </div>
-            <div class="mrp-dropzone__title">Arrastra tu CSV aquí o <span id="mrpBrowse" style="color:var(--brand);text-decoration:underline;cursor:pointer">selecciona archivo</span></div>
-            <div class="mrp-dropzone__sub">Formato esperado: OF, Descripción, Cantidad, Unidad, Fecha necesidad, Stock actual, Lead time (días) · <span id="mrpTemplateLink">Descargar plantilla</span></div>
+            <div class="mrp-dropzone__title">Arrastra tu Excel o CSV aquí, o <span id="mrpBrowse" style="color:var(--brand);text-decoration:underline;cursor:pointer">selecciona archivo</span></div>
+            <div class="mrp-dropzone__sub">Formatos: .xlsx, .xls, .ods, .csv · Columnas: OF, Descripción, Cantidad, Unidad, Fecha necesidad, Stock actual, Lead time (días) · <span id="mrpTemplateLink">Descargar plantilla Excel</span></div>
           </div>
 
           <!-- Toolbar (hidden until data loaded) -->
@@ -3240,12 +3254,18 @@
 
         <!-- ── TAB: TIEMPOS ── -->
         <div id="mrpTabTiempos" style="display:none">
-          <div class="time-section-title">Tiempos estándar por recurso</div>
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.75rem">
+            <div class="time-section-title" style="margin:0">Tiempos por proceso / recurso</div>
+            <button class="btn-ui" id="addProcessBtn" style="font-size:.78rem">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              Añadir proceso
+            </button>
+          </div>
           <div class="time-table-wrap">
             <table class="time-table" id="timeTable">
               <thead>
                 <tr>
-                  <th>Recurso</th>
+                  <th style="min-width:130px">Recurso / Proceso</th>
                   <th>Setup (min)</th>
                   <th>Ciclo (min/ud)</th>
                   <th>Buffer (%)</th>
@@ -3253,6 +3273,7 @@
                   <th>Operarios/turno</th>
                   <th>Ud/jornada</th>
                   <th>Carga</th>
+                  <th></th>
                 </tr>
               </thead>
               <tbody id="timeBody"></tbody>
@@ -3268,17 +3289,24 @@
           </div>
 
           <!-- Shift schedule -->
-          <div class="time-section-title" style="margin-top:2rem">Horarios de turno</div>
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-top:2rem;margin-bottom:.75rem">
+            <div class="time-section-title" style="margin:0">Horarios de turno</div>
+            <button class="btn-ui" id="addShiftBtn" style="font-size:.78rem">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              Añadir turno
+            </button>
+          </div>
           <div class="time-table-wrap">
             <table class="time-table" id="shiftTable">
               <thead>
                 <tr>
-                  <th>Turno</th>
+                  <th style="min-width:120px">Nombre</th>
                   <th>Inicio</th>
                   <th>Fin</th>
                   <th>Duración</th>
                   <th>Días activos</th>
                   <th>Estado</th>
+                  <th></th>
                 </tr>
               </thead>
               <tbody id="shiftBody"></tbody>
@@ -3344,6 +3372,7 @@
 <div class="toast" id="toast"></div>
 
 <script>
+  import * as XLSX from 'xlsx';
   const API = 'https://composite-replanning-api.vercel.app';
   const LOGIN_URL = 'https://composite-replanning-api.vercel.app/login?next=https://planning-core-web.vercel.app/app';
 
@@ -3379,8 +3408,26 @@
   }
 
   async function init() {
+    // Pick up token passed via URL fragment from cross-domain login redirect
+    const hash = window.location.hash;
+    if (hash.startsWith('#token=')) {
+      const t = decodeURIComponent(hash.slice(7));
+      localStorage.setItem('pc_token', t);
+      sessionStorage.removeItem('auth_redirects');
+      history.replaceState(null, '', window.location.pathname + window.location.search);
+    }
+
     const token = localStorage.getItem('pc_token');
-    if (!token) { window.location.href = LOGIN_URL; return; }
+    if (!token) {
+      const redirects = parseInt(sessionStorage.getItem('auth_redirects') || '0');
+      if (redirects >= 3) {
+        document.getElementById('auth-overlay').innerHTML = '<div style="color:#fff;text-align:center;padding:2rem"><p style="font-size:1.1rem;margin-bottom:.5rem">Error de autenticación</p><p style="opacity:.6;font-size:.85rem">Limpia las cookies y vuelve a intentarlo</p><button onclick="localStorage.clear();sessionStorage.clear();location.reload()" style="margin-top:1rem;padding:.5rem 1.2rem;background:#1B3F8B;color:#fff;border:none;border-radius:6px;cursor:pointer">Reintentar</button></div>';
+        return;
+      }
+      sessionStorage.setItem('auth_redirects', String(redirects + 1));
+      window.location.replace(LOGIN_URL);
+      return;
+    }
 
     try {
       const res = await fetch(`${API}/auth/me`, { headers: { Authorization: `Bearer ${token}` } });
@@ -3402,7 +3449,8 @@
 
     } catch {
       localStorage.removeItem('pc_token');
-      window.location.href = LOGIN_URL;
+      // Use replace to avoid a back-button loop with the login page
+      window.location.replace(LOGIN_URL);
       return;
     }
 
@@ -4126,16 +4174,17 @@
     }
 
     function downloadTemplate() {
-      const csv = [
-        'OF,Descripcion,Cantidad,Unidad,Fecha_necesidad,Stock_actual,Lead_time_dias',
-        'OF-2050,Carcasa motor B,10,piezas,2026-06-05,3,3',
-        'OF-2051,Placa soporte XL,5,piezas,2026-06-08,0,5',
-        'OF-2052,Valvula hidraulica,20,piezas,2026-06-10,12,2',
-      ].join('\n');
-      const blob = new Blob([csv], { type: 'text/csv' });
-      const url  = URL.createObjectURL(blob);
-      Object.assign(document.createElement('a'), { href: url, download: 'plantilla_mrp.csv' }).click();
-      URL.revokeObjectURL(url);
+      const rows = [
+        ['OF', 'Descripcion', 'Cantidad', 'Unidad', 'Fecha_necesidad', 'Stock_actual', 'Lead_time_dias'],
+        ['OF-2050', 'Carcasa motor B',    10, 'piezas', '2026-06-05',  3, 3],
+        ['OF-2051', 'Placa soporte XL',    5, 'piezas', '2026-06-08',  0, 5],
+        ['OF-2052', 'Valvula hidraulica', 20, 'piezas', '2026-06-10', 12, 2],
+      ];
+      const wb  = XLSX.utils.book_new();
+      const ws  = XLSX.utils.aoa_to_sheet(rows);
+      ws['!cols'] = [14, 22, 10, 10, 16, 12, 16].map(w => ({ wch: w }));
+      XLSX.utils.book_append_sheet(wb, ws, 'MRP');
+      XLSX.writeFile(wb, 'plantilla_mrp.xlsx');
     }
 
     // ── Render MRP table ──────────────────────────────────────────
@@ -4174,94 +4223,111 @@
     }
 
     // ── Render time editor ────────────────────────────────────────
-    // Approximate base loads from the current Gantt (static demo values)
     const BASE_LOADS: Record<string, number> = { 'cnc-1': 78, 'cnc-2': 91, 'soldadura': 62, 'acabados': 55, 'embalaje': 30 };
-    const SHIFT_MINUTES = 480; // 8 h per shift
+    const SHIFT_MINUTES = 480;
+    const PALETTE = ['#3B82F6','#8B5CF6','#10B981','#6B7280','#F59E0B','#EF4444','#06B6D4','#F97316','#84CC16','#EC4899'];
 
     function calcUdsJornada(t: any): number {
-      // Net productive minutes = (shift_min - setup) * (1 - buffer/100) * operarios * turnos
-      const netMin = Math.max(0, (SHIFT_MINUTES - t.setup) * (1 - (t.buffer || 0) / 100)) * (t.operarios || 1) * t.turnos;
+      const netMin = Math.max(0, (SHIFT_MINUTES - (t.setup||0)) * (1 - (t.buffer||0) / 100)) * (t.operarios||1) * (t.turnos||1);
       return Math.floor(netMin / (t.ciclo || 1));
     }
 
-    function calcLoad(t: any, idx: number): number {
-      const baseDef  = DEFAULT_TIMES[idx];
-      const baseUds  = calcUdsJornada(baseDef);
+    function calcLoad(t: any): number {
+      const baseUds  = calcUdsJornada(DEFAULT_TIMES.find((d: any) => d.id === t.id) || t);
       const newUds   = calcUdsJornada(t);
-      const baseLoad = BASE_LOADS[t.id] ?? 70;
-      // Load scales inversely with throughput increase
+      const baseLoad = BASE_LOADS[t.id] ?? 75;
       return Math.min(Math.round(baseLoad * (baseUds / (newUds || 1))), 100);
     }
 
-    function updateTimeRow(tbody: HTMLElement, t: any, idx: number) {
-      const row = tbody.querySelector(`tr[data-id="${t.id}"]`);
-      if (!row) return;
-      const adjLoad = calcLoad(t, idx);
+    function addTimeRow(tbody: HTMLElement, times: any[], t: any, idx: number) {
+      const adjLoad = calcLoad(t);
       const fillCls = adjLoad >= 90 ? 'time-impact-fill--danger' : adjLoad >= 75 ? 'time-impact-fill--warn' : '';
-      const fill    = row.querySelector('.time-impact-fill') as HTMLElement;
-      const pct     = row.querySelector('.time-impact span') as HTMLElement;
-      const uds     = row.querySelector('.time-uds') as HTMLElement;
-      if (fill) { fill.style.width = `${adjLoad}%`; fill.className = `time-impact-fill ${fillCls}`; }
-      if (pct)  { pct.textContent = `${adjLoad}%`; pct.style.color = adjLoad>=90?'var(--red)':adjLoad>=75?'var(--amber)':'var(--green)'; }
-      if (uds)  { uds.textContent = `${calcUdsJornada(t)} ud`; }
+      const uds     = calcUdsJornada(t);
+      const tr      = document.createElement('tr');
+      tr.dataset.id = t.id;
+
+      tr.innerHTML = `
+        <td style="padding:.4rem .6rem">
+          <div style="display:flex;align-items:center;gap:.4rem">
+            <span class="time-dot" style="background:${t.color};cursor:pointer" title="Cambiar color" data-colorpick="${idx}"></span>
+            <input class="time-name-input" data-field="label" data-idx="${idx}" value="${t.label}" placeholder="Nombre proceso" />
+          </div>
+        </td>
+        <td><input class="time-input" data-field="setup"     data-idx="${idx}" type="number" min="0"  max="480" step="5" value="${t.setup}"  /></td>
+        <td><input class="time-input" data-field="ciclo"     data-idx="${idx}" type="number" min="1"  max="999" step="1" value="${t.ciclo}"  /></td>
+        <td><input class="time-input" data-field="buffer"    data-idx="${idx}" type="number" min="0"  max="100" step="5" value="${t.buffer}" /></td>
+        <td>
+          <select class="time-input" data-field="turnos" data-idx="${idx}" style="width:80px">
+            <option value="1" ${t.turnos===1?'selected':''}>1 turno</option>
+            <option value="2" ${t.turnos===2?'selected':''}>2 turnos</option>
+            <option value="3" ${t.turnos===3?'selected':''}>3 turnos</option>
+          </select>
+        </td>
+        <td>
+          <div style="display:flex;align-items:center;gap:.35rem">
+            <input class="time-input" data-field="operarios" data-idx="${idx}" type="number" min="1" max="99" step="1" value="${t.operarios||1}" style="width:52px" />
+            <span style="font-size:.72rem;color:var(--n40)">op.</span>
+          </div>
+        </td>
+        <td style="font-size:.82rem;font-weight:600;white-space:nowrap"><span class="time-uds">${uds} ud</span></td>
+        <td>
+          <div class="time-impact">
+            <div class="time-impact-bar"><div class="time-impact-fill ${fillCls}" style="width:${adjLoad}%"></div></div>
+            <span style="font-size:.74rem;font-weight:600;color:${adjLoad>=90?'var(--red)':adjLoad>=75?'var(--amber)':'var(--green)'}">${adjLoad}%</span>
+          </div>
+        </td>
+        <td>
+          <button class="time-delete-btn" data-del-idx="${idx}" title="Eliminar proceso">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
+          </button>
+        </td>`;
+
+      // Live recalc
+      tr.querySelectorAll('.time-input, .time-name-input').forEach(input => {
+        input.addEventListener('input', () => {
+          const el    = input as HTMLInputElement | HTMLSelectElement;
+          const i     = parseInt(el.dataset.idx!);
+          const field = el.dataset.field!;
+          if (field === 'label') {
+            times[i].label = el.value;
+          } else {
+            const intFields = ['turnos', 'operarios'];
+            times[i][field] = intFields.includes(field) ? parseInt(el.value)||1 : parseFloat(el.value)||0;
+          }
+          // Update uds + load
+          const udsEl  = tr.querySelector('.time-uds') as HTMLElement;
+          const fill   = tr.querySelector('.time-impact-fill') as HTMLElement;
+          const pctEl  = tr.querySelector('.time-impact span') as HTMLElement;
+          const newUds = calcUdsJornada(times[i]);
+          const load   = calcLoad(times[i]);
+          const fc     = load >= 90 ? 'time-impact-fill--danger' : load >= 75 ? 'time-impact-fill--warn' : '';
+          if (udsEl) udsEl.textContent = `${newUds} ud`;
+          if (fill)  { fill.style.width = `${load}%`; fill.className = `time-impact-fill ${fc}`; }
+          if (pctEl) { pctEl.textContent = `${load}%`; pctEl.style.color = load>=90?'var(--red)':load>=75?'var(--amber)':'var(--green)'; }
+        });
+      });
+
+      // Color picker (cycle through palette on dot click)
+      tr.querySelector('[data-colorpick]')?.addEventListener('click', () => {
+        const cur  = PALETTE.indexOf(times[idx].color);
+        times[idx].color = PALETTE[(cur + 1) % PALETTE.length];
+        (tr.querySelector('.time-dot') as HTMLElement).style.background = times[idx].color;
+      });
+
+      // Delete row
+      tr.querySelector('.time-delete-btn')?.addEventListener('click', () => {
+        if (times.length <= 1) { showToast('Debe haber al menos un proceso'); return; }
+        times.splice(idx, 1);
+        renderTimeTable(times);
+      });
+
+      tbody.appendChild(tr);
     }
 
     function renderTimeTable(times: any[]) {
       const tbody = document.getElementById('timeBody')!;
       tbody.innerHTML = '';
-
-      times.forEach((t, idx) => {
-        const adjLoad = calcLoad(t, idx);
-        const fillCls = adjLoad >= 90 ? 'time-impact-fill--danger' : adjLoad >= 75 ? 'time-impact-fill--warn' : '';
-        const uds     = calcUdsJornada(t);
-        const ops     = t.operarios ?? 1;
-
-        const tr = document.createElement('tr');
-        tr.dataset.id = t.id;
-        tr.innerHTML = `
-          <td>
-            <div class="time-resource-badge">
-              <span class="time-dot" style="background:${t.color}"></span>
-              ${t.label}
-            </div>
-          </td>
-          <td><input class="time-input" data-field="setup"     data-idx="${idx}" type="number" min="0"  max="480" step="5" value="${t.setup}"  /></td>
-          <td><input class="time-input" data-field="ciclo"     data-idx="${idx}" type="number" min="1"  max="999" step="1" value="${t.ciclo}"  /></td>
-          <td><input class="time-input" data-field="buffer"    data-idx="${idx}" type="number" min="0"  max="100" step="5" value="${t.buffer}" /></td>
-          <td>
-            <select class="time-input" data-field="turnos" data-idx="${idx}" style="width:88px;text-align:left">
-              <option value="1" ${t.turnos===1?'selected':''}>1 turno</option>
-              <option value="2" ${t.turnos===2?'selected':''}>2 turnos</option>
-              <option value="3" ${t.turnos===3?'selected':''}>3 turnos</option>
-            </select>
-          </td>
-          <td>
-            <div style="display:flex;align-items:center;gap:.4rem">
-              <input class="time-input" data-field="operarios" data-idx="${idx}" type="number" min="1" max="50" step="1" value="${ops}" style="width:56px" />
-              <span style="font-size:.75rem;color:var(--n40)">op.</span>
-            </div>
-          </td>
-          <td style="font-size:.82rem;font-weight:600"><span class="time-uds">${uds} ud</span></td>
-          <td>
-            <div class="time-impact">
-              <div class="time-impact-bar"><div class="time-impact-fill ${fillCls}" style="width:${adjLoad}%"></div></div>
-              <span style="font-size:.75rem;font-weight:600;color:${adjLoad>=90?'var(--red)':adjLoad>=75?'var(--amber)':'var(--green)'}">${adjLoad}%</span>
-            </div>
-          </td>`;
-        tbody.appendChild(tr);
-      });
-
-      // Live recalc on any input change
-      tbody.querySelectorAll('.time-input').forEach(input => {
-        input.addEventListener('input', () => {
-          const el    = input as HTMLInputElement | HTMLSelectElement;
-          const idx   = parseInt(el.dataset.idx!);
-          const field = el.dataset.field!;
-          const val   = field === 'turnos' ? parseInt(el.value) : parseFloat(el.value) || 0;
-          times[idx][field] = val;
-          updateTimeRow(tbody, times[idx], idx);
-        });
-      });
+      times.forEach((t, idx) => addTimeRow(tbody, times, t, idx));
     }
 
     // ── Apply times to Gantt ──────────────────────────────────────
@@ -4292,7 +4358,7 @@
 
     // ── Panel init ────────────────────────────────────────────────
     let _mrpInited = false;
-    function initMrpPanel() {
+    async function initMrpPanel() {
       if (_mrpInited) return;
       _mrpInited = true;
 
@@ -4329,19 +4395,46 @@
         if (fileInput.files?.[0]) loadFile(fileInput.files[0]);
       });
 
+      function sheetToRows(sheet: any): any[] {
+        const data: any[][] = XLSX.utils.sheet_to_json(sheet, { header: 1, defval: '' });
+        if (data.length < 2) return [];
+        return data.slice(1).map((cols: any[]) => {
+          const [of_, desc, cant, unidad, fecha, stock, lead] = cols.map((c: any) => String(c ?? '').trim());
+          if (!of_) return null;
+          // Normalize Excel date serial numbers
+          let fechaStr = fecha;
+          if (fecha && !isNaN(Number(fecha))) {
+            const d = XLSX.SSF.parse_date_code(Number(fecha));
+            fechaStr = `${d.y}-${String(d.m).padStart(2,'0')}-${String(d.d).padStart(2,'0')}`;
+          }
+          return { of: of_, desc: desc || '', cant: parseFloat(cant) || 0, unidad: unidad || 'ud', fecha: fechaStr, stock: parseFloat(stock) || 0, lead: parseInt(lead) || 0 };
+        }).filter(Boolean);
+      }
+
       function loadFile(file: File) {
-        if (!file.name.match(/\.(csv|txt)$/i)) { showToast('Usa un archivo CSV (.csv)'); return; }
+        const isExcel = file.name.match(/\.(xlsx|xls|ods)$/i);
+        const isCsv   = file.name.match(/\.(csv|txt)$/i);
+        if (!isExcel && !isCsv) { showToast('Formato no soportado. Usa .xlsx, .xls, .ods o .csv'); return; }
+
         const reader = new FileReader();
         reader.onload = e => {
-          const rows = parseCsv(e.target?.result as string);
-          if (rows.length === 0) { showToast('No se encontraron filas válidas en el CSV'); return; }
+          let rows: any[] = [];
+          if (isExcel) {
+            const wb    = XLSX.read(e.target?.result, { type: 'array', cellDates: false });
+            const sheet = wb.Sheets[wb.SheetNames[0]];
+            rows = sheetToRows(sheet);
+          } else {
+            rows = parseCsv(e.target?.result as string);
+          }
+          if (rows.length === 0) { showToast('No se encontraron filas válidas en el archivo'); return; }
           localStorage.setItem(MRP_LS, JSON.stringify(rows));
           renderMrpTable(rows);
           showToast(`✓ ${rows.length} líneas MRP cargadas`);
           const sub = document.getElementById('mrpSub');
           if (sub) sub.textContent = `${rows.length} líneas · ${file.name}`;
         };
-        reader.readAsText(file, 'UTF-8');
+        if (isExcel) reader.readAsArrayBuffer(file);
+        else         reader.readAsText(file, 'UTF-8');
       }
 
       document.getElementById('mrpClear')?.addEventListener('click', () => {
@@ -4381,26 +4474,66 @@
       // Load existing rows
       renderMrpTable(getMrpRows());
 
+      // ── Backend config helpers ────────────────────────────────────
+      async function fetchConfig(): Promise<any> {
+        const token = localStorage.getItem('pc_token');
+        if (!token) return null;
+        try {
+          const res = await fetch(`${API_BASE}/config`, { headers: { Authorization: `Bearer ${token}` } });
+          if (!res.ok) return null;
+          return await res.json();
+        } catch { return null; }
+      }
+
+      async function pushConfig(payload: any) {
+        const token = localStorage.getItem('pc_token');
+        if (!token) return;
+        try {
+          await fetch(`${API_BASE}/config`, {
+            method: 'PUT',
+            headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload),
+          });
+        } catch {}
+      }
+
       // ── Tiempos tab setup ──
+      // Try to load saved config from backend first, fall back to localStorage
+      const remoteConfig = await fetchConfig();
+      if (remoteConfig?.process_times?.length) {
+        localStorage.setItem(TIME_LS, JSON.stringify(remoteConfig.process_times));
+      }
+
       const times = getProcessTimes();
       renderTimeTable(times);
 
-      document.getElementById('timeSave')?.addEventListener('click', () => {
+      document.getElementById('addProcessBtn')?.addEventListener('click', () => {
+        const newIdx = times.length;
+        const newId  = `proceso-${Date.now()}`;
+        times.push({ id: newId, label: 'Nuevo proceso', color: PALETTE[newIdx % PALETTE.length], setup: 15, ciclo: 30, buffer: 10, turnos: 1, operarios: 1 });
+        const tbody = document.getElementById('timeBody')!;
+        addTimeRow(tbody, times, times[newIdx], newIdx);
+      });
+
+      document.getElementById('timeSave')?.addEventListener('click', async () => {
         const oldTimes = getProcessTimes();
-        // Read current input values
         document.querySelectorAll('#timeBody .time-input').forEach(input => {
           const el    = input as HTMLInputElement | HTMLSelectElement;
           const idx   = parseInt(el.dataset.idx!);
           const field = el.dataset.field!;
-          times[idx][field] = field === 'turnos' ? parseInt(el.value) : parseFloat(el.value) || 0;
+          times[idx][field] = field === 'turnos' || field === 'operarios' ? parseInt(el.value) : parseFloat(el.value) || 0;
         });
         localStorage.setItem(TIME_LS, JSON.stringify(times));
         applyTimesToGantt(oldTimes, times);
-        renderTimeTable(times); // refresh capacity bars
+        renderTimeTable(times);
+
+        // Sync shifts too so backend has the full picture
+        const currentShifts = getShifts();
+        await pushConfig({ process_times: times, shift_schedule: currentShifts });
 
         const status = document.getElementById('timeSaveStatus');
-        if (status) { status.textContent = '✓ Guardado y aplicado al Gantt'; setTimeout(() => { status.textContent = ''; }, 3000); }
-        showToast('✓ Tiempos de proceso actualizados · Gantt recalculado');
+        if (status) { status.textContent = '✓ Guardado en servidor y Gantt recalculado'; setTimeout(() => { status.textContent = ''; }, 3000); }
+        showToast('✓ Tiempos de proceso actualizados');
       });
 
       document.getElementById('timeReset')?.addEventListener('click', () => {
@@ -4457,9 +4590,9 @@
 
           tr.innerHTML = `
             <td>
-              <div class="shift-name-badge">
-                <span class="shift-dot" style="background:${s.color}"></span>
-                Turno ${s.id} — ${s.label}
+              <div style="display:flex;align-items:center;gap:.4rem">
+                <span class="shift-dot shift-color-dot" data-si="${si}" style="background:${s.color};cursor:pointer;flex-shrink:0" title="Cambiar color"></span>
+                <input class="time-name-input shift-name-input" data-si="${si}" type="text" value="${s.label}" maxlength="40" style="min-width:80px" />
               </div>
             </td>
             <td><input class="time-hm" data-sfield="start" data-si="${si}" type="time" value="${s.start}" ${!s.active?'disabled':''} /></td>
@@ -4476,6 +4609,11 @@
                 <div class="shift-toggle__track"></div>
                 <div class="shift-toggle__thumb"></div>
               </label>
+            </td>
+            <td>
+              <button class="time-delete-btn shift-delete-btn" data-si="${si}" title="Eliminar turno">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/></svg>
+              </button>
             </td>`;
           tbody.appendChild(tr);
         });
@@ -4514,7 +4652,38 @@
             const el = cb as HTMLInputElement;
             const si = parseInt(el.dataset.si!);
             shifts[si].active = el.checked;
-            renderShiftTable(shifts); // re-render to enable/disable inputs
+            renderShiftTable(shifts);
+            refreshUdsFromShifts(shifts);
+          });
+        });
+
+        // Editable shift name
+        tbody.querySelectorAll('.shift-name-input').forEach(input => {
+          input.addEventListener('input', () => {
+            const el = input as HTMLInputElement;
+            const si = parseInt(el.dataset.si!);
+            shifts[si].label = el.value;
+          });
+        });
+
+        // Shift color dot — cycles through PALETTE
+        tbody.querySelectorAll('.shift-color-dot').forEach(dot => {
+          dot.addEventListener('click', () => {
+            const el = dot as HTMLElement;
+            const si = parseInt(el.dataset.si!);
+            const cur = PALETTE.indexOf(shifts[si].color);
+            shifts[si].color = PALETTE[(cur + 1) % PALETTE.length];
+            el.style.background = shifts[si].color;
+          });
+        });
+
+        // Delete shift
+        tbody.querySelectorAll('.shift-delete-btn').forEach(btn => {
+          btn.addEventListener('click', () => {
+            const si = parseInt((btn as HTMLElement).dataset.si!);
+            if (shifts.length <= 1) { showToast('Debe haber al menos un turno'); return; }
+            shifts.splice(si, 1);
+            renderShiftTable(shifts);
             refreshUdsFromShifts(shifts);
           });
         });
@@ -4543,11 +4712,21 @@
         });
       }
 
+      // Load shifts from backend if available
+      if (remoteConfig?.shift_schedule?.length) {
+        localStorage.setItem(SHIFT_LS, JSON.stringify(remoteConfig.shift_schedule));
+      }
+
       const shifts = getShifts();
       renderShiftTable(shifts);
 
-      document.getElementById('shiftSave')?.addEventListener('click', () => {
-        // Read current input values before saving
+      document.getElementById('addShiftBtn')?.addEventListener('click', () => {
+        const newId = shifts.length ? Math.max(...shifts.map((s: any) => s.id)) + 1 : 1;
+        shifts.push({ id: newId, label: `Turno ${newId}`, color: PALETTE[newId % PALETTE.length], start: '06:00', end: '14:00', days: [0,1,2,3,4], active: true });
+        renderShiftTable(shifts);
+      });
+
+      document.getElementById('shiftSave')?.addEventListener('click', async () => {
         document.querySelectorAll('#shiftBody .time-hm').forEach(input => {
           const el    = input as HTMLInputElement;
           const si    = parseInt(el.dataset.si!);
@@ -4556,8 +4735,11 @@
         });
         localStorage.setItem(SHIFT_LS, JSON.stringify(shifts));
         refreshUdsFromShifts(shifts);
+
+        await pushConfig({ process_times: times, shift_schedule: shifts });
+
         const st = document.getElementById('shiftSaveStatus');
-        if (st) { st.textContent = '✓ Horarios guardados'; setTimeout(() => { st.textContent = ''; }, 3000); }
+        if (st) { st.textContent = '✓ Guardado en servidor'; setTimeout(() => { st.textContent = ''; }, 3000); }
         showToast('✓ Horarios de turno actualizados');
       });
 

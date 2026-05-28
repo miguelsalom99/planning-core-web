@@ -34,8 +34,8 @@ body {
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
   text-align: justify;
-  hyphens: auto;
-  -webkit-hyphens: auto;
+  hyphens: none;
+  -webkit-hyphens: none;
 }
 
 a { color: inherit; text-decoration: none; }

@@ -1,17 +1,16 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import { SECTORS } from '../data/sectors.js';
 ---
 <BaseLayout
-  title="Precios — Planning Core"
-  description="Precios del piloto 12 semanas de Planning Core. Sin permanencia. ROI medible desde la semana 1."
+  title="Piloto 12 semanas — Planning Core"
+  description="Piloto de 12 semanas para demostrar el ROI con tus propios datos. Sin permanencia. Sin riesgo."
 >
   <section class="page-hero">
     <div class="container">
-      <p class="section-label">Precios y piloto</p>
-      <h1 class="section-title section-title--light">Sin permanencia.<br/>Piloto de 12 semanas.</h1>
+      <p class="section-label">Piloto 12 semanas</p>
+      <h1 class="section-title section-title--light">De cero a producción<br/>en 3 meses.</h1>
       <p class="page-hero__sub">
-        Empezamos con un piloto de 3 meses para demostrar el ROI con tus propios datos.
+        Empezamos con un piloto de 12 semanas para demostrar el ROI con tus propios datos.
         Si no genera valor, no hay contrato. Así de simple.
       </p>
     </div>
@@ -24,13 +23,12 @@ import { SECTORS } from '../data/sectors.js';
       <h2 class="section-title">12 semanas de cero a go-live</h2>
       <div class="phases-grid">
         {[
-          { phase:'Semanas 1–2', title:'Mapeo y configuración', desc:'Mapeamos tus máquinas, turnos, operarios y restricciones. Sin código, sin IT. Tú defines, nosotros configuramos.', icon:'🗺️' },
-          { phase:'Semanas 3–5', title:'Restricciones y validación', desc:'Configuramos la lógica de tu sector: secuencias, cuellos de botella, ventanas de mantenimiento. Plan generado vs. tu realidad.', icon:'⚙️' },
-          { phase:'Semanas 6–8', title:'Uso en paralelo', desc:'Corres Planning Core en paralelo con tu sistema actual. Comparas el plan generado con lo que realmente ejecutas.', icon:'📊' },
-          { phase:'Semanas 9–12', title:'Go-live y scorecard', desc:'Go-live completo. Scorecard de impacto semanal con las métricas acordadas. El ROI medido con tus propios datos.', icon:'🚀' },
+          { phase:'Semanas 1–2', title:'Mapeo y configuración', desc:'Mapeamos tus máquinas, turnos, operarios y restricciones. Sin código, sin IT. Tú defines, nosotros configuramos.' },
+          { phase:'Semanas 3–5', title:'Restricciones y validación', desc:'Configuramos la lógica de tu sector: secuencias, cuellos de botella, ventanas de mantenimiento. Plan generado vs. tu realidad.' },
+          { phase:'Semanas 6–8', title:'Uso en paralelo', desc:'Corres Planning Core en paralelo con tu sistema actual. Comparas el plan generado con lo que realmente ejecutas.' },
+          { phase:'Semanas 9–12', title:'Go-live y scorecard', desc:'Go-live completo. Scorecard de impacto semanal con las métricas acordadas. El ROI medido con tus propios datos.' },
         ].map(p => (
           <div class="phase-card">
-            <div class="phase-icon">{p.icon}</div>
             <div class="phase-badge">{p.phase}</div>
             <h3>{p.title}</h3>
             <p>{p.desc}</p>
@@ -40,44 +38,8 @@ import { SECTORS } from '../data/sectors.js';
     </div>
   </section>
 
-  <!-- PRICING TABLE -->
-  <section class="pricing" style="background:var(--n90)">
-    <div class="container">
-      <p class="section-label">Precios por sector</p>
-      <h2 class="section-title">Precio adaptado a tu industria</h2>
-      <p class="section-sub" style="margin-bottom:3rem">
-        El precio varía según la complejidad del sector, número de recursos y
-        nivel de integracion con tu ERP. Siempre sin permanencia.
-      </p>
-      <div class="pricing-table">
-        <div class="pricing-header">
-          <span>Sector</span>
-          <span>Precio mensual</span>
-          <span>Ciclo de venta</span>
-          <span>Fit</span>
-          <span></span>
-        </div>
-        {SECTORS.map(s => (
-          <div class="pricing-row" style={`--acc:${s.accent}`}>
-            <div class="pricing-sector">
-              <span class="p-icon">{s.icon}</span>
-              <div>
-                <strong>{s.short}</strong>
-                <span>{s.icp}</span>
-              </div>
-            </div>
-            <span class="p-price">{s.price}</span>
-            <span class="p-cycle">{s.cycle}</span>
-            <span class="p-fit">{s.fit}</span>
-            <a href={`/sectores/${s.slug}`} class="p-link">Ver sector →</a>
-          </div>
-        ))}
-      </div>
-    </div>
-  </section>
-
   <!-- WHAT IS INCLUDED -->
-  <section class="included">
+  <section class="included" style="background:var(--n90)">
     <div class="container">
       <div class="included-grid">
         <div>
@@ -102,18 +64,18 @@ import { SECTORS } from '../data/sectors.js';
             ))}
           </div>
         </div>
-        <div class="no-included">
-          <p class="section-label">Lo que no cobramos</p>
-          <h2 style="font-size:1.4rem;font-weight:800;color:var(--navy);margin-bottom:1.5rem">Sin sorpresas</h2>
+        <div class="guarantees">
+          <p class="section-label">Nuestro compromiso</p>
+          <h2 style="font-size:1.4rem;font-weight:800;color:var(--navy);margin-bottom:1.5rem">Sin riesgo. Sin ataduras.</h2>
           {[
             'Sin coste de implantación',
-            'Sin licencia de setup',
             'Sin consultores externos',
             'Sin permanencia mínima',
             'Sin penalización por cancelar',
+            'Sin reemplazar tu ERP actual',
           ].map(t => (
-            <div class="no-item">
-              <span>🚫</span>
+            <div class="guarantee-item">
+              <span class="g-check">✓</span>
               <span>{t}</span>
             </div>
           ))}
@@ -140,47 +102,37 @@ import { SECTORS } from '../data/sectors.js';
 
   .phases { padding: 5rem 0; }
   .phases-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.25rem; margin-top: 2.5rem; }
-  .phase-card { background: var(--n90); border: 1px solid var(--n80); border-radius: var(--radius-lg); padding: 1.75rem 1.5rem; }
-  .phase-icon { font-size: 1.75rem; margin-bottom: .75rem; }
-  .phase-badge { font-size: .7rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--brand); margin-bottom: .5rem; }
+  .phase-card {
+    background: var(--n90);
+    border: 1px solid var(--n80);
+    border-top: 3px solid #1E4DB7;
+    border-radius: var(--radius-lg);
+    padding: 1.75rem 1.5rem;
+  }
+  .phase-badge { font-size: .7rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: #1E4DB7; margin-bottom: .75rem; }
   .phase-card h3 { font-size: 1rem; font-weight: 700; color: var(--navy); margin-bottom: .5rem; }
   .phase-card p { font-size: .875rem; color: var(--n30); line-height: 1.65; }
-
-  .pricing { padding: 5rem 0; }
-  .pricing-table { border: 1px solid var(--n80); border-radius: var(--radius-lg); overflow: hidden; margin-top: 1rem; }
-  .pricing-header { display: grid; grid-template-columns: 2fr 1.5fr 1fr .5fr .75fr; gap: 1rem; padding: .75rem 1.5rem; background: #fff; font-size: .7rem; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; color: var(--silver); border-bottom: 1px solid var(--n80); }
-  .pricing-row { display: grid; grid-template-columns: 2fr 1.5fr 1fr .5fr .75fr; gap: 1rem; align-items: center; padding: 1rem 1.5rem; border-top: 1px solid var(--n80); background: #fff; transition: background .15s; }
-  .pricing-row:hover { background: var(--n90); }
-  .pricing-sector { display: flex; align-items: center; gap: .85rem; }
-  .p-icon { font-size: 1.25rem; flex-shrink: 0; }
-  .pricing-sector strong { display: block; font-size: .9rem; font-weight: 700; color: var(--navy); }
-  .pricing-sector span { font-size: .75rem; color: var(--silver); }
-  .p-price { font-size: .88rem; font-weight: 600; color: var(--navy); }
-  .p-cycle { font-size: .82rem; color: var(--n30); }
-  .p-fit { font-size: .85rem; font-weight: 700; color: var(--acc); }
-  .p-link { font-size: .8rem; font-weight: 600; color: var(--brand); white-space: nowrap; }
-  .p-link:hover { text-decoration: underline; }
 
   .included { padding: 5rem 0; }
   .included-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 5rem; align-items: start; }
   .included-list { margin-top: 1.5rem; display: flex; flex-direction: column; gap: .9rem; }
   .included-item { display: flex; gap: .85rem; align-items: flex-start; }
-  .inc-check { width: 22px; height: 22px; background: rgba(30,77,183,.1); color: var(--brand); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: .7rem; font-weight: 700; flex-shrink: 0; margin-top: 2px; }
+  .inc-check { width: 22px; height: 22px; background: rgba(30,77,183,.1); color: #1E4DB7; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: .7rem; font-weight: 700; flex-shrink: 0; margin-top: 2px; }
   .included-item strong { display: block; font-size: .95rem; color: var(--navy); margin-bottom: .15rem; }
   .included-item span { font-size: .875rem; color: var(--n30); }
 
-  .no-included { background: var(--n90); border: 1px solid var(--n80); border-radius: var(--radius-lg); padding: 2rem; }
-  .no-item { display: flex; align-items: center; gap: .75rem; font-size: .9rem; color: var(--n30); padding: .6rem 0; border-bottom: 1px solid var(--n80); }
-  .no-item:last-child { border-bottom: none; }
+  .guarantees { background: var(--navy); border-radius: var(--radius-lg); padding: 2rem; }
+  .guarantees .section-label { color: rgba(255,255,255,.45); }
+  .guarantees h2 { color: #fff !important; }
+  .guarantee-item { display: flex; align-items: center; gap: .75rem; font-size: .9rem; color: rgba(255,255,255,.75); padding: .7rem 0; border-bottom: 1px solid rgba(255,255,255,.08); }
+  .guarantee-item:last-child { border-bottom: none; }
+  .g-check { width: 20px; height: 20px; background: rgba(30,77,183,.4); color: #93c5fd; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: .65rem; font-weight: 700; flex-shrink: 0; }
 
   .cta-bar { background: linear-gradient(145deg, #060F20, #0B1C3A); padding: 4rem 0; }
   .cta-bar__inner { display: flex; justify-content: space-between; align-items: center; gap: 2rem; flex-wrap: wrap; }
 
   @media (max-width: 900px) {
     .phases-grid { grid-template-columns: repeat(2, 1fr); }
-    .pricing-header, .pricing-row { grid-template-columns: 1fr 1fr; }
-    .pricing-header span:nth-child(3), .pricing-header span:nth-child(4),
-    .pricing-row .p-cycle, .pricing-row .p-fit { display: none; }
     .included-grid { grid-template-columns: 1fr; }
   }
   @media (max-width: 600px) {

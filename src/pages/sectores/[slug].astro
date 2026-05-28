@@ -18,7 +18,6 @@ const { sector: s } = Astro.props;
   <section class="hero" style={`--acc:${s.accent}`}>
     <div class="container hero__inner">
       <div>
-        <div class="sector-badge-top">{s.badge}</div>
         <div class="hero__icon"><SectorIcon slug={s.slug} size={32} /></div>
         <h1 class="hero__title">{s.name}</h1>
         <p class="hero__tagline">{s.tagline}</p>
@@ -40,11 +39,7 @@ const { sector: s } = Astro.props;
           <span class="meta-val">{s.marketEu}</span>
         </div>
         <div class="meta-row">
-          <span class="meta-lbl">Precio</span>
-          <span class="meta-val">{s.price}</span>
-        </div>
-        <div class="meta-row">
-          <span class="meta-lbl">Ciclo venta</span>
+          <span class="meta-lbl">Implantación</span>
           <span class="meta-val">{s.cycle}</span>
         </div>
         <div class="meta-row">
