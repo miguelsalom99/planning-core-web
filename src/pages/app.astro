@@ -3645,13 +3645,46 @@
   }
 
   function showLoginForm(errMsg?: string) {
-    document.getElementById('auth-spinner')!.style.display = 'none';
-    document.getElementById('login-card')!.classList.add('visible');
+    const spinner = document.getElementById('auth-spinner');
+    const card    = document.getElementById('login-card');
+    if (spinner) spinner.style.display = 'none';
+    if (card)    card.classList.add('visible');
     if (errMsg) {
-      const errEl = document.getElementById('login-err')!;
-      errEl.textContent = errMsg;
-      errEl.style.display = 'block';
+      const errEl = document.getElementById('login-err');
+      if (errEl) { errEl.textContent = errMsg; errEl.style.display = 'block'; }
     }
+    // Pre-warm the server in the background so login POST is fast
+    fetch(`${API}/health`).catch(() => {});
+  }
+
+  function hideOverlay() {
+    const overlay = document.getElementById('auth-overlay');
+    if (overlay) overlay.classList.add('hidden');
+  }
+
+  function applyUser(user: any) {
+    try {
+      const initials = user.name
+        ? user.name.split(' ').map((w: string) => w[0]).slice(0,2).join('').toUpperCase()
+        : (user.email || 'U').slice(0,2).toUpperCase();
+      const uiEl = document.getElementById('user-initials');
+      if (uiEl) uiEl.textContent = initials;
+      const unEl = document.getElementById('user-name');
+      if (unEl) unEl.textContent = user.name || user.email;
+      const urEl = document.getElementById('user-role');
+      if (urEl) urEl.textContent = user.is_admin ? 'Administrador' : 'Usuario';
+      if (user.is_admin) initAdminPanel(true);
+      const company    = user.company || 'Mi empresa';
+      const coInitials = company.split(' ').map((w: string) => w[0]).slice(0,2).join('').toUpperCase();
+      const ciEl = document.getElementById('co-initials');
+      if (ciEl) ciEl.textContent = coInitials;
+      const cnEl = document.getElementById('co-name');
+      if (cnEl) cnEl.textContent = company;
+    } catch (e) {
+      console.error('applyUser error', e);
+    }
+    hideOverlay();
+    showSelector();
   }
 
   async function doLogin() {
@@ -3663,22 +3696,22 @@
     btn.disabled = true;
     btn.textContent = 'Verificando…';
     errEl.style.display = 'none';
-    const loginHint = setTimeout(() => { btn.textContent = 'Iniciando servidor…'; }, 3000);
+    const hint = setTimeout(() => { btn.textContent = 'Iniciando servidor… (10-15s primera vez)'; }, 3000);
     try {
       const res = await fetch(`${API}/auth/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password }),
       });
-      clearTimeout(loginHint);
+      clearTimeout(hint);
       const data = await res.json();
       if (!res.ok) throw new Error(data.detail || 'Credenciales incorrectas');
       localStorage.setItem('pc_token', data.access_token);
-      document.getElementById('login-card')!.classList.remove('visible');
-      document.getElementById('auth-spinner')!.style.display = '';
-      await applyUser(data.user);  // data.user comes from login response — no extra round-trip
+      const card = document.getElementById('login-card');
+      if (card) card.classList.remove('visible');
+      applyUser(data.user);
     } catch (e: any) {
-      clearTimeout(loginHint);
+      clearTimeout(hint);
       errEl.textContent = e.message || 'Error de autenticación';
       errEl.style.display = 'block';
       btn.disabled = false;
@@ -3686,42 +3719,22 @@
     }
   }
 
-  async function applyUser(user: any) {
-    const initials = user.name
-      ? user.name.split(' ').map((w: string) => w[0]).slice(0,2).join('').toUpperCase()
-      : user.email.slice(0,2).toUpperCase();
-    document.getElementById('user-initials')!.textContent = initials;
-    document.getElementById('user-name')!.textContent = user.name || user.email;
-    document.getElementById('user-role')!.textContent = user.is_admin ? 'Administrador' : 'Usuario';
-    if (user.is_admin) initAdminPanel(true);
-    const company = user.company || 'Mi empresa';
-    const coInitials = company.split(' ').map((w: string) => w[0]).slice(0,2).join('').toUpperCase();
-    document.getElementById('co-initials')!.textContent = coInitials;
-    document.getElementById('co-name')!.textContent = company;
-    const overlay = document.getElementById('auth-overlay')!;
-    overlay.classList.add('hidden');
-    setTimeout(() => overlay.remove(), 400);
-    showSelector();
-  }
-
-  function slowLoadHint(msgEl: HTMLElement | null, delay = 3000) {
-    return setTimeout(() => {
-      if (msgEl) msgEl.textContent = 'Iniciando servidor… puede tardar unos segundos';
-    }, delay);
-  }
-
   async function init() {
     const token = localStorage.getItem('pc_token');
     if (!token) { showLoginForm(); return; }
-    const hint = slowLoadHint(document.getElementById('auth-spinner-msg'));
+    // Show hint if token validation takes long (cold start)
+    const hintTimer = setTimeout(() => {
+      const msg = document.getElementById('auth-spinner-msg');
+      if (msg) msg.textContent = 'Iniciando servidor… puede tardar unos segundos';
+    }, 3000);
     try {
       const res = await fetch(`${API}/auth/me`, { headers: { Authorization: `Bearer ${token}` } });
-      clearTimeout(hint);
-      if (!res.ok) throw new Error('Token inválido');
+      clearTimeout(hintTimer);
+      if (!res.ok) throw new Error('expired');
       const user = await res.json();
-      await applyUser(user);
+      applyUser(user);
     } catch {
-      clearTimeout(hint);
+      clearTimeout(hintTimer);
       localStorage.removeItem('pc_token');
       showLoginForm('Tu sesión ha expirado. Vuelve a iniciar sesión.');
     }
@@ -3729,8 +3742,12 @@
 
   // Login form wiring
   document.getElementById('login-btn')?.addEventListener('click', doLogin);
-  document.getElementById('login-password')?.addEventListener('keydown', (e) => { if ((e as KeyboardEvent).key === 'Enter') doLogin(); });
-  document.getElementById('login-email')?.addEventListener('keydown', (e) => { if ((e as KeyboardEvent).key === 'Enter') (document.getElementById('login-password') as HTMLInputElement).focus(); });
+  document.getElementById('login-password')?.addEventListener('keydown', (e) => {
+    if ((e as KeyboardEvent).key === 'Enter') doLogin();
+  });
+  document.getElementById('login-email')?.addEventListener('keydown', (e) => {
+    if ((e as KeyboardEvent).key === 'Enter') (document.getElementById('login-password') as HTMLInputElement)?.focus();
+  });
 
   // Industry cards in selector view
   document.querySelectorAll('#industry-selector .industry-card').forEach(card => {
