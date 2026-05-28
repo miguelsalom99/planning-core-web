@@ -1683,7 +1683,7 @@
     #auth-overlay {
       position: fixed;
       inset: 0;
-      background: var(--navy-dark);
+      background: #060B11;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -1702,13 +1702,57 @@
       animation: spin .7s linear infinite;
     }
     @keyframes spin { to { transform: rotate(360deg); } }
+    /* Login card inside overlay */
+    .login-card {
+      display: none;
+      flex-direction: column;
+      width: 100%;
+      max-width: 380px;
+      padding: 0 1.5rem;
+    }
+    .login-card.visible { display: flex; }
+    .login-logo { display:flex; align-items:center; gap:.6rem; margin-bottom:2.5rem; justify-content:center; }
+    .login-logo__box { width:36px;height:36px;background:var(--brand);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:900;color:#fff;border-radius:4px; }
+    .login-logo__name { font-size:15px;font-weight:800;color:#fff; }
+    .login-box { background:#0D1829;border:1px solid rgba(255,255,255,.07);border-radius:12px;padding:2rem; }
+    .login-box h2 { font-size:1.1rem;font-weight:700;color:#fff;margin-bottom:.25rem; }
+    .login-box p { font-size:.8rem;color:rgba(255,255,255,.35);margin-bottom:1.5rem; }
+    .login-field { margin-bottom:1rem; }
+    .login-field label { display:block;font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:rgba(255,255,255,.35);margin-bottom:.35rem; }
+    .login-field input { width:100%;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:5px;padding:.65rem .85rem;font-size:.88rem;color:#fff;font-family:inherit;outline:none;transition:border-color .15s; }
+    .login-field input:focus { border-color:var(--brand-lt); }
+    .login-field input::placeholder { color:rgba(255,255,255,.2); }
+    .login-btn { width:100%;background:var(--brand);border:none;border-radius:5px;color:#fff;font-size:.88rem;font-weight:700;padding:.75rem;cursor:pointer;margin-top:.25rem;transition:background .15s;font-family:inherit; }
+    .login-btn:hover { background:var(--brand-lt); }
+    .login-btn:disabled { opacity:.5;cursor:not-allowed; }
+    .login-err { background:rgba(220,38,38,.1);border:1px solid rgba(220,38,38,.25);border-radius:5px;color:#fca5a5;font-size:.78rem;padding:.55rem .85rem;margin-top:.85rem;display:none; }
   </style>
 </head>
 <body>
 
-<!-- Auth overlay — hidden once token validated -->
+<!-- Auth overlay — shows spinner while validating, login form if no token -->
 <div id="auth-overlay">
-  <div class="spinner"></div>
+  <div class="spinner" id="auth-spinner"></div>
+  <div class="login-card" id="login-card">
+    <div class="login-logo">
+      <div class="login-logo__box">PC</div>
+      <span class="login-logo__name">Planning Core</span>
+    </div>
+    <div class="login-box">
+      <h2>Accede a tu cuenta</h2>
+      <p>Introduce tus credenciales para continuar</p>
+      <div class="login-field">
+        <label>Email</label>
+        <input type="email" id="login-email" placeholder="tu@empresa.com" autocomplete="email"/>
+      </div>
+      <div class="login-field">
+        <label>Contraseña</label>
+        <input type="password" id="login-password" placeholder="••••••••" autocomplete="current-password"/>
+      </div>
+      <button class="login-btn" id="login-btn">Entrar →</button>
+      <div class="login-err" id="login-err"></div>
+    </div>
+  </div>
 </div>
 
 <div class="app-shell">
@@ -3565,7 +3609,6 @@
 <script>
   import * as XLSX from 'xlsx';
   const API = 'https://composite-replanning-api.vercel.app';
-  const LOGIN_URL = 'https://composite-replanning-api.vercel.app/login?next=https://planning-core-web.vercel.app/app';
 
   const selectorEl  = document.getElementById('industry-selector');
   const dashboardEl = document.getElementById('dashboard-view');
@@ -3598,60 +3641,81 @@
     initDashboard();
   }
 
-  async function init() {
-    // Pick up token passed via URL fragment from cross-domain login redirect
-    const hash = window.location.hash;
-    if (hash.startsWith('#token=')) {
-      const t = decodeURIComponent(hash.slice(7));
-      localStorage.setItem('pc_token', t);
-      sessionStorage.removeItem('auth_redirects');
-      history.replaceState(null, '', window.location.pathname + window.location.search);
+  function showLoginForm(errMsg?: string) {
+    document.getElementById('auth-spinner')!.style.display = 'none';
+    document.getElementById('login-card')!.classList.add('visible');
+    if (errMsg) {
+      const errEl = document.getElementById('login-err')!;
+      errEl.textContent = errMsg;
+      errEl.style.display = 'block';
     }
+  }
 
-    const token = localStorage.getItem('pc_token');
-    if (!token) {
-      const redirects = parseInt(sessionStorage.getItem('auth_redirects') || '0');
-      if (redirects >= 3) {
-        document.getElementById('auth-overlay').innerHTML = '<div style="color:#fff;text-align:center;padding:2rem"><p style="font-size:1.1rem;margin-bottom:.5rem">Error de autenticación</p><p style="opacity:.6;font-size:.85rem">Limpia las cookies y vuelve a intentarlo</p><button onclick="localStorage.clear();sessionStorage.clear();location.reload()" style="margin-top:1rem;padding:.5rem 1.2rem;background:#1B3F8B;color:#fff;border:none;border-radius:6px;cursor:pointer">Reintentar</button></div>';
-        return;
-      }
-      sessionStorage.setItem('auth_redirects', String(redirects + 1));
-      window.location.replace(LOGIN_URL);
-      return;
-    }
-
+  async function doLogin() {
+    const email    = (document.getElementById('login-email') as HTMLInputElement).value.trim();
+    const password = (document.getElementById('login-password') as HTMLInputElement).value;
+    const btn      = document.getElementById('login-btn') as HTMLButtonElement;
+    const errEl    = document.getElementById('login-err')!;
+    if (!email || !password) { errEl.textContent = 'Introduce email y contraseña'; errEl.style.display = 'block'; return; }
+    btn.disabled = true;
+    btn.textContent = 'Verificando…';
+    errEl.style.display = 'none';
     try {
-      const res = await fetch(`${API}/auth/me`, { headers: { Authorization: `Bearer ${token}` } });
-      if (!res.ok) throw new Error('Unauthorized');
-      const user = await res.json();
-
-      const initials = user.name
-        ? user.name.split(' ').map(w => w[0]).slice(0,2).join('').toUpperCase()
-        : user.email.slice(0,2).toUpperCase();
-
-      document.getElementById('user-initials').textContent = initials;
-      document.getElementById('user-name').textContent = user.name || user.email;
-      document.getElementById('user-role').textContent = user.is_admin ? 'Administrador' : 'Usuario';
-      if (user.is_admin) initAdminPanel(true);
-
-      const company = user.company || 'Mi empresa';
-      const coInitials = company.split(' ').map(w => w[0]).slice(0,2).join('').toUpperCase();
-      document.getElementById('co-initials').textContent = coInitials;
-      document.getElementById('co-name').textContent = company;
-
-    } catch {
-      localStorage.removeItem('pc_token');
-      // Use replace to avoid a back-button loop with the login page
-      window.location.replace(LOGIN_URL);
-      return;
+      const res = await fetch(`${API}/auth/login`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.detail || 'Credenciales incorrectas');
+      localStorage.setItem('pc_token', data.access_token);
+      document.getElementById('login-card')!.classList.remove('visible');
+      document.getElementById('auth-spinner')!.style.display = '';
+      await applyUser(data.user);
+    } catch (e: any) {
+      errEl.textContent = e.message || 'Error de autenticación';
+      errEl.style.display = 'block';
+      btn.disabled = false;
+      btn.textContent = 'Entrar →';
     }
+  }
 
-    const overlay = document.getElementById('auth-overlay');
+  async function applyUser(user: any) {
+    const initials = user.name
+      ? user.name.split(' ').map((w: string) => w[0]).slice(0,2).join('').toUpperCase()
+      : user.email.slice(0,2).toUpperCase();
+    document.getElementById('user-initials')!.textContent = initials;
+    document.getElementById('user-name')!.textContent = user.name || user.email;
+    document.getElementById('user-role')!.textContent = user.is_admin ? 'Administrador' : 'Usuario';
+    if (user.is_admin) initAdminPanel(true);
+    const company = user.company || 'Mi empresa';
+    const coInitials = company.split(' ').map((w: string) => w[0]).slice(0,2).join('').toUpperCase();
+    document.getElementById('co-initials')!.textContent = coInitials;
+    document.getElementById('co-name')!.textContent = company;
+    const overlay = document.getElementById('auth-overlay')!;
     overlay.classList.add('hidden');
     setTimeout(() => overlay.remove(), 400);
-
     showSelector();
   }
+
+  async function init() {
+    const token = localStorage.getItem('pc_token');
+    if (!token) { showLoginForm(); return; }
+    try {
+      const res = await fetch(`${API}/auth/me`, { headers: { Authorization: `Bearer ${token}` } });
+      if (!res.ok) throw new Error('Token inválido');
+      const user = await res.json();
+      await applyUser(user);
+    } catch {
+      localStorage.removeItem('pc_token');
+      showLoginForm('Tu sesión ha expirado. Vuelve a iniciar sesión.');
+    }
+  }
+
+  // Login form wiring
+  document.getElementById('login-btn')?.addEventListener('click', doLogin);
+  document.getElementById('login-password')?.addEventListener('keydown', (e) => { if ((e as KeyboardEvent).key === 'Enter') doLogin(); });
+  document.getElementById('login-email')?.addEventListener('keydown', (e) => { if ((e as KeyboardEvent).key === 'Enter') (document.getElementById('login-password') as HTMLInputElement).focus(); });
 
   // Industry cards in selector view
   document.querySelectorAll('#industry-selector .industry-card').forEach(card => {
@@ -5606,7 +5670,7 @@
   document.getElementById('nav-logout').addEventListener('click', e => {
     e.preventDefault();
     localStorage.removeItem('pc_token');
-    window.location.href = LOGIN_URL;
+    location.reload();
   });
 
   init();
