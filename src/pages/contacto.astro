@@ -8,9 +8,9 @@ import { SECTORS } from '../data/sectors.js';
 >
   <section class="page-hero">
     <div class="container">
-      <p class="section-label">Contacto</p>
-      <h1 class="section-title section-title--light">Hablemos de tu planta</h1>
-      <p class="page-hero__sub">
+      <p class="section-label" data-i18n="contacto.hero.label">Contacto</p>
+      <h1 class="section-title section-title--light" data-i18n="contacto.hero.title">Hablemos de tu planta</h1>
+      <p class="page-hero__sub" data-i18n="contacto.hero.sub">
         Una llamada de 30 min para entender tus restricciones y ver si Planning Core
         encaja. Sin compromiso. Respuesta en menos de 24h.
       </p>
@@ -21,36 +21,36 @@ import { SECTORS } from '../data/sectors.js';
     <div class="container contact-inner">
       <!-- FORM -->
       <div class="contact-form-wrap">
-        <h2>Solicitar demo</h2>
-        <p class="form-sub">Cuéntanos tu sector y el reto principal. Te respondemos en menos de 24h.</p>
+        <h2 data-i18n="contacto.form.title">Solicitar demo</h2>
+        <p class="form-sub" data-i18n="contacto.form.sub">Cuéntanos tu sector y el reto principal. Te respondemos en menos de 24h.</p>
 
         <form class="contact-form" id="contactForm">
           <div class="form-row">
             <div class="form-group">
-              <label for="nombre">Nombre *</label>
-              <input type="text" id="nombre" name="nombre" placeholder="Tu nombre" required />
+              <label for="nombre" data-i18n="contacto.form.name">Nombre *</label>
+              <input type="text" id="nombre" name="nombre" placeholder="Tu nombre" required data-i18n-placeholder="contacto.form.namePH" />
             </div>
             <div class="form-group">
-              <label for="empresa">Empresa *</label>
-              <input type="text" id="empresa" name="empresa" placeholder="Nombre de la empresa" required />
+              <label for="empresa" data-i18n="contacto.form.company">Empresa *</label>
+              <input type="text" id="empresa" name="empresa" placeholder="Nombre de la empresa" required data-i18n-placeholder="contacto.form.companyPH" />
             </div>
           </div>
 
           <div class="form-row">
             <div class="form-group">
-              <label for="email">Email *</label>
+              <label for="email" data-i18n="contacto.form.email">Email *</label>
               <input type="email" id="email" name="email" placeholder="tu@empresa.com" required />
             </div>
             <div class="form-group">
-              <label for="telefono">Teléfono</label>
+              <label for="telefono" data-i18n="contacto.form.phone">Teléfono</label>
               <input type="tel" id="telefono" name="telefono" placeholder="+34 600 000 000" />
             </div>
           </div>
 
           <div class="form-group">
-            <label for="sector">Sector *</label>
+            <label for="sector" data-i18n="contacto.form.sector">Sector *</label>
             <select id="sector" name="sector" required>
-              <option value="">Selecciona tu sector</option>
+              <option value="" data-i18n-opt="contacto.form.sectorDefault">Selecciona tu sector</option>
               {SECTORS.map(s => (
                 <option value={s.slug}>{s.name}</option>
               ))}
@@ -59,74 +59,74 @@ import { SECTORS } from '../data/sectors.js';
           </div>
 
           <div class="form-group">
-            <label for="cargo">Cargo</label>
+            <label for="cargo" data-i18n="contacto.form.role">Cargo</label>
             <input type="text" id="cargo" name="cargo" placeholder="Director de Producción, Plant Manager..." />
           </div>
 
           <div class="form-group">
-            <label for="reto">Cuéntanos tu principal reto *</label>
+            <label for="reto" data-i18n="contacto.form.challenge">Cuéntanos tu principal reto *</label>
             <textarea id="reto" name="reto" rows="4" placeholder="¿Cuál es el cuello de botella más crítico? ¿Cómo gestionáis ahora la planificación?" required></textarea>
           </div>
 
           <div class="form-group form-group--check">
             <label class="check-label">
               <input type="checkbox" required />
-              <span>Acepto que Planning Core use mis datos para contactarme sobre la demo.</span>
+              <span data-i18n="contacto.form.consent">Acepto que Planning Core use mis datos para contactarme sobre la demo.</span>
             </label>
           </div>
 
-          <button type="submit" class="btn btn--primary btn--full">
+          <button type="submit" class="btn btn--primary btn--full" data-i18n="contacto.form.submit">
             Solicitar demo gratuita →
           </button>
         </form>
 
         <div class="form-success" id="formSuccess" style="display:none">
           <div class="success-icon">✅</div>
-          <h3>¡Solicitud recibida!</h3>
-          <p>Te contactamos en menos de 24h para coordinar la demo.</p>
+          <h3 data-i18n="contacto.success.title">¡Solicitud recibida!</h3>
+          <p data-i18n="contacto.success.sub">Te contactamos en menos de 24h para coordinar la demo.</p>
         </div>
       </div>
 
       <!-- SIDEBAR -->
       <div class="contact-sidebar">
         <div class="sidebar-block">
-          <h3>Lo que pasa después</h3>
+          <h3 data-i18n="contacto.sidebar.next">Lo que pasa después</h3>
           <div class="sidebar-steps">
             <div class="sidebar-step">
               <span class="ss-num">1</span>
-              <div><strong>Confirmamos tu solicitud</strong><span>Email en menos de 2 horas en horario laboral.</span></div>
+              <div><strong data-i18n="contacto.sidebar.s1.title">Confirmamos tu solicitud</strong><span data-i18n="contacto.sidebar.s1.desc">Email en menos de 2 horas en horario laboral.</span></div>
             </div>
             <div class="sidebar-step">
               <span class="ss-num">2</span>
-              <div><strong>Llamada de discovery (30 min)</strong><span>Entendemos tu sector, recursos y el reto principal.</span></div>
+              <div><strong data-i18n="contacto.sidebar.s2.title">Llamada de discovery (30 min)</strong><span data-i18n="contacto.sidebar.s2.desc">Entendemos tu sector, recursos y el reto principal.</span></div>
             </div>
             <div class="sidebar-step">
               <span class="ss-num">3</span>
-              <div><strong>Demo personalizada</strong><span>Planning Core configurado con tus datos y tus restricciones reales.</span></div>
+              <div><strong data-i18n="contacto.sidebar.s3.title">Demo personalizada</strong><span data-i18n="contacto.sidebar.s3.desc">Planning Core configurado con tus datos y tus restricciones reales.</span></div>
             </div>
             <div class="sidebar-step">
               <span class="ss-num">4</span>
-              <div><strong>Propuesta de piloto</strong><span>Si encaja, diseñamos el piloto de 12 semanas con KPIs acordados.</span></div>
+              <div><strong data-i18n="contacto.sidebar.s4.title">Propuesta de piloto</strong><span data-i18n="contacto.sidebar.s4.desc">Si encaja, diseñamos el piloto de 12 semanas con KPIs acordados.</span></div>
             </div>
           </div>
         </div>
 
         <div class="sidebar-block sidebar-block--dark">
-          <h3>Contacto directo</h3>
+          <h3 data-i18n="contacto.sidebar.direct">Contacto directo</h3>
           <a href="tel:+34686595405" class="direct-link">
             <span>📞</span>
             +34 686 595 405
           </a>
-          <p class="sidebar-note">Respondemos en menos de 24h en días laborables.</p>
+          <p class="sidebar-note" data-i18n="contacto.sidebar.note">Respondemos en menos de 24h en días laborables.</p>
         </div>
 
         <div class="sidebar-block">
-          <h3>Por qué empezar con un piloto</h3>
+          <h3 data-i18n="contacto.sidebar.why.title">Por qué empezar con un piloto</h3>
           <ul class="why-list">
-            <li>ROI medible con tus propios datos</li>
-            <li>Sin permanencia ni contrato largo</li>
-            <li>Onboarding guiado por nuestro equipo</li>
-            <li>Si no genera valor, no hay contrato</li>
+            <li data-i18n="contacto.sidebar.why.0">ROI medible con tus propios datos</li>
+            <li data-i18n="contacto.sidebar.why.1">Sin permanencia ni contrato largo</li>
+            <li data-i18n="contacto.sidebar.why.2">Onboarding guiado por nuestro equipo</li>
+            <li data-i18n="contacto.sidebar.why.3">Si no genera valor, no hay contrato</li>
           </ul>
         </div>
       </div>

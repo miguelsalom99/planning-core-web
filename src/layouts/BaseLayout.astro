@@ -23,6 +23,16 @@ const {
     <style define:vars={{ accent }}>
       :root { --page-accent: var(--accent); }
     </style>
+    <!-- Anti-flicker: apply saved theme/lang before first paint -->
+    <script>
+      (function(){
+        try {
+          if (localStorage.getItem('theme') === 'dark') {
+            document.documentElement.setAttribute('data-theme','dark');
+          }
+        } catch(e){}
+      })();
+    </script>
   </head>
   <body>
     <Header />
@@ -32,3 +42,74 @@ const {
     <Footer />
   </body>
 </html>
+
+<script>
+  import { EN } from '../data/i18n.js';
+
+  type Translations = Record<string, string>;
+
+  function applyLang(lang: string) {
+    const t: Translations = lang === 'en' ? EN : {};
+    document.querySelectorAll<HTMLElement>('[data-i18n]').forEach(el => {
+      const key = el.dataset.i18n!;
+      if (key in t) el.textContent = t[key];
+    });
+    document.querySelectorAll<HTMLElement>('[data-i18n-html]').forEach(el => {
+      const key = el.dataset.i18nHtml!;
+      if (key in t) el.innerHTML = t[key];
+    });
+    document.querySelectorAll<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>('[data-i18n-placeholder]').forEach(el => {
+      const key = (el as HTMLElement).dataset.i18nPlaceholder!;
+      if (key in t) (el as HTMLInputElement).placeholder = t[key];
+    });
+    // Update <option> default text (select elements)
+    document.querySelectorAll<HTMLOptionElement>('[data-i18n-opt]').forEach(el => {
+      const key = el.dataset.i18nOpt!;
+      if (key in t) el.textContent = t[key];
+    });
+
+    // Sync lang button label
+    const cur = document.getElementById('langCurrent');
+    if (cur) cur.textContent = lang.toUpperCase();
+
+    // Mark active option
+    document.querySelectorAll<HTMLElement>('[data-lang-option]').forEach(btn => {
+      btn.classList.toggle('active', btn.dataset.langOption === lang);
+    });
+
+    document.documentElement.lang = lang === 'en' ? 'en' : 'es';
+    localStorage.setItem('pc_lang', lang);
+  }
+
+  // Apply saved language on load
+  const savedLang = localStorage.getItem('pc_lang') || 'es';
+  if (savedLang === 'en') applyLang('en');
+
+  // Sync active class on initial load
+  document.querySelectorAll<HTMLElement>('[data-lang-option]').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.langOption === savedLang);
+  });
+
+  // Language dropdown toggle
+  const langSelector = document.getElementById('langSelector');
+  const langBtnEl    = document.getElementById('langBtnEl');
+  const langMenu     = document.getElementById('langMenu');
+
+  langBtnEl?.addEventListener('click', (e) => {
+    e.stopPropagation();
+    langSelector?.classList.toggle('open');
+  });
+
+  document.addEventListener('click', () => {
+    langSelector?.classList.remove('open');
+  });
+
+  langMenu?.addEventListener('click', (e) => e.stopPropagation());
+
+  document.querySelectorAll<HTMLElement>('[data-lang-option]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      applyLang(btn.dataset.langOption!);
+      langSelector?.classList.remove('open');
+    });
+  });
+</script>

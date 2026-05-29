@@ -16,19 +16,19 @@ const sectors = [
       <a href="/" class="footer__logo-link">
         <img src="/images/logo-stacked.png" alt="Planning Core" class="footer__logo-img" />
       </a>
-      <p class="footer__tagline">El Gantt inteligente para manufactura industrial.</p>
-      <p class="footer__tagline footer__tagline--sub">Sin código. Sin IT. En semanas.</p>
+      <p class="footer__tagline" data-i18n="footer.tagline1">El Gantt inteligente para manufactura industrial.</p>
+      <p class="footer__tagline footer__tagline--sub" data-i18n="footer.tagline2">Sin código. Sin IT. En semanas.</p>
     </div>
 
     <div class="footer__col">
-      <h4>Producto</h4>
-      <a href="/producto">Cómo funciona</a>
-      <a href="/precios">Piloto 12 semanas</a>
-      <a href="/contacto">Solicitar demo</a>
+      <h4 data-i18n="footer.col.product">Producto</h4>
+      <a href="/producto" data-i18n="footer.link.how">Cómo funciona</a>
+      <a href="/precios" data-i18n="footer.link.pilot">Piloto 12 semanas</a>
+      <a href="/contacto" data-i18n="footer.link.demo">Solicitar demo</a>
     </div>
 
     <div class="footer__col">
-      <h4>Sectores</h4>
+      <h4 data-i18n="footer.col.sectors">Sectores</h4>
       {sectors.slice(0,4).map(s => <a href={s.href}>{s.label}</a>)}
     </div>
 

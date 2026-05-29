@@ -8,9 +8,9 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   <!-- HERO -->
   <section class="page-hero">
     <div class="container">
-      <p class="section-label">El producto</p>
-      <h1 class="section-title section-title--light">Un Gantt que decide,<br/>no solo que dibuja</h1>
-      <p class="page-hero__sub">
+      <p class="section-label" data-i18n="prod.hero.label">El producto</p>
+      <h1 class="section-title section-title--light" data-i18n-html="prod.hero.title">Un Gantt que decide,<br/>no solo que dibuja</h1>
+      <p class="page-hero__sub" data-i18n="prod.hero.sub">
         Planning Core es la capa de planificación que tu ERP no tiene. Gestiona recursos,
         simula escenarios y replanifica en segundos cuando la realidad cambia.
       </p>
@@ -22,18 +22,18 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     <div class="container">
       <div class="feature-block feature-block--reverse">
         <div class="feature-block__text">
-          <p class="section-label">Gantt en tiempo real</p>
-          <h2 class="section-title">Visibilidad total<br/>de tu planta</h2>
-          <p class="feature-desc">
+          <p class="section-label" data-i18n="prod.f1.label">Gantt en tiempo real</p>
+          <h2 class="section-title" data-i18n-html="prod.f1.title">Visibilidad total<br/>de tu planta</h2>
+          <p class="feature-desc" data-i18n="prod.f1.desc">
             Ve todas tus máquinas, líneas y operarios en una sola pantalla.
             El plan se actualiza automáticamente cuando cambia algo en producción.
             Sin refrescos manuales, sin versiones desactualizadas.
           </p>
           <ul class="feature-list">
-            <li>Arrastrar y soltar para reordenar operaciones</li>
-            <li>Alertas automáticas de colisión de recursos</li>
-            <li>Vista por turno, día o semana</li>
-            <li>Exportación a PDF o integración vía API</li>
+            <li data-i18n="prod.f1.li.0">Arrastrar y soltar para reordenar operaciones</li>
+            <li data-i18n="prod.f1.li.1">Alertas automáticas de colisión de recursos</li>
+            <li data-i18n="prod.f1.li.2">Vista por turno, día o semana</li>
+            <li data-i18n="prod.f1.li.3">Exportación a PDF o integración vía API</li>
           </ul>
         </div>
         <div class="feature-block__visual">
@@ -46,9 +46,14 @@ import BaseLayout from '../layouts/BaseLayout.astro';
             </div>
             <div class="screen-body">
               <div class="mini-gantt">
-                {['Línea A','Línea B','Línea C','Operarios'].map((row, ri) => (
+                {[
+                  ['Línea A','prod.f1.row.0'],
+                  ['Línea B','prod.f1.row.1'],
+                  ['Línea C','prod.f1.row.2'],
+                  ['Operarios','prod.f1.row.3'],
+                ].map(([row, i18nKey], ri) => (
                   <div class="mg-row">
-                    <span class="mg-label">{row}</span>
+                    <span class="mg-label" data-i18n={i18nKey}>{row}</span>
                     <div class="mg-track">
                       <div class="mg-bar" style={`width:${[35,20,28,55][ri]}%;background:${['#1E4DB7','#16A34A','#DC6803','#0891B2'][ri]}`}></div>
                       {ri < 3 && <div class="mg-bar" style={`width:${[20,35,15][ri]}%;background:${['#7C3AED','#DC6803','#1E4DB7'][ri]};margin-left:3px`}></div>}
@@ -56,7 +61,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
                   </div>
                 ))}
               </div>
-              <div class="alert-chip">⚠ Colisión detectada en Línea B — Sem 3</div>
+              <div class="alert-chip" data-i18n="prod.f1.alert">⚠ Colisión detectada en Línea B — Sem 3</div>
             </div>
           </div>
         </div>
@@ -64,37 +69,37 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
       <div class="feature-block">
         <div class="feature-block__text">
-          <p class="section-label">Escenarios de simulación</p>
-          <h2 class="section-title">3 planes en segundos.<br/>Tú eliges cuál ejecutar.</h2>
-          <p class="feature-desc">
+          <p class="section-label" data-i18n="prod.f2.label">Escenarios de simulación</p>
+          <h2 class="section-title" data-i18n-html="prod.f2.title">3 planes en segundos.<br/>Tú eliges cuál ejecutar.</h2>
+          <p class="feature-desc" data-i18n="prod.f2.desc">
             El motor genera automáticamente tres versiones del plan: Óptimo (máximo throughput),
             Equilibrado (balance carga-entrega) y Conservador (mínimo riesgo). Compara y decide
             en segundos, no en horas de reunión.
           </p>
           <ul class="feature-list">
-            <li>Óptimo: maximiza producción y OEE</li>
-            <li>Equilibrado: equilibra carga entre recursos</li>
-            <li>Conservador: prioriza fechas de entrega</li>
-            <li>Guardar y comparar escenarios históricos</li>
+            <li data-i18n="prod.f2.li.0">Óptimo: maximiza producción y OEE</li>
+            <li data-i18n="prod.f2.li.1">Equilibrado: equilibra carga entre recursos</li>
+            <li data-i18n="prod.f2.li.2">Conservador: prioriza fechas de entrega</li>
+            <li data-i18n="prod.f2.li.3">Guardar y comparar escenarios históricos</li>
           </ul>
         </div>
         <div class="feature-block__visual">
           <div class="scenarios-card">
             {[
-              { label:'Óptimo', oee:'94%', otd:'91%', color:'#16A34A', desc:'Máximo throughput' },
-              { label:'Equilibrado', oee:'87%', otd:'97%', color:'#1E4DB7', desc:'Balance recomendado', active:true },
-              { label:'Conservador', oee:'78%', otd:'99%', color:'#8BA3C1', desc:'Mínimo riesgo' },
+              { label:'Óptimo', oee:'94%', otd:'91%', color:'#16A34A', desc:'Máximo throughput', i18n: 0 },
+              { label:'Equilibrado', oee:'87%', otd:'97%', color:'#1E4DB7', desc:'Balance recomendado', active:true, i18n: 1 },
+              { label:'Conservador', oee:'78%', otd:'99%', color:'#8BA3C1', desc:'Mínimo riesgo', i18n: 2 },
             ].map(sc => (
               <div class={`scenario ${sc.active ? 'scenario--active' : ''}`} style={`--sc:${sc.color}`}>
                 <div class="scenario__top">
-                  <span class="scenario__label">{sc.label}</span>
-                  {sc.active && <span class="scenario__tag">Recomendado</span>}
+                  <span class="scenario__label" data-i18n={`prod.f2.sc.${sc.i18n}.label`}>{sc.label}</span>
+                  {sc.active && <span class="scenario__tag" data-i18n="prod.f2.recommended">Recomendado</span>}
                 </div>
                 <div class="scenario__metrics">
                   <div class="sc-metric"><span>OEE</span><strong>{sc.oee}</strong></div>
                   <div class="sc-metric"><span>OTD</span><strong>{sc.otd}</strong></div>
                 </div>
-                <p class="scenario__desc">{sc.desc}</p>
+                <p class="scenario__desc" data-i18n={`prod.f2.sc.${sc.i18n}.desc`}>{sc.desc}</p>
               </div>
             ))}
           </div>
@@ -103,17 +108,17 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
       <div class="feature-block feature-block--reverse">
         <div class="feature-block__text">
-          <p class="section-label">Replanificación inteligente</p>
-          <h2 class="section-title">La realidad cambia.<br/>El plan también.</h2>
-          <p class="feature-desc">
+          <p class="section-label" data-i18n="prod.f3.label">Replanificación inteligente</p>
+          <h2 class="section-title" data-i18n-html="prod.f3.title">La realidad cambia.<br/>El plan también.</h2>
+          <p class="feature-desc" data-i18n="prod.f3.desc">
             Avería, pedido urgente, operario de baja. Planning Core detecta la desviación
             y genera un nuevo plan en segundos, sin perder las fechas comprometidas.
           </p>
           <ul class="feature-list">
-            <li>Replanificación con un clic</li>
-            <li>Mantiene restricciones regulatorias y de calidad</li>
-            <li>Auditoría de cambios con marca de tiempo</li>
-            <li>Simulación de impacto antes de confirmar</li>
+            <li data-i18n="prod.f3.li.0">Replanificación con un clic</li>
+            <li data-i18n="prod.f3.li.1">Mantiene restricciones regulatorias y de calidad</li>
+            <li data-i18n="prod.f3.li.2">Auditoría de cambios con marca de tiempo</li>
+            <li data-i18n="prod.f3.li.3">Simulación de impacto antes de confirmar</li>
           </ul>
         </div>
         <div class="feature-block__visual">
@@ -121,17 +126,17 @@ import BaseLayout from '../layouts/BaseLayout.astro';
             <div class="replan-event">
               <span class="event-icon">🔴</span>
               <div>
-                <strong>Avería detectada</strong>
-                <span>Línea A — Turno tarde</span>
+                <strong data-i18n="prod.f3.breakdown">Avería detectada</strong>
+                <span data-i18n="prod.f3.lineA">Línea A — Turno tarde</span>
               </div>
               <span class="event-time">14:32</span>
             </div>
-            <div class="replan-arrow">↓ Replanificando...</div>
+            <div class="replan-arrow" data-i18n="prod.f3.replanning">↓ Replanificando...</div>
             <div class="replan-result">
               <span class="event-icon">✅</span>
               <div>
-                <strong>Nuevo plan listo</strong>
-                <span>3 OTs reasignadas · OTD: 96% mantenido</span>
+                <strong data-i18n="prod.f3.ready">Nuevo plan listo</strong>
+                <span data-i18n="prod.f3.result">3 OTs reasignadas · OTD: 96% mantenido</span>
               </div>
               <span class="event-time">14:32</span>
             </div>
@@ -144,9 +149,9 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   <!-- INTEGRATIONS -->
   <section class="integrations" style="background:var(--n90)">
     <div class="container text-center">
-      <p class="section-label">Integraciones</p>
-      <h2 class="section-title">Encima de lo que ya tienes</h2>
-      <p class="section-sub text-center" style="margin:0 auto 3rem">
+      <p class="section-label" data-i18n="prod.int.label">Integraciones</p>
+      <h2 class="section-title" data-i18n="prod.int.title">Encima de lo que ya tienes</h2>
+      <p class="section-sub text-center" style="margin:0 auto 3rem" data-i18n="prod.int.sub">
         Planning Core no reemplaza tu ERP. Se conecta vía API y añade la capa de
         planificación inteligente que le faltaba.
       </p>
@@ -155,7 +160,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
           <div class="integration-chip">{int}</div>
         ))}
       </div>
-      <p class="integrations-note">¿Tu ERP no está en la lista? Contáctanos — la integración suele tardar menos de una semana.</p>
+      <p class="integrations-note" data-i18n="prod.int.note">¿Tu ERP no está en la lista? Contáctanos — la integración suele tardar menos de una semana.</p>
     </div>
   </section>
 
@@ -163,12 +168,12 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   <section class="cta-section">
     <div class="container cta-inner">
       <div>
-        <h2 class="section-title">¿Listo para ver Planning Core<br/>en tu planta?</h2>
-        <p class="section-sub">Demo personalizada para tu sector y tus restricciones reales.</p>
+        <h2 class="section-title" data-i18n-html="prod.cta.title">¿Listo para ver Planning Core<br/>en tu planta?</h2>
+        <p class="section-sub" data-i18n="prod.cta.sub">Demo personalizada para tu sector y tus restricciones reales.</p>
       </div>
       <div style="display:flex;flex-direction:column;gap:.75rem;flex-shrink:0">
-        <a href="/contacto" class="btn btn--primary">Solicitar demo →</a>
-        <a href="/precios" class="btn btn--dark">Ver precios del piloto</a>
+        <a href="/contacto" class="btn btn--primary" data-i18n="prod.cta.btn1">Solicitar demo →</a>
+        <a href="/precios" class="btn btn--dark" data-i18n="prod.cta.btn2">Ver precios del piloto</a>
       </div>
     </div>
   </section>

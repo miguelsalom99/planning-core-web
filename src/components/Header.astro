@@ -2,9 +2,9 @@
 const currentPath = Astro.url.pathname;
 
 const industries = [
-  { href: '/sectores/composites-aero',      label: 'Composites & Aeroespacial' },
-  { href: '/sectores/impresion-packaging',  label: 'Impresión & Packaging' },
-  { href: '/sectores/fundicion-metalurgia', label: 'Fundición & Metalurgia' },
+  { href: '/sectores/composites-aero',      label: 'Composites & Aeroespacial', i18n: 'nav.ind.composites' },
+  { href: '/sectores/impresion-packaging',  label: 'Impresión & Packaging',     i18n: 'nav.ind.print'      },
+  { href: '/sectores/fundicion-metalurgia', label: 'Fundición & Metalurgia',    i18n: 'nav.ind.metal'      },
 ];
 ---
 <header class="header" id="header">
@@ -15,29 +15,41 @@ const industries = [
     </a>
 
     <nav class="header__nav" id="nav">
-      <a href="/" class={`nav-link ${currentPath === '/' ? 'nav-link--active' : ''}`}>Inicio</a>
-      <a href="/producto" class={`nav-link ${currentPath.startsWith('/producto') ? 'nav-link--active' : ''}`}>Producto</a>
+      <a href="/" class={`nav-link ${currentPath === '/' ? 'nav-link--active' : ''}`} data-i18n="nav.inicio">Inicio</a>
+      <a href="/producto" class={`nav-link ${currentPath.startsWith('/producto') ? 'nav-link--active' : ''}`} data-i18n="nav.producto">Producto</a>
 
       <div class="nav-dropdown">
         <button class={`nav-link nav-link--btn ${currentPath.startsWith('/sectores') ? 'nav-link--active' : ''}`}>
-          Industrias
+          <span data-i18n="nav.industrias">Industrias</span>
           <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
         </button>
         <div class="dropdown-menu">
-          {industries.map(({ href, label }) => (
-            <a href={href} class="dropdown-item">{label}</a>
+          {industries.map(({ href, label, i18n }) => (
+            <a href={href} class="dropdown-item" data-i18n={i18n}>{label}</a>
           ))}
           <div class="dropdown-divider"></div>
-          <a href="/sectores" class="dropdown-item dropdown-item--all">Ver todos los sectores →</a>
+          <a href="/sectores" class="dropdown-item dropdown-item--all" data-i18n="nav.viewAll">Ver todos los sectores →</a>
         </div>
       </div>
 
-      <a href="/precios" class={`nav-link ${currentPath.startsWith('/precios') ? 'nav-link--active' : ''}`}>Piloto</a>
+      <a href="/precios" class={`nav-link ${currentPath.startsWith('/precios') ? 'nav-link--active' : ''}`} data-i18n="nav.piloto">Piloto</a>
     </nav>
 
     <div class="header__actions">
-      <a href="https://composite-replanning-api.vercel.app/login?next=https://planning-core-web.vercel.app/app" class="btn btn--ghost btn--sm" id="loginBtn">Iniciar sesión</a>
-      <a href="/contacto" class="btn btn--primary btn--sm">Solicitar demo</a>
+      <!-- Language selector -->
+      <div class="lang-selector" id="langSelector">
+        <button class="lang-btn" id="langBtnEl" aria-label="Language">
+          <span id="langCurrent">ES</span>
+          <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="lang-menu" id="langMenu">
+          <button class="lang-option" data-lang-option="es">🇪🇸 Español</button>
+          <button class="lang-option" data-lang-option="en">🇬🇧 English</button>
+        </div>
+      </div>
+
+      <a href="https://composite-replanning-api.vercel.app/login?next=https://planning-core-web.vercel.app/app" class="btn btn--ghost btn--sm" id="loginBtn" data-i18n="header.login">Iniciar sesión</a>
+      <a href="/contacto" class="btn btn--primary btn--sm" data-i18n="header.demo">Solicitar demo</a>
       <button class="nav-toggle" id="navToggle" aria-label="Menu">
         <span></span><span></span><span></span>
       </button>
@@ -76,7 +88,6 @@ const industries = [
     border-radius: 8px;
     object-fit: cover;
     flex-shrink: 0;
-    /* fondo del PNG = #0B1C3A = mismo que el header → se integra sin blend */
   }
   .logo-wordmark {
     font-size: 1rem;
@@ -159,6 +170,67 @@ const industries = [
     border-color: rgba(255,255,255,.4);
     transform: none;
   }
+
+  /* Language selector */
+  .lang-selector {
+    position: relative;
+  }
+  .lang-btn {
+    display: flex;
+    align-items: center;
+    gap: .3rem;
+    background: transparent;
+    border: 1.5px solid rgba(255,255,255,.2);
+    border-radius: 6px;
+    color: rgba(255,255,255,.7);
+    cursor: pointer;
+    font-family: inherit;
+    font-size: .8rem;
+    font-weight: 600;
+    letter-spacing: .04em;
+    padding: .38rem .6rem;
+    transition: all .15s;
+  }
+  .lang-btn:hover {
+    background: rgba(255,255,255,.07);
+    color: #fff;
+    border-color: rgba(255,255,255,.35);
+  }
+  .lang-btn svg { opacity: .6; transition: transform .15s; }
+  .lang-selector.open .lang-btn svg { transform: rotate(180deg); }
+  .lang-menu {
+    display: none;
+    position: absolute;
+    top: calc(100% + 6px);
+    right: 0;
+    min-width: 130px;
+    background: #112347;
+    border: 1px solid rgba(255,255,255,.1);
+    border-radius: 8px;
+    padding: .3rem;
+    box-shadow: 0 8px 24px rgba(0,0,0,.35);
+    z-index: 300;
+  }
+  .lang-selector.open .lang-menu { display: block; }
+  .lang-option {
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+    width: 100%;
+    padding: .45rem .75rem;
+    background: none;
+    border: none;
+    border-radius: 5px;
+    color: rgba(255,255,255,.75);
+    cursor: pointer;
+    font-family: inherit;
+    font-size: .82rem;
+    font-weight: 500;
+    text-align: left;
+    transition: all .12s;
+  }
+  .lang-option:hover { background: rgba(255,255,255,.07); color: #fff; }
+  .lang-option.active { color: #8BC2C6; }
 
   .nav-toggle {
     display: none;

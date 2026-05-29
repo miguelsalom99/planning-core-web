@@ -7,9 +7,9 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 >
   <section class="page-hero">
     <div class="container">
-      <p class="section-label">Piloto 12 semanas</p>
-      <h1 class="section-title section-title--light">De cero a producción<br/>en 3 meses.</h1>
-      <p class="page-hero__sub">
+      <p class="section-label" data-i18n="precios.hero.label">Piloto 12 semanas</p>
+      <h1 class="section-title section-title--light" data-i18n-html="precios.hero.title">De cero a producción<br/>en 3 meses.</h1>
+      <p class="page-hero__sub" data-i18n="precios.hero.sub">
         Empezamos con un piloto de 12 semanas para demostrar el ROI con tus propios datos.
         Si no genera valor, no hay contrato. Así de simple.
       </p>
@@ -19,19 +19,19 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   <!-- PILOT PHASES -->
   <section class="phases">
     <div class="container">
-      <p class="section-label">Cómo funciona el piloto</p>
-      <h2 class="section-title">12 semanas de cero a go-live</h2>
+      <p class="section-label" data-i18n="precios.phases.label">Cómo funciona el piloto</p>
+      <h2 class="section-title" data-i18n="precios.phases.title">12 semanas de cero a go-live</h2>
       <div class="phases-grid">
         {[
-          { phase:'Semanas 1–2', title:'Mapeo y configuración', desc:'Mapeamos tus máquinas, turnos, operarios y restricciones. Sin código, sin IT. Tú defines, nosotros configuramos.' },
-          { phase:'Semanas 3–5', title:'Restricciones y validación', desc:'Configuramos la lógica de tu sector: secuencias, cuellos de botella, ventanas de mantenimiento. Plan generado vs. tu realidad.' },
-          { phase:'Semanas 6–8', title:'Uso en paralelo', desc:'Corres Planning Core en paralelo con tu sistema actual. Comparas el plan generado con lo que realmente ejecutas.' },
-          { phase:'Semanas 9–12', title:'Go-live y scorecard', desc:'Go-live completo. Scorecard de impacto semanal con las métricas acordadas. El ROI medido con tus propios datos.' },
+          { phase:'Semanas 1–2', title:'Mapeo y configuración', desc:'Mapeamos tus máquinas, turnos, operarios y restricciones. Sin código, sin IT. Tú defines, nosotros configuramos.', i: 0 },
+          { phase:'Semanas 3–5', title:'Restricciones y validación', desc:'Configuramos la lógica de tu sector: secuencias, cuellos de botella, ventanas de mantenimiento. Plan generado vs. tu realidad.', i: 1 },
+          { phase:'Semanas 6–8', title:'Uso en paralelo', desc:'Corres Planning Core en paralelo con tu sistema actual. Comparas el plan generado con lo que realmente ejecutas.', i: 2 },
+          { phase:'Semanas 9–12', title:'Go-live y scorecard', desc:'Go-live completo. Scorecard de impacto semanal con las métricas acordadas. El ROI medido con tus propios datos.', i: 3 },
         ].map(p => (
           <div class="phase-card">
-            <div class="phase-badge">{p.phase}</div>
-            <h3>{p.title}</h3>
-            <p>{p.desc}</p>
+            <div class="phase-badge" data-i18n={`precios.phase.${p.i}.badge`}>{p.phase}</div>
+            <h3 data-i18n={`precios.phase.${p.i}.title`}>{p.title}</h3>
+            <p data-i18n={`precios.phase.${p.i}.desc`}>{p.desc}</p>
           </div>
         ))}
       </div>
@@ -43,40 +43,40 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     <div class="container">
       <div class="included-grid">
         <div>
-          <p class="section-label">Qué incluye</p>
-          <h2 class="section-title">Todo lo que necesitas<br/>para empezar</h2>
+          <p class="section-label" data-i18n="precios.inc.label">Qué incluye</p>
+          <h2 class="section-title" data-i18n-html="precios.inc.title">Todo lo que necesitas<br/>para empezar</h2>
           <div class="included-list">
             {[
-              ['Onboarding dedicado', 'Sesiones de configuración guiadas por nuestro equipo.'],
-              ['Integración con tu ERP', 'Conectamos vía API o importación CSV según tu sistema.'],
-              ['Soporte durante el piloto', 'Canal directo con el equipo de CS durante las 12 semanas.'],
-              ['Scorecard de impacto', 'KPIs medidos con tus datos reales, semana a semana.'],
-              ['Acceso sin límite de usuarios', 'Todos los roles de tu planta pueden acceder.'],
-              ['Actualizaciones incluidas', 'Sin coste adicional por nuevas funcionalidades.'],
-            ].map(([title, desc]) => (
+              ['Onboarding dedicado', 'Sesiones de configuración guiadas por nuestro equipo.', 0],
+              ['Integración con tu ERP', 'Conectamos vía API o importación CSV según tu sistema.', 1],
+              ['Soporte durante el piloto', 'Canal directo con el equipo de CS durante las 12 semanas.', 2],
+              ['Scorecard de impacto', 'KPIs medidos con tus datos reales, semana a semana.', 3],
+              ['Acceso sin límite de usuarios', 'Todos los roles de tu planta pueden acceder.', 4],
+              ['Actualizaciones incluidas', 'Sin coste adicional por nuevas funcionalidades.', 5],
+            ].map(([title, desc, i]) => (
               <div class="included-item">
                 <span class="inc-check">✓</span>
                 <div>
-                  <strong>{title}</strong>
-                  <span>{desc}</span>
+                  <strong data-i18n={`precios.inc.${i}.title`}>{title}</strong>
+                  <span data-i18n={`precios.inc.${i}.desc`}>{desc}</span>
                 </div>
               </div>
             ))}
           </div>
         </div>
         <div class="guarantees">
-          <p class="section-label">Nuestro compromiso</p>
-          <h2 style="font-size:1.4rem;font-weight:800;color:var(--navy);margin-bottom:1.5rem">Sin riesgo. Sin ataduras.</h2>
+          <p class="section-label" data-i18n="precios.guarantee.label">Nuestro compromiso</p>
+          <h2 style="font-size:1.4rem;font-weight:800;color:var(--navy);margin-bottom:1.5rem" data-i18n="precios.guarantee.title">Sin riesgo. Sin ataduras.</h2>
           {[
-            'Sin coste de implantación',
-            'Sin consultores externos',
-            'Sin permanencia mínima',
-            'Sin penalización por cancelar',
-            'Sin reemplazar tu ERP actual',
-          ].map(t => (
+            ['Sin coste de implantación', 0],
+            ['Sin consultores externos', 1],
+            ['Sin permanencia mínima', 2],
+            ['Sin penalización por cancelar', 3],
+            ['Sin reemplazar tu ERP actual', 4],
+          ].map(([t, i]) => (
             <div class="guarantee-item">
               <span class="g-check">✓</span>
-              <span>{t}</span>
+              <span data-i18n={`precios.guarantee.${i}`}>{t}</span>
             </div>
           ))}
         </div>
@@ -88,10 +88,10 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   <section class="cta-bar">
     <div class="container cta-bar__inner">
       <div>
-        <h2 class="section-title section-title--light">¿Hablamos de tu caso?</h2>
-        <p style="color:var(--silver);margin-top:.5rem">Una llamada de 30 min para ver si Planning Core encaja con tu planta.</p>
+        <h2 class="section-title section-title--light" data-i18n="precios.cta.title">¿Hablamos de tu caso?</h2>
+        <p style="color:var(--silver);margin-top:.5rem" data-i18n="precios.cta.sub">Una llamada de 30 min para ver si Planning Core encaja con tu planta.</p>
       </div>
-      <a href="/contacto" class="btn btn--primary">Solicitar llamada →</a>
+      <a href="/contacto" class="btn btn--primary" data-i18n="precios.cta.btn">Solicitar llamada →</a>
     </div>
   </section>
 </BaseLayout>

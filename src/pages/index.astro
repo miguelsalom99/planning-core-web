@@ -9,13 +9,13 @@ import SectorIcon from '../components/SectorIcon.astro';
     <div class="container hero__inner">
       <div class="hero__content">
         <div class="badge" style="margin-bottom:1.25rem;background:rgba(220,104,3,.12);color:#f97316;border-color:rgba(220,104,3,.25)">
-          <span>⚠</span> El cuello de botella de esta tarde ya existe
+          <span data-i18n="home.hero.badge">⚠ El cuello de botella de esta tarde ya existe</span>
         </div>
-        <h1 class="hero__title">
+        <h1 class="hero__title" data-i18n-html="home.hero.title">
           Tu equipo trabaja con<br/>
           <span class="hero__accent">el plan del lunes.</span>
         </h1>
-        <p class="hero__sub">
+        <p class="hero__sub" data-i18n-html="home.hero.sub">
           La planta real lleva horas siendo otra cosa. Tu jefe de turno
           ya tomó tres decisiones sin datos, a ojo — y tú te enterarás
           mañana en la reunión de producción.
@@ -25,23 +25,23 @@ import SectorIcon from '../components/SectorIcon.astro';
           escenarios de replanificación listos en segundos.
         </p>
         <div class="hero__ctas">
-          <a href="/contacto" class="btn btn--primary">Quiero visibilidad ahora →</a>
-          <a href="/producto" class="btn btn--outline">Ver cómo funciona</a>
+          <a href="/contacto" class="btn btn--primary" data-i18n="home.hero.cta1">Quiero visibilidad ahora →</a>
+          <a href="/producto" class="btn btn--outline" data-i18n="home.hero.cta2">Ver cómo funciona</a>
         </div>
         <div class="hero__trust">
-          <span>✓ Sin reemplazar tu ERP</span>
-          <span>✓ Operativo en 12 semanas</span>
-          <span>✓ ROI medible desde el día 1</span>
+          <span data-i18n="home.hero.trust1">✓ Sin reemplazar tu ERP</span>
+          <span data-i18n="home.hero.trust2">✓ Operativo en 12 semanas</span>
+          <span data-i18n="home.hero.trust3">✓ ROI medible desde el día 1</span>
         </div>
       </div>
       <div class="hero__visual">
         <div class="gantt-preview">
           <div class="gantt-header">
-            <span class="gantt-title">Plan de producción — Semana 21</span>
+            <span class="gantt-title" data-i18n="home.gantt.title">Plan de producción — Semana 21</span>
             <div class="gantt-chips">
-              <span class="chip chip--green">Óptimo</span>
-              <span class="chip chip--blue">Equilibrado</span>
-              <span class="chip chip--gray">Conservador</span>
+              <span class="chip chip--green" data-i18n="home.gantt.opt">Óptimo</span>
+              <span class="chip chip--blue" data-i18n="home.gantt.bal">Equilibrado</span>
+              <span class="chip chip--gray" data-i18n="home.gantt.con">Conservador</span>
             </div>
           </div>
           <div class="gantt-rows">
@@ -69,14 +69,14 @@ import SectorIcon from '../components/SectorIcon.astro';
             <div class="gantt-row">
               <span class="gantt-row-label">Operarios</span>
               <div class="gantt-row-track">
-                <div class="gantt-bar" style="width:50%;background:#0891B2">Turno Mañana</div>
+                <div class="gantt-bar" style="width:50%;background:#0891B2" data-i18n="home.gantt.morning">Turno Mañana</div>
               </div>
             </div>
           </div>
           <div class="gantt-footer">
-            <span class="kpi-chip">OEE: 87%</span>
-            <span class="kpi-chip">Carga: 94%</span>
-            <span class="kpi-chip kpi-chip--warn">2 cuellos detectados</span>
+            <span class="kpi-chip" data-i18n="home.gantt.oee">OEE: 87%</span>
+            <span class="kpi-chip" data-i18n="home.gantt.load">Carga: 94%</span>
+            <span class="kpi-chip kpi-chip--warn" data-i18n="home.gantt.warn">2 cuellos detectados</span>
           </div>
         </div>
       </div>
@@ -88,22 +88,22 @@ import SectorIcon from '../components/SectorIcon.astro';
     <div class="container proof-bar__inner">
       <div class="proof-item">
         <strong>8</strong>
-        <span>sectores industriales</span>
+        <span data-i18n="home.proof.sectors">sectores industriales</span>
       </div>
       <div class="proof-divider"></div>
       <div class="proof-item">
         <strong>12 sem</strong>
-        <span>piloto a producción</span>
+        <span data-i18n="home.proof.pilot">piloto a producción</span>
       </div>
       <div class="proof-divider"></div>
       <div class="proof-item">
         <strong>0</strong>
-        <span>líneas de código</span>
+        <span data-i18n="home.proof.code">líneas de código</span>
       </div>
       <div class="proof-divider"></div>
       <div class="proof-item">
         <strong>3</strong>
-        <span>escenarios en segundos</span>
+        <span data-i18n="home.proof.scenarios">escenarios en segundos</span>
       </div>
     </div>
   </div>
@@ -112,9 +112,9 @@ import SectorIcon from '../components/SectorIcon.astro';
   <section class="how">
     <div class="container">
       <div class="text-center">
-        <p class="section-label">Cómo funciona</p>
-        <h2 class="section-title">Un Gantt que toma decisiones,<br/>no solo las muestra</h2>
-        <p class="section-sub text-center" style="margin:0 auto 3rem">
+        <p class="section-label" data-i18n="home.how.label">Cómo funciona</p>
+        <h2 class="section-title" data-i18n-html="home.how.title">Un Gantt que toma decisiones,<br/>no solo las muestra</h2>
+        <p class="section-sub text-center" style="margin:0 auto 3rem" data-i18n="home.how.sub">
           Planning Core vive encima de tu ERP. Tú defines los recursos y restricciones;
           el motor genera el plan óptimo y te muestra tres escenarios en segundos.
         </p>
@@ -130,8 +130,8 @@ import SectorIcon from '../components/SectorIcon.astro';
               <circle cx="8" cy="18" r="2"/><line x1="3" y1="18" x2="6" y2="18"/><line x1="10" y1="18" x2="21" y2="18"/>
             </svg>
           </div>
-          <h3>Define tus recursos</h3>
-          <p>Máquinas, operarios, turnos y restricciones. Sin código, sin IT. En menos de una semana.</p>
+          <h3 data-i18n="home.steps.0.title">Define tus recursos</h3>
+          <p data-i18n="home.steps.0.desc">Máquinas, operarios, turnos y restricciones. Sin código, sin IT. En menos de una semana.</p>
         </div>
 
         <div class="how-step">
@@ -143,8 +143,8 @@ import SectorIcon from '../components/SectorIcon.astro';
               <rect x="9.5" y="9.5" width="5" height="5" rx=".75" fill="currentColor" stroke="none" opacity=".25"/>
             </svg>
           </div>
-          <h3>El motor planifica</h3>
-          <p>Algoritmo de scheduling genera el plan óptimo respetando todas tus restricciones de planta.</p>
+          <h3 data-i18n="home.steps.1.title">El motor planifica</h3>
+          <p data-i18n="home.steps.1.desc">Algoritmo de scheduling genera el plan óptimo respetando todas tus restricciones de planta.</p>
         </div>
 
         <div class="how-step">
@@ -157,8 +157,8 @@ import SectorIcon from '../components/SectorIcon.astro';
               <path d="M3 21h18"/>
             </svg>
           </div>
-          <h3>Compara 3 escenarios</h3>
-          <p>Óptimo, Equilibrado y Conservador. Elige el que encaja con la demanda real del día.</p>
+          <h3 data-i18n="home.steps.2.title">Compara 3 escenarios</h3>
+          <p data-i18n="home.steps.2.desc">Óptimo, Equilibrado y Conservador. Elige el que encaja con la demanda real del día.</p>
         </div>
 
         <div class="how-step">
@@ -170,13 +170,13 @@ import SectorIcon from '../components/SectorIcon.astro';
               <path d="M3 21h18"/>
             </svg>
           </div>
-          <h3>Ejecuta y mide</h3>
-          <p>Gantt en tiempo real, alertas de cuello de botella y scorecard de impacto desde el primer día.</p>
+          <h3 data-i18n="home.steps.3.title">Ejecuta y mide</h3>
+          <p data-i18n="home.steps.3.desc">Gantt en tiempo real, alertas de cuello de botella y scorecard de impacto desde el primer día.</p>
         </div>
 
       </div>
       <div class="text-center mt-8">
-        <a href="/producto" class="btn btn--dark">Ver el producto en detalle →</a>
+        <a href="/producto" class="btn btn--dark" data-i18n="home.steps.cta">Ver el producto en detalle →</a>
       </div>
     </div>
   </section>
@@ -185,9 +185,9 @@ import SectorIcon from '../components/SectorIcon.astro';
   <section class="sectors-sec" style="background:var(--n90)">
     <div class="container">
       <div class="text-center">
-        <p class="section-label">Sectores</p>
-        <h2 class="section-title">Diseñado para tu industria,<br/>no para todas a la vez</h2>
-        <p class="section-sub text-center" style="margin:0 auto 3rem">
+        <p class="section-label" data-i18n="home.sectors.label">Sectores</p>
+        <h2 class="section-title" data-i18n-html="home.sectors.title">Diseñado para tu industria,<br/>no para todas a la vez</h2>
+        <p class="section-sub text-center" style="margin:0 auto 3rem" data-i18n="home.sectors.sub">
           Cada sector tiene sus propias restricciones. Planning Core viene preconfigurado
           con la lógica de tu industria.
         </p>
@@ -212,48 +212,48 @@ import SectorIcon from '../components/SectorIcon.astro';
     <div class="container">
       <div class="value__grid">
         <div class="value__text">
-          <p class="section-label">Por qué Planning Core</p>
-          <h2 class="section-title">No es otro ERP.<br/>Es la capa que faltaba.</h2>
-          <p class="section-sub">
+          <p class="section-label" data-i18n="home.value.label">Por qué Planning Core</p>
+          <h2 class="section-title" data-i18n-html="home.value.title">No es otro ERP.<br/>Es la capa que faltaba.</h2>
+          <p class="section-sub" data-i18n="home.value.sub">
             Tu ERP registra lo que pasó. Planning Core decide qué producir mañana.
             Vive encima de tu sistema actual, sin migraciones, sin consultores, sin riesgo.
           </p>
           <div class="value__list">
             <div class="value-item">
               <span class="value-check">✓</span>
-              <div><strong>Sin reemplazar tu ERP</strong><span>Integración vía API en días, no meses.</span></div>
+              <div><strong data-i18n="home.value.0.title">Sin reemplazar tu ERP</strong><span data-i18n="home.value.0.desc">Integración vía API en días, no meses.</span></div>
             </div>
             <div class="value-item">
               <span class="value-check">✓</span>
-              <div><strong>100% personalizable</strong><span>Adaptado a tus recursos y restricciones reales.</span></div>
+              <div><strong data-i18n="home.value.1.title">100% personalizable</strong><span data-i18n="home.value.1.desc">Adaptado a tus recursos y restricciones reales.</span></div>
             </div>
             <div class="value-item">
               <span class="value-check">✓</span>
-              <div><strong>Resultados medibles</strong><span>Scorecard de impacto desde la semana 1 del piloto.</span></div>
+              <div><strong data-i18n="home.value.2.title">Resultados medibles</strong><span data-i18n="home.value.2.desc">Scorecard de impacto desde la semana 1 del piloto.</span></div>
             </div>
             <div class="value-item">
               <span class="value-check">✓</span>
-              <div><strong>Escala contigo</strong><span>Desde una máquina hasta cientos de recursos.</span></div>
+              <div><strong data-i18n="home.value.3.title">Escala contigo</strong><span data-i18n="home.value.3.desc">Desde una máquina hasta cientos de recursos.</span></div>
             </div>
           </div>
         </div>
         <div class="value__visual">
           <div class="comparison-card">
             <div class="comparison-col comparison-col--old">
-              <div class="comparison-label comparison-label--red">Sin Planning Core</div>
-              <div class="comparison-row"><span class="icon-x">✗</span><span>Excel por turno, verdad por persona</span></div>
-              <div class="comparison-row"><span class="icon-x">✗</span><span>Cuello de botella detectado tarde</span></div>
-              <div class="comparison-row"><span class="icon-x">✗</span><span>Plan hecho el lunes, inútil el martes</span></div>
-              <div class="comparison-row"><span class="icon-x">✗</span><span>Reunión de 2h para replanificar</span></div>
-              <div class="comparison-row"><span class="icon-x">✗</span><span>El jefe lleva el plan en la cabeza</span></div>
+              <div class="comparison-label comparison-label--red" data-i18n="home.comp.withoutLabel">Sin Planning Core</div>
+              <div class="comparison-row"><span class="icon-x">✗</span><span data-i18n="home.comp.old.0">Excel por turno, verdad por persona</span></div>
+              <div class="comparison-row"><span class="icon-x">✗</span><span data-i18n="home.comp.old.1">Cuello de botella detectado tarde</span></div>
+              <div class="comparison-row"><span class="icon-x">✗</span><span data-i18n="home.comp.old.2">Plan hecho el lunes, inútil el martes</span></div>
+              <div class="comparison-row"><span class="icon-x">✗</span><span data-i18n="home.comp.old.3">Reunión de 2h para replanificar</span></div>
+              <div class="comparison-row"><span class="icon-x">✗</span><span data-i18n="home.comp.old.4">El jefe lleva el plan en la cabeza</span></div>
             </div>
             <div class="comparison-col comparison-col--new">
-              <div class="comparison-label comparison-label--green">Con Planning Core</div>
-              <div class="comparison-row"><span class="icon-ok">✓</span><span>Plan único en tiempo real para todos</span></div>
-              <div class="comparison-row"><span class="icon-ok">✓</span><span>Alerta automática antes de que ocurra</span></div>
-              <div class="comparison-row"><span class="icon-ok">✓</span><span>Gantt que se actualiza solo</span></div>
-              <div class="comparison-row"><span class="icon-ok">✓</span><span>Replanificación en segundos</span></div>
-              <div class="comparison-row"><span class="icon-ok">✓</span><span>Visibilidad para todo el equipo</span></div>
+              <div class="comparison-label comparison-label--green" data-i18n="home.comp.withLabel">Con Planning Core</div>
+              <div class="comparison-row"><span class="icon-ok">✓</span><span data-i18n="home.comp.new.0">Plan único en tiempo real para todos</span></div>
+              <div class="comparison-row"><span class="icon-ok">✓</span><span data-i18n="home.comp.new.1">Alerta automática antes de que ocurra</span></div>
+              <div class="comparison-row"><span class="icon-ok">✓</span><span data-i18n="home.comp.new.2">Gantt que se actualiza solo</span></div>
+              <div class="comparison-row"><span class="icon-ok">✓</span><span data-i18n="home.comp.new.3">Replanificación en segundos</span></div>
+              <div class="comparison-row"><span class="icon-ok">✓</span><span data-i18n="home.comp.new.4">Visibilidad para todo el equipo</span></div>
             </div>
           </div>
         </div>
@@ -266,16 +266,16 @@ import SectorIcon from '../components/SectorIcon.astro';
     <div class="container">
       <div class="pilot-cta__inner">
         <div>
-          <p class="section-label" style="color:rgba(255,255,255,.5)">Piloto 12 semanas</p>
-          <h2 class="section-title section-title--light">De Excel a Gantt inteligente<br/>en 12 semanas</h2>
-          <p style="color:var(--silver);max-width:520px;line-height:1.65;margin-top:.75rem">
+          <p class="section-label" style="color:rgba(255,255,255,.5)" data-i18n="home.pilot.label">Piloto 12 semanas</p>
+          <h2 class="section-title section-title--light" data-i18n-html="home.pilot.title">De Excel a Gantt inteligente<br/>en 12 semanas</h2>
+          <p style="color:var(--silver);max-width:520px;line-height:1.65;margin-top:.75rem" data-i18n="home.pilot.sub">
             Mapeamos tus recursos en la semana 1, validamos el plan en la semana 8
             y hacemos go-live con métricas reales antes de la semana 12.
           </p>
         </div>
         <div class="pilot-cta__actions">
-          <a href="/precios" class="btn btn--primary">Ver el piloto →</a>
-          <a href="/contacto" class="btn btn--outline">Hablar con ventas</a>
+          <a href="/precios" class="btn btn--primary" data-i18n="home.pilot.cta1">Ver el piloto →</a>
+          <a href="/contacto" class="btn btn--outline" data-i18n="home.pilot.cta2">Hablar con ventas</a>
         </div>
       </div>
     </div>
