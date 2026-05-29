@@ -68,9 +68,11 @@ const {
       if (key in t) el.textContent = t[key];
     });
 
-    // Sync lang button label
-    const cur = document.getElementById('langCurrent');
-    if (cur) cur.textContent = lang.toUpperCase();
+    // Sync lang button label and flag
+    const cur  = document.getElementById('langCurrent');
+    const flag = document.getElementById('langFlag');
+    if (cur)  cur.textContent  = lang.toUpperCase();
+    if (flag) flag.textContent = lang === 'en' ? '🇬🇧' : '🇪🇸';
 
     // Mark active option
     document.querySelectorAll<HTMLElement>('[data-lang-option]').forEach(btn => {
