@@ -154,7 +154,26 @@
     [data-theme="dark"] .mrp-table tr:hover td { background: rgba(255,255,255,.03); }
     [data-theme="dark"] .mrp-table-wrap { border-color: #334155; }
     [data-theme="dark"] .mrp-dropzone { background: rgba(255,255,255,.02); border-color: #334155; }
-    [data-theme="dark"] .mrp-dropzone:hover { background: rgba(27,63,139,.12); border-color: var(--brand); }
+    [data-theme="dark"] .mrp-dropzone:hover,
+    [data-theme="dark"] .mrp-dropzone.drag-over { background: rgba(27,63,139,.15); border-color: var(--brand); }
+
+    /* ── Hardcoded light backgrounds ── */
+    [data-theme="dark"] .industries-panel { background: rgba(255,255,255,.03); }
+    [data-theme="dark"] .alert-detail { background: rgba(255,255,255,.03); }
+
+    /* ── Hardcoded dark text → invisible on dark bg ── */
+    [data-theme="dark"] .alert-banner__body,
+    [data-theme="dark"] .alert-banner__body strong,
+    [data-theme="dark"] .alert-banner__cta { color: #FDE68A; }
+    [data-theme="dark"] .cap-pill--warn { color: #FDE68A; }
+    [data-theme="dark"] .alert-sev--media { color: #FDE68A; background: rgba(217,119,6,.18); }
+    [data-theme="dark"] .admin-badge--admin { background: rgba(217,119,6,.15); color: #FDE68A; }
+
+    /* ── Toast — needs contrast on dark page ── */
+    [data-theme="dark"] .toast { background: #334155; box-shadow: 0 4px 24px rgba(0,0,0,.5); }
+
+    /* ── nav danger hover ── */
+    [data-theme="dark"] .nav-item--danger:hover { background: rgba(220,38,38,.15); color: var(--red); }
 
     html, body {
       height: 100%;
@@ -1521,7 +1540,7 @@
     .alert-row { transition: opacity .3s, max-height .35s; overflow: hidden; }
     .alert-row--resolved { opacity: .45; background: var(--n90) !important; pointer-events: none; }
     .alert-resolved-chip { font-size: .62rem; font-weight: 700; background: var(--green-bg); color: var(--green); padding: .18rem .5rem; border-radius: 999px; flex-shrink: 0; }
-    .alert-detail { max-height: 0; overflow: hidden; transition: max-height .3s ease, padding .3s; padding: 0 1.25rem; background: #F8FAFC; border-top: 0px solid var(--n80); font-size: .75rem; color: var(--n50); line-height: 1.7; }
+    .alert-detail { max-height: 0; overflow: hidden; transition: max-height .3s ease, padding .3s; padding: 0 1.25rem; background: var(--n90); border-top: 0px solid var(--n80); font-size: .75rem; color: var(--n50); line-height: 1.7; }
     .alert-detail.open { max-height: 120px; padding: .75rem 1.25rem; border-top: 1px solid var(--n80); }
     .alert-filter-bar { display: flex; align-items: center; gap: .4rem; padding: .6rem 1.25rem; border-bottom: 1px solid var(--n80); background: var(--n90); }
     .alert-count-badge { margin-left: auto; font-size: .68rem; font-weight: 700; color: var(--n50); }
@@ -1706,7 +1725,7 @@
     .industries-panel {
       border-top: 1px solid var(--n80);
       border-bottom: 1px solid var(--n80);
-      background: #F8FAFC;
+      background: var(--n90);
     }
     .industries-panel.hidden { display: none; }
     .industries-panel__toggle {
