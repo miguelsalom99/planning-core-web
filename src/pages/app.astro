@@ -13,6 +13,12 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <!-- Anti-flicker: apply saved theme before first paint -->
+  <script>
+    (function(){
+      try { if (localStorage.getItem('theme') === 'dark') document.documentElement.setAttribute('data-theme','dark'); } catch(e){}
+    })();
+  </script>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -45,6 +51,110 @@
       --shadow-md: 0 4px 16px rgba(11,28,58,.10);
       --transition: .15s cubic-bezier(.4,0,.2,1);
     }
+
+    /* ── DARK THEME ── */
+    [data-theme="dark"] {
+      --white:     #1E293B;
+      --n90:       #0F172A;
+      --n80:       #334155;
+      --n50:       #94A3B8;
+      --n30:       #CBD5E1;
+      --n20:       #F1F5F9;
+      /* --navy intentionally NOT overridden: used as topbar BG, stays dark */
+      --green-bg:  rgba(22,163,74,.18);
+      --amber-bg:  rgba(217,119,6,.18);
+      --red-bg:    rgba(220,38,38,.18);
+      --shadow-sm: 0 1px 2px rgba(0,0,0,.5), 0 1px 3px rgba(0,0,0,.6);
+      --shadow:    0 2px 8px rgba(0,0,0,.5), 0 1px 2px rgba(0,0,0,.4);
+      --shadow-md: 0 4px 16px rgba(0,0,0,.65);
+    }
+
+    /* ── Navy-as-text → must be light in dark mode ── */
+    [data-theme="dark"] .page-header__left h1,
+    [data-theme="dark"] .kpi-card__val,
+    [data-theme="dark"] .gantt-header__title,
+    [data-theme="dark"] .res-name,
+    [data-theme="dark"] .pg-res-name,
+    [data-theme="dark"] .modal__title,
+    [data-theme="dark"] .panel-page-title,
+    [data-theme="dark"] .alt-card__label,
+    [data-theme="dark"] .time-section-title,
+    [data-theme="dark"] .mrp-dropzone__title,
+    [data-theme="dark"] .cap-card__name,
+    [data-theme="dark"] .res-card__name,
+    [data-theme="dark"] .scenario-card__title,
+    [data-theme="dark"] .industry-card__name,
+    [data-theme="dark"] .selector-header h2 { color: var(--n20); }
+
+    /* ── Industry selector ── */
+    [data-theme="dark"] .badge--available { background: rgba(255,255,255,.07); color: var(--n50); }
+    [data-theme="dark"] .industry-card:hover { box-shadow: 0 4px 20px rgba(0,0,0,.4); }
+
+    /* ── Sidebar scorecard & section labels ── */
+    [data-theme="dark"] .sc-name { color: var(--n50); }
+    [data-theme="dark"] .sc-row { border-color: var(--n80); }
+
+    /* ── Hardcoded light borders in planner → dark ── */
+    [data-theme="dark"] .pg-shift-cell { border-color: rgba(255,255,255,.06); }
+    [data-theme="dark"] .pg-cell { border-color: rgba(255,255,255,.06); }
+
+    /* ── Alert & history banners ── */
+    [data-theme="dark"] .alert-banner { background: rgba(217,119,6,.1); border-color: rgba(217,119,6,.3); border-left-color: var(--amber); }
+    [data-theme="dark"] .alert-banner__body { color: #FDE68A; }
+    [data-theme="dark"] .alert-banner__body strong { color: #FDE68A; }
+    [data-theme="dark"] .alert-banner__cta { background: rgba(217,119,6,.15); border-color: rgba(217,119,6,.35); color: #FDE68A; }
+    [data-theme="dark"] .hist-banner { background: rgba(27,63,139,.2); border-color: rgba(27,63,139,.4); }
+    [data-theme="dark"] .hist-banner__body { color: #93C5FD; }
+    [data-theme="dark"] .hist-banner__icon { background: rgba(27,63,139,.4); }
+    [data-theme="dark"] .hist-banner__cta { background: rgba(27,63,139,.3); border-color: rgba(27,63,139,.5); color: #93C5FD; }
+
+    /* ── Dropdowns & popovers ── */
+    [data-theme="dark"] .settings-dropdown { background: #1E293B; border-color: #334155; }
+    [data-theme="dark"] .settings-dropdown__item:hover { background: rgba(255,255,255,.06); }
+    [data-theme="dark"] .settings-dropdown__divider { background: #334155; }
+    [data-theme="dark"] .filter-dropdown { background: #1E293B; border-color: #334155; }
+    [data-theme="dark"] .filter-section__label { color: #7E96B3; }
+    [data-theme="dark"] .block-popover__head { border-color: #334155; }
+    [data-theme="dark"] .bp-of-input { color: #F1F5F9; }
+    [data-theme="dark"] .bp-of-input:focus { background: rgba(255,255,255,.06); }
+    [data-theme="dark"] .bp-input { background: #0F172A; border-color: #334155; color: #F1F5F9; }
+    [data-theme="dark"] .bp-footer { border-color: #334155; }
+
+    /* ── Modals & forms ── */
+    [data-theme="dark"] .modal-backdrop { background: rgba(0,0,0,.75); }
+    [data-theme="dark"] .form-input,
+    [data-theme="dark"] .form-select { background: #0F172A; border-color: #334155; color: #F1F5F9; }
+    [data-theme="dark"] .planner-bar input,
+    [data-theme="dark"] .planner-bar select { background: #0F172A; border-color: #334155; color: #F1F5F9; }
+    [data-theme="dark"] .time-input,
+    [data-theme="dark"] .time-hm,
+    [data-theme="dark"] .time-name-input { background: #0F172A; border-color: #334155; color: #F1F5F9; }
+
+    /* ── Nav & sidebar ── */
+    [data-theme="dark"] .nav-item--danger:hover { background: rgba(220,38,38,.15); }
+    [data-theme="dark"] .scorecard { background: rgba(255,255,255,.04); border-color: #334155; }
+    [data-theme="dark"] .scorecard__title { color: #7E96B3; }
+
+    /* ── Gantt specifics ── */
+    [data-theme="dark"] .gantt-cell--today { background: rgba(27,63,139,.12); }
+    [data-theme="dark"] .gantt-day--today  { background: rgba(27,63,139,.2); }
+    [data-theme="dark"] .gantt-grid__corner { background: rgba(255,255,255,.03); }
+    [data-theme="dark"] .gantt-days { background: rgba(255,255,255,.03); }
+    [data-theme="dark"] .planner-bar { background: rgba(255,255,255,.03); }
+    [data-theme="dark"] .alt-cards { background: rgba(255,255,255,.03); }
+    [data-theme="dark"] .pg-shift-header-row { background: rgba(255,255,255,.03); }
+    [data-theme="dark"] .pg-day-header-row { background: rgba(255,255,255,.03); }
+    [data-theme="dark"] .turno-hour-header { background: rgba(255,255,255,.03); }
+    [data-theme="dark"] .turno-hour-cell--now { background: rgba(27,63,139,.2); }
+    [data-theme="dark"] .turno-empty-text { color: #475569; }
+
+    /* ── Tables ── */
+    [data-theme="dark"] .mrp-table th { background: rgba(255,255,255,.04); color: #94A3B8; }
+    [data-theme="dark"] .mrp-table td { border-color: #334155; }
+    [data-theme="dark"] .mrp-table tr:hover td { background: rgba(255,255,255,.03); }
+    [data-theme="dark"] .mrp-table-wrap { border-color: #334155; }
+    [data-theme="dark"] .mrp-dropzone { background: rgba(255,255,255,.02); border-color: #334155; }
+    [data-theme="dark"] .mrp-dropzone:hover { background: rgba(27,63,139,.12); border-color: var(--brand); }
 
     html, body {
       height: 100%;
@@ -221,6 +331,14 @@
     }
     .icon-btn:hover { background: rgba(255,255,255,.1); }
     .icon-btn svg { opacity: .6; }
+
+    /* Theme toggle */
+    .theme-toggle { transition: transform .3s cubic-bezier(.4,0,.2,1); }
+    .icon-btn:hover .theme-toggle { transform: rotate(20deg); }
+    .theme-icon-sun, .theme-icon-moon { position: absolute; transition: opacity .2s, transform .25s; }
+    .theme-icon-moon { opacity: 0; transform: rotate(-30deg) scale(.7); }
+    [data-theme="dark"] .theme-icon-sun  { opacity: 0; transform: rotate(30deg) scale(.7); }
+    [data-theme="dark"] .theme-icon-moon { opacity: .6; transform: none; }
     .notif-badge {
       position: absolute;
       top: 5px; right: 5px;
@@ -946,19 +1064,24 @@
       border-radius: 5px;
       display: flex;
       align-items: center;
-      padding: 0 .5rem;
+      padding: 0 .5rem 0 .5rem;
       font-size: .63rem;
       font-weight: 600;
       color: #fff;
-      white-space: nowrap;
       overflow: hidden;
-      text-overflow: ellipsis;
       cursor: grab;
       transition: filter var(--transition), transform var(--transition), opacity var(--transition);
       user-select: none;
     }
     .gantt-block:hover { filter: brightness(1.1); transform: scaleY(1.05); }
     .gantt-block.dragging { opacity: .3; cursor: grabbing; transform: none; filter: none; }
+    .gb-text { flex:1; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; min-width:0; }
+    .gantt-resize {
+      flex-shrink: 0; align-self: stretch; width:5px; cursor:col-resize;
+      background:rgba(255,255,255,.3); border-radius:0 4px 4px 0;
+      opacity:0; transition:opacity .12s; margin-left:3px;
+    }
+    .gantt-block:hover .gantt-resize { opacity:1; }
     .gantt-cell.drop-target {
       background: rgba(27,63,139,.07);
       outline: 2px dashed rgba(27,63,139,.35);
@@ -1076,26 +1199,31 @@
     .modal-view-section { display: flex; flex-direction: column; gap: .85rem; }
     .modal-view-section[hidden] { display: none; }
 
-    /* ── BLOCK DETAIL POPOVER ── */
+    /* ── BLOCK DETAIL POPOVER (editable) ── */
     .block-popover {
-      position: fixed;
-      background: var(--white);
-      border: 1px solid var(--n80);
-      border-radius: var(--radius-md);
-      box-shadow: var(--shadow-md);
-      z-index: 500;
-      min-width: 210px;
-      padding: .9rem 1rem;
-      display: none;
+      position: fixed; background: var(--white); border: 1px solid var(--n80);
+      border-radius: var(--radius-md); box-shadow: var(--shadow-md);
+      z-index: 500; width: 240px; padding: 0; display: none; overflow: hidden;
     }
     .block-popover.open { display: block; }
-    .block-popover__head { display: flex; align-items: center; justify-content: space-between; margin-bottom: .6rem; }
-    .block-popover__title { font-size: .82rem; font-weight: 700; color: var(--navy); }
-    .block-popover__close { background: none; border: none; cursor: pointer; color: #94A3B8; font-size: 1.1rem; line-height: 1; padding: 0 .15rem; }
-    .block-popover__row { display: flex; justify-content: space-between; font-size: .72rem; padding: .22rem 0; border-bottom: 1px solid var(--n80); }
-    .block-popover__row:last-child { border-bottom: none; }
-    .block-popover__label { color: var(--n50); }
-    .block-popover__val { font-weight: 600; color: var(--n20); }
+    .block-popover__head { display:flex; align-items:center; gap:.4rem; padding:.7rem .9rem .5rem; border-bottom:1px solid var(--n80); }
+    .bp-of-input { flex:1; border:none; outline:none; font-size:.82rem; font-weight:700; color:var(--navy); background:transparent; min-width:0; }
+    .bp-of-input:focus { background:var(--n90); border-radius:3px; padding:1px 3px; }
+    .block-popover__close { background:none; border:none; cursor:pointer; color:#94A3B8; font-size:1.1rem; line-height:1; padding:0 .1rem; flex-shrink:0; }
+    .bp-fields { padding:.5rem .9rem; display:flex; flex-direction:column; gap:.3rem; }
+    .bp-field { display:flex; align-items:center; justify-content:space-between; font-size:.71rem; }
+    .bp-lbl { color:var(--n50); flex-shrink:0; }
+    .bp-input { border:1px solid var(--n80); border-radius:3px; padding:.18rem .4rem; font-size:.71rem; color:var(--n20); background:var(--white); outline:none; width:120px; }
+    .bp-input:focus { border-color:var(--brand); }
+    .bp-range-wrap { display:flex; align-items:center; gap:.4rem; width:120px; }
+    .bp-range { flex:1; accent-color:var(--brand); cursor:pointer; }
+    .bp-pct-val { font-size:.68rem; font-weight:600; color:var(--n20); min-width:26px; text-align:right; }
+    .bp-footer { display:flex; gap:.4rem; padding:.5rem .9rem .7rem; border-top:1px solid var(--n80); }
+    .bp-btn { flex:1; padding:.28rem 0; font-size:.68rem; font-weight:600; border-radius:4px; cursor:pointer; border:1px solid; letter-spacing:.02em; }
+    .bp-btn--del { background:transparent; border-color:rgba(220,38,38,.35); color:var(--red); }
+    .bp-btn--del:hover { background:var(--red-bg); }
+    .bp-btn--save { background:var(--brand); border-color:var(--brand); color:#fff; }
+    .bp-btn--save:hover { filter:brightness(1.1); }
 
     /* Replan loading */
     @keyframes spin-btn { to { transform: rotate(360deg); } }
@@ -1129,30 +1257,8 @@
     .gb--amber  { background: var(--amber); }
     .gb--gray   { background: #64748B; }
 
-    .today-line {
-      position: absolute;
-      top: 0; bottom: 0;
-      width: 2px;
-      background: var(--brand);
-      left: 38%;
-      z-index: 5;
-      pointer-events: none;
-    }
-    .today-line::before {
-      content: 'HOY';
-      position: absolute;
-      top: 4px;
-      left: 50%;
-      transform: translateX(-50%);
-      font-size: .55rem;
-      font-weight: 800;
-      color: var(--brand);
-      letter-spacing: .06em;
-      background: rgba(27,63,139,.08);
-      padding: .1rem .3rem;
-      border-radius: 3px;
-      white-space: nowrap;
-    }
+    /* Turno view — now line (kept for reference; actual styles applied inline by JS) */
+    .turno-now-line { pointer-events: none; }
 
     .gantt-legend {
       display: flex;
@@ -1180,6 +1286,144 @@
       font-size: .65rem;
       color: #94A3B8;
     }
+
+    /* ───── PLANNER BAR & ALTERNATIVES ───── */
+    .planner-bar {
+      padding: .75rem 1.25rem;
+      background: rgba(27,63,139,.03);
+      border-bottom: 1px solid var(--n80);
+      display: flex;
+      align-items: center;
+      gap: .75rem;
+      flex-wrap: wrap;
+    }
+    .planner-bar__label { font-size: .72rem; font-weight: 600; color: var(--n50); }
+    .planner-bar__field { display: flex; align-items: center; gap: .4rem; }
+    .planner-bar input[type=date],
+    .planner-bar select,
+    .planner-bar input[type=number] {
+      height: 28px; border: 1px solid var(--n80); border-radius: var(--radius);
+      padding: 0 .5rem; font-size: .72rem; font-family: inherit; color: var(--n20);
+      background: var(--white);
+    }
+    .planner-bar input[type=number] { width: 54px; }
+    .planner-bar__sep { width: 1px; height: 20px; background: var(--n80); }
+
+    .alt-cards {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: .75rem;
+      padding: .75rem 1.25rem;
+      background: var(--n90);
+      border-bottom: 1px solid var(--n80);
+    }
+    .alt-card {
+      background: var(--white);
+      border: 2px solid var(--n80);
+      border-radius: var(--radius-md);
+      padding: .85rem 1rem;
+      cursor: pointer;
+      transition: border-color .15s, box-shadow .15s;
+    }
+    .alt-card:hover { border-color: #94A3B8; box-shadow: var(--shadow-sm); }
+    .alt-card--selected { border-color: var(--brand) !important; box-shadow: 0 0 0 3px rgba(27,63,139,.12); }
+    .alt-card__header { display: flex; align-items: center; justify-content: space-between; margin-bottom: .5rem; }
+    .alt-card__badge { font-size: .95rem; }
+    .alt-card__label { font-size: .82rem; font-weight: 700; color: var(--navy); }
+    .alt-card__desc  { font-size: .68rem; color: var(--n50); margin-bottom: .6rem; }
+    .alt-card__kpis  { display: grid; grid-template-columns: 1fr 1fr; gap: .3rem .75rem; }
+    .alt-kpi         { display: flex; flex-direction: column; }
+    .alt-kpi__val    { font-size: .88rem; font-weight: 700; }
+    .alt-kpi__key    { font-size: .62rem; color: var(--n50); }
+    .alt-card__warnings { font-size: .65rem; color: var(--amber); margin-top: .5rem; }
+
+    /* ───── COMPOSITES PLANNER GANTT ───── */
+    .pg-wrapper { overflow-x: auto; }
+    .pg-day-header-row {
+      display: grid;
+      grid-template-columns: 148px repeat(21, minmax(44px, 1fr));
+      background: var(--n90);
+      border-bottom: 1px solid var(--n80);
+    }
+    .pg-day-cell {
+      grid-column: span 3;
+      padding: .35rem .5rem;
+      text-align: center;
+      font-size: .65rem;
+      font-weight: 700;
+      letter-spacing: .04em;
+      text-transform: uppercase;
+      color: #94A3B8;
+      border-right: 2px solid var(--n80);
+    }
+    .pg-day-cell:last-child { border-right: none; }
+    .pg-corner { background: var(--n90); border-right: 1px solid var(--n80); border-bottom: 1px solid var(--n80); display: flex; align-items: center; padding: 0 .9rem; }
+    .pg-corner span { font-size: .62rem; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; color: #94A3B8; }
+    .pg-shift-header-row {
+      display: grid;
+      grid-template-columns: 148px repeat(21, minmax(44px, 1fr));
+      background: rgba(27,63,139,.03);
+      border-bottom: 2px solid var(--n80);
+    }
+    .pg-shift-cell {
+      padding: .25rem 0;
+      text-align: center;
+      font-size: .6rem;
+      font-weight: 600;
+      color: #94A3B8;
+      border-right: 1px solid var(--n80);
+    }
+    .pg-shift-cell--eod { border-right: 2px solid var(--n80); }
+    .pg-resource-row {
+      display: grid;
+      grid-template-columns: 148px 1fr;
+      border-bottom: 1px solid var(--n80);
+      min-height: 52px;
+    }
+    .pg-resource-row:last-child { border-bottom: none; }
+    .pg-res-label {
+      display: flex; align-items: center; gap: .6rem;
+      padding: .5rem .9rem;
+      border-right: 1px solid var(--n80);
+      background: var(--white);
+    }
+    .pg-res-name { font-size: .77rem; font-weight: 600; color: var(--navy); }
+    .pg-res-type { font-size: .63rem; color: #94A3B8; }
+    .pg-timeline {
+      display: grid;
+      grid-template-columns: repeat(21, minmax(44px, 1fr));
+      position: relative;
+      background: var(--white);
+    }
+    .pg-cell {
+      min-height: 52px;
+      border-right: 1px solid var(--n80);
+      grid-row: 1;
+    }
+    .pg-cell--eod { border-right: 2px solid var(--n80); }
+    .pg-event {
+      grid-row: 1;
+      margin: 7px 2px;
+      border-radius: 4px;
+      padding: 3px 6px;
+      font-size: .65rem;
+      font-weight: 600;
+      overflow: hidden;
+      white-space: nowrap;
+      cursor: default;
+      z-index: 2;
+      position: relative;
+    }
+    .pg-event-title { display: block; overflow: hidden; text-overflow: ellipsis; }
+    .pg-event-sub   { display: block; font-size: .58rem; font-weight: 400; opacity: .75; }
+    .pg-empty { display: flex; align-items: center; justify-content: center; height: 100%; color: var(--n50); font-size: .72rem; font-style: italic; }
+
+    /* loading spinner for planner */
+    .planner-spinner {
+      display: none; align-items: center; gap: .5rem;
+      padding: .5rem 1.25rem; font-size: .75rem; color: var(--n50);
+    }
+    .planner-spinner.active { display: flex; }
 
     /* ───── GANTT TURNO VIEW (hour-based timeline) ───── */
     .turno-track { position: relative; height: 52px; border-bottom: 1px solid var(--n80); background: var(--white); }
@@ -1791,6 +2035,10 @@
       <div class="icon-btn" title="Buscar">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.7)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
       </div>
+      <div class="icon-btn theme-toggle" id="themeToggleBtn" title="Modo claro / oscuro" style="overflow:hidden">
+        <svg class="theme-icon-sun" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.7)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+        <svg class="theme-icon-moon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.7)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+      </div>
       <div class="icon-btn" id="notifBtn" title="Notificaciones">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.7)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
         <div class="notif-badge" id="notifBadge"></div>
@@ -2259,6 +2507,10 @@
             <button class="expand-btn" id="expandGantt" title="Ampliar Gantt">
               <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/><line x1="21" y1="3" x2="14" y2="10"/><line x1="3" y1="21" x2="10" y2="14"/></svg>
             </button>
+            <button class="btn-ui btn-ui--primary" id="plannerToggleBtn" style="padding:.3rem .75rem;font-size:.72rem;gap:.3rem">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+              Planificar IA
+            </button>
             <button class="btn-ui" id="addOrderBtn" style="padding:.3rem .75rem;font-size:.72rem;gap:.3rem">
               <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
               Nueva orden
@@ -2295,6 +2547,40 @@
           </div>
         </div>
 
+        <!-- ── Planner bar (hidden until "Planificar IA" is clicked) ── -->
+        <div id="planner-bar" class="planner-bar" style="display:none">
+          <span class="planner-bar__label">Semana</span>
+          <div class="planner-bar__field">
+            <input type="date" id="plannerWeekStart" />
+          </div>
+          <div class="planner-bar__sep"></div>
+          <span class="planner-bar__label">ATL-01</span>
+          <div class="planner-bar__field">
+            <select id="atl1PieceType" style="max-width:170px"></select>
+            <span style="font-size:.7rem;color:var(--n50)">×</span>
+            <input type="number" id="atl1Qty" value="2" min="1" max="10" />
+          </div>
+          <div class="planner-bar__sep"></div>
+          <span class="planner-bar__label">ATL-02</span>
+          <div class="planner-bar__field">
+            <select id="atl2PieceType" style="max-width:170px"></select>
+            <span style="font-size:.7rem;color:var(--n50)">×</span>
+            <input type="number" id="atl2Qty" value="2" min="1" max="10" />
+          </div>
+          <button class="btn-ui btn-ui--primary" id="runPlannerBtn" style="padding:.3rem .9rem;font-size:.72rem;margin-left:auto">Generar alternativas</button>
+          <button class="btn-ui" id="plannerCloseBtn" style="padding:.3rem .7rem;font-size:.72rem">Volver al manual</button>
+        </div>
+        <div class="planner-spinner" id="plannerSpinner">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="animation:spin .8s linear infinite"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg>
+          Calculando alternativas…
+        </div>
+
+        <!-- ── 3 alternatives (hidden until plan is run) ── -->
+        <div id="planner-alternatives" class="alt-cards" style="display:none"></div>
+
+        <!-- ── Manual Gantt (default view) ── -->
+        <div id="gantt-manual-view">
+
         <div id="gantt-semana">
         <div class="gantt-grid">
           <!-- Header row -->
@@ -2324,8 +2610,7 @@
               <div class="gantt-block gb--blue" style="width:55%" data-of="OF-2038" data-recurso="CNC-1" data-inicio="Lun 19 · 06:00" data-fin="Mar 20 · 12:00" data-pct="82%" data-estado="En plazo">OF-2038</div>
               <div class="gantt-block gb--teal" style="width:42%;margin-top:2px" data-of="OF-2041" data-recurso="CNC-1" data-inicio="Mar 20 · 14:00" data-fin="Mié 21 · 22:00" data-pct="45%" data-estado="En riesgo">OF-2041</div>
             </div>
-            <div class="gantt-cell gantt-cell--today" style="position:relative">
-              <div class="today-line"></div>
+            <div class="gantt-cell gantt-cell--today">
               <div class="gantt-block gb--teal" style="width:100%" data-of="OF-2041" data-recurso="CNC-1" data-inicio="Mar 20 · 14:00" data-fin="Mié 21 · 22:00" data-pct="45%" data-estado="En riesgo">OF-2041 · Soporte B</div>
             </div>
             <div class="gantt-cell">
@@ -2544,6 +2829,26 @@
           <div class="legend-item"><div class="legend-dot" style="background:#64748B"></div>QC / Acabados</div>
           <div class="gantt-legend__updated">Actualizado hace 8 min</div>
         </div>
+
+        </div><!-- /#gantt-manual-view -->
+
+        <!-- ── Composites planner Gantt (shown when an alternative is selected) ── -->
+        <div id="gantt-planner-view" style="display:none">
+          <div class="pg-wrapper">
+            <div id="pg-day-header" class="pg-day-header-row"></div>
+            <div id="pg-shift-header" class="pg-shift-header-row"></div>
+            <div id="pg-rows"></div>
+          </div>
+          <div class="gantt-legend" id="pg-legend">
+            <div class="legend-item"><div class="legend-dot" style="background:#1589EE"></div>Encintado ATL</div>
+            <div class="legend-item"><div class="legend-dot" style="background:#4BC076"></div>Prep. bolsa</div>
+            <div class="legend-item"><div class="legend-dot" style="background:#F4740B"></div>Autoclave</div>
+            <div class="legend-item"><div class="legend-dot" style="background:#7B5EA7"></div>NDT</div>
+            <div class="legend-item"><div class="legend-dot" style="background:#2E844A"></div>CNC</div>
+            <div class="legend-item"><div class="legend-dot" style="background:#E74C3C"></div>Mantenimiento</div>
+          </div>
+        </div>
+
       </div>
 
       <!-- Bottom grid -->
@@ -3597,14 +3902,36 @@
 
 <div class="block-popover" id="blockPopover">
   <div class="block-popover__head">
-    <span class="block-popover__title" id="bpTitle">OF-XXXX</span>
+    <input class="bp-of-input" id="bpOfInput" type="text" placeholder="OF-XXXX" />
     <button class="block-popover__close" id="blockPopoverClose">×</button>
   </div>
-  <div class="block-popover__row"><span class="block-popover__label">Recurso</span><span class="block-popover__val" id="bpResource">—</span></div>
-  <div class="block-popover__row"><span class="block-popover__label">Inicio</span><span class="block-popover__val" id="bpStart">—</span></div>
-  <div class="block-popover__row"><span class="block-popover__label">Fin</span><span class="block-popover__val" id="bpEnd">—</span></div>
-  <div class="block-popover__row"><span class="block-popover__label">Progreso</span><span class="block-popover__val" id="bpPct">—</span></div>
-  <div class="block-popover__row"><span class="block-popover__label">Estado</span><span class="block-popover__val" id="bpStatus">—</span></div>
+  <div class="bp-fields">
+    <div class="bp-field"><span class="bp-lbl">Recurso</span>
+      <select class="bp-input" id="bpRecursoSel"></select>
+    </div>
+    <div class="bp-field"><span class="bp-lbl">Inicio</span>
+      <input class="bp-input" id="bpInicioInp" type="text" />
+    </div>
+    <div class="bp-field"><span class="bp-lbl">Fin</span>
+      <input class="bp-input" id="bpFinInp" type="text" />
+    </div>
+    <div class="bp-field"><span class="bp-lbl">Progreso</span>
+      <div class="bp-range-wrap">
+        <input class="bp-range" id="bpPctInp" type="range" min="0" max="100" step="5" />
+        <span class="bp-pct-val" id="bpPctVal">0%</span>
+      </div>
+    </div>
+    <div class="bp-field"><span class="bp-lbl">Estado</span>
+      <select class="bp-input" id="bpEstadoSel">
+        <option>En plazo</option><option>En riesgo</option>
+        <option>Retrasada</option><option>Completada</option>
+      </select>
+    </div>
+  </div>
+  <div class="bp-footer">
+    <button class="bp-btn bp-btn--del" id="bpDeleteBtn">Eliminar</button>
+    <button class="bp-btn bp-btn--save" id="bpSaveBtn">Guardar</button>
+  </div>
 </div>
 
 <div class="toast" id="toast"></div>
@@ -3803,12 +4130,363 @@
       });
     });
 
+    // ── COMPOSITES PLANNER ─────────────────────────────────────
+    (function initPlannerUI() {
+      const plannerBar      = document.getElementById('planner-bar');
+      const plannerToggleBtn = document.getElementById('plannerToggleBtn');
+      const plannerCloseBtn  = document.getElementById('plannerCloseBtn');
+      const altCards         = document.getElementById('planner-alternatives');
+      const manualView       = document.getElementById('gantt-manual-view');
+      const plannerView      = document.getElementById('gantt-planner-view');
+      const spinner          = document.getElementById('plannerSpinner');
+      const runBtn           = document.getElementById('runPlannerBtn');
+      const ganttSubEl       = document.querySelector('.gantt-header__sub') as HTMLElement;
+
+      let pieceTypesList: any[] = [];
+      let selectedAlt: any = null;
+
+      // Default week start = nearest Monday
+      function getMonday(d: Date): string {
+        const day = d.getDay();
+        const diff = day === 0 ? -6 : 1 - day;
+        const mon = new Date(d);
+        mon.setDate(d.getDate() + diff);
+        return mon.toISOString().split('T')[0];
+      }
+      const weekInput = document.getElementById('plannerWeekStart') as HTMLInputElement;
+      if (weekInput) weekInput.value = getMonday(new Date());
+
+      // Populate piece type selects from API
+      async function loadPieceTypes() {
+        const token = localStorage.getItem('pc_token');
+        try {
+          const res = await fetch(`${API}/api/piece-types`, {
+            headers: { 'Authorization': `Bearer ${token}` }
+          });
+          if (res.ok) pieceTypesList = await res.json();
+        } catch (_) {}
+        // Also merge any custom types from localStorage
+        try {
+          const stored = JSON.parse(localStorage.getItem('pc_process_times') || '[]');
+          stored.forEach((pt: any) => {
+            if (!pieceTypesList.find((p: any) => p.name === pt.name)) {
+              pieceTypesList.push({
+                name: pt.name,
+                atl_hours: pt.atl_hours ?? 4,
+                autoclave_hours: pt.autoclave_hours ?? 8,
+                ndt_hours: pt.ndt_hours ?? 3,
+                cnc_hours: pt.cnc_hours ?? 3,
+                workers_atl: pt.workers_atl ?? 1,
+                workers_bag: 2, workers_autoclave: 1, workers_ndt: 1, workers_cnc: 1,
+                layup_type: 'Custom',
+              });
+            }
+          });
+        } catch (_) {}
+        ['atl1PieceType','atl2PieceType'].forEach(id => {
+          const sel = document.getElementById(id) as HTMLSelectElement;
+          if (!sel) return;
+          sel.innerHTML = '';
+          pieceTypesList.forEach((pt: any) => {
+            const opt = document.createElement('option');
+            opt.value = pt.name;
+            opt.textContent = `${pt.name}${pt.aircraft ? ' ('+pt.aircraft+')' : ''}`;
+            sel.appendChild(opt);
+          });
+        });
+        if ((document.getElementById('atl2PieceType') as HTMLSelectElement)?.options.length > 1) {
+          (document.getElementById('atl2PieceType') as HTMLSelectElement).selectedIndex = 1;
+        }
+      }
+
+      // Toggle planner bar on/off
+      plannerToggleBtn?.addEventListener('click', async () => {
+        const isOpen = plannerBar.style.display !== 'none';
+        if (isOpen) return closePlanner();
+        plannerBar.style.display = '';
+        plannerToggleBtn.classList.add('btn-ui--primary');
+        if (pieceTypesList.length === 0) await loadPieceTypes();
+      });
+
+      plannerCloseBtn?.addEventListener('click', closePlanner);
+
+      function closePlanner() {
+        plannerBar.style.display = 'none';
+        altCards.style.display = 'none';
+        spinner.classList.remove('active');
+        manualView.style.display = '';
+        plannerView.style.display = 'none';
+        plannerToggleBtn.classList.remove('btn-ui--primary');
+        if (ganttSubEl) ganttSubEl.textContent = '5 recursos · 12 órdenes activas';
+      }
+
+      // Build PlanRequest body
+      function buildPlanRequest(): any {
+        const weekStart = (document.getElementById('plannerWeekStart') as HTMLInputElement).value;
+        const atl1Type  = (document.getElementById('atl1PieceType') as HTMLSelectElement).value;
+        const atl1Qty   = parseInt((document.getElementById('atl1Qty') as HTMLInputElement).value) || 2;
+        const atl2Type  = (document.getElementById('atl2PieceType') as HTMLSelectElement).value;
+        const atl2Qty   = parseInt((document.getElementById('atl2Qty') as HTMLInputElement).value) || 2;
+
+        // Piece types needed
+        const needed = new Set([atl1Type, atl2Type]);
+        const piece_types = pieceTypesList
+          .filter((pt: any) => needed.has(pt.name))
+          .map((pt: any) => ({
+            name:              pt.name,
+            layup_type:        pt.layup_type || 'Cuasi-isótropo',
+            atl_hours:         pt.atl_hours,
+            autoclave_hours:   pt.autoclave_hours,
+            ndt_hours:         pt.ndt_hours,
+            cnc_hours:         pt.cnc_hours,
+            workers_atl:       pt.workers_atl ?? 1,
+            workers_bag:       pt.workers_bag ?? 2,
+            workers_autoclave: pt.workers_autoclave ?? 1,
+            workers_ndt:       pt.workers_ndt ?? 1,
+            workers_cnc:       pt.workers_cnc ?? 1,
+          }));
+
+        // Default specializations from localStorage or fallback 2 workers / shift
+        let specializations: any[] = [];
+        try {
+          const shifts = JSON.parse(localStorage.getItem('pc_shift_schedule') || '[]');
+          if (shifts.length >= 3) {
+            specializations = [
+              { operation: 'atl_layup',  shift1: 2, shift2: 2, shift3: 1 },
+              { operation: 'bag_prep',   shift1: 2, shift2: 2, shift3: 1 },
+              { operation: 'autoclave',  shift1: 1, shift2: 1, shift3: 1 },
+              { operation: 'ndt',        shift1: 1, shift2: 1, shift3: 1 },
+              { operation: 'cnc',        shift1: 1, shift2: 1, shift3: 1 },
+            ];
+          }
+        } catch (_) {}
+        if (specializations.length === 0) {
+          specializations = [
+            { operation: 'atl_layup',  shift1: 2, shift2: 2, shift3: 1 },
+            { operation: 'bag_prep',   shift1: 2, shift2: 2, shift3: 1 },
+            { operation: 'autoclave',  shift1: 1, shift2: 1, shift3: 1 },
+            { operation: 'ndt',        shift1: 1, shift2: 1, shift3: 1 },
+            { operation: 'cnc',        shift1: 1, shift2: 1, shift3: 1 },
+          ];
+        }
+
+        return {
+          week_start: weekStart,
+          atl_assignments: [
+            { machine: 'ATL-01', piece_type: atl1Type, quantity: atl1Qty },
+            { machine: 'ATL-02', piece_type: atl2Type, quantity: atl2Qty },
+          ],
+          piece_types,
+          specializations,
+          maintenance: [],
+        };
+      }
+
+      // Run planner and show alternatives
+      runBtn?.addEventListener('click', async () => {
+        const token = localStorage.getItem('pc_token');
+        spinner.classList.add('active');
+        altCards.style.display = 'none';
+        manualView.style.display = 'none';
+        plannerView.style.display = 'none';
+        runBtn.disabled = true;
+
+        try {
+          const body = buildPlanRequest();
+          const res = await fetch(`${API}/api/plan/alternatives`, {
+            method: 'POST',
+            headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
+            body: JSON.stringify(body),
+          });
+          if (!res.ok) {
+            const err = await res.json().catch(() => ({}));
+            showToast(`⚠ Error al planificar: ${err.detail || res.status}`);
+            manualView.style.display = '';
+            return;
+          }
+          const data = await res.json();
+          renderAlternatives(data.alternatives);
+        } catch (e) {
+          showToast('⚠ No se pudo conectar con el servidor');
+          manualView.style.display = '';
+        } finally {
+          spinner.classList.remove('active');
+          runBtn.disabled = false;
+        }
+      });
+
+      // Render the 3 alternative cards
+      function renderAlternatives(alternatives: any[]) {
+        altCards.innerHTML = '';
+        alternatives.forEach((alt: any, idx: number) => {
+          const s = alt.summary;
+          const compColor = s.compliance_pct >= 90 ? '#16A34A' : s.compliance_pct >= 75 ? '#D97706' : '#DC2626';
+          const warnings = [...s.warnings, ...s.qualification_alerts].slice(0, 3);
+          const card = document.createElement('div');
+          card.className = 'alt-card';
+          card.innerHTML = `
+            <div class="alt-card__header">
+              <span class="alt-card__badge">${s.badge}</span>
+              <span class="alt-card__label">${s.label}</span>
+            </div>
+            <div class="alt-card__desc">${s.description}</div>
+            <div class="alt-card__kpis">
+              <div class="alt-kpi"><span class="alt-kpi__val" style="color:${compColor}">${s.compliance_pct}%</span><span class="alt-kpi__key">Cumplimiento OTD</span></div>
+              <div class="alt-kpi"><span class="alt-kpi__val">${s.pieces_scheduled}/${s.pieces_total}</span><span class="alt-kpi__key">Piezas prog.</span></div>
+              <div class="alt-kpi"><span class="alt-kpi__val">${s.atl_saturation_pct}%</span><span class="alt-kpi__key">Sat. ATL</span></div>
+              <div class="alt-kpi"><span class="alt-kpi__val">${s.autoclave_saturation_pct}%</span><span class="alt-kpi__key">Sat. Autoclave</span></div>
+            </div>
+            ${warnings.length ? `<div class="alt-card__warnings">${warnings.map((w: string) => `<div>${w}</div>`).join('')}</div>` : ''}
+          `;
+          card.addEventListener('click', () => {
+            document.querySelectorAll('.alt-card').forEach(c => c.classList.remove('alt-card--selected'));
+            card.classList.add('alt-card--selected');
+            selectedAlt = alt;
+            renderPlannerGantt(alt);
+          });
+          // Auto-select the equilibrado one (index 1)
+          if (idx === 1) {
+            card.classList.add('alt-card--selected');
+            selectedAlt = alt;
+          }
+          altCards.appendChild(card);
+        });
+        altCards.style.display = '';
+        // Auto-render the recommended (equilibrado) alternative
+        if (alternatives[1]) renderPlannerGantt(alternatives[1]);
+      }
+
+      // Render the composites planner Gantt
+      function renderPlannerGantt(alt: any) {
+        const RESOURCES = ['ATL-01', 'ATL-02', 'AUTOCLAVE', 'NDT', 'CNC', 'WORKERS'];
+        const RES_LABELS: Record<string, string> = {
+          'ATL-01': 'Máquina ATL', 'ATL-02': 'Máquina ATL',
+          'AUTOCLAVE': 'Curado',   'NDT': 'Ultrasonidos',
+          'CNC': 'Recorte CNC',   'WORKERS': 'Operarios',
+        };
+        const weekDays: string[] = alt.week_days;
+        const events: any[] = alt.events;
+
+        // Build day header (uses same 21-col grid; each day cell spans 3)
+        const dayHeader = document.getElementById('pg-day-header') as HTMLElement;
+        dayHeader.innerHTML = `<div class="pg-corner" style="grid-column:1"><span>Recurso</span></div>`;
+        weekDays.forEach((d: string, i: number) => {
+          const col = 2 + i * 3;
+          dayHeader.innerHTML += `<div class="pg-day-cell" style="grid-column:${col}/span 3">${d}</div>`;
+        });
+
+        // Build shift header
+        const shiftHeader = document.getElementById('pg-shift-header') as HTMLElement;
+        shiftHeader.innerHTML = `<div class="pg-corner" style="border-bottom:none"></div>`;
+        for (let d = 0; d < 7; d++) {
+          for (let s = 1; s <= 3; s++) {
+            const isEod = s === 3 && d < 6;
+            shiftHeader.innerHTML += `<div class="pg-shift-cell${isEod ? ' pg-shift-cell--eod' : ''}">T${s}</div>`;
+          }
+        }
+
+        // Build resource rows
+        const rowsContainer = document.getElementById('pg-rows') as HTMLElement;
+        rowsContainer.innerHTML = '';
+        RESOURCES.forEach((res: string) => {
+          const resEvents = events.filter((e: any) => e.resource === res);
+          const row = document.createElement('div');
+          row.className = 'pg-resource-row';
+
+          const label = document.createElement('div');
+          label.className = 'pg-res-label';
+          label.innerHTML = `<div><div class="pg-res-name">${res}</div><div class="pg-res-type">${RES_LABELS[res] || ''}</div></div>`;
+          row.appendChild(label);
+
+          const timeline = document.createElement('div');
+          timeline.className = 'pg-timeline';
+
+          // Background cells (21)
+          for (let i = 0; i < 21; i++) {
+            const cell = document.createElement('div');
+            const isEod = (i + 1) % 3 === 0 && i < 20;
+            cell.className = 'pg-cell' + (isEod ? ' pg-cell--eod' : '');
+            cell.style.cssText = `grid-column:${i+1};grid-row:1`;
+            timeline.appendChild(cell);
+          }
+
+          // Events
+          resEvents.forEach((ev: any) => {
+            const col = ev.day * 3 + (ev.shift - 1) + 1;
+            const span = ev.duration_shifts;
+            if (col < 1 || col > 21) return;
+            const el = document.createElement('div');
+            el.className = 'pg-event';
+            el.style.cssText = `grid-column:${col}/span ${Math.min(span, 22-col)};grid-row:1;background:${ev.color}22;border-left:3px solid ${ev.color};color:${ev.color}`;
+            el.innerHTML = `<span class="pg-event-title">${ev.title}</span><span class="pg-event-sub">${ev.subtitle}</span>`;
+            el.title = `${ev.title} · ${ev.subtitle}\nDía ${ev.day+1} · Turno ${ev.shift} · ${ev.duration_shifts} turno(s)`;
+            timeline.appendChild(el);
+          });
+
+          if (resEvents.length === 0) {
+            const empty = document.createElement('div');
+            empty.className = 'pg-empty';
+            empty.style.cssText = 'grid-column:1/span 21;grid-row:1';
+            empty.textContent = 'Sin actividad esta semana';
+            timeline.appendChild(empty);
+          }
+
+          row.appendChild(timeline);
+          rowsContainer.appendChild(row);
+        });
+
+        // Update subtitle
+        if (ganttSubEl) ganttSubEl.textContent = `${alt.summary.label} · ${alt.week_label} · ${alt.summary.pieces_scheduled} piezas`;
+        manualView.style.display = 'none';
+        plannerView.style.display = '';
+      }
+    })();
+
     // 2. Drag & drop helpers (reusable for static + dynamic blocks)
     let draggedBlock = null;
 
     function initGanttBlock(block) {
+      // Wrap text in .gb-text span if not already done
+      if (!block.querySelector('.gb-text')) {
+        const text = block.textContent.trim();
+        block.textContent = '';
+        const span = document.createElement('span');
+        span.className = 'gb-text';
+        span.textContent = text;
+        block.appendChild(span);
+      }
+
+      // Add resize handle if not already present
+      if (!block.querySelector('.gantt-resize')) {
+        const handle = document.createElement('div');
+        handle.className = 'gantt-resize';
+        block.appendChild(handle);
+
+        handle.addEventListener('mousedown', e => {
+          e.preventDefault();
+          e.stopPropagation();
+          const startX   = e.clientX;
+          const startW   = block.offsetWidth;
+          const cellW    = block.parentElement ? block.parentElement.offsetWidth : 200;
+          const startPct = parseFloat(block.style.width) || (startW / cellW * 100);
+
+          function onMove(ev) {
+            const dx = ev.clientX - startX;
+            const newPct = Math.max(10, startPct + dx / cellW * 100);
+            block.style.width = newPct + '%';
+          }
+          function onUp() {
+            document.removeEventListener('mousemove', onMove);
+            document.removeEventListener('mouseup', onUp);
+          }
+          document.addEventListener('mousemove', onMove);
+          document.addEventListener('mouseup', onUp);
+        });
+      }
+
       block.setAttribute('draggable', 'true');
       block.addEventListener('dragstart', e => {
+        if (e.target.classList.contains('gantt-resize')) { e.preventDefault(); return; }
         draggedBlock = block;
         e.dataTransfer.effectAllowed = 'move';
         setTimeout(() => block.classList.add('dragging'), 0);
@@ -3845,6 +4523,11 @@
         if (!draggedBlock) return;
         if (draggedBlock.parentElement === cell) return;
         cell.appendChild(draggedBlock);
+        // Update recurso if moved to a different row
+        const newRow = cell.closest('.gantt-row[data-resource]');
+        if (newRow && draggedBlock.dataset.recurso !== newRow.dataset.resource) {
+          draggedBlock.dataset.recurso = newRow.dataset.resource;
+        }
         showToast('Orden replanificada manualmente · Plan actualizado');
       });
     });
@@ -5259,6 +5942,21 @@
       });
     }
 
+    // ── Theme toggle ─────────────────────────────────────────────
+    const themeToggleBtn = document.getElementById('themeToggleBtn');
+    function applyTheme(dark: boolean) {
+      if (dark) {
+        document.documentElement.setAttribute('data-theme', 'dark');
+        localStorage.setItem('theme', 'dark');
+      } else {
+        document.documentElement.removeAttribute('data-theme');
+        localStorage.setItem('theme', 'light');
+      }
+    }
+    themeToggleBtn?.addEventListener('click', () => {
+      applyTheme(document.documentElement.getAttribute('data-theme') !== 'dark');
+    });
+
     // ── Topbar: notifications & settings buttons ─────────────────
     function navToPanel(panelId: string) {
       document.querySelectorAll('.nav-item[data-panel]').forEach(n => n.classList.remove('nav-item--active'));
@@ -5472,24 +6170,47 @@
     filterApply && filterApply.addEventListener('click', applyFilters);
     filterClear && filterClear.addEventListener('click', clearFilters);
 
-    // 9. Block click — detail popover
-    const blockPopover     = document.getElementById('blockPopover');
+    // 9. Block click — detail popover (editable)
+    const blockPopover      = document.getElementById('blockPopover');
     const blockPopoverClose = document.getElementById('blockPopoverClose');
+    const bpOfInput    = document.getElementById('bpOfInput');
+    const bpRecursoSel = document.getElementById('bpRecursoSel');
+    const bpInicioInp  = document.getElementById('bpInicioInp');
+    const bpFinInp     = document.getElementById('bpFinInp');
+    const bpPctInp     = document.getElementById('bpPctInp');
+    const bpPctVal     = document.getElementById('bpPctVal');
+    const bpEstadoSel  = document.getElementById('bpEstadoSel');
+    const bpDeleteBtn  = document.getElementById('bpDeleteBtn');
+    const bpSaveBtn    = document.getElementById('bpSaveBtn');
+
+    // Populate recurso options from gantt rows
+    const RECURSOS = Array.from(document.querySelectorAll('.gantt-row[data-resource]'))
+      .map(r => r.dataset.resource).filter(Boolean);
+    RECURSOS.forEach(r => bpRecursoSel.add(new Option(r, r)));
+
+    // Live progress label
+    bpPctInp && bpPctInp.addEventListener('input', () => { bpPctVal.textContent = bpPctInp.value + '%'; });
+
+    let activePopoverBlock = null;
 
     function showBlockPopover(block, e) {
       const d = block.dataset;
       if (!d.of) return;
-      document.getElementById('bpTitle').textContent    = d.of + (block.textContent.includes('·') ? ' · ' + block.textContent.split('·')[1].trim() : '');
-      document.getElementById('bpResource').textContent = d.recurso || '—';
-      document.getElementById('bpStart').textContent    = d.inicio  || '—';
-      document.getElementById('bpEnd').textContent      = d.fin     || '—';
-      document.getElementById('bpPct').textContent      = d.pct     || '—';
-      document.getElementById('bpStatus').textContent   = d.estado  || '—';
+      activePopoverBlock = block;
+
+      bpOfInput.value          = d.of || '';
+      bpRecursoSel.value       = d.recurso || (RECURSOS[0] ?? '');
+      bpInicioInp.value        = d.inicio  || '';
+      bpFinInp.value           = d.fin     || '';
+      const pctNum             = parseInt(d.pct) || 0;
+      bpPctInp.value           = pctNum;
+      bpPctVal.textContent     = pctNum + '%';
+      bpEstadoSel.value        = d.estado  || 'En plazo';
 
       const vw = window.innerWidth, vh = window.innerHeight;
       let x = e.clientX + 12, y = e.clientY + 12;
-      if (x + 230 > vw) x = e.clientX - 242;
-      if (y + 180 > vh) y = e.clientY - 182;
+      if (x + 260 > vw) x = e.clientX - 260;
+      if (y + 260 > vh) y = e.clientY - 260;
       blockPopover.style.left = x + 'px';
       blockPopover.style.top  = y + 'px';
       blockPopover.classList.add('open');
@@ -5504,9 +6225,82 @@
     }
     document.querySelectorAll('.gantt-block[data-of], .turno-block[data-of]').forEach(b => attachBlockClick(b));
 
-    blockPopoverClose && blockPopoverClose.addEventListener('click', () => blockPopover.classList.remove('open'));
+    blockPopoverClose && blockPopoverClose.addEventListener('click', () => {
+      blockPopover.classList.remove('open');
+      activePopoverBlock = null;
+    });
     document.addEventListener('click', e => {
-      if (blockPopover && !blockPopover.contains(e.target)) blockPopover.classList.remove('open');
+      if (blockPopover && !blockPopover.contains(e.target)) {
+        blockPopover.classList.remove('open');
+        activePopoverBlock = null;
+      }
+    });
+
+    // Save handler — updates all blocks with same OF
+    bpSaveBtn && bpSaveBtn.addEventListener('click', () => {
+      if (!activePopoverBlock) return;
+      const oldOf      = activePopoverBlock.dataset.of;
+      const oldRecurso = activePopoverBlock.dataset.recurso;
+      const newOf      = bpOfInput.value.trim()   || oldOf;
+      const newRecurso = bpRecursoSel.value;
+      const newInicio = bpInicioInp.value.trim();
+      const newFin    = bpFinInp.value.trim();
+      const newPct    = bpPctInp.value + '%';
+      const newEstado = bpEstadoSel.value;
+
+      // Color by estado
+      const estadoColor = { 'En plazo':'blue', 'En riesgo':'yellow', 'Retrasada':'red', 'Completada':'green' };
+      const newColor = estadoColor[newEstado] || 'blue';
+
+      // Update all blocks sharing the same OF
+      document.querySelectorAll(`[data-of="${oldOf}"]`).forEach(bl => {
+        bl.dataset.of      = newOf;
+        bl.dataset.recurso = newRecurso;
+        bl.dataset.inicio  = newInicio;
+        bl.dataset.fin     = newFin;
+        bl.dataset.pct     = newPct;
+        bl.dataset.estado  = newEstado;
+
+        // Update label text (keep "OF · desc" pattern)
+        const oldText = bl.textContent.trim();
+        const desc = oldText.includes('·') ? oldText.split('·').slice(1).join('·').trim() : '';
+        const gbText = bl.querySelector('.gb-text');
+        if (gbText) gbText.textContent = desc ? `${newOf} · ${desc}` : newOf;
+        else if (!bl.querySelector('.gantt-resize')) bl.textContent = desc ? `${newOf} · ${desc}` : newOf;
+
+        // Update estado color class
+        ['gb--blue','gb--green','gb--yellow','gb--red','gb--purple','gb--orange'].forEach(c => bl.classList.remove(c));
+        bl.classList.add(`gb--${newColor}`);
+      });
+
+      // Move block to new resource row if changed
+      if (newRecurso !== oldRecurso) {
+        // dataset already updated above; if gantt block, move to first cell of new resource
+        if (activePopoverBlock.classList.contains('gantt-block')) {
+          const newRow = document.querySelector(`.gantt-row[data-resource="${newRecurso}"]`);
+          if (newRow) {
+            const cells = newRow.querySelector('.gantt-timeline').querySelectorAll('.gantt-cell');
+            const currentCell = activePopoverBlock.parentElement;
+            const cellIdx = currentCell ? Array.from(currentCell.parentElement?.children || []).indexOf(currentCell) : 0;
+            const targetCell = cells[Math.max(0, cellIdx)] || cells[0];
+            if (targetCell) targetCell.appendChild(activePopoverBlock);
+          }
+        }
+      }
+
+      showToast(`✓ ${newOf} actualizada`);
+      blockPopover.classList.remove('open');
+      activePopoverBlock = null;
+    });
+
+    // Delete handler — removes all blocks with same OF
+    bpDeleteBtn && bpDeleteBtn.addEventListener('click', () => {
+      if (!activePopoverBlock) return;
+      const ofVal = activePopoverBlock.dataset.of;
+      document.querySelectorAll(`[data-of="${ofVal}"]`).forEach(bl => bl.remove());
+      showToast(`Orden ${ofVal} eliminada`);
+      blockPopover.classList.remove('open');
+      activePopoverBlock = null;
     });
 
     // 10. ADD ORDER MODAL
@@ -5663,6 +6457,81 @@
 
     zoomInBtn  && zoomInBtn.addEventListener('click',  () => { if (zoomIdx < ZOOM_STEPS.length - 1) { zoomIdx++; applyZoom(); } });
     zoomOutBtn && zoomOutBtn.addEventListener('click', () => { if (zoomIdx > 0)                     { zoomIdx--; applyZoom(); } });
+
+    // 11b. LIVE NOW-LINE ── updates every minute
+    // Inject keyframes once (inline styles can't use @keyframes from scoped CSS)
+    if (!document.getElementById('nowline-style')) {
+      const s = document.createElement('style');
+      s.id = 'nowline-style';
+      s.textContent = '@keyframes nowline-blink{0%,100%{opacity:1}50%{opacity:.25}}';
+      document.head.appendChild(s);
+    }
+    const DAY_START_H = 6, DAY_HOURS = 16; // 06:00 – 22:00
+    const TURNO_HOUR_MARKS = [6,8,10,12,14,16,18,20,22];
+
+    function updateNowLine() {
+      const now      = new Date();
+      const h        = now.getHours();
+      const m        = now.getMinutes();
+      const timeStr  = String(h).padStart(2,'0') + ':' + String(m).padStart(2,'0');
+      const nowDec   = h + m / 60;
+      const timeFrac = Math.max(0, Math.min(1, (nowDec - DAY_START_H) / DAY_HOURS));
+
+      // Weekly gantt: find today column and compute left% across all 5 columns
+      const dayEls    = document.querySelectorAll('.gantt-days .gantt-day');
+      const totalCols = dayEls.length;
+      const todayIdx  = Array.from(dayEls).findIndex(d => d.classList.contains('gantt-day--today'));
+
+      if (todayIdx >= 0 && totalCols > 0) {
+        const leftPct = (todayIdx + timeFrac) / totalCols * 100;
+
+        document.querySelectorAll('.gantt-timeline').forEach((tl, i) => {
+          let nline = tl.querySelector('.today-line');
+          if (!nline) {
+            nline = document.createElement('div');
+            nline.className = 'today-line';
+            nline.style.cssText = 'position:absolute;top:0;bottom:0;width:2px;background:#DC2626;z-index:5;pointer-events:none;transition:left .4s ease;animation:nowline-blink 1s ease-in-out infinite';
+            tl.appendChild(nline);
+          }
+          nline.style.left = leftPct + '%';
+
+          // Time label only on first row
+          let lbl = nline.querySelector('span');
+          if (i === 0) {
+            if (!lbl) {
+              lbl = document.createElement('span');
+              lbl.style.cssText = 'position:absolute;top:4px;left:4px;font-size:.55rem;font-weight:800;color:#DC2626;letter-spacing:.06em;background:rgba(220,38,38,.1);padding:.1rem .3rem;border-radius:3px;white-space:nowrap';
+              nline.appendChild(lbl);
+            }
+            lbl.textContent = timeStr;
+          }
+        });
+      }
+
+      // Turno gantt: highlight current hour cell
+      document.querySelectorAll('.turno-hour-cell').forEach((cell, i) => {
+        const mark = TURNO_HOUR_MARKS[i];
+        const next = TURNO_HOUR_MARKS[i + 1] ?? 23;
+        cell.classList.toggle('turno-hour-cell--now', h >= mark && h < next);
+      });
+
+      // Turno gantt: live vertical line inside each track (inline styles avoid Astro scope issue)
+      const turnoTimeFrac = Math.max(0, Math.min(1, (nowDec - DAY_START_H) / DAY_HOURS));
+      const turnoPct = turnoTimeFrac * 100;
+      document.querySelectorAll('.turno-track').forEach(track => {
+        let nline = track.querySelector('.turno-now-line');
+        if (!nline) {
+          nline = document.createElement('div');
+          nline.className = 'turno-now-line';
+          nline.style.cssText = 'position:absolute;top:0;bottom:0;width:2px;background:#DC2626;z-index:4;pointer-events:none;transition:left .4s ease;animation:nowline-blink 1s ease-in-out infinite';
+          track.appendChild(nline);
+        }
+        nline.style.left = turnoPct + '%';
+      });
+    }
+
+    updateNowLine();
+    setInterval(updateNowLine, 60000);
 
     // 12. EXPAND ── fullscreen toggle
     const expandBtn  = document.getElementById('expandGantt');
