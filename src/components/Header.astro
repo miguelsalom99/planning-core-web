@@ -39,13 +39,25 @@ const industries = [
       <!-- Language selector -->
       <div class="lang-selector" id="langSelector">
         <button class="lang-btn" id="langBtnEl" aria-label="Language">
-          <span id="langFlag">🇪🇸</span>
+          <span id="langFlag">
+            <!-- Spain flag (default) -->
+            <svg class="flag-svg" viewBox="0 0 3 2" xmlns="http://www.w3.org/2000/svg">
+              <rect width="3" height="2" fill="#c60b1e"/>
+              <rect y=".5" width="3" height="1" fill="#ffc400"/>
+            </svg>
+          </span>
           <span id="langCurrent">ES</span>
           <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
         </button>
         <div class="lang-menu" id="langMenu">
-          <button class="lang-option" data-lang-option="es">🇪🇸 Español</button>
-          <button class="lang-option" data-lang-option="en">🇬🇧 English</button>
+          <button class="lang-option" data-lang-option="es">
+            <svg class="flag-svg" viewBox="0 0 3 2" xmlns="http://www.w3.org/2000/svg"><rect width="3" height="2" fill="#c60b1e"/><rect y=".5" width="3" height="1" fill="#ffc400"/></svg>
+            Español
+          </button>
+          <button class="lang-option" data-lang-option="en">
+            <svg class="flag-svg" viewBox="0 0 60 30" xmlns="http://www.w3.org/2000/svg"><rect width="60" height="30" fill="#012169"/><path d="M0,0 L60,30 M60,0 L0,30" stroke="#fff" stroke-width="6"/><path d="M30,0 V30 M0,15 H60" stroke="#fff" stroke-width="10"/><path d="M0,0 L60,30 M60,0 L0,30" stroke="#C8102E" stroke-width="4"/><path d="M30,0 V30 M0,15 H60" stroke="#C8102E" stroke-width="6"/></svg>
+            English
+          </button>
         </div>
       </div>
 
@@ -170,6 +182,16 @@ const industries = [
     color: #fff;
     border-color: rgba(255,255,255,.4);
     transform: none;
+  }
+
+  /* Flag SVGs */
+  .flag-svg {
+    display: inline-block;
+    width: 18px;
+    height: 12px;
+    border-radius: 2px;
+    flex-shrink: 0;
+    vertical-align: middle;
   }
 
   /* Language selector */
