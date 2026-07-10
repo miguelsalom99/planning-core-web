@@ -1989,6 +1989,9 @@
     .login-btn:hover { background:var(--brand-lt); }
     .login-btn:disabled { opacity:.5;cursor:not-allowed; }
     .login-err { background:rgba(220,38,38,.1);border:1px solid rgba(220,38,38,.25);border-radius:5px;color:#fca5a5;font-size:.78rem;padding:.55rem .85rem;margin-top:.85rem;display:none; }
+    .login-link { display:block;width:100%;background:none;border:none;color:rgba(255,255,255,.4);font-size:.78rem;font-family:inherit;text-align:center;margin-top:1rem;cursor:pointer;transition:color .15s; }
+    .login-link:hover { color:var(--brand-lt); }
+    .login-box p.fp-question { font-size:.85rem;color:#fff;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:5px;padding:.65rem .85rem;margin-bottom:1.25rem;line-height:1.5; }
   </style>
 </head>
 <body>
@@ -2004,7 +2007,7 @@
       <div class="login-logo__box">PC</div>
       <span class="login-logo__name">Planning Core</span>
     </div>
-    <div class="login-box">
+    <div class="login-box" id="login-box">
       <h2>Accede a tu cuenta</h2>
       <p>Introduce tus credenciales para continuar</p>
       <div class="login-field">
@@ -2017,6 +2020,37 @@
       </div>
       <button class="login-btn" id="login-btn">Entrar →</button>
       <div class="login-err" id="login-err"></div>
+      <button class="login-link" id="forgotPasswordLink" type="button">¿Olvidaste tu contraseña?</button>
+    </div>
+
+    <!-- Forgot password — step 1: enter email -->
+    <div class="login-box" id="forgot-step1" style="display:none">
+      <h2>Recuperar acceso</h2>
+      <p>Introduce tu email para ver tu pregunta de seguridad</p>
+      <div class="login-field">
+        <label>Email</label>
+        <input type="email" id="fp-email" placeholder="tu@empresa.com" autocomplete="email"/>
+      </div>
+      <button class="login-btn" id="fp-continue-btn">Continuar →</button>
+      <div class="login-err" id="fp-step1-err"></div>
+      <button class="login-link" id="fp-back-to-login-1" type="button">Volver a inicio de sesión</button>
+    </div>
+
+    <!-- Forgot password — step 2: answer security question + set new password -->
+    <div class="login-box" id="forgot-step2" style="display:none">
+      <h2>Recuperar acceso</h2>
+      <p class="fp-question" id="fp-question"></p>
+      <div class="login-field">
+        <label>Respuesta</label>
+        <input type="text" id="fp-answer" placeholder="Tu respuesta" autocomplete="off"/>
+      </div>
+      <div class="login-field">
+        <label>Nueva contraseña</label>
+        <input type="password" id="fp-new-password" placeholder="Mínimo 8 caracteres" autocomplete="new-password"/>
+      </div>
+      <button class="login-btn" id="fp-reset-btn">Restablecer contraseña</button>
+      <div class="login-err" id="fp-step2-err"></div>
+      <button class="login-link" id="fp-back-to-login-2" type="button">Volver a inicio de sesión</button>
     </div>
   </div>
 </div>
@@ -2077,6 +2111,10 @@
           <div class="settings-dropdown__item" data-settings-action="tiempos">
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
             Tiempos de proceso
+          </div>
+          <div class="settings-dropdown__item" data-settings-action="seguridad">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            Pregunta de seguridad
           </div>
           <div class="settings-dropdown__divider"></div>
           <div class="settings-dropdown__item settings-dropdown__item--danger" data-settings-action="logout">
@@ -3916,6 +3954,35 @@
         </div>
       </div>
     </div>
+
+    <!-- ── MODAL: PREGUNTA DE SEGURIDAD ── -->
+    <div class="modal-backdrop" id="securityQuestionModal">
+      <div class="modal__box" style="max-width:440px">
+        <div class="modal__header">
+          <h3 class="modal__title">Pregunta de seguridad</h3>
+          <button class="modal__close" id="securityQuestionClose">×</button>
+        </div>
+        <div class="modal__body" style="display:flex;flex-direction:column;gap:1rem">
+          <p style="font-size:.82rem;color:var(--n40);line-height:1.5;margin:0">
+            Se usa para restablecer tu contraseña si la olvidas, sin depender de un administrador.
+          </p>
+          <div class="form-group">
+            <label class="form-label">Pregunta <span style="color:var(--red)">*</span></label>
+            <input class="form-input" id="sq-question" type="text" placeholder="Ej. ¿Cuál es el nombre de tu primera mascota?" maxlength="200" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Respuesta <span style="color:var(--red)">*</span></label>
+            <input class="form-input" id="sq-answer" type="text" placeholder="Tu respuesta" autocomplete="off" />
+            <div style="font-size:.72rem;color:var(--n50);margin-top:.3rem">No distingue mayúsculas ni espacios extra.</div>
+          </div>
+          <div id="securityQuestionStatus" style="font-size:.8rem;color:var(--n40);min-height:1.2em"></div>
+        </div>
+        <div class="modal__footer">
+          <button class="btn-ui" id="securityQuestionCancel">Cancelar</button>
+          <button class="btn-ui btn-ui--primary" id="securityQuestionSave">Guardar</button>
+        </div>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -3995,6 +4062,7 @@
     const card    = document.getElementById('login-card');
     if (spinner) spinner.style.display = 'none';
     if (card)    card.classList.add('visible');
+    showAuthStep('login');
     if (errMsg) {
       const errEl = document.getElementById('login-err');
       if (errEl) { errEl.textContent = errMsg; errEl.style.display = 'block'; }
@@ -4064,6 +4132,83 @@
       btn.textContent = 'Entrar →';
     }
   }
+
+  // ── Forgot password (security question) ──────────────────────────────
+  let fpEmail = '';
+
+  function showAuthStep(step: 'login' | 'forgot1' | 'forgot2') {
+    const boxes: Record<string, HTMLElement | null> = {
+      login: document.getElementById('login-box'),
+      forgot1: document.getElementById('forgot-step1'),
+      forgot2: document.getElementById('forgot-step2'),
+    };
+    Object.entries(boxes).forEach(([key, el]) => { if (el) el.style.display = key === step ? '' : 'none'; });
+  }
+
+  document.getElementById('forgotPasswordLink')?.addEventListener('click', () => {
+    const fpEmailInput = document.getElementById('fp-email') as HTMLInputElement;
+    if (fpEmailInput) fpEmailInput.value = (document.getElementById('login-email') as HTMLInputElement)?.value || '';
+    showAuthStep('forgot1');
+  });
+  document.getElementById('fp-back-to-login-1')?.addEventListener('click', () => showAuthStep('login'));
+  document.getElementById('fp-back-to-login-2')?.addEventListener('click', () => showAuthStep('login'));
+
+  document.getElementById('fp-continue-btn')?.addEventListener('click', async () => {
+    const email = (document.getElementById('fp-email') as HTMLInputElement).value.trim();
+    const errEl = document.getElementById('fp-step1-err')!;
+    errEl.style.display = 'none';
+    if (!email) { errEl.textContent = 'Introduce tu email'; errEl.style.display = 'block'; return; }
+    try {
+      const res = await fetch(`${API}/auth/forgot-password/question`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.detail || 'No se pudo continuar');
+      fpEmail = email;
+      const qEl = document.getElementById('fp-question');
+      if (qEl) qEl.textContent = data.question;
+      (document.getElementById('fp-answer') as HTMLInputElement).value = '';
+      (document.getElementById('fp-new-password') as HTMLInputElement).value = '';
+      document.getElementById('fp-step2-err')!.style.display = 'none';
+      showAuthStep('forgot2');
+    } catch (e: any) {
+      errEl.textContent = e.message || 'No se pudo continuar';
+      errEl.style.display = 'block';
+    }
+  });
+
+  document.getElementById('fp-reset-btn')?.addEventListener('click', async () => {
+    const answer = (document.getElementById('fp-answer') as HTMLInputElement).value;
+    const newPassword = (document.getElementById('fp-new-password') as HTMLInputElement).value;
+    const errEl = document.getElementById('fp-step2-err')!;
+    errEl.style.display = 'none';
+    if (!answer || !newPassword) { errEl.textContent = 'Completa la respuesta y la nueva contraseña'; errEl.style.display = 'block'; return; }
+    if (newPassword.length < 8) { errEl.textContent = 'La contraseña debe tener al menos 8 caracteres'; errEl.style.display = 'block'; return; }
+    const btn = document.getElementById('fp-reset-btn') as HTMLButtonElement;
+    btn.disabled = true;
+    btn.textContent = 'Restableciendo…';
+    try {
+      const res = await fetch(`${API}/auth/forgot-password/reset`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: fpEmail, answer, new_password: newPassword }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.detail || 'No se pudo restablecer la contraseña');
+      showToast('✓ Contraseña actualizada. Ya puedes iniciar sesión.');
+      (document.getElementById('login-email') as HTMLInputElement).value = fpEmail;
+      (document.getElementById('login-password') as HTMLInputElement).value = '';
+      showAuthStep('login');
+    } catch (e: any) {
+      errEl.textContent = e.message || 'No se pudo restablecer la contraseña';
+      errEl.style.display = 'block';
+    } finally {
+      btn.disabled = false;
+      btn.textContent = 'Restablecer contraseña';
+    }
+  });
 
   async function init() {
     const token = localStorage.getItem('pc_token');
@@ -6028,8 +6173,67 @@
           localStorage.removeItem('pc_email');
           showToast('Sesión cerrada');
           setTimeout(() => { window.location.href = '/'; }, 1000);
+        } else if (action === 'seguridad') {
+          openSecurityQuestionModal();
         }
       });
+    });
+
+    // ── Security question modal ─────────────────────────────────────
+    const securityQuestionModal  = document.getElementById('securityQuestionModal');
+    const securityQuestionStatus = document.getElementById('securityQuestionStatus');
+
+    async function openSecurityQuestionModal() {
+      if (!securityQuestionModal) return;
+      if (securityQuestionStatus) securityQuestionStatus.textContent = 'Cargando…';
+      (document.getElementById('sq-question') as HTMLInputElement).value = '';
+      (document.getElementById('sq-answer') as HTMLInputElement).value = '';
+      securityQuestionModal.classList.add('open');
+      const token = localStorage.getItem('pc_token');
+      try {
+        const res = await fetch(`${API_BASE}/auth/security-question`, { headers: { Authorization: `Bearer ${token}` } });
+        const data = await res.json();
+        if (data.has_security_question) {
+          (document.getElementById('sq-question') as HTMLInputElement).value = data.question;
+          if (securityQuestionStatus) securityQuestionStatus.textContent = 'Ya tienes una pregunta configurada. Puedes actualizarla (deberás escribir la respuesta de nuevo).';
+        } else {
+          if (securityQuestionStatus) securityQuestionStatus.textContent = 'Aún no tienes una pregunta de seguridad configurada.';
+        }
+      } catch {
+        if (securityQuestionStatus) securityQuestionStatus.textContent = '';
+      }
+    }
+    function closeSecurityQuestionModal() { securityQuestionModal?.classList.remove('open'); }
+
+    document.getElementById('securityQuestionClose')?.addEventListener('click', closeSecurityQuestionModal);
+    document.getElementById('securityQuestionCancel')?.addEventListener('click', closeSecurityQuestionModal);
+    securityQuestionModal?.addEventListener('click', (e: MouseEvent) => {
+      if (e.target === securityQuestionModal) closeSecurityQuestionModal();
+    });
+    document.getElementById('securityQuestionSave')?.addEventListener('click', async () => {
+      const question = (document.getElementById('sq-question') as HTMLInputElement).value.trim();
+      const answer   = (document.getElementById('sq-answer') as HTMLInputElement).value.trim();
+      if (!question || !answer) {
+        if (securityQuestionStatus) securityQuestionStatus.textContent = 'La pregunta y la respuesta son obligatorias.';
+        return;
+      }
+      const btn = document.getElementById('securityQuestionSave') as HTMLButtonElement;
+      btn.disabled = true;
+      const token = localStorage.getItem('pc_token');
+      try {
+        const res = await fetch(`${API_BASE}/auth/security-question`, {
+          method: 'PUT',
+          headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
+          body: JSON.stringify({ question, answer }),
+        });
+        if (!res.ok) { const d = await res.json(); throw new Error(d.detail || 'Error al guardar'); }
+        showToast('✓ Pregunta de seguridad guardada');
+        closeSecurityQuestionModal();
+      } catch (e: any) {
+        if (securityQuestionStatus) securityQuestionStatus.textContent = e.message || 'Error al guardar';
+      } finally {
+        btn.disabled = false;
+      }
     });
 
     // Sync notif badge with alert count
