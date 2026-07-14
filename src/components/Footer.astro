@@ -1,14 +1,5 @@
 ---
-const sectors = [
-  { href: '/sectores/impresion-packaging', label: 'Impresión & Packaging' },
-  { href: '/sectores/fundicion-metalurgia', label: 'Fundición y Metalurgia' },
-  { href: '/sectores/fabricacion-muebles', label: 'Muebles y Madera' },
-  { href: '/sectores/medtech-dispositivos', label: 'MedTech' },
-  { href: '/sectores/ferroviario-mro', label: 'Ferroviario MRO' },
-  { href: '/sectores/agroalimentario', label: 'Agroalimentaria' },
-  { href: '/sectores/naval-astilleros', label: 'Naval y Astilleros' },
-  { href: '/sectores/construccion-industrial', label: 'Construcción Industrial' },
-];
+import { SECTORS } from '../data/sectors.js';
 ---
 <footer class="footer">
   <div class="container footer__inner">
@@ -29,12 +20,12 @@ const sectors = [
 
     <div class="footer__col">
       <h4 data-i18n="footer.col.sectors">Sectores</h4>
-      {sectors.slice(0,4).map(s => <a href={s.href}>{s.label}</a>)}
+      {SECTORS.slice(0,5).map(s => <a href={`/sectores/${s.slug}`} data-i18n={`sector.${s.slug}.short`}>{s.short}</a>)}
     </div>
 
     <div class="footer__col">
       <h4>&nbsp;</h4>
-      {sectors.slice(4).map(s => <a href={s.href}>{s.label}</a>)}
+      {SECTORS.slice(5).map(s => <a href={`/sectores/${s.slug}`} data-i18n={`sector.${s.slug}.short`}>{s.short}</a>)}
     </div>
   </div>
 
