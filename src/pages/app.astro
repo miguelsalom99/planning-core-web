@@ -2009,6 +2009,83 @@
     .login-link:hover { color:var(--brand-lt); }
     .login-box p.fp-question { font-size:.85rem;color:#fff;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:5px;padding:.65rem .85rem;margin-bottom:1.25rem;line-height:1.5; }
 
+    /* ───── GLOBAL SEARCH ───── */
+    .search-overlay {
+      position: fixed; inset: 0;
+      background: rgba(6,15,32,.5);
+      z-index: 800;
+      display: flex; justify-content: center;
+      padding-top: 12vh;
+      opacity: 0; pointer-events: none;
+      transition: opacity .15s;
+      backdrop-filter: blur(2px);
+    }
+    .search-overlay.open { opacity: 1; pointer-events: auto; }
+    .search-palette {
+      background: var(--white);
+      border-radius: var(--radius-lg);
+      box-shadow: 0 24px 64px rgba(11,28,58,.32);
+      width: 100%; max-width: 560px;
+      height: fit-content;
+      max-height: 60vh;
+      display: flex; flex-direction: column;
+      overflow: hidden;
+      transform: translateY(-8px);
+      transition: transform .15s;
+      margin: 0 1rem;
+    }
+    .search-overlay.open .search-palette { transform: translateY(0); }
+    .search-input-row {
+      display: flex; align-items: center; gap: .7rem;
+      padding: .9rem 1.1rem;
+      border-bottom: 1px solid var(--n80);
+      color: #94A3B8;
+      flex-shrink: 0;
+    }
+    .search-input-row input {
+      flex: 1; border: none; outline: none; background: none;
+      font-size: .92rem; font-family: inherit; color: var(--n10);
+    }
+    .search-input-row input::placeholder { color: #94A3B8; }
+    .search-esc {
+      font-size: .65rem; font-weight: 700; color: var(--n50);
+      background: var(--n90); border: 1px solid var(--n80);
+      border-radius: 4px; padding: .15rem .4rem; font-family: inherit;
+      flex-shrink: 0;
+    }
+    .search-results { overflow-y: auto; padding: .5rem; }
+    .search-empty {
+      padding: 2rem 1rem; text-align: center; font-size: .82rem; color: var(--n50);
+    }
+    .search-group-label {
+      font-size: .62rem; font-weight: 700; text-transform: uppercase; letter-spacing: .08em;
+      color: #94A3B8; padding: .6rem .6rem .3rem;
+    }
+    .search-result-item {
+      display: flex; align-items: center; gap: .7rem;
+      padding: .55rem .6rem;
+      border-radius: var(--radius);
+      cursor: pointer;
+      transition: background .1s;
+    }
+    .search-result-item:hover, .search-result-item--active { background: var(--n90); }
+    .search-result-icon {
+      width: 28px; height: 28px; border-radius: 7px; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      background: rgba(27,63,139,.08); color: var(--brand);
+    }
+    .search-result-body { flex: 1; min-width: 0; }
+    .search-result-title { font-size: .82rem; font-weight: 600; color: var(--navy); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .search-result-title mark { background: rgba(217,119,6,.25); color: inherit; border-radius: 2px; }
+    .search-result-sub { font-size: .72rem; color: var(--n50); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .search-result-type { font-size: .62rem; font-weight: 700; color: #94A3B8; flex-shrink: 0; text-transform: uppercase; letter-spacing: .05em; }
+
+    @keyframes search-flash {
+      0%, 100% { background: transparent; }
+      25%, 75% { background: rgba(217,119,6,.18); }
+    }
+    .search-highlight-flash { animation: search-flash 1.6s ease; }
+
     /* ───── MOBILE: sidebar drawer chrome (base rules, activated in media queries) ───── */
     .sidebar-toggle {
       display: none;
@@ -2117,6 +2194,9 @@
       .gantt-grid { min-width: 620px; }
       .gantt-timeline { grid-template-columns: repeat(5, minmax(90px, 1fr)); }
       #gantt-semana { overflow-x: auto; }
+
+      .search-overlay { padding-top: 4vh; }
+      .search-palette { max-height: 85vh; }
 
       .modal { width: 100%; max-width: calc(100vw - 1.5rem); }
       /* !important: several .modal__box instances set a narrower max-width
@@ -2228,7 +2308,7 @@
     </div>
 
     <div class="topbar__right">
-      <div class="icon-btn" title="Buscar">
+      <div class="icon-btn" id="searchBtn" title="Buscar (Ctrl+K)">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.7)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
       </div>
       <div class="icon-btn theme-toggle" id="themeToggleBtn" title="Modo claro / oscuro" style="overflow:hidden">
@@ -2275,6 +2355,20 @@
       </div>
     </div>
   </header>
+
+  <!-- ── GLOBAL SEARCH ── -->
+  <div class="search-overlay" id="searchOverlay">
+    <div class="search-palette" id="searchPalette">
+      <div class="search-input-row">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input type="text" id="searchInput" placeholder="Buscar órdenes, alertas, planificaciones, empresas…" autocomplete="off" />
+        <kbd class="search-esc">Esc</kbd>
+      </div>
+      <div class="search-results" id="searchResults">
+        <div class="search-empty">Escribe para buscar en todo el panel.</div>
+      </div>
+    </div>
+  </div>
 
   <div class="app-body">
 
@@ -6303,6 +6397,208 @@
     sidebarBackdropEl?.addEventListener('click', closeMobileSidebar);
     window.addEventListener('resize', () => {
       if (window.innerWidth > 860) closeMobileSidebar();
+    });
+
+    // ── Global search ────────────────────────────────────────────
+    const searchOverlay   = document.getElementById('searchOverlay');
+    const searchInput     = document.getElementById('searchInput') as HTMLInputElement | null;
+    const searchResultsEl = document.getElementById('searchResults');
+
+    const searchCache: { planificaciones: any[]; companies: any[]; users: any[] } = { planificaciones: [], companies: [], users: [] };
+    let searchCacheLoaded = false;
+    let searchActiveIndex = -1;
+    let currentSearchResults: any[] = [];
+
+    const SEARCH_ICONS: Record<string, string> = {
+      orden: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>',
+      alerta: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>',
+      disrupcion: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>',
+      plan: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/></svg>',
+      empresa: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="18" height="14" rx="2"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>',
+      usuario: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21v-1a6 6 0 0 1 6-6h4a6 6 0 0 1 6 6v1"/></svg>',
+    };
+
+    function escapeHtml(s: string): string {
+      const map: Record<string, string> = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' };
+      return s.replace(/[&<>"']/g, c => map[c]);
+    }
+    function highlightMatch(text: string, q: string): string {
+      const idx = text.toLowerCase().indexOf(q.toLowerCase());
+      if (idx === -1 || !q) return escapeHtml(text);
+      return escapeHtml(text.slice(0, idx)) + '<mark>' + escapeHtml(text.slice(idx, idx + q.length)) + '</mark>' + escapeHtml(text.slice(idx + q.length));
+    }
+
+    async function loadSearchCache() {
+      searchCacheLoaded = true;
+      const token = localStorage.getItem('pc_token');
+      try {
+        const res = await fetch(`${API_BASE}/planificaciones`, { headers: { Authorization: `Bearer ${token}` } });
+        searchCache.planificaciones = res.ok ? await res.json() : [];
+      } catch { searchCache.planificaciones = []; }
+      if (localStorage.getItem('pc_is_admin') === 'true') {
+        try {
+          const [compRes, usersRes] = await Promise.all([
+            fetch(`${API_BASE}/admin/companies`, { headers: { Authorization: `Bearer ${token}` } }),
+            fetch(`${API_BASE}/admin/users`, { headers: { Authorization: `Bearer ${token}` } }),
+          ]);
+          searchCache.companies = compRes.ok ? await compRes.json() : [];
+          searchCache.users = usersRes.ok ? await usersRes.json() : [];
+        } catch { searchCache.companies = []; searchCache.users = []; }
+      }
+    }
+
+    function jumpToRow(panel: string, row: Element) {
+      navToPanel(panel);
+      closeSearch();
+      setTimeout(() => {
+        row.scrollIntoView({ block: 'center', behavior: 'smooth' });
+        row.classList.add('search-highlight-flash');
+        setTimeout(() => row.classList.remove('search-highlight-flash'), 1600);
+      }, 100);
+    }
+
+    function runSearch(qRaw: string) {
+      const q = qRaw.trim();
+      searchActiveIndex = -1;
+      if (!q) { renderSearchResults([], ''); return; }
+      const ql = q.toLowerCase();
+      const results: any[] = [];
+
+      document.querySelectorAll('#ordersBody tr').forEach(row => {
+        const cells = row.querySelectorAll('td');
+        if (!cells.length) return;
+        const id = cells[0]?.textContent?.trim() || '';
+        const desc = cells[1]?.textContent?.trim() || '';
+        const resource = cells[2]?.textContent?.trim() || '';
+        if (`${id} ${desc} ${resource}`.toLowerCase().includes(ql)) {
+          results.push({ group: 'Órdenes', type: 'orden', title: id, sub: `${desc} · ${resource}`, action: () => jumpToRow('ordenes', row) });
+        }
+      });
+
+      document.querySelectorAll('#alertList .alert-row').forEach(row => {
+        const text = row.querySelector('.alert-desc')?.textContent?.trim() || '';
+        if (text.toLowerCase().includes(ql)) {
+          results.push({ group: 'Alertas', type: 'alerta', title: text.length > 70 ? text.slice(0, 70) + '…' : text, sub: '', action: () => jumpToRow('alertas', row) });
+        }
+      });
+
+      document.querySelectorAll('#panel-disrupciones .disrupt-row').forEach(row => {
+        const title = row.querySelector('.disrupt-title')?.textContent?.trim() || '';
+        const detail = row.querySelector('.disrupt-detail')?.textContent?.trim() || '';
+        if (`${title} ${detail}`.toLowerCase().includes(ql)) {
+          results.push({ group: 'Disrupciones', type: 'disrupcion', title, sub: detail, action: () => jumpToRow('disrupciones', row) });
+        }
+      });
+
+      searchCache.planificaciones.forEach((p: any) => {
+        if (`${p.nombre} ${p.descripcion || ''}`.toLowerCase().includes(ql)) {
+          results.push({
+            group: 'Planificaciones guardadas', type: 'plan', title: p.nombre, sub: p.descripcion || '',
+            action: () => { navToPanel('historial'); closeSearch(); },
+          });
+        }
+      });
+
+      searchCache.companies.forEach((c: any) => {
+        if ((c.name || '').toLowerCase().includes(ql)) {
+          results.push({
+            group: 'Empresas', type: 'empresa', title: c.name, sub: c.industry || '',
+            action: () => { navToPanel('admin'); document.getElementById('adminTabCompanies')?.dispatchEvent(new MouseEvent('click')); closeSearch(); },
+          });
+        }
+      });
+      searchCache.users.forEach((u: any) => {
+        if (`${u.name} ${u.email}`.toLowerCase().includes(ql)) {
+          results.push({
+            group: 'Usuarios', type: 'usuario', title: u.name, sub: u.email,
+            action: () => { navToPanel('admin'); document.getElementById('adminTabUsers')?.dispatchEvent(new MouseEvent('click')); closeSearch(); },
+          });
+        }
+      });
+
+      renderSearchResults(results, q);
+    }
+
+    function renderSearchResults(results: any[], q: string) {
+      currentSearchResults = results;
+      if (!searchResultsEl) return;
+      if (!results.length) {
+        searchResultsEl.innerHTML = `<div class="search-empty">${q ? 'Sin resultados para “' + escapeHtml(q) + '”.' : 'Escribe para buscar en todo el panel.'}</div>`;
+        return;
+      }
+      const groups: Record<string, any[]> = {};
+      results.forEach(r => {
+        if (!groups[r.group]) groups[r.group] = [];
+        groups[r.group].push(r);
+      });
+      let html = '';
+      let idx = 0;
+      Object.entries(groups).forEach(([group, items]) => {
+        html += `<div class="search-group-label">${escapeHtml(group)}</div>`;
+        items.forEach(r => {
+          html += `<div class="search-result-item" data-idx="${idx}">
+            <div class="search-result-icon">${SEARCH_ICONS[r.type] || ''}</div>
+            <div class="search-result-body">
+              <div class="search-result-title">${highlightMatch(r.title, q)}</div>
+              ${r.sub ? `<div class="search-result-sub">${escapeHtml(r.sub)}</div>` : ''}
+            </div>
+          </div>`;
+          idx++;
+        });
+      });
+      searchResultsEl.innerHTML = html;
+      searchResultsEl.querySelectorAll('.search-result-item').forEach(el => {
+        el.addEventListener('click', () => {
+          const i = parseInt((el as HTMLElement).dataset.idx || '-1');
+          currentSearchResults[i]?.action();
+        });
+      });
+    }
+
+    function updateActiveResult(items: NodeListOf<Element>) {
+      items.forEach((it, i) => it.classList.toggle('search-result-item--active', i === searchActiveIndex));
+      (items[searchActiveIndex] as HTMLElement)?.scrollIntoView({ block: 'nearest' });
+    }
+
+    function openSearch() {
+      searchOverlay?.classList.add('open');
+      closeMobileSidebar();
+      searchInput?.focus();
+      if (!searchCacheLoaded) loadSearchCache();
+    }
+    function closeSearch() {
+      searchOverlay?.classList.remove('open');
+      if (searchInput) searchInput.value = '';
+      renderSearchResults([], '');
+    }
+
+    let searchDebounce: ReturnType<typeof setTimeout>;
+    searchInput?.addEventListener('input', () => {
+      clearTimeout(searchDebounce);
+      searchDebounce = setTimeout(() => runSearch(searchInput!.value), 120);
+    });
+    searchInput?.addEventListener('keydown', (e: KeyboardEvent) => {
+      const items = searchResultsEl?.querySelectorAll('.search-result-item');
+      if (!items || !items.length) return;
+      if (e.key === 'ArrowDown') {
+        e.preventDefault();
+        searchActiveIndex = Math.min(searchActiveIndex + 1, items.length - 1);
+        updateActiveResult(items);
+      } else if (e.key === 'ArrowUp') {
+        e.preventDefault();
+        searchActiveIndex = Math.max(searchActiveIndex - 1, 0);
+        updateActiveResult(items);
+      } else if (e.key === 'Enter') {
+        e.preventDefault();
+        const target = searchActiveIndex >= 0 ? currentSearchResults[searchActiveIndex] : currentSearchResults[0];
+        target?.action();
+      }
+    });
+    document.getElementById('searchBtn')?.addEventListener('click', openSearch);
+    searchOverlay?.addEventListener('click', (e: MouseEvent) => { if (e.target === searchOverlay) closeSearch(); });
+    document.addEventListener('keydown', (e: KeyboardEvent) => {
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') { e.preventDefault(); openSearch(); }
+      else if (e.key === 'Escape' && searchOverlay?.classList.contains('open')) closeSearch();
     });
 
     // Bell → open Alertas panel
