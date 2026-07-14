@@ -27,15 +27,15 @@ import SectorIcon from '../../components/SectorIcon.astro';
           <div class="sector-row__icon"><SectorIcon slug={s.slug} size={22} /></div>
           <div class="sector-row__main">
             <div class="sector-row__top">
-              <h2>{s.name}</h2>
+              <h2 data-i18n={`sector.${s.slug}.name`}>{s.name}</h2>
             </div>
-            <p class="sector-row__tagline">{s.tagline}</p>
-            <p class="sector-row__roi">{s.roiHeadline}</p>
+            <p class="sector-row__tagline" data-i18n={`sector.${s.slug}.tagline`}>{s.tagline}</p>
+            <p class="sector-row__roi" data-i18n={`sector.${s.slug}.roiHeadline`}>{s.roiHeadline}</p>
           </div>
           <div class="sector-row__meta">
             <div class="meta-item">
               <span class="meta-label" data-i18n="sectores.meta.cycle">Ciclo de implantación</span>
-              <span class="meta-val">{s.cycle}</span>
+              <span class="meta-val" data-i18n={`sector.${s.slug}.cycle`}>{s.cycle}</span>
             </div>
           </div>
           <div class="sector-row__arrow">→</div>

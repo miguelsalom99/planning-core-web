@@ -1,3 +1,5 @@
+import { SECTORS } from './sectors.js';
+
 /** English translations — Spanish is the server-rendered default */
 export const EN = {
   // Navigation
@@ -247,4 +249,59 @@ export const EN = {
   'sectores.hero.title': 'Designed for your industry,<br/>not all at once',
   'sectores.hero.sub':   'Each industrial sector has different constraints: maintenance windows, bottlenecks, regulatory traceability, 24h shifts. Planning Core comes pre-configured with your sector\'s logic.',
   'sectores.meta.cycle': 'Implementation cycle',
+
+  // ── SECTOR DETAIL (shared labels, [slug].astro) ───────────────────────────
+  'sectorDetail.cta.demo':       'Request demo →',
+  'sectorDetail.cta.pilot':      'See 12-week pilot',
+  'sectorDetail.meta.marketEs':  'Spain market',
+  'sectorDetail.meta.marketEu':  'EU market',
+  'sectorDetail.meta.deployment':'Deployment',
+  'sectorDetail.meta.icp':       'ICP',
+  'sectorDetail.pains.label':      'The problem',
+  'sectorDetail.pains.titlePrefix':'Pains of',
+  'sectorDetail.diffs.label':    'Why Planning Core',
+  'sectorDetail.diffs.title':    'The solution that fits',
+  'sectorDetail.diffs.bar':      '✓  100% customizable to your needs and requirements  —  No code. No consultants. In weeks.',
+  'sectorDetail.pilot.label':    '12-week pilot',
+  'sectorDetail.pilot.title':    'From zero to production in 3 months',
+  'sectorDetail.kpis.label':     'KPIs measured',
+  'sectorDetail.kpis.title':     'Measurable impact from week 1',
+  'sectorDetail.comp.label':     'Competition',
+  'sectorDetail.comp.title':     'Why not the alternatives',
+  'sectorDetail.comp.headerAlt': 'Alternative',
+  'sectorDetail.comp.headerWhy': 'Why not',
+  'sectorDetail.comp.usWhy':     'Visual Gantt · Scenarios · No ERP replacement · 12-week pilot',
+  'sectorDetail.bottom.title':   'Ready to start the pilot?',
+  'sectorDetail.bottom.sub':     '12 weeks. No risk. Measurable ROI.',
+  'sectorDetail.bottom.cta':     'Request free demo →',
 };
+
+// Per-sector content (name, pains, differentiators, kpis, etc.) is translated
+// alongside the Spanish copy in sectors.js and flattened into EN here so both
+// /sectores pages can drive their data-i18n attributes off a single dictionary.
+for (const s of SECTORS) {
+  if (!s.en) continue;
+  const base = `sector.${s.slug}`;
+  for (const field of ['name', 'short', 'badge', 'tagline', 'marketEs', 'marketEu', 'price', 'cycle', 'icp', 'roiHeadline']) {
+    if (s.en[field] != null) EN[`${base}.${field}`] = s.en[field];
+  }
+  (s.en.pains || []).forEach(([title, desc], i) => {
+    EN[`${base}.pain.${i}.title`] = title;
+    EN[`${base}.pain.${i}.desc`] = desc;
+  });
+  (s.en.differentiators || []).forEach(([title, desc], i) => {
+    EN[`${base}.diff.${i}.title`] = title;
+    EN[`${base}.diff.${i}.desc`] = desc;
+  });
+  (s.en.pilotSteps || []).forEach(([phase, desc], i) => {
+    EN[`${base}.pilot.${i}.phase`] = phase;
+    EN[`${base}.pilot.${i}.desc`] = desc;
+  });
+  (s.en.kpis || []).forEach((kpi, i) => {
+    EN[`${base}.kpi.${i}`] = kpi;
+  });
+  (s.en.competitors || []).forEach(([name, why], i) => {
+    EN[`${base}.comp.${i}.name`] = name;
+    EN[`${base}.comp.${i}.why`] = why;
+  });
+}
