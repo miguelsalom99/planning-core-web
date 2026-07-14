@@ -5238,6 +5238,7 @@
           if (sub) sub.textContent = remaining === 0 ? 'Sin registros guardados' : `${remaining} registro${remaining !== 1 ? 's' : ''}`;
         });
 
+        copyAstroScope(tr);
         tbody.appendChild(tr);
       });
     }
@@ -5470,9 +5471,7 @@
     // rules silently fail to match them. Copy it from a known-static ancestor onto the
     // whole subtree so dynamically-built rows actually pick up .disrupt-* styling.
     function copyAstroScope(root: Element) {
-      const donor = document.getElementById('disruptList');
-      if (!donor) return;
-      const cidAttr = Array.from(donor.attributes).find(a => a.name.startsWith('data-astro-cid'));
+      const cidAttr = Array.from(document.body.attributes).find(a => a.name.startsWith('data-astro-cid'));
       if (!cidAttr) return;
       root.setAttribute(cidAttr.name, cidAttr.value);
       root.querySelectorAll('*').forEach(el => el.setAttribute(cidAttr.name, cidAttr.value));
