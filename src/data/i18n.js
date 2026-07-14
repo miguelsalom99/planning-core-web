@@ -217,6 +217,7 @@ export const EN = {
   'contacto.form.phone':         'Phone',
   'contacto.form.sector':        'Sector *',
   'contacto.form.sectorDefault': 'Select your sector',
+  'contacto.form.sectorOther':   'Other sector',
   'contacto.form.role':          'Role',
   'contacto.form.challenge':     'Tell us your main challenge *',
   'contacto.form.namePH':        'Your name',

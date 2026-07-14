@@ -52,9 +52,9 @@ import { SECTORS } from '../data/sectors.js';
             <select id="sector" name="sector" required>
               <option value="" data-i18n-opt="contacto.form.sectorDefault">Selecciona tu sector</option>
               {SECTORS.map(s => (
-                <option value={s.slug}>{s.name}</option>
+                <option value={s.slug} data-i18n-opt={`sector.${s.slug}.name`}>{s.name}</option>
               ))}
-              <option value="otro">Otro sector</option>
+              <option value="otro" data-i18n-opt="contacto.form.sectorOther">Otro sector</option>
             </select>
           </div>
 

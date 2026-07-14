@@ -197,8 +197,8 @@ import SectorIcon from '../components/SectorIcon.astro';
           <a href={`/sectores/${s.slug}`} class="sector-card" style={`--acc:${s.accent}`}>
             <div class="sector-card__icon"><SectorIcon slug={s.slug} /></div>
             <div class="sector-card__body">
-              <h3>{s.short}</h3>
-              <p>{s.tagline}</p>
+              <h3 data-i18n={`sector.${s.slug}.short`}>{s.short}</h3>
+              <p data-i18n={`sector.${s.slug}.tagline`}>{s.tagline}</p>
             </div>
             <div class="sector-card__arrow">→</div>
           </a>
