@@ -1183,6 +1183,21 @@
       transition: transform .2s;
     }
     .modal-backdrop.open .modal { transform: translateY(0); }
+    /* .modal__box: a second, newer modal-card class (savePlanModal, adminUserModal,
+       companyModal, securityQuestionModal) that shares .modal__header/__body/__footer
+       but never had its own container styling — it was relying on nothing, which
+       only "worked" by accident wherever a default background happened to show
+       through. Give it the same card treatment as .modal. */
+    .modal__box {
+      background: var(--white);
+      border-radius: var(--radius-lg);
+      box-shadow: 0 24px 64px rgba(11,28,58,.28);
+      width: 100%; max-width: calc(100vw - 2rem);
+      overflow: hidden;
+      transform: translateY(8px);
+      transition: transform .2s;
+    }
+    .modal-backdrop.open .modal__box { transform: translateY(0); }
     .modal__header {
       display: flex; align-items: center; justify-content: space-between;
       padding: 1rem 1.25rem;
@@ -1207,6 +1222,7 @@
       box-shadow: 0 0 0 3px rgba(27,63,139,.08);
     }
     .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: .75rem; }
+    .au-sectors-grid { display: grid; grid-template-columns: 1fr 1fr; gap: .4rem; padding: .5rem 0; }
     .color-picker { display: flex; gap: .5rem; flex-wrap: wrap; }
     .color-opt {
       width: 26px; height: 26px; border-radius: 7px;
@@ -1992,6 +2008,130 @@
     .login-link { display:block;width:100%;background:none;border:none;color:rgba(255,255,255,.4);font-size:.78rem;font-family:inherit;text-align:center;margin-top:1rem;cursor:pointer;transition:color .15s; }
     .login-link:hover { color:var(--brand-lt); }
     .login-box p.fp-question { font-size:.85rem;color:#fff;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:5px;padding:.65rem .85rem;margin-bottom:1.25rem;line-height:1.5; }
+
+    /* ───── MOBILE: sidebar drawer chrome (base rules, activated in media queries) ───── */
+    .sidebar-toggle {
+      display: none;
+      width: 32px; height: 32px;
+      align-items: center; justify-content: center;
+      background: rgba(255,255,255,.06);
+      border: 1px solid rgba(255,255,255,.09);
+      border-radius: 7px;
+      color: rgba(255,255,255,.75);
+      cursor: pointer;
+      margin: 0 .5rem 0 .75rem;
+      flex-shrink: 0;
+    }
+    .sidebar-toggle:hover { background: rgba(255,255,255,.1); }
+    .sidebar-backdrop {
+      display: none;
+      position: fixed; inset: var(--topbar-h) 0 0 0;
+      background: rgba(6,15,32,.5);
+      z-index: 499;
+      opacity: 0;
+      transition: opacity .2s;
+    }
+
+    /* ═════════════════════════════════════════════════════════════════
+       MOBILE / TABLET RESPONSIVE OVERRIDES
+       ═════════════════════════════════════════════════════════════════ */
+    @media (max-width: 900px) {
+      /* When the (up to 9) industry cards stack into fewer columns they can
+         exceed the viewport height. justify-content:center on an overflowing
+         flex container clips the *top* of the content out of scroll reach
+         (no negative scrollTop) — switch to flex-start so everything stays
+         reachable by scrolling. */
+      #industry-selector { justify-content: flex-start; padding-top: 2rem; }
+    }
+
+    @media (max-width: 860px) {
+      /* Topbar: compress, show hamburger, drop non-essential chrome */
+      .sidebar-toggle { display: flex; }
+      .topbar { padding-right: .5rem; }
+      .topbar__brand { width: auto; padding: 0 .5rem 0 0; border-right: none; }
+      .topbar__brand-name { display: none; }
+      .topbar__center { padding: 0 .5rem; gap: .5rem; min-width: 0; }
+      .topbar__company .company-name { display: none; }
+      .pilot-chip { display: none; }
+      .topbar__sep { display: none; }
+      .user-info { display: none; }
+      .user-pill { padding: .25rem; margin-left: 0; }
+
+      /* Sidebar becomes an off-canvas drawer over the content */
+      .app-body { position: relative; }
+      .sidebar {
+        position: fixed;
+        top: var(--topbar-h);
+        bottom: 0;
+        left: 0;
+        width: min(82vw, 300px);
+        z-index: 500;
+        transform: translateX(-100%);
+        transition: transform .25s ease;
+        box-shadow: 8px 0 24px rgba(0,0,0,.15);
+      }
+      .sidebar.mobile-open { transform: translateX(0); }
+      .sidebar-backdrop.open { display: block; opacity: 1; }
+
+      .gantt-card--expanded { left: 0; }
+
+      /* Grids: 4/5/3-column dashboard grids collapse to 2 columns */
+      .kpi-grid,
+      .cap-cards-grid,
+      .kpis-grid,
+      .res-cards-grid,
+      .scenario-grid,
+      .industry-grid { grid-template-columns: repeat(2, 1fr); }
+
+      .bottom-grid { grid-template-columns: 1fr; }
+
+      .main, .panel-page { padding: 1rem; gap: 1rem; }
+    }
+
+    @media (max-width: 560px) {
+      /* Everything down to a single column on phone widths */
+      .kpi-grid,
+      .cap-cards-grid,
+      .kpis-grid,
+      .res-cards-grid,
+      .scenario-grid,
+      .industry-grid,
+      .form-row,
+      .au-sectors-grid { grid-template-columns: 1fr; }
+
+      .main, .panel-page { padding: .75rem; gap: .75rem; }
+      .page-header { flex-direction: column; align-items: stretch; }
+      .header-actions { flex-wrap: wrap; }
+      .header-actions .btn-ui { flex: 1 1 auto; justify-content: center; }
+
+      /* Tables: allow horizontal scroll instead of illegible squishing.
+         .time-table-wrap already has overflow-x:auto; .gantt-card (which
+         wraps .orders-table directly, no dedicated wrapper) needs it added. */
+      .cap-table { overflow-x: auto; }
+      .gantt-card { overflow-x: auto; }
+      .orders-table, .time-table { min-width: 640px; }
+
+      /* Manual (5-day) Gantt: force a minimum column width so it scrolls
+         instead of shrinking to unreadable slivers (the shift/turno Gantt
+         already does this via minmax(44px,...) + #gantt-turno overflow-x). */
+      .gantt-grid { min-width: 620px; }
+      .gantt-timeline { grid-template-columns: repeat(5, minmax(90px, 1fr)); }
+      #gantt-semana { overflow-x: auto; }
+
+      .modal { width: 100%; max-width: calc(100vw - 1.5rem); }
+      /* !important: several .modal__box instances set a narrower max-width
+         inline (e.g. style="max-width:440px"), which would otherwise beat
+         this class rule and let the card overflow past the screen edge. */
+      .modal__box { max-width: calc(100vw - 1.5rem) !important; }
+      .modal__body { max-height: calc(100vh - 160px); overflow-y: auto; }
+
+      .orders-toolbar { flex-wrap: wrap; }
+      .filter-chips { flex-wrap: wrap; }
+
+      /* Auth / login card padding tighter on very small phones */
+      .login-card { padding: 0 1rem; }
+      .login-box { padding: 1.5rem; }
+    }
   </style>
 </head>
 <body>
@@ -2059,6 +2199,9 @@
 
   <!-- ── TOPBAR ── -->
   <header class="topbar">
+    <button class="sidebar-toggle" id="sidebarToggle" aria-label="Menú">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+    </button>
     <a href="/" class="topbar__brand">
       <img src="/images/logo-small.png" alt="Planning Core" />
       <span class="topbar__brand-name">Planning<strong>Core</strong></span>
@@ -2134,6 +2277,8 @@
   </header>
 
   <div class="app-body">
+
+    <div class="sidebar-backdrop" id="sidebarBackdrop"></div>
 
     <!-- ── SIDEBAR ── -->
     <nav class="sidebar hidden" id="sidebar">
@@ -3892,7 +4037,7 @@
           </div>
           <div class="form-group">
             <label class="form-label">Planificadores asignados</label>
-            <div style="display:grid;grid-template-columns:1fr 1fr;gap:.4rem;padding:.5rem 0" id="au-sectors">
+            <div class="au-sectors-grid" id="au-sectors">
               <label style="display:flex;align-items:center;gap:.5rem;font-size:.8rem;cursor:pointer"><input type="checkbox" value="composites-aeronautica" style="accent-color:var(--brand)"> ✈️ Composites</label>
               <label style="display:flex;align-items:center;gap:.5rem;font-size:.8rem;cursor:pointer"><input type="checkbox" value="impresion-packaging" style="accent-color:var(--brand)"> 🖨️ Impresión</label>
               <label style="display:flex;align-items:center;gap:.5rem;font-size:.8rem;cursor:pointer"><input type="checkbox" value="fundicion-metalurgia" style="accent-color:var(--brand)"> ⚙️ Fundición</label>
@@ -4087,7 +4232,11 @@
       if (unEl) unEl.textContent = user.name || user.email;
       const urEl = document.getElementById('user-role');
       if (urEl) urEl.textContent = user.is_admin ? 'Administrador' : 'Usuario';
-      if (user.is_admin) initAdminPanel(true);
+      // initAdminPanel lives inside initDashboard's scope (sidebar DOM isn't
+      // mounted/relevant until the dashboard shows), so we can't call it from
+      // here directly — stash the flag and let initDashboard apply it once
+      // the dashboard is actually shown.
+      localStorage.setItem('pc_is_admin', user.is_admin ? 'true' : 'false');
       const company    = user.company || 'Mi empresa';
       const coInitials = company.split(' ').map((w: string) => w[0]).slice(0,2).join('').toUpperCase();
       const ciEl = document.getElementById('co-initials');
@@ -4271,6 +4420,8 @@
   function initDashboard() {
     if (dashboardReady) return;
     dashboardReady = true;
+
+    initAdminPanel(localStorage.getItem('pc_is_admin') === 'true');
 
     // 1. Gantt tab switching (Semana / Turno)
     const ganttSemana  = document.getElementById('gantt-semana');
@@ -4721,6 +4872,7 @@
         document.querySelectorAll('.dash-panel').forEach(p => p.style.display = 'none');
         const target = document.getElementById('panel-' + panel);
         if (target) target.style.display = '';
+        closeMobileSidebar();
       });
     });
 
@@ -6128,7 +6280,30 @@
       document.querySelectorAll('.dash-panel').forEach(p => (p as HTMLElement).style.display = 'none');
       const target = document.getElementById(`panel-${panelId}`);
       if (target) target.style.display = '';
+      closeMobileSidebar();
     }
+
+    // ── Mobile sidebar drawer ──────────────────────────────────────
+    const sidebarEl2       = document.getElementById('sidebar');
+    const sidebarToggleBtn = document.getElementById('sidebarToggle');
+    const sidebarBackdropEl = document.getElementById('sidebarBackdrop');
+
+    function openMobileSidebar() {
+      sidebarEl2?.classList.add('mobile-open');
+      sidebarBackdropEl?.classList.add('open');
+    }
+    function closeMobileSidebar() {
+      sidebarEl2?.classList.remove('mobile-open');
+      sidebarBackdropEl?.classList.remove('open');
+    }
+    sidebarToggleBtn?.addEventListener('click', () => {
+      if (sidebarEl2?.classList.contains('mobile-open')) closeMobileSidebar();
+      else openMobileSidebar();
+    });
+    sidebarBackdropEl?.addEventListener('click', closeMobileSidebar);
+    window.addEventListener('resize', () => {
+      if (window.innerWidth > 860) closeMobileSidebar();
+    });
 
     // Bell → open Alertas panel
     document.getElementById('notifBtn')?.addEventListener('click', () => {
