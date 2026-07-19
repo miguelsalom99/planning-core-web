@@ -3882,6 +3882,7 @@
         <div style="display:flex;gap:0;border-bottom:1px solid var(--n80);margin-bottom:1.25rem">
           <button class="admin-tab admin-tab--active" data-atab="companies" id="adminTabCompanies">Empresas</button>
           <button class="admin-tab" data-atab="users" id="adminTabUsers">Usuarios</button>
+          <button class="admin-tab" data-atab="piecetypes" id="adminTabPieceTypes">Tipos de pieza</button>
         </div>
 
         <!-- Empresas -->
@@ -3929,6 +3930,32 @@
                 <th></th>
               </tr></thead>
               <tbody id="usersBody"><tr><td colspan="7" style="text-align:center;padding:2rem;color:var(--n50)">Cargando…</td></tr></tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Tipos de pieza -->
+        <div id="adminPanelPieceTypes" style="display:none">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem">
+            <span style="font-size:.85rem;color:var(--n30);font-weight:600">Catálogo de tipos de pieza</span>
+            <button class="btn-ui btn-ui--primary" id="newPieceTypeBtn" style="font-size:.78rem">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              Nuevo tipo de pieza
+            </button>
+          </div>
+          <div style="font-size:.78rem;color:var(--n50);margin-bottom:1rem;line-height:1.5">
+            Estos tipos alimentan el selector del planificador IA (panel Gantt semanal → Planificar IA).
+          </div>
+          <div class="time-table-wrap">
+            <table class="time-table" id="pieceTypesTable">
+              <thead><tr>
+                <th>Nombre</th>
+                <th>Layup</th>
+                <th>ATL / Autoclave / NDT / CNC (h)</th>
+                <th>Operarios (ATL/bolsa/autoclave/NDT/CNC)</th>
+                <th></th>
+              </tr></thead>
+              <tbody id="pieceTypesBody"><tr><td colspan="5" style="text-align:center;padding:2rem;color:var(--n50)">Cargando…</td></tr></tbody>
             </table>
           </div>
         </div>
@@ -4064,6 +4091,79 @@
             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
             Guardar
           </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── MODAL: TIPO DE PIEZA ── -->
+    <div class="modal-backdrop" id="pieceTypeModal">
+      <div class="modal__box" style="max-width:520px">
+        <div class="modal__header">
+          <h3 class="modal__title" id="pieceTypeModalTitle">Nuevo tipo de pieza</h3>
+          <button class="modal__close" id="pieceTypeModalClose">×</button>
+        </div>
+        <div class="modal__body" style="display:flex;flex-direction:column;gap:.9rem">
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Nombre <span style="color:var(--red)">*</span></label>
+              <input class="form-input" id="pt-name" placeholder="Ej. Larguero" />
+            </div>
+            <div class="form-group">
+              <label class="form-label">Layup</label>
+              <input class="form-input" id="pt-layup" placeholder="Cuasi-isótropo" />
+            </div>
+          </div>
+          <div style="font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--n50)">Duración por operación (horas)</div>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">ATL</label>
+              <input class="form-input" id="pt-atl-hours" type="number" min="0" step="0.5" value="4" />
+            </div>
+            <div class="form-group">
+              <label class="form-label">Autoclave</label>
+              <input class="form-input" id="pt-autoclave-hours" type="number" min="0" step="0.5" value="8" />
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">NDT</label>
+              <input class="form-input" id="pt-ndt-hours" type="number" min="0" step="0.5" value="2" />
+            </div>
+            <div class="form-group">
+              <label class="form-label">CNC</label>
+              <input class="form-input" id="pt-cnc-hours" type="number" min="0" step="0.5" value="2" />
+            </div>
+          </div>
+          <div style="font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--n50)">Operarios requeridos</div>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">ATL</label>
+              <input class="form-input" id="pt-workers-atl" type="number" min="0" value="1" />
+            </div>
+            <div class="form-group">
+              <label class="form-label">Bolsa (bag)</label>
+              <input class="form-input" id="pt-workers-bag" type="number" min="0" value="2" />
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Autoclave</label>
+              <input class="form-input" id="pt-workers-autoclave" type="number" min="0" value="1" />
+            </div>
+            <div class="form-group">
+              <label class="form-label">NDT</label>
+              <input class="form-input" id="pt-workers-ndt" type="number" min="0" value="1" />
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">CNC</label>
+            <input class="form-input" id="pt-workers-cnc" type="number" min="0" value="1" />
+          </div>
+          <div id="pieceTypeModalErr" style="font-size:.8rem;color:var(--red);min-height:1rem"></div>
+        </div>
+        <div class="modal__footer">
+          <button class="btn-ui" id="pieceTypeModalCancel">Cancelar</button>
+          <button class="btn-ui btn-ui--primary" id="pieceTypeModalSave">Guardar</button>
         </div>
       </div>
     </div>
@@ -6367,6 +6467,8 @@
 
       let adminCompanies: any[] = [];
       let editingCompanyId: number | null = null;
+      let adminPieceTypes: any[] = [];
+      let editingPieceTypeId: number | null = null;
 
       // Tab switching
       document.querySelectorAll('.admin-tab').forEach(btn => {
@@ -6376,7 +6478,9 @@
           const tab = (btn as HTMLElement).dataset.atab;
           document.getElementById('adminPanelCompanies')!.style.display = tab === 'companies' ? '' : 'none';
           document.getElementById('adminPanelUsers')!.style.display = tab === 'users' ? '' : 'none';
+          document.getElementById('adminPanelPieceTypes')!.style.display = tab === 'piecetypes' ? '' : 'none';
           if (tab === 'users') loadAdminUsers();
+          if (tab === 'piecetypes') loadAdminPieceTypes();
         });
       });
 
@@ -6559,6 +6663,110 @@
       document.getElementById('adminUserModalCancel')?.addEventListener('click', () => { document.getElementById('adminUserModal')!.style.display = 'none'; });
       document.getElementById('adminUserModalSave')?.addEventListener('click', saveAdminUser);
 
+      // ── Tipos de pieza ──
+      async function loadAdminPieceTypes() {
+        const token = localStorage.getItem('pc_token');
+        if (!token) return;
+        try {
+          const res = await fetch(`${API_BASE}/api/piece-types`, { headers: { Authorization: `Bearer ${token}` } });
+          adminPieceTypes = res.ok ? await res.json() : [];
+        } catch { adminPieceTypes = []; }
+        renderPieceTypesAdmin();
+      }
+
+      function renderPieceTypesAdmin() {
+        const tbody = document.getElementById('pieceTypesBody')!;
+        if (!adminPieceTypes.length) {
+          tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:2rem;color:var(--n50)">No hay tipos de pieza. Crea el primero.</td></tr>';
+          return;
+        }
+        tbody.innerHTML = adminPieceTypes.map((pt: any) => `
+          <tr>
+            <td style="font-weight:600">${pt.name}</td>
+            <td style="font-size:.78rem;color:var(--n30)">${pt.layup_type}</td>
+            <td style="font-size:.78rem;color:var(--n50);white-space:nowrap">${pt.atl_hours}h / ${pt.autoclave_hours}h / ${pt.ndt_hours}h / ${pt.cnc_hours}h</td>
+            <td style="font-size:.78rem;color:var(--n50);white-space:nowrap">${pt.workers_atl}/${pt.workers_bag}/${pt.workers_autoclave}/${pt.workers_ndt}/${pt.workers_cnc}</td>
+            <td>
+              <button class="admin-action-btn" data-edit-pt="${pt.id}">Editar</button>
+              <button class="admin-action-btn del" data-del-pt="${pt.id}" data-del-pt-name="${pt.name}">Eliminar</button>
+            </td>
+          </tr>`).join('');
+
+        tbody.querySelectorAll('[data-edit-pt]').forEach(btn => {
+          btn.addEventListener('click', () => openPieceTypeModal(parseInt((btn as HTMLElement).dataset.editPt!)));
+        });
+        tbody.querySelectorAll('[data-del-pt]').forEach(btn => {
+          const el = btn as HTMLElement;
+          btn.addEventListener('click', () => deletePieceType(parseInt(el.dataset.delPt!), el.dataset.delPtName!));
+        });
+      }
+
+      function openPieceTypeModal(id?: number) {
+        editingPieceTypeId = id || null;
+        const pt = id ? adminPieceTypes.find((p: any) => p.id === id) : null;
+        document.getElementById('pieceTypeModalTitle')!.textContent = id ? 'Editar tipo de pieza' : 'Nuevo tipo de pieza';
+        document.getElementById('pieceTypeModalErr')!.textContent = '';
+        (document.getElementById('pt-name') as HTMLInputElement).value = pt?.name || '';
+        (document.getElementById('pt-layup') as HTMLInputElement).value = pt?.layup_type || 'Cuasi-isótropo';
+        (document.getElementById('pt-atl-hours') as HTMLInputElement).value = String(pt?.atl_hours ?? 4);
+        (document.getElementById('pt-autoclave-hours') as HTMLInputElement).value = String(pt?.autoclave_hours ?? 8);
+        (document.getElementById('pt-ndt-hours') as HTMLInputElement).value = String(pt?.ndt_hours ?? 2);
+        (document.getElementById('pt-cnc-hours') as HTMLInputElement).value = String(pt?.cnc_hours ?? 2);
+        (document.getElementById('pt-workers-atl') as HTMLInputElement).value = String(pt?.workers_atl ?? 1);
+        (document.getElementById('pt-workers-bag') as HTMLInputElement).value = String(pt?.workers_bag ?? 2);
+        (document.getElementById('pt-workers-autoclave') as HTMLInputElement).value = String(pt?.workers_autoclave ?? 1);
+        (document.getElementById('pt-workers-ndt') as HTMLInputElement).value = String(pt?.workers_ndt ?? 1);
+        (document.getElementById('pt-workers-cnc') as HTMLInputElement).value = String(pt?.workers_cnc ?? 1);
+        document.getElementById('pieceTypeModal')!.classList.add('open');
+        document.getElementById('pt-name')?.focus();
+      }
+      function closePieceTypeModal() { document.getElementById('pieceTypeModal')!.classList.remove('open'); }
+
+      async function savePieceType() {
+        const token = localStorage.getItem('pc_token');
+        const errEl = document.getElementById('pieceTypeModalErr')!;
+        const name = (document.getElementById('pt-name') as HTMLInputElement).value.trim();
+        if (!name) { errEl.textContent = 'El nombre es obligatorio'; return; }
+        errEl.textContent = '';
+        const body = {
+          name,
+          layup_type: (document.getElementById('pt-layup') as HTMLInputElement).value.trim() || 'Cuasi-isótropo',
+          atl_hours: Number((document.getElementById('pt-atl-hours') as HTMLInputElement).value) || 0,
+          autoclave_hours: Number((document.getElementById('pt-autoclave-hours') as HTMLInputElement).value) || 0,
+          ndt_hours: Number((document.getElementById('pt-ndt-hours') as HTMLInputElement).value) || 0,
+          cnc_hours: Number((document.getElementById('pt-cnc-hours') as HTMLInputElement).value) || 0,
+          workers_atl: Number((document.getElementById('pt-workers-atl') as HTMLInputElement).value) || 0,
+          workers_bag: Number((document.getElementById('pt-workers-bag') as HTMLInputElement).value) || 0,
+          workers_autoclave: Number((document.getElementById('pt-workers-autoclave') as HTMLInputElement).value) || 0,
+          workers_ndt: Number((document.getElementById('pt-workers-ndt') as HTMLInputElement).value) || 0,
+          workers_cnc: Number((document.getElementById('pt-workers-cnc') as HTMLInputElement).value) || 0,
+        };
+        const url = editingPieceTypeId ? `${API_BASE}/api/piece-types/${editingPieceTypeId}` : `${API_BASE}/api/piece-types`;
+        const method = editingPieceTypeId ? 'PATCH' : 'POST';
+        const res = await fetch(url, { method, headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+        if (!res.ok) { const d = await res.json(); errEl.textContent = d.detail || 'Error al guardar'; return; }
+        closePieceTypeModal();
+        loadAdminPieceTypes();
+        showToast(editingPieceTypeId ? '✓ Tipo de pieza actualizado' : '✓ Tipo de pieza creado');
+      }
+
+      async function deletePieceType(id: number, name: string) {
+        if (!confirm(`¿Eliminar "${name}"? Los planes que lo usen dejarán de poder referenciarlo.`)) return;
+        const token = localStorage.getItem('pc_token');
+        const res = await fetch(`${API_BASE}/api/piece-types/${id}`, { method: 'DELETE', headers: { Authorization: `Bearer ${token}` } });
+        if (!res.ok) { showToast('⚠ No se pudo eliminar'); return; }
+        loadAdminPieceTypes();
+        showToast('Tipo de pieza eliminado');
+      }
+
+      document.getElementById('newPieceTypeBtn')?.addEventListener('click', () => openPieceTypeModal());
+      document.getElementById('pieceTypeModalClose')?.addEventListener('click', closePieceTypeModal);
+      document.getElementById('pieceTypeModalCancel')?.addEventListener('click', closePieceTypeModal);
+      document.getElementById('pieceTypeModalSave')?.addEventListener('click', savePieceType);
+      document.getElementById('pieceTypeModal')?.addEventListener('click', (e: MouseEvent) => {
+        if (e.target === document.getElementById('pieceTypeModal')) closePieceTypeModal();
+      });
+
       // Load on panel open
       document.querySelector('.nav-item[data-panel="admin"]')?.addEventListener('click', () => {
         loadAdminCompanies();
@@ -6617,7 +6825,7 @@
     const searchInput     = document.getElementById('searchInput') as HTMLInputElement | null;
     const searchResultsEl = document.getElementById('searchResults');
 
-    const searchCache: { planificaciones: any[]; companies: any[]; users: any[] } = { planificaciones: [], companies: [], users: [] };
+    const searchCache: { planificaciones: any[]; companies: any[]; users: any[]; pieceTypes: any[] } = { planificaciones: [], companies: [], users: [], pieceTypes: [] };
     let searchCacheLoaded = false;
     let searchActiveIndex = -1;
     let currentSearchResults: any[] = [];
@@ -6629,6 +6837,7 @@
       plan: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/></svg>',
       empresa: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="18" height="14" rx="2"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>',
       usuario: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21v-1a6 6 0 0 1 6-6h4a6 6 0 0 1 6 6v1"/></svg>',
+      piezatipo: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>',
     };
 
     function escapeHtml(s: string): string {
@@ -6657,6 +6866,10 @@
           searchCache.companies = compRes.ok ? await compRes.json() : [];
           searchCache.users = usersRes.ok ? await usersRes.json() : [];
         } catch { searchCache.companies = []; searchCache.users = []; }
+        try {
+          const ptRes = await fetch(`${API_BASE}/api/piece-types`, { headers: { Authorization: `Bearer ${token}` } });
+          searchCache.pieceTypes = ptRes.ok ? await ptRes.json() : [];
+        } catch { searchCache.pieceTypes = []; }
       }
     }
 
@@ -6725,6 +6938,14 @@
           results.push({
             group: 'Usuarios', type: 'usuario', title: u.name, sub: u.email,
             action: () => { navToPanel('admin'); document.getElementById('adminTabUsers')?.dispatchEvent(new MouseEvent('click')); closeSearch(); },
+          });
+        }
+      });
+      searchCache.pieceTypes.forEach((pt: any) => {
+        if (`${pt.name} ${pt.layup_type}`.toLowerCase().includes(ql)) {
+          results.push({
+            group: 'Tipos de pieza', type: 'piezatipo', title: pt.name, sub: pt.layup_type,
+            action: () => { navToPanel('admin'); document.getElementById('adminTabPieceTypes')?.dispatchEvent(new MouseEvent('click')); closeSearch(); },
           });
         }
       });
