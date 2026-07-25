@@ -1708,6 +1708,28 @@
     .sp--risk   { background: var(--amber-bg); color: var(--amber); }
     .sp--late   { background: var(--red-bg);   color: var(--red); }
 
+    /* Order checkpoints */
+    .checkpoints-btn {
+      font-size: .7rem;
+      font-weight: 600;
+      padding: .25rem .6rem;
+      border-radius: 999px;
+      border: 1px solid var(--n80);
+      background: var(--n90);
+      color: var(--n30);
+      cursor: pointer;
+      white-space: nowrap;
+      font-family: inherit;
+    }
+    .checkpoints-btn:hover { background: var(--n80); }
+    .checkpoints-btn--done { background: var(--green-bg); color: var(--green); border-color: transparent; }
+    .checkpoint-item { display: flex; align-items: center; gap: .65rem; padding: .55rem 0; border-bottom: 1px solid var(--n80); }
+    .checkpoint-item:last-child { border-bottom: none; }
+    .checkpoint-item__check { flex-shrink: 0; width: 16px; height: 16px; cursor: pointer; }
+    .checkpoint-item__title { flex: 1; font-size: .85rem; color: var(--navy); word-break: break-word; }
+    .checkpoint-item__title--done { text-decoration: line-through; color: var(--n40); }
+    .checkpoint-item__del { background: none; border: none; color: var(--red); cursor: pointer; font-size: 1rem; line-height: 1; padding: .2rem .35rem; flex-shrink: 0; }
+
     /* Capacity */
     .cap-list { padding: .9rem 1.1rem; display: flex; flex-direction: column; gap: .75rem; }
     .cap-row { display: flex; align-items: center; gap: .75rem; }
@@ -3484,6 +3506,7 @@
                 <th>Fin</th>
                 <th>Progreso</th>
                 <th>Estado</th>
+                <th>Checkpoints</th>
               </tr>
             </thead>
             <tbody id="ordersBody">
@@ -4046,7 +4069,7 @@
             <div style="font-size:.72rem;color:var(--n50)">Los admins tienen acceso completo sin selección</div>
           </div>
           <div class="form-group">
-            <label class="form-label">Contraseña <span style="color:var(--red)">*</span></label>
+            <label class="form-label" id="au-password-label">Contraseña <span style="color:var(--red)">*</span></label>
             <input class="form-input" id="au-password" type="password" placeholder="Mínimo 8 caracteres"/>
           </div>
           <div class="form-group">
@@ -4054,6 +4077,13 @@
             <select class="form-input" id="au-role">
               <option value="false">Cliente</option>
               <option value="true">Administrador</option>
+            </select>
+          </div>
+          <div class="form-group" id="au-active-group" style="display:none">
+            <label class="form-label">Acceso</label>
+            <select class="form-input" id="au-active">
+              <option value="true">Activo</option>
+              <option value="false">Revocado</option>
             </select>
           </div>
           <div id="adminUserModalErr" style="font-size:.8rem;color:var(--red);min-height:1rem"></div>
@@ -4272,6 +4302,29 @@
         </div>
       </div>
     </div>
+
+    <div class="modal-backdrop" id="checkpointsModal">
+      <div class="modal__box" style="max-width:440px">
+        <div class="modal__header">
+          <h3 class="modal__title" id="checkpointsModalTitle">Checkpoints</h3>
+          <button class="modal__close" id="checkpointsModalClose">×</button>
+        </div>
+        <div class="modal__body" style="display:flex;flex-direction:column;gap:.75rem">
+          <div id="checkpointList" style="display:flex;flex-direction:column"></div>
+          <div id="checkpointEmpty" style="text-align:center;color:var(--n40);font-size:.85rem;padding:1rem 0">
+            Aún no hay checkpoints para esta orden.
+          </div>
+          <div class="form-row" style="display:flex;gap:.5rem;align-items:flex-start">
+            <input class="form-input" id="checkpointNewInput" type="text" placeholder="Nuevo checkpoint…" maxlength="200" style="flex:1" />
+            <button class="btn-ui btn-ui--primary" id="checkpointAddBtn" style="font-size:.78rem;white-space:nowrap">Añadir</button>
+          </div>
+          <div id="checkpointModalStatus" style="font-size:.8rem;color:var(--n40);min-height:1.2em"></div>
+        </div>
+        <div class="modal__footer">
+          <button class="btn-ui" id="checkpointCloseBtn">Cerrar</button>
+        </div>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -4313,7 +4366,7 @@
 
 <script>
   import * as XLSX from 'xlsx';
-  const API = 'https://composite-replanning-api.vercel.app';
+  const API = 'http://127.0.0.1:8000'; // TEMP-TEST-EDIT: was 'https://composite-replanning-api.vercel.app'
 
   const selectorEl  = document.getElementById('industry-selector');
   const dashboardEl = document.getElementById('dashboard-view');
@@ -5192,7 +5245,7 @@
         if (!emptyRow) {
           emptyRow = document.createElement('tr');
           emptyRow.id = 'ordersEmptyRow';
-          emptyRow.innerHTML = `<td colspan="7" style="text-align:center;padding:2rem;color:var(--n40);font-size:.85rem">Sin órdenes que coincidan</td>`;
+          emptyRow.innerHTML = `<td colspan="8" style="text-align:center;padding:2rem;color:var(--n40);font-size:.85rem">Sin órdenes que coincidan</td>`;
           document.getElementById('ordersBody')?.appendChild(emptyRow);
         }
         emptyRow.style.display = '';
@@ -5212,7 +5265,7 @@
     ordersSearch && ordersSearch.addEventListener('input', filterOrders);
 
     // 8d. Historial de planificaciones — guardar + listar + eliminar
-    const API_BASE = 'https://composite-replanning-api.vercel.app';
+    const API_BASE = 'http://127.0.0.1:8000'; // TEMP-TEST-EDIT: was 'http://127.0.0.1:8123'
     const LS_KEY   = 'pc_historial';
 
     function getLocalHistory(): any[] {
@@ -5443,6 +5496,7 @@
         _liveOrdersSnapshot = null;
         // Re-attach chip/search filters
         filterOrders();
+        enhanceOrderRows();
       }
       // Hide banner
       const banner = document.getElementById('histBanner');
@@ -5556,6 +5610,7 @@
         if (p === 'mrp') initMrpPanel();
         if (p === 'recursos') renderResourceCards();
         if (p === 'disrupciones') loadDisrupciones();
+        if (p === 'ordenes') loadCheckpointsForOrders();
       });
     });
 
@@ -5619,6 +5674,177 @@
         await fetch(`${API_BASE}/disruptions/${id}`, { method: 'DELETE', headers: { Authorization: `Bearer ${token}` } });
       } catch {}
     }
+
+    // ── Order checkpoints — backend-backed CRUD, hung off each Órdenes row ──
+    async function fetchCheckpoints(): Promise<any[]> {
+      const token = localStorage.getItem('pc_token');
+      if (!token) return [];
+      try {
+        const res = await fetch(`${API_BASE}/checkpoints`, { headers: { Authorization: `Bearer ${token}` } });
+        return res.ok ? await res.json() : [];
+      } catch { return []; }
+    }
+
+    async function createCheckpoint(orderCode: string, title: string) {
+      const token = localStorage.getItem('pc_token');
+      if (!token) return null;
+      try {
+        const res = await fetch(`${API_BASE}/checkpoints`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+          body: JSON.stringify({ order_code: orderCode, title }),
+        });
+        return res.ok ? await res.json() : null;
+      } catch { return null; }
+    }
+
+    async function patchCheckpoint(id: number, payload: any) {
+      const token = localStorage.getItem('pc_token');
+      if (!token) return null;
+      try {
+        const res = await fetch(`${API_BASE}/checkpoints/${id}`, {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+          body: JSON.stringify(payload),
+        });
+        return res.ok ? await res.json() : null;
+      } catch { return null; }
+    }
+
+    async function deleteCheckpointRemote(id: number) {
+      const token = localStorage.getItem('pc_token');
+      if (!token) return;
+      try {
+        await fetch(`${API_BASE}/checkpoints/${id}`, { method: 'DELETE', headers: { Authorization: `Bearer ${token}` } });
+      } catch {}
+    }
+
+    let allCheckpoints: any[] = [];
+    let activeCheckpointOrder: string | null = null;
+
+    async function loadCheckpointsForOrders() {
+      allCheckpoints = await fetchCheckpoints();
+      enhanceOrderRows();
+    }
+
+    // Adds/refreshes a trailing "Checkpoints" cell + button on every order row,
+    // reading the order code from the row's first cell. Safe to call repeatedly —
+    // it's the only way listeners survive the innerHTML swaps that history-mode
+    // restore and MRP-apply do to #ordersBody.
+    function enhanceOrderRows() {
+      document.querySelectorAll('#ordersBody tr[data-estado]').forEach(row => {
+        const code = row.querySelector('td:first-child')?.textContent?.trim();
+        if (!code) return;
+        let cell = row.querySelector('.order-checkpoints-cell') as HTMLElement | null;
+        if (!cell) {
+          cell = document.createElement('td');
+          cell.className = 'order-checkpoints-cell';
+          row.appendChild(cell);
+        }
+        const items = allCheckpoints.filter(c => c.order_code === code);
+        const done = items.filter(c => c.done).length;
+        const btn = document.createElement('button');
+        btn.className = 'checkpoints-btn' + (items.length > 0 && done === items.length ? ' checkpoints-btn--done' : '');
+        btn.textContent = items.length ? `✓ ${done}/${items.length}` : '+ Checkpoints';
+        btn.addEventListener('click', () => {
+          const desc = row.querySelector('td:nth-child(2)')?.textContent?.trim() || code;
+          openCheckpointsModal(code, desc);
+        });
+        cell.innerHTML = '';
+        cell.appendChild(btn);
+        copyAstroScope(cell);
+      });
+    }
+
+    function renderCheckpointList(orderCode: string) {
+      const list = document.getElementById('checkpointList');
+      const empty = document.getElementById('checkpointEmpty');
+      if (!list) return;
+      list.innerHTML = '';
+      const items = allCheckpoints.filter(c => c.order_code === orderCode);
+      if (empty) empty.style.display = items.length ? 'none' : '';
+
+      items.forEach(c => {
+        const item = document.createElement('div');
+        item.className = 'checkpoint-item';
+        item.innerHTML = `
+          <input type="checkbox" class="checkpoint-item__check" ${c.done ? 'checked' : ''} />
+          <span class="checkpoint-item__title ${c.done ? 'checkpoint-item__title--done' : ''}"></span>
+          <button class="checkpoint-item__del" title="Eliminar">×</button>
+        `;
+        (item.querySelector('.checkpoint-item__title') as HTMLElement).textContent = c.title;
+
+        item.querySelector('.checkpoint-item__check')?.addEventListener('change', async (e) => {
+          const checked = (e.target as HTMLInputElement).checked;
+          const updated = await patchCheckpoint(c.id, { done: checked });
+          if (updated) {
+            allCheckpoints = allCheckpoints.map(x => x.id === c.id ? updated : x);
+            renderCheckpointList(orderCode);
+            enhanceOrderRows();
+          } else {
+            (e.target as HTMLInputElement).checked = !checked;
+            showToast('⚠ No se pudo actualizar');
+          }
+        });
+
+        item.querySelector('.checkpoint-item__del')?.addEventListener('click', async () => {
+          await deleteCheckpointRemote(c.id);
+          allCheckpoints = allCheckpoints.filter(x => x.id !== c.id);
+          renderCheckpointList(orderCode);
+          enhanceOrderRows();
+        });
+
+        copyAstroScope(item);
+        list.appendChild(item);
+      });
+    }
+
+    function openCheckpointsModal(orderCode: string, orderLabel: string) {
+      activeCheckpointOrder = orderCode;
+      const title = document.getElementById('checkpointsModalTitle');
+      if (title) title.textContent = `Checkpoints — ${orderCode} · ${orderLabel}`;
+      const input = document.getElementById('checkpointNewInput') as HTMLInputElement | null;
+      if (input) input.value = '';
+      const status = document.getElementById('checkpointModalStatus');
+      if (status) status.textContent = '';
+      renderCheckpointList(orderCode);
+      document.getElementById('checkpointsModal')?.classList.add('open');
+      input?.focus();
+    }
+
+    function closeCheckpointsModal() {
+      document.getElementById('checkpointsModal')?.classList.remove('open');
+      activeCheckpointOrder = null;
+    }
+
+    document.getElementById('checkpointsModalClose')?.addEventListener('click', closeCheckpointsModal);
+    document.getElementById('checkpointCloseBtn')?.addEventListener('click', closeCheckpointsModal);
+    document.getElementById('checkpointsModal')?.addEventListener('click', (e: MouseEvent) => {
+      if (e.target === document.getElementById('checkpointsModal')) closeCheckpointsModal();
+    });
+
+    async function submitNewCheckpoint() {
+      const input = document.getElementById('checkpointNewInput') as HTMLInputElement | null;
+      const status = document.getElementById('checkpointModalStatus');
+      const title = input?.value.trim();
+      if (!activeCheckpointOrder || !title) return;
+      const created = await createCheckpoint(activeCheckpointOrder, title);
+      if (created) {
+        allCheckpoints.push(created);
+        if (input) input.value = '';
+        if (status) status.textContent = '';
+        renderCheckpointList(activeCheckpointOrder);
+        enhanceOrderRows();
+        input?.focus();
+      } else if (status) {
+        status.textContent = 'No se pudo guardar. ¿Sesión iniciada?';
+      }
+    }
+
+    document.getElementById('checkpointAddBtn')?.addEventListener('click', submitNewCheckpoint);
+    document.getElementById('checkpointNewInput')?.addEventListener('keydown', (e: KeyboardEvent) => {
+      if (e.key === 'Enter') { e.preventDefault(); submitNewCheckpoint(); }
+    });
 
     function disruptRelativeTime(iso: string): string {
       if (!iso) return '—';
@@ -6162,6 +6388,7 @@
           document.getElementById('ordersBody')?.appendChild(tr);
           added++;
         });
+        enhanceOrderRows();
         showToast(added > 0 ? `✓ ${added} orden${added!==1?'es':''} añadida${added!==1?'s':''} al panel de Órdenes` : 'Todas las órdenes ya estaban en el panel');
       });
 
@@ -6469,6 +6696,8 @@
       let editingCompanyId: number | null = null;
       let adminPieceTypes: any[] = [];
       let editingPieceTypeId: number | null = null;
+      let adminUsersList: any[] = [];
+      let editingUserId: number | null = null;
 
       // Tab switching
       document.querySelectorAll('.admin-tab').forEach(btn => {
@@ -6583,6 +6812,7 @@
         try {
           const res = await fetch(`${API_BASE}/admin/users`, { headers: { Authorization: `Bearer ${token}` } });
           const users = await res.json();
+          adminUsersList = users;
           renderAdminUsers(users);
         } catch { document.getElementById('usersBody')!.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:2rem;color:var(--red)">Error al cargar usuarios</td></tr>'; }
       }
@@ -6602,17 +6832,26 @@
             <td><span class="admin-badge ${u.is_active ? 'admin-badge--active' : 'admin-badge--inactive'}">${u.is_active ? 'Activo' : 'Inactivo'}</span></td>
             <td style="font-size:.72rem;color:var(--n50)">${u.last_login ? new Date(u.last_login).toLocaleDateString('es-ES') : 'Nunca'}</td>
             <td>
-              <button class="admin-action-btn" data-toggle-user="${u.id}" data-toggle-active="${u.is_active}">${u.is_active ? 'Desactivar' : 'Activar'}</button>
+              <button class="admin-action-btn" data-edit-user="${u.id}">Editar</button>
+              <button class="admin-action-btn" data-toggle-user="${u.id}" data-toggle-active="${u.is_active}">${u.is_active ? 'Revocar' : 'Reactivar'}</button>
               <button class="admin-action-btn del" data-del-user="${u.id}" data-del-user-name="${u.name}">Eliminar</button>
             </td>
           </tr>`;
         }).join('');
 
+        tbody.querySelectorAll('[data-edit-user]').forEach(btn => {
+          btn.addEventListener('click', () => openUserModal(parseInt((btn as HTMLElement).dataset.editUser!)));
+        });
         tbody.querySelectorAll('[data-toggle-user]').forEach(btn => {
           btn.addEventListener('click', async () => {
             const el = btn as HTMLElement;
+            const isActive = el.dataset.toggleActive === 'true';
+            const target = adminUsersList.find((x: any) => x.id === parseInt(el.dataset.toggleUser!));
+            if (isActive && !confirm(`¿Revocar el acceso de ${target?.name || 'este usuario'}? No podrá iniciar sesión hasta que se reactive.`)) return;
             const token = localStorage.getItem('pc_token');
-            await fetch(`${API_BASE}/admin/users/${el.dataset.toggleUser}`, { method: 'PATCH', headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' }, body: JSON.stringify({ is_active: el.dataset.toggleActive === 'true' ? false : true }) });
+            const res = await fetch(`${API_BASE}/admin/users/${el.dataset.toggleUser}`, { method: 'PATCH', headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' }, body: JSON.stringify({ is_active: !isActive }) });
+            if (!res.ok) { const d = await res.json().catch(() => ({})); showToast(`⚠ ${d.detail || 'No se pudo actualizar'}`); return; }
+            showToast(isActive ? '✓ Acceso revocado' : '✓ Acceso restaurado');
             loadAdminUsers();
           });
         });
@@ -6627,16 +6866,38 @@
         });
       }
 
-      function openUserModal() {
+      function openUserModal(id?: number) {
+        editingUserId = id || null;
+        const u = id ? adminUsersList.find((x: any) => x.id === id) : null;
         document.getElementById('adminUserModalErr')!.textContent = '';
-        (document.getElementById('au-name') as HTMLInputElement).value = '';
-        (document.getElementById('au-email') as HTMLInputElement).value = '';
+        document.getElementById('adminUserModalTitle')!.textContent = id ? 'Editar usuario' : 'Nuevo usuario';
+        (document.getElementById('au-name') as HTMLInputElement).value = u?.name || '';
+        (document.getElementById('au-email') as HTMLInputElement).value = u?.email || '';
         (document.getElementById('au-password') as HTMLInputElement).value = '';
-        (document.getElementById('au-role') as HTMLSelectElement).value = 'false';
-        (document.getElementById('au-company-id') as HTMLSelectElement).value = '';
-        document.querySelectorAll('#au-sectors input').forEach(i => (i as HTMLInputElement).checked = false);
+        (document.getElementById('au-role') as HTMLSelectElement).value = u?.is_admin ? 'true' : 'false';
+        (document.getElementById('au-company-id') as HTMLSelectElement).value = u?.company_id ? String(u.company_id) : '';
+        const currentSectors = new Set((u?.sector || '').split(',').map((s: string) => s.trim()).filter(Boolean));
+        document.querySelectorAll('#au-sectors input').forEach(i => {
+          (i as HTMLInputElement).checked = currentSectors.has((i as HTMLInputElement).value);
+        });
+
+        const pwLabel = document.getElementById('au-password-label')!;
+        const pwInput = document.getElementById('au-password') as HTMLInputElement;
+        const activeGroup = document.getElementById('au-active-group')!;
+        if (id) {
+          pwLabel.innerHTML = 'Nueva contraseña (opcional)';
+          pwInput.placeholder = 'Dejar en blanco para no cambiarla';
+          activeGroup.style.display = '';
+          (document.getElementById('au-active') as HTMLSelectElement).value = u?.is_active === false ? 'false' : 'true';
+        } else {
+          pwLabel.innerHTML = 'Contraseña <span style="color:var(--red)">*</span>';
+          pwInput.placeholder = 'Mínimo 8 caracteres';
+          activeGroup.style.display = 'none';
+        }
+
         populateCompanySelect();
-        document.getElementById('adminUserModal')!.style.display = 'flex';
+        (document.getElementById('au-company-id') as HTMLSelectElement).value = u?.company_id ? String(u.company_id) : '';
+        document.getElementById('adminUserModal')!.classList.add('open');
       }
 
       async function saveAdminUser() {
@@ -6648,20 +6909,37 @@
         const companyIdRaw = (document.getElementById('au-company-id') as HTMLSelectElement).value;
         const sectors = [...document.querySelectorAll('#au-sectors input:checked')].map(i => (i as HTMLInputElement).value).join(',') || null;
         const is_admin = (document.getElementById('au-role') as HTMLSelectElement).value === 'true';
-        if (!name || !email || !password) { errEl.textContent = 'Nombre, email y contraseña son obligatorios'; return; }
+
+        if (!name || !email) { errEl.textContent = 'Nombre y email son obligatorios'; return; }
+        if (!editingUserId && !password) { errEl.textContent = 'La contraseña es obligatoria para un usuario nuevo'; return; }
+        if (password && password.length < 8) { errEl.textContent = 'La contraseña debe tener al menos 8 caracteres'; return; }
         errEl.textContent = '';
-        const body = { name, email, password, company_id: companyIdRaw ? parseInt(companyIdRaw) : null, sector: sectors, is_admin };
-        const res = await fetch(`${API_BASE}/admin/users`, { method: 'POST', headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
-        if (!res.ok) { const d = await res.json(); errEl.textContent = d.detail || 'Error al crear usuario'; return; }
-        document.getElementById('adminUserModal')!.style.display = 'none';
+
+        let url = `${API_BASE}/admin/users`;
+        let method = 'POST';
+        let body: any = { name, email, password, company_id: companyIdRaw ? parseInt(companyIdRaw) : null, sector: sectors, is_admin };
+        if (editingUserId) {
+          url = `${API_BASE}/admin/users/${editingUserId}`;
+          method = 'PATCH';
+          const is_active = (document.getElementById('au-active') as HTMLSelectElement).value === 'true';
+          body = { name, email, company_id: companyIdRaw ? parseInt(companyIdRaw) : null, sector: sectors, is_admin, is_active };
+          if (password) body.new_password = password;
+        }
+
+        const res = await fetch(url, { method, headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+        if (!res.ok) { const d = await res.json(); errEl.textContent = d.detail || 'Error al guardar'; return; }
+        document.getElementById('adminUserModal')!.classList.remove('open');
         loadAdminUsers();
-        showToast('✓ Usuario creado');
+        showToast(editingUserId ? '✓ Usuario actualizado' : '✓ Usuario creado');
       }
 
-      document.getElementById('newUserBtn')?.addEventListener('click', openUserModal);
-      document.getElementById('adminUserModalClose')?.addEventListener('click', () => { document.getElementById('adminUserModal')!.style.display = 'none'; });
-      document.getElementById('adminUserModalCancel')?.addEventListener('click', () => { document.getElementById('adminUserModal')!.style.display = 'none'; });
+      document.getElementById('newUserBtn')?.addEventListener('click', () => openUserModal());
+      document.getElementById('adminUserModalClose')?.addEventListener('click', () => { document.getElementById('adminUserModal')!.classList.remove('open'); });
+      document.getElementById('adminUserModalCancel')?.addEventListener('click', () => { document.getElementById('adminUserModal')!.classList.remove('open'); });
       document.getElementById('adminUserModalSave')?.addEventListener('click', saveAdminUser);
+      document.getElementById('adminUserModal')?.addEventListener('click', (e: MouseEvent) => {
+        if (e.target === document.getElementById('adminUserModal')) document.getElementById('adminUserModal')!.classList.remove('open');
+      });
 
       // ── Tipos de pieza ──
       async function loadAdminPieceTypes() {
