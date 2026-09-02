@@ -4366,7 +4366,7 @@
 
 <script>
   import * as XLSX from 'xlsx';
-  const API = 'http://127.0.0.1:8000'; // TEMP-TEST-EDIT: was 'https://composite-replanning-api.vercel.app'
+  const API = 'https://composite-replanning-api.vercel.app';
 
   const selectorEl  = document.getElementById('industry-selector');
   const dashboardEl = document.getElementById('dashboard-view');
@@ -5265,7 +5265,7 @@
     ordersSearch && ordersSearch.addEventListener('input', filterOrders);
 
     // 8d. Historial de planificaciones — guardar + listar + eliminar
-    const API_BASE = 'http://127.0.0.1:8000'; // TEMP-TEST-EDIT: was 'http://127.0.0.1:8123'
+    const API_BASE = 'https://composite-replanning-api.vercel.app';
     const LS_KEY   = 'pc_historial';
 
     function getLocalHistory(): any[] {
