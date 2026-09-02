@@ -8311,6 +8311,10 @@
         const cls = d[st.id] ? 'done' : (firstUndone && firstUndone.id === st.id ? 'now' : '');
         return '<li data-step="' + st.id + '" class="' + cls + '"><span class="ob-box">' + (d[st.id] ? '&#10003;' : '') + '</span><span>' + st.label + '</span></li>';
       }).join('');
+      // Astro scopes <style> to elements stamped at build time; JS-built <li> need the
+      // scope attribute copied from a static ancestor or the rules silently don't match.
+      const scopeAttr = Array.prototype.slice.call(checklistEl.attributes).find(a => a.name.indexOf('data-astro-cid') === 0);
+      if (scopeAttr) ul.querySelectorAll('*').forEach(el => el.setAttribute(scopeAttr.name, scopeAttr.value));
       ul.querySelectorAll('li').forEach(li => li.addEventListener('click', () => navTo(li.getAttribute('data-step'))));
 
       const footBtn = checklistEl.querySelector('.ob-cl-foot button');
