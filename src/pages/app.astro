@@ -4037,6 +4037,16 @@
               <option value="enterprise">Enterprise</option>
             </select>
           </div>
+          <div style="display:flex;gap:.75rem">
+            <div class="form-group" style="flex:1">
+              <label class="form-label">Inicio del piloto</label>
+              <input class="form-input" id="cmp-pilot-start" type="date"/>
+            </div>
+            <div class="form-group" style="width:120px">
+              <label class="form-label">Semanas</label>
+              <input class="form-input" id="cmp-pilot-weeks" type="number" min="1" max="52" placeholder="12"/>
+            </div>
+          </div>
           <div id="companyModalErr" style="font-size:.8rem;color:var(--red);min-height:1rem"></div>
         </div>
         <div class="modal__footer">
@@ -4455,11 +4465,32 @@
       if (ciEl) ciEl.textContent = coInitials;
       const cnEl = document.getElementById('co-name');
       if (cnEl) cnEl.textContent = company;
+      applyPilot(user.pilot);
     } catch (e) {
       console.error('applyUser error', e);
     }
     hideOverlay();
     showSelector();
+  }
+
+  // Pilot timeline is per-company (admin sets "Inicio del piloto" + "Semanas").
+  // `user.pilot` = { start, week, total, pct } from /auth/me, computed live so it
+  // advances by itself each week. Absent (company with no pilot set) → leave the
+  // static demo values untouched.
+  function applyPilot(pilot: any) {
+    if (!pilot || !pilot.total) return;
+    const chip = document.querySelector('.pilot-chip') as HTMLElement | null;
+    if (chip) {
+      chip.style.display = '';
+      const val = chip.querySelector('.pilot-chip__val');
+      if (val) val.textContent = `Sem. ${pilot.week} / ${pilot.total}`;
+      const fill = chip.querySelector('.pilot-chip__fill') as HTMLElement | null;
+      if (fill) fill.style.width = `${pilot.pct}%`;
+    }
+    const scWeek = document.querySelector('.scorecard__week');
+    if (scWeek) scWeek.textContent = `Sem. ${pilot.week}`;
+    const kpiSub = document.querySelector('#panel-kpis .panel-page-sub');
+    if (kpiSub) kpiSub.textContent = `Semana ${pilot.week} de ${pilot.total} · Evolución acumulada desde inicio del piloto`;
   }
 
   async function doLogin() {
@@ -6879,6 +6910,8 @@
         (document.getElementById('cmp-name') as HTMLInputElement).value = c?.name || '';
         (document.getElementById('cmp-industry') as HTMLSelectElement).value = c?.industry || '';
         (document.getElementById('cmp-plan') as HTMLSelectElement).value = c?.plan || '';
+        (document.getElementById('cmp-pilot-start') as HTMLInputElement).value = c?.pilot_start || '';
+        (document.getElementById('cmp-pilot-weeks') as HTMLInputElement).value = c?.pilot_weeks != null ? String(c.pilot_weeks) : '';
         document.getElementById('companyModal')!.style.display = 'flex';
       }
 
@@ -6889,12 +6922,15 @@
         const name = (document.getElementById('cmp-name') as HTMLInputElement).value.trim();
         const industry = (document.getElementById('cmp-industry') as HTMLSelectElement).value || null;
         const plan = (document.getElementById('cmp-plan') as HTMLSelectElement).value || null;
+        const pilot_start = (document.getElementById('cmp-pilot-start') as HTMLInputElement).value || null;
+        const pwRaw = (document.getElementById('cmp-pilot-weeks') as HTMLInputElement).value.trim();
+        const pilot_weeks = pwRaw ? parseInt(pwRaw, 10) : null;
         const errEl = document.getElementById('companyModalErr')!;
         if (!name) { errEl.textContent = 'El nombre es obligatorio'; return; }
         errEl.textContent = '';
         const url = editingCompanyId ? `${API_BASE}/admin/companies/${editingCompanyId}` : `${API_BASE}/admin/companies`;
         const method = editingCompanyId ? 'PATCH' : 'POST';
-        const res = await fetch(url, { method, headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' }, body: JSON.stringify({ name, industry, plan }) });
+        const res = await fetch(url, { method, headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' }, body: JSON.stringify({ name, industry, plan, pilot_start, pilot_weeks }) });
         if (!res.ok) { const d = await res.json(); errEl.textContent = d.detail || 'Error al guardar'; return; }
         closeCompanyModal();
         loadAdminCompanies();
