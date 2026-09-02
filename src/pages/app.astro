@@ -1372,6 +1372,21 @@
     .alt-kpi__key    { font-size: .62rem; color: var(--n50); }
     .alt-card__warnings { font-size: .65rem; color: var(--amber); margin-top: .5rem; }
 
+    /* Monte Carlo robustness block appended to each alternative card */
+    .alt-card__sim { margin-top: .7rem; padding-top: .7rem; border-top: 1px dashed var(--n80); font-size: .68rem; }
+    .alt-card__sim--loading { color: var(--n50); font-style: italic; }
+    .alt-sim__head { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: .35rem; }
+    .alt-sim__title { font-weight: 700; color: var(--navy); font-size: .62rem; text-transform: uppercase; letter-spacing: .03em; }
+    .alt-sim__score { font-size: 1rem; font-weight: 800; }
+    .alt-sim__score span { font-size: .58rem; font-weight: 600; color: var(--n50); }
+    .alt-sim__bar { height: 5px; background: var(--n80); border-radius: 3px; overflow: hidden; margin-bottom: .5rem; }
+    .alt-sim__bar div { height: 5px; border-radius: 3px; transition: width .3s; }
+    .alt-sim__rows { display: flex; flex-direction: column; gap: .25rem; }
+    .alt-sim__rows > div { display: flex; justify-content: space-between; gap: .5rem; }
+    .alt-sim__rows span { color: var(--n50); }
+    .alt-sim__rows b { color: var(--navy); font-weight: 700; }
+    .alt-sim__foot { margin-top: .45rem; font-size: .58rem; color: var(--n50); }
+
     /* ───── COMPOSITES PLANNER GANTT ───── */
     .pg-wrapper { overflow-x: auto; }
     .pg-day-header-row {
@@ -4656,6 +4671,7 @@
 
       let pieceTypesList: any[] = [];
       let selectedAlt: any = null;
+      let simGen = 0;  // guards against a stale simulation writing onto a newer set of cards
 
       // Default week start = nearest Monday
       function getMonday(d: Date): string {
@@ -4818,6 +4834,7 @@
           }
           const data = await res.json();
           renderAlternatives(data.alternatives);
+          runSimulation(body);
         } catch (e) {
           showToast('⚠ No se pudo conectar con el servidor');
           manualView.style.display = '';
@@ -4866,6 +4883,66 @@
         altCards.style.display = '';
         // Auto-render the recommended (equilibrado) alternative
         if (alternatives[1]) renderPlannerGantt(alternatives[1]);
+      }
+
+      // ── Monte Carlo robustness prediction ──────────────────────
+      // Runs right after the 3 alternative cards render. Calls /api/plan/simulate
+      // with the same PlanRequest body and appends a robustness block to each
+      // card (matched by label). Silent no-op if the endpoint isn't reachable.
+      async function runSimulation(planBody: any) {
+        const gen = ++simGen;
+        const token = localStorage.getItem('pc_token');
+        altCards.querySelectorAll('.alt-card').forEach((c: any) => {
+          if (c.querySelector('.alt-card__sim')) return;
+          const el = document.createElement('div');
+          el.className = 'alt-card__sim alt-card__sim--loading';
+          el.textContent = 'Simulando robustez (Monte Carlo)…';
+          c.appendChild(el);
+        });
+        try {
+          const res = await fetch(`${API}/api/plan/simulate`, {
+            method: 'POST',
+            headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
+            body: JSON.stringify(planBody),
+          });
+          if (gen !== simGen) return;
+          if (!res.ok) throw new Error('simulate ' + res.status);
+          const sim = await res.json();
+          renderPredictions(sim);
+        } catch (e) {
+          if (gen === simGen) altCards.querySelectorAll('.alt-card__sim').forEach((el: any) => el.remove());
+        }
+      }
+
+      function renderPredictions(sim: any) {
+        const byLabel: Record<string, any> = {};
+        (sim.alternatives || []).forEach((a: any) => { byLabel[a.label] = a.prediction; });
+        altCards.querySelectorAll('.alt-card').forEach((card: any) => {
+          const label  = (card.querySelector('.alt-card__label')?.textContent || '').trim();
+          const holder = card.querySelector('.alt-card__sim');
+          const p = byLabel[label];
+          if (!holder) return;
+          if (!p) { holder.remove(); return; }
+          const score = p.robustness_score;
+          const color = score >= 80 ? '#16A34A' : score >= 55 ? '#D97706' : '#DC2626';
+          const pc = p.pieces_completed || {};
+          const mk = p.makespan_shifts  || {};
+          holder.className = 'alt-card__sim';
+          holder.innerHTML = `
+            <div class="alt-sim__head">
+              <span class="alt-sim__title">Robustez Monte Carlo</span>
+              <span class="alt-sim__score" style="color:${color}">${score}<span>/100</span></span>
+            </div>
+            <div class="alt-sim__bar"><div style="width:${Math.max(2, score)}%;background:${color}"></div></div>
+            <div class="alt-sim__rows">
+              <div><span>Prob. dentro de plazo</span><b>${Math.round((p.within_horizon_probability || 0) * 100)}%</b></div>
+              <div><span>Piezas completas · P50 / P10</span><b>${pc.p50 ?? '–'} / ${pc.p10 ?? '–'}</b></div>
+              <div><span>Duración turnos · P50 / P90</span><b>${mk.p50 ?? '–'} / ${mk.p90 ?? '–'}</b></div>
+              <div><span>Exceso esperado</span><b>${p.expected_overflow ?? 0}</b></div>
+            </div>
+            <div class="alt-sim__foot">${sim.iterations} iteraciones Monte Carlo</div>
+          `;
+        });
       }
 
       // Render the composites planner Gantt
