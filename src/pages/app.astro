@@ -2251,6 +2251,82 @@
       .login-card { padding: 0 1rem; }
       .login-box { padding: 1.5rem; }
     }
+
+    /* ═══ First Build — onboarding shell ═══ */
+    #ob-welcome {
+      position: fixed; inset: 0; z-index: 1200;
+      display: none; align-items: center; justify-content: center;
+      background: rgba(11,28,58,.5); backdrop-filter: blur(3px);
+      padding: 1.5rem;
+    }
+    #ob-welcome.show { display: flex; }
+    .ob-w-card {
+      background: var(--white); border: 1px solid var(--n80);
+      border-radius: var(--radius-lg); box-shadow: var(--shadow-md);
+      max-width: 30rem; width: 100%; padding: 1.8rem 1.9rem;
+    }
+    .ob-eyebrow { font-size: .66rem; letter-spacing: .12em; text-transform: uppercase; color: var(--brand); font-weight: 700; }
+    .ob-w-card h2 { font-size: 1.35rem; line-height: 1.2; margin: .55rem 0 .55rem; color: var(--n20); }
+    .ob-w-card p { font-size: .9rem; color: var(--n50); line-height: 1.55; margin: 0 0 1.2rem; }
+    .ob-w-progress { font-size: .72rem; color: var(--n50); font-weight: 600; }
+    .ob-w-bar { height: 5px; background: var(--n80); border-radius: 3px; overflow: hidden; margin: .35rem 0 1.3rem; }
+    .ob-w-bar > i { display: block; height: 100%; background: var(--brand); border-radius: 3px; transition: width .4s cubic-bezier(.4,0,.2,1); }
+    .ob-btns { display: flex; flex-wrap: wrap; gap: .6rem; }
+    .ob-btn {
+      font: inherit; font-size: .88rem; font-weight: 600; cursor: pointer; line-height: 1;
+      padding: .6rem 1.05rem; border-radius: var(--radius);
+      border: 1px solid var(--brand); background: var(--brand); color: #fff;
+    }
+    .ob-btn.ghost { background: transparent; color: var(--brand); }
+    .ob-btn:focus-visible { outline: 2px solid var(--brand); outline-offset: 2px; }
+
+    #ob-checklist {
+      position: fixed; right: 1rem; bottom: 1rem; z-index: 650;
+      width: 19rem; max-width: calc(100vw - 2rem);
+      background: var(--white); border: 1px solid var(--n80);
+      border-radius: var(--radius-md); box-shadow: var(--shadow-md);
+      overflow: hidden; font-size: .85rem; display: none;
+    }
+    #ob-checklist.show { display: block; }
+    #ob-checklist.collapsed { width: auto; }
+    #ob-checklist.collapsed .ob-cl-body, #ob-checklist.collapsed .ob-cl-foot { display: none; }
+    #ob-checklist.collapsed .ob-cl-head { border-bottom: none; }
+    .ob-cl-head {
+      display: flex; align-items: center; justify-content: space-between; gap: .5rem;
+      padding: .65rem .85rem; border-bottom: 1px solid var(--n80);
+      font-weight: 700; color: var(--n20); font-size: .88rem; cursor: pointer;
+    }
+    .ob-cl-count { font-size: .72rem; color: var(--n50); font-weight: 600; white-space: nowrap; }
+    .ob-cl-body { list-style: none; margin: 0; padding: .3rem 0; }
+    .ob-cl-body li {
+      display: grid; grid-template-columns: 1.15rem 1fr; gap: .55rem; align-items: center;
+      padding: .5rem .85rem; cursor: pointer; color: var(--n30);
+    }
+    .ob-cl-body li:hover { background: var(--n90); }
+    .ob-box {
+      width: 1.15rem; height: 1.15rem; border-radius: 4px; border: 1.5px solid var(--n80);
+      display: grid; place-items: center; color: #fff; font-size: .7rem; line-height: 1;
+    }
+    .ob-cl-body li.done { color: var(--n50); }
+    .ob-cl-body li.done .ob-box { background: var(--green); border-color: var(--green); }
+    .ob-cl-body li.now .ob-box { border-color: var(--brand); box-shadow: 0 0 0 3px rgba(27,63,139,.14); }
+    .ob-cl-foot {
+      padding: .55rem .85rem; border-top: 1px solid var(--n80);
+      display: flex; justify-content: space-between; align-items: center;
+      font-size: .72rem; color: var(--n50);
+    }
+    .ob-cl-foot button { font: inherit; font-size: .72rem; background: none; border: none; color: var(--brand); cursor: pointer; font-weight: 600; padding: 0; }
+    #ob-checklist.ob-cl-done .ob-cl-head { color: var(--green); }
+
+    #ob-reopen {
+      position: fixed; right: 1rem; bottom: 1rem; z-index: 649;
+      display: none; align-items: center; gap: .4rem;
+      background: var(--white); border: 1px solid var(--n80); border-radius: 999px;
+      box-shadow: var(--shadow); padding: .48rem .85rem; cursor: pointer;
+      font: inherit; font-size: .78rem; font-weight: 600; color: var(--brand);
+    }
+    #ob-reopen.show { display: inline-flex; }
+    @media (prefers-reduced-motion: reduce) { .ob-w-bar > i { transition: none; } }
   </style>
 </head>
 <body>
@@ -4388,6 +4464,32 @@
 </div>
 
 <div class="toast" id="toast"></div>
+
+<!-- ═══ First Build — onboarding shell (phase 1) ═══ -->
+<div id="ob-welcome" role="dialog" aria-modal="true" aria-label="Bienvenida">
+  <div class="ob-w-card">
+    <span class="ob-eyebrow">Te damos la bienvenida a Planning Core</span>
+    <h2>Vamos a preparar tu espacio de trabajo.</h2>
+    <p>Ahora mismo está en blanco: nada está decidido sobre cómo trabajas. En unos pocos pasos elegirás tu sector, revisarás tus tipos de pieza, lanzarás tu primer plan y compararás un escenario. Todo lo que configures es tuyo y puedes cambiarlo cuando quieras.</p>
+    <div class="ob-w-progress">Paso 0 de 4 · aún no has configurado nada</div>
+    <div class="ob-w-bar"><i style="width:0%"></i></div>
+    <div class="ob-btns">
+      <button class="ob-btn" type="button" data-ob="start">Empezar</button>
+      <button class="ob-btn ghost" type="button" data-ob="explore">Explorar por mi cuenta</button>
+    </div>
+  </div>
+</div>
+
+<div id="ob-checklist">
+  <div class="ob-cl-head"><span>Prepara tu espacio de trabajo</span><span class="ob-cl-count">0 / 4</span></div>
+  <ul class="ob-cl-body"></ul>
+  <div class="ob-cl-foot"><span>Se guarda automáticamente</span><button type="button" data-ob="hide">Ocultar</button></div>
+</div>
+
+<button id="ob-reopen" type="button">
+  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+  Configuración guiada
+</button>
 
 <script>
   import * as XLSX from 'xlsx';
@@ -8125,6 +8227,139 @@
     localStorage.removeItem('pc_token');
     location.reload();
   });
+
+  // ═══ First Build — onboarding shell (localStorage-backed, phase 1) ═══
+  (function initOnboarding() {
+    const KEY = 'pc_onboarding';
+    const STEPS = [
+      { id: 'sector',   label: 'Elige tu sector' },
+      { id: 'pieces',   label: 'Revisa tus tipos de pieza' },
+      { id: 'plan',     label: 'Lanza tu primer plan' },
+      { id: 'scenario', label: 'Compara un escenario' },
+    ];
+    const get  = () => { try { return JSON.parse(localStorage.getItem(KEY)) || {}; } catch (e) { return {}; } };
+    const save = (s) => { try { localStorage.setItem(KEY, JSON.stringify(s)); } catch (e) {} };
+    const doneCount = (s) => { const d = s.steps || {}; return STEPS.filter(x => d[x.id]).length; };
+    const labelOf = (id) => (STEPS.find(x => x.id === id) || {}).label || '';
+
+    const welcomeEl   = document.getElementById('ob-welcome');
+    const checklistEl = document.getElementById('ob-checklist');
+    const reopenEl    = document.getElementById('ob-reopen');
+    const authOverlay = document.getElementById('auth-overlay');
+    if (!welcomeEl || !checklistEl || !reopenEl) return;
+
+    const loggedIn = () => !!localStorage.getItem('pc_token') && authOverlay && authOverlay.classList.contains('hidden');
+
+    function markStep(id, silent) {
+      const s = get();
+      if (!s.steps) s.steps = {};
+      if (s.steps[id]) return;
+      s.steps[id] = true;
+      save(s);
+      render();
+      if (!silent && typeof showToast === 'function') showToast('✓ Hecho: ' + labelOf(id));
+      checkComplete();
+    }
+
+    function checkComplete() {
+      const s = get();
+      if (doneCount(s) === STEPS.length && s.status !== 'done') {
+        s.status = 'done';
+        save(s);
+        render();
+        if (typeof showToast === 'function') showToast('Tu espacio de trabajo está preparado.', 4000);
+      }
+    }
+
+    function navTo(id) {
+      if (id === 'sector') { const b = document.getElementById('backToSelector'); if (b && !b.classList.contains('hidden')) b.click(); return; }
+      if (id === 'pieces') { const m = document.querySelector('.nav-item[data-panel="mrp"]'); if (m) m.click(); }
+      if (id === 'plan') {
+        const g = document.querySelector('.nav-item[data-panel="gantt"]'); if (g) g.click();
+        setTimeout(() => { const t = document.getElementById('plannerToggleBtn'); if (t) t.click(); }, 140);
+      }
+      if (id === 'scenario') { const e = document.querySelector('.nav-item[data-panel="escenarios"]'); if (e) e.click(); }
+    }
+
+    function render() {
+      const s = get();
+      const d = s.steps || {};
+      const n = doneCount(s);
+      const complete = n === STEPS.length;
+      const pct = Math.round((n / STEPS.length) * 100);
+
+      welcomeEl.classList.toggle('show', !s.welcomed && loggedIn());
+      const wb = welcomeEl.querySelector('.ob-w-bar > i');
+      if (wb) wb.style.width = pct + '%';
+      const wp = welcomeEl.querySelector('.ob-w-progress');
+      if (wp) wp.textContent = n === 0
+        ? 'Paso 0 de ' + STEPS.length + ' · aún no has configurado nada'
+        : 'Paso ' + n + ' de ' + STEPS.length + ' · ' + pct + '%';
+
+      const showCl = loggedIn() && s.welcomed && s.status !== 'hidden' && s.status !== 'dismissedDone';
+      checklistEl.classList.toggle('show', showCl);
+      checklistEl.classList.toggle('ob-cl-done', complete);
+      reopenEl.classList.toggle('show', loggedIn() && s.welcomed && (s.status === 'hidden') && !complete);
+
+      checklistEl.querySelector('.ob-cl-count').textContent = complete ? '¡Listo!' : n + ' / ' + STEPS.length;
+      checklistEl.querySelector('.ob-cl-head span:first-child').textContent =
+        complete ? 'Espacio de trabajo preparado' : 'Prepara tu espacio de trabajo';
+
+      const firstUndone = STEPS.find(x => !d[x.id]);
+      const ul = checklistEl.querySelector('.ob-cl-body');
+      ul.innerHTML = STEPS.map(st => {
+        const cls = d[st.id] ? 'done' : (firstUndone && firstUndone.id === st.id ? 'now' : '');
+        return '<li data-step="' + st.id + '" class="' + cls + '"><span class="ob-box">' + (d[st.id] ? '&#10003;' : '') + '</span><span>' + st.label + '</span></li>';
+      }).join('');
+      ul.querySelectorAll('li').forEach(li => li.addEventListener('click', () => navTo(li.getAttribute('data-step'))));
+
+      const footBtn = checklistEl.querySelector('.ob-cl-foot button');
+      const footTxt = checklistEl.querySelector('.ob-cl-foot span');
+      if (complete) { footBtn.textContent = 'Cerrar'; footBtn.dataset.ob = 'closeDone'; footTxt.textContent = STEPS.length + ' pasos completados'; }
+      else { footBtn.textContent = 'Ocultar'; footBtn.dataset.ob = 'hide'; footTxt.textContent = 'Se guarda automáticamente'; }
+    }
+
+    welcomeEl.querySelector('[data-ob="start"]').addEventListener('click', () => { const s = get(); s.welcomed = true; save(s); render(); });
+    welcomeEl.querySelector('[data-ob="explore"]').addEventListener('click', () => { const s = get(); s.welcomed = true; s.status = 'exploring'; save(s); render(); });
+
+    checklistEl.querySelector('.ob-cl-head').addEventListener('click', () => checklistEl.classList.toggle('collapsed'));
+    checklistEl.querySelector('.ob-cl-foot button').addEventListener('click', function () {
+      const s = get();
+      s.status = this.dataset.ob === 'closeDone' ? 'dismissedDone' : 'hidden';
+      save(s); render();
+    });
+    reopenEl.addEventListener('click', () => { const s = get(); s.status = 'exploring'; save(s); render(); });
+
+    // ── completion event wiring ──
+    document.querySelectorAll('#industry-selector .industry-card').forEach(c =>
+      c.addEventListener('click', () => markStep('sector')));
+    document.querySelectorAll('.nav-item[data-panel]').forEach(item =>
+      item.addEventListener('click', () => {
+        const p = item.dataset.panel;
+        if (p === 'mrp') markStep('pieces');
+        if (p === 'escenarios') markStep('scenario');
+      }));
+    const altHost = document.getElementById('planner-alternatives');
+    if (altHost && 'MutationObserver' in window) {
+      new MutationObserver(() => {
+        if (altHost.querySelector('.alt-card')) markStep('plan');
+        const sim = altHost.querySelector('.alt-card__sim');
+        if (sim && !sim.classList.contains('alt-card__sim--loading') && sim.textContent.trim()) markStep('scenario');
+      }).observe(altHost, { childList: true, subtree: true });
+    }
+    // re-render when auth resolves / the dashboard shows
+    if (authOverlay && 'MutationObserver' in window) {
+      new MutationObserver(() => {
+        if (authOverlay.classList.contains('hidden')) {
+          const dv = document.getElementById('dashboard-view');
+          if (dv && dv.classList.contains('visible')) markStep('sector', true);
+          render();
+        }
+      }).observe(authOverlay, { attributes: true, attributeFilter: ['class'] });
+    }
+
+    render();
+  })();
 
   init();
 </script>
