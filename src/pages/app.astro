@@ -4652,7 +4652,10 @@
         } else {
           ganttSemana.style.display = 'none';
           ganttTurno.style.display  = '';
-          ganttSub.textContent = 'Miércoles 21 mayo · Vista por horas · T.Mañana 06–14h · T.Tarde 14–22h';
+          const _t = new Date();
+          const _dn = ['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'][_t.getDay()];
+          const _mn = ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'][_t.getMonth()];
+          ganttSub.textContent = `${_dn} ${_t.getDate()} ${_mn} · Vista por horas · T.Mañana 06–14h · T.Tarde 14–22h`;
         }
       });
     });
@@ -5149,6 +5152,36 @@
         closeMobileSidebar();
       });
     });
+
+    // 8a-bis. Weekly calendar — keep the "Planificación semanal" grid on the real current week
+    (function refreshWeeklyCalendar() {
+      const DOW    = ['LUN', 'MAR', 'MIÉ', 'JUE', 'VIE'];
+      const MONTHS = ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
+      const now = new Date();
+      const wd  = now.getDay();                 // 0=Sun … 6=Sat
+      const monday = new Date(now);
+      monday.setDate(now.getDate() + (wd === 0 ? -6 : 1 - wd));
+      const days = Array.from({ length: 5 }, (_, i) => {
+        const d = new Date(monday);
+        d.setDate(monday.getDate() + i);
+        return d;
+      });
+      const todayIdx = (wd >= 1 && wd <= 5) ? wd - 1 : -1;
+
+      document.querySelectorAll('#gantt-semana .gantt-days .gantt-day').forEach((cell, i) => {
+        if (!days[i]) return;
+        const isToday = i === todayIdx;
+        cell.classList.toggle('gantt-day--today', isToday);
+        cell.textContent = `${DOW[i]} ${days[i].getDate()}${isToday ? ' ●' : ''}`;
+      });
+
+      const a = days[0], b = days[4];
+      const range = a.getMonth() === b.getMonth()
+        ? `${a.getDate()}–${b.getDate()} ${MONTHS[b.getMonth()]} ${b.getFullYear()}`
+        : `${a.getDate()} ${MONTHS[a.getMonth()]} – ${b.getDate()} ${MONTHS[b.getMonth()]} ${b.getFullYear()}`;
+      const sub = document.querySelector('#panel-gantt .page-header__sub');
+      if (sub) sub.textContent = `${range} · Turno mañana + tarde`;
+    })();
 
     // 8a. Alerts panel — filters, actions, dismiss
     function updateAlertCount() {
