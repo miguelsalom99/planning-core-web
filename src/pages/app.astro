@@ -2424,6 +2424,69 @@
     [data-theme="dark"] .cfg-card__title { color: var(--n20); }
     [data-theme="dark"] .cfg-btn { color: var(--n20); }
     [data-theme="dark"] .cfg-color input[type="color"]::-webkit-color-swatch { border-color: var(--n80); }
+
+    /* ═══ Ayuda & soporte panel (reuses .cfg-* card styles) ═══ */
+    .help-steps { list-style: none; display: flex; flex-direction: column; gap: .55rem; }
+    .help-step { display: flex; gap: .7rem; align-items: flex-start; font-size: .8rem; color: var(--n30); line-height: 1.5; }
+    .help-step__n {
+      flex-shrink: 0; width: 1.4rem; height: 1.4rem; border-radius: 50%;
+      background: var(--brand); color: #fff; font-size: .72rem; font-weight: 700;
+      display: grid; place-items: center;
+    }
+    .help-links { display: flex; flex-wrap: wrap; gap: .5rem; }
+    .help-link {
+      font: inherit; font-size: .74rem; font-weight: 600; padding: .38rem .8rem;
+      border-radius: var(--radius); border: 1px solid var(--n80); background: var(--white);
+      color: var(--brand); cursor: pointer; transition: background var(--transition);
+    }
+    .help-link:hover { background: var(--n90); }
+    .help-faq { display: flex; flex-direction: column; }
+    .help-faq details {
+      border-top: 1px solid var(--n90); padding: .55rem 0;
+    }
+    .help-faq details:first-child { border-top: none; }
+    .help-faq summary {
+      cursor: pointer; font-size: .8rem; font-weight: 600; color: var(--n20);
+      list-style: none; display: flex; align-items: center; gap: .5rem;
+    }
+    .help-faq summary::-webkit-details-marker { display: none; }
+    .help-faq summary::before {
+      content: '+'; color: var(--brand); font-weight: 700; width: .8rem; flex-shrink: 0;
+    }
+    .help-faq details[open] summary::before { content: '\2212'; }
+    .help-faq p { font-size: .76rem; color: var(--n30); line-height: 1.55; margin: .5rem 0 .1rem 1.3rem; }
+    .help-gloss { display: grid; grid-template-columns: max-content 1fr; gap: .35rem .9rem; font-size: .76rem; }
+    .help-gloss dt { font-weight: 700; color: var(--n20); }
+    .help-gloss dd { color: var(--n30); line-height: 1.5; }
+    .help-kbd { display: flex; flex-direction: column; gap: .5rem; }
+    .help-kbd__row { display: flex; align-items: center; gap: .7rem; font-size: .78rem; color: var(--n30); }
+    .help-kbd kbd {
+      font: inherit; font-size: .7rem; font-weight: 600; padding: .12rem .45rem;
+      border: 1px solid var(--n80); border-bottom-width: 2px; border-radius: 5px;
+      background: var(--n90); color: var(--n20); white-space: nowrap;
+    }
+    .help-status-row { display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding: .5rem 0; border-top: 1px solid var(--n90); font-size: .78rem; }
+    .help-status-row:first-of-type { border-top: none; }
+    .help-status-row span:first-child { color: var(--n30); }
+    .help-status-row b { color: var(--n20); font-variant-numeric: tabular-nums; }
+    .help-dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: .4rem; vertical-align: middle; }
+    .help-dot--ok { background: var(--green); }
+    .help-dot--bad { background: var(--red); }
+    .help-dot--wait { background: var(--amber); }
+    .help-form { display: flex; flex-direction: column; gap: .7rem; }
+    .help-form label { font-size: .74rem; font-weight: 600; color: var(--n30); margin-bottom: .25rem; display: block; }
+    .help-input, .help-textarea, .help-form select {
+      width: 100%; font: inherit; font-size: .8rem; padding: .5rem .65rem;
+      border-radius: var(--radius); border: 1px solid var(--n80); background: var(--white); color: var(--n20);
+    }
+    .help-textarea { min-height: 110px; resize: vertical; }
+    .help-form__ctx { font-size: .68rem; color: var(--n50); line-height: 1.5; }
+    .help-form__msg { font-size: .75rem; min-height: 1.1em; }
+    .help-form__msg--ok  { color: var(--green); }
+    .help-form__msg--err { color: var(--red); }
+    [data-theme="dark"] .help-link { background: var(--white); }
+    [data-theme="dark"] .help-faq summary { color: var(--n20); }
+    [data-theme="dark"] .help-kbd kbd { background: var(--n90); color: var(--n20); }
   </style>
 </head>
 <body>
@@ -2703,7 +2766,7 @@
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
           <span data-i18n="navConfig">Configuración</span>
         </a>
-        <a class="nav-item" href="#">
+        <a class="nav-item" href="#" data-panel="ayuda">
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
           <span data-i18n="navAyuda">Ayuda & soporte</span>
         </a>
@@ -4286,6 +4349,143 @@
       </div>
     </div><!-- /#panel-config -->
 
+    <!-- ── AYUDA & SOPORTE ── -->
+    <div id="panel-ayuda" class="dash-panel" style="display:none">
+      <div class="panel-page">
+        <div class="panel-page-header">
+          <div>
+            <div class="panel-page-title" data-i18n="helpTitle">Ayuda &amp; soporte</div>
+            <div class="panel-page-sub" data-i18n="helpSub">Guía de inicio, preguntas frecuentes, glosario y contacto con el equipo de Planning Core.</div>
+          </div>
+        </div>
+
+        <div class="cfg-wrap">
+
+          <!-- Guía de inicio -->
+          <div class="cfg-card">
+            <div class="cfg-card__title" data-i18n="helpStartTitle">Guía de inicio</div>
+            <div class="cfg-card__sub" data-i18n="helpStartSub">Cuatro pasos para tener tu primer plan.</div>
+            <ol class="help-steps">
+              <li class="help-step"><span class="help-step__n">1</span><span>Selecciona la industria y la empresa cuya planificación quieres abrir.</span></li>
+              <li class="help-step"><span class="help-step__n">2</span><span>En <b>MRP &amp; Tiempos</b> revisa los tipos de pieza y las horas por operación (ATL, autoclave, NDT, CNC).</span></li>
+              <li class="help-step"><span class="help-step__n">3</span><span>En el <b>Gantt semanal</b> pulsa <b>Planificar IA</b> → <b>Generar alternativas</b> para obtener los tres escenarios.</span></li>
+              <li class="help-step"><span class="help-step__n">4</span><span>Compara <b>Fin del plan</b> / <b>Margen entre operaciones</b> / <b>Robustez Monte Carlo</b>, elige un escenario y pulsa <b>Guardar plan</b>.</span></li>
+            </ol>
+            <div class="cfg-card__foot">
+              <button class="cfg-btn" id="helpReplayTutorial" data-i18n="helpReplayTutorial">Repetir tutorial de bienvenida</button>
+              <button class="help-link" data-help-goto="mrp" data-i18n="helpGotoMrp">Ir a MRP &amp; Tiempos</button>
+              <button class="help-link" data-help-goto="gantt" data-i18n="helpGotoGantt">Ir al Gantt</button>
+              <button class="help-link" data-help-goto="escenarios" data-i18n="helpGotoEscenarios">Ir a Escenarios</button>
+            </div>
+          </div>
+
+          <!-- FAQ -->
+          <div class="cfg-card">
+            <div class="cfg-card__title" data-i18n="helpFaqTitle">Preguntas frecuentes</div>
+            <div class="help-faq">
+              <details>
+                <summary>¿Cómo genera el planificador los tres escenarios?</summary>
+                <p>El motor determinista programa las piezas por las operaciones ATL → autoclave → NDT → CNC en una rejilla de 7 días × 3 turnos. «Óptimo» no deja margen entre operaciones, «Equilibrado» deja 1 turno y «Conservador» deja 2. Más margen = termina más tarde pero absorbe mejor los imprevistos.</p>
+              </details>
+              <details>
+                <summary>¿Qué mide la «Robustez Monte Carlo»?</summary>
+                <p>Ejecuta cientos de simulaciones del plan variando la duración de cada operación y añadiendo averías no planificadas. Devuelve la probabilidad de terminar dentro del horizonte, los percentiles P10/P50/P90 de piezas completadas y de duración, y una puntuación de robustez de 0 a 100.</p>
+              </details>
+              <details>
+                <summary>¿Para qué sirve «Fin del plan» y «Margen entre operaciones» en las tarjetas?</summary>
+                <p>Cuando los tres escenarios cumplen el plan al 100%, el cumplimiento no los distingue. «Fin del plan» es el turno en el que acaba la última pieza y «Margen entre operaciones» es el colchón real de cada escenario ante disrupciones. Son los dos ejes de decisión: velocidad frente a robustez.</p>
+              </details>
+              <details>
+                <summary>¿Cómo registro una disrupción (avería, ausencia, urgencia)?</summary>
+                <p>En el panel <b>Disrupciones</b>. Las disrupciones activas con recurso, día y turno se incorporan automáticamente como bloques de mantenimiento la próxima vez que generas alternativas.</p>
+              </details>
+              <details>
+                <summary>¿Qué es el contador «Semana X / 12» de la cabecera?</summary>
+                <p>Es la semana actual del piloto de tu empresa. El administrador fija la fecha de inicio y la duración del piloto; el contador y las barras de progreso se calculan solos a partir de la fecha de hoy.</p>
+              </details>
+              <details>
+                <summary>¿Dónde se guardan mis ajustes de idioma, tema y colores?</summary>
+                <p>En este navegador (almacenamiento local). No se sincronizan entre dispositivos. Puedes restablecerlos desde <b>Configuración → Datos locales</b>.</p>
+              </details>
+              <details>
+                <summary>He guardado un plan por error, ¿puedo recuperarlo?</summary>
+                <p>Sí. En <b>Historial de planes</b> tienes todas las planificaciones guardadas; puedes abrir cualquiera en modo histórico sin afectar al plan en vivo.</p>
+              </details>
+            </div>
+          </div>
+
+          <!-- Glosario -->
+          <div class="cfg-card">
+            <div class="cfg-card__title" data-i18n="helpGlossTitle">Glosario</div>
+            <dl class="help-gloss">
+              <dt>ATL</dt><dd>Automated Tape Laying — encintado automático de fibra sobre el molde.</dd>
+              <dt>Autoclave</dt><dd>Horno a presión donde cura la pieza tras el encintado.</dd>
+              <dt>NDT</dt><dd>Non-Destructive Testing — inspección por ultrasonidos sin dañar la pieza.</dd>
+              <dt>CNC</dt><dd>Recorte y mecanizado final de la pieza curada.</dd>
+              <dt>OTD</dt><dd>On-Time Delivery — porcentaje de piezas entregadas en plazo.</dd>
+              <dt>OEE</dt><dd>Overall Equipment Effectiveness — eficiencia global del equipo (disponibilidad × rendimiento × calidad).</dd>
+              <dt>Makespan</dt><dd>Duración total del plan, del primer al último turno con actividad.</dd>
+              <dt>Colchón / margen</dt><dd>Turnos de holgura que un escenario deja entre operaciones para absorber imprevistos.</dd>
+              <dt>Setup</dt><dd>Tiempo de preparación de una máquina antes de procesar un lote.</dd>
+            </dl>
+          </div>
+
+          <!-- Atajos de teclado -->
+          <div class="cfg-card">
+            <div class="cfg-card__title" data-i18n="helpKbdTitle">Atajos de teclado</div>
+            <div class="help-kbd">
+              <div class="help-kbd__row"><kbd>Ctrl</kbd><span>+</span><kbd>K</kbd><span data-i18n="helpKbdSearch">Abrir la búsqueda global</span></div>
+              <div class="help-kbd__row"><kbd>Esc</kbd><span data-i18n="helpKbdEsc">Cerrar búsqueda, modal o menú abierto</span></div>
+              <div class="help-kbd__row"><kbd>Enter</kbd><span data-i18n="helpKbdEnter">Confirmar en formularios y campos de texto</span></div>
+            </div>
+          </div>
+
+          <!-- Estado del sistema -->
+          <div class="cfg-card">
+            <div class="cfg-card__title" data-i18n="helpStatusTitle">Estado del sistema</div>
+            <div class="cfg-card__sub" data-i18n="helpStatusSub">Comprobación en directo del servicio de Planning Core.</div>
+            <div id="helpStatusBody">
+              <div class="help-status-row"><span data-i18n="helpStatusApi">Servicio de planificación</span><b id="helpStatusApi">—</b></div>
+              <div class="help-status-row"><span data-i18n="helpStatusVersion">Versión del backend</span><b id="helpStatusVersion">—</b></div>
+              <div class="help-status-row"><span data-i18n="helpStatusLatency">Latencia</span><b id="helpStatusLatency">—</b></div>
+              <div class="help-status-row"><span data-i18n="helpStatusApp">Interfaz</span><b id="helpStatusApp">—</b></div>
+            </div>
+            <div class="cfg-card__foot">
+              <button class="cfg-btn" id="helpStatusCheck" data-i18n="helpStatusCheck">Comprobar de nuevo</button>
+            </div>
+          </div>
+
+          <!-- Contactar con soporte -->
+          <div class="cfg-card">
+            <div class="cfg-card__title" data-i18n="helpContactTitle">Contactar con soporte</div>
+            <div class="cfg-card__sub" data-i18n="helpContactSub">Escríbenos y el equipo de Planning Core responderá a tu cuenta.</div>
+            <form class="help-form" id="helpSupportForm">
+              <div>
+                <label for="helpSupportTopic" data-i18n="helpContactTopic">Tema</label>
+                <select id="helpSupportTopic">
+                  <option value="pregunta" data-i18n="helpTopicQuestion">Pregunta de uso</option>
+                  <option value="error" data-i18n="helpTopicBug">Un error / algo no funciona</option>
+                  <option value="datos" data-i18n="helpTopicData">Datos incorrectos en el plan</option>
+                  <option value="mejora" data-i18n="helpTopicIdea">Sugerencia de mejora</option>
+                  <option value="otro" data-i18n="helpTopicOther">Otro</option>
+                </select>
+              </div>
+              <div>
+                <label for="helpSupportMessage" data-i18n="helpContactMessage">Mensaje</label>
+                <textarea class="help-textarea" id="helpSupportMessage" data-i18n-ph="helpContactPlaceholder" placeholder="Describe qué necesitas o qué ha ocurrido, y en qué pantalla…"></textarea>
+              </div>
+              <div class="help-form__ctx" id="helpSupportCtx"></div>
+              <div class="help-form__msg" id="helpSupportMsg"></div>
+              <div class="cfg-card__foot" style="margin-top:0">
+                <button type="submit" class="btn-ui btn-ui--primary" id="helpSupportSend" data-i18n="helpContactSend">Enviar a soporte</button>
+              </div>
+            </form>
+          </div>
+
+        </div>
+      </div>
+    </div><!-- /#panel-ayuda -->
+
     <!-- ── MODAL: EMPRESA ── -->
     <div class="modal-backdrop" id="companyModal">
       <div class="modal__box" style="max-width:420px">
@@ -4767,6 +4967,28 @@
       cfgResetOnboarding: 'Repetir tutorial de bienvenida', cfgClearLocal: 'Borrar todos los datos locales',
       cfgToastSaved: 'Ajustes guardados', cfgToastColors: 'Colores restablecidos',
       cfgConfirmClear: '¿Borrar todos los datos locales de este navegador? Se cerrará la sesión.',
+      helpTitle: 'Ayuda & soporte',
+      helpSub: 'Guía de inicio, preguntas frecuentes, glosario y contacto con el equipo de Planning Core.',
+      helpStartTitle: 'Guía de inicio', helpStartSub: 'Cuatro pasos para tener tu primer plan.',
+      helpReplayTutorial: 'Repetir tutorial de bienvenida',
+      helpGotoMrp: 'Ir a MRP & Tiempos', helpGotoGantt: 'Ir al Gantt', helpGotoEscenarios: 'Ir a Escenarios',
+      helpFaqTitle: 'Preguntas frecuentes', helpGlossTitle: 'Glosario', helpKbdTitle: 'Atajos de teclado',
+      helpKbdSearch: 'Abrir la búsqueda global', helpKbdEsc: 'Cerrar búsqueda, modal o menú abierto',
+      helpKbdEnter: 'Confirmar en formularios y campos de texto',
+      helpStatusTitle: 'Estado del sistema', helpStatusSub: 'Comprobación en directo del servicio de Planning Core.',
+      helpStatusApi: 'Servicio de planificación', helpStatusVersion: 'Versión del backend',
+      helpStatusLatency: 'Latencia', helpStatusApp: 'Interfaz', helpStatusCheck: 'Comprobar de nuevo',
+      helpStatusOk: 'Operativo', helpStatusDown: 'No disponible', helpStatusChecking: 'Comprobando…',
+      helpContactTitle: 'Contactar con soporte',
+      helpContactSub: 'Escríbenos y el equipo de Planning Core responderá a tu cuenta.',
+      helpContactTopic: 'Tema', helpContactMessage: 'Mensaje', helpContactSend: 'Enviar a soporte',
+      helpContactPlaceholder: 'Describe qué necesitas o qué ha ocurrido, y en qué pantalla…',
+      helpTopicQuestion: 'Pregunta de uso', helpTopicBug: 'Un error / algo no funciona',
+      helpTopicData: 'Datos incorrectos en el plan', helpTopicIdea: 'Sugerencia de mejora', helpTopicOther: 'Otro',
+      helpCtx: 'Se adjunta automáticamente: pantalla, versión de la app y navegador.',
+      helpSendSending: 'Enviando…', helpSendOk: 'Enviado. Te responderemos a tu cuenta.',
+      helpSendErrEmpty: 'Escribe un mensaje antes de enviar.',
+      helpSendErrNet: 'No se pudo enviar. Inténtalo de nuevo en unos minutos.',
     },
     en: {
       navSecPlanificacion: 'Planning', navSecOperaciones: 'Operations', navSecAuditoria: 'Audit',
@@ -4797,6 +5019,28 @@
       cfgResetOnboarding: 'Replay welcome tutorial', cfgClearLocal: 'Clear all local data',
       cfgToastSaved: 'Settings saved', cfgToastColors: 'Colors reset',
       cfgConfirmClear: 'Clear all local data in this browser? You will be signed out.',
+      helpTitle: 'Help & support',
+      helpSub: 'Getting-started guide, FAQ, glossary and contact with the Planning Core team.',
+      helpStartTitle: 'Getting started', helpStartSub: 'Four steps to your first plan.',
+      helpReplayTutorial: 'Replay welcome tutorial',
+      helpGotoMrp: 'Go to MRP & Times', helpGotoGantt: 'Go to Gantt', helpGotoEscenarios: 'Go to Scenarios',
+      helpFaqTitle: 'Frequently asked questions', helpGlossTitle: 'Glossary', helpKbdTitle: 'Keyboard shortcuts',
+      helpKbdSearch: 'Open global search', helpKbdEsc: 'Close search, modal or open menu',
+      helpKbdEnter: 'Confirm in forms and text fields',
+      helpStatusTitle: 'System status', helpStatusSub: 'Live check of the Planning Core service.',
+      helpStatusApi: 'Planning service', helpStatusVersion: 'Backend version',
+      helpStatusLatency: 'Latency', helpStatusApp: 'Interface', helpStatusCheck: 'Check again',
+      helpStatusOk: 'Operational', helpStatusDown: 'Unavailable', helpStatusChecking: 'Checking…',
+      helpContactTitle: 'Contact support',
+      helpContactSub: 'Write to us and the Planning Core team will reply to your account.',
+      helpContactTopic: 'Topic', helpContactMessage: 'Message', helpContactSend: 'Send to support',
+      helpContactPlaceholder: 'Describe what you need or what happened, and on which screen…',
+      helpTopicQuestion: 'How-to question', helpTopicBug: 'A bug / something is broken',
+      helpTopicData: 'Wrong data in the plan', helpTopicIdea: 'Improvement suggestion', helpTopicOther: 'Other',
+      helpCtx: 'Automatically attached: screen, app version and browser.',
+      helpSendSending: 'Sending…', helpSendOk: 'Sent. We will reply to your account.',
+      helpSendErrEmpty: 'Write a message before sending.',
+      helpSendErrNet: 'Could not send. Please try again in a few minutes.',
     },
   };
   function t(key: string): string {
@@ -4805,10 +5049,14 @@
   }
   function applyI18n(root: Document | Element = document) {
     const lang = getSettings().lang;
+    const dict = I18N[lang] || {};
     root.querySelectorAll('[data-i18n]').forEach(el => {
-      const k = el.getAttribute('data-i18n')!;
-      const v = (I18N[lang] && I18N[lang][k]);
+      const v = dict[el.getAttribute('data-i18n')!];
       if (v != null) el.textContent = v;
+    });
+    root.querySelectorAll('[data-i18n-ph]').forEach(el => {
+      const v = dict[el.getAttribute('data-i18n-ph')!];
+      if (v != null) (el as HTMLInputElement).placeholder = v;
     });
   }
 
@@ -7876,6 +8124,108 @@
       });
 
       syncConfigPanel();
+    })();
+
+    // ── Ayuda & soporte panel wiring ───────────────────────────
+    (function initHelpPanel() {
+      const panel = document.getElementById('panel-ayuda');
+      if (!panel) return;
+
+      // Replay tutorial (same as Configuración)
+      document.getElementById('helpReplayTutorial')?.addEventListener('click', () => {
+        try { localStorage.removeItem('pc_onboarding'); } catch (_) {}
+        location.reload();
+      });
+
+      // Quick links → click the matching nav item
+      panel.querySelectorAll('[data-help-goto]').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const id = (btn as HTMLElement).dataset.helpGoto!;
+          (document.querySelector(`.nav-item[data-panel="${id}"]`) as HTMLElement | null)?.click();
+        });
+      });
+
+      // ── System status ──
+      async function checkStatus() {
+        const set = (id: string, html: string) => { const el = document.getElementById(id); if (el) el.innerHTML = html; };
+        set('helpStatusApi', t('helpStatusChecking'));
+        set('helpStatusVersion', '…'); set('helpStatusLatency', '…');
+        set('helpStatusApp', `<span class="help-dot help-dot--ok"></span>${location.host}`);
+        const started = performance.now();
+        try {
+          const res = await fetch(`${API}/health`, { cache: 'no-store' });
+          const ms = Math.round(performance.now() - started);
+          const j = await res.json().catch(() => ({}));
+          if (res.ok) {
+            set('helpStatusApi', `<span class="help-dot help-dot--ok"></span>${t('helpStatusOk')}`);
+            set('helpStatusVersion', j.version ? `v${j.version}${j.route_count ? ' · ' + j.route_count + ' rutas' : ''}` : '—');
+          } else {
+            set('helpStatusApi', `<span class="help-dot help-dot--bad"></span>${t('helpStatusDown')} (${res.status})`);
+            set('helpStatusVersion', '—');
+          }
+          set('helpStatusLatency', `${ms} ms`);
+        } catch (_) {
+          set('helpStatusApi', `<span class="help-dot help-dot--bad"></span>${t('helpStatusDown')}`);
+          set('helpStatusVersion', '—');
+          set('helpStatusLatency', '—');
+        }
+      }
+      document.getElementById('helpStatusCheck')?.addEventListener('click', checkStatus);
+      // run once when the panel is first opened
+      let statusRan = false;
+      document.querySelector('.nav-item[data-panel="ayuda"]')?.addEventListener('click', () => {
+        if (!statusRan) { statusRan = true; checkStatus(); }
+        renderCtx();
+      });
+
+      // ── Contact form ──
+      const form = document.getElementById('helpSupportForm') as HTMLFormElement | null;
+      const msgEl = document.getElementById('helpSupportMsg');
+      const ctxEl = document.getElementById('helpSupportCtx');
+      const sendBtn = document.getElementById('helpSupportSend') as HTMLButtonElement | null;
+      function currentPanelId(): string {
+        const active = document.querySelector('.nav-item[data-panel].nav-item--active') as HTMLElement | null;
+        return active?.dataset.panel || 'ayuda';
+      }
+      function renderCtx() {
+        if (ctxEl) ctxEl.textContent = t('helpCtx');
+      }
+      renderCtx();
+      form?.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        if (!msgEl) return;
+        const message = (document.getElementById('helpSupportMessage') as HTMLTextAreaElement).value.trim();
+        const topic   = (document.getElementById('helpSupportTopic') as HTMLSelectElement).value;
+        msgEl.className = 'help-form__msg';
+        if (!message) { msgEl.textContent = t('helpSendErrEmpty'); msgEl.classList.add('help-form__msg--err'); return; }
+        const token = localStorage.getItem('pc_token');
+        const body = {
+          topic, message,
+          page: currentPanelId(),
+          company: (currentUser && currentUser.company) || null,
+          app_version: location.host,
+          user_agent: navigator.userAgent,
+          lang: getSettings().lang,
+        };
+        if (sendBtn) sendBtn.disabled = true;
+        msgEl.textContent = t('helpSendSending');
+        try {
+          const res = await fetch(`${API}/api/support`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', ...(token ? { Authorization: `Bearer ${token}` } : {}) },
+            body: JSON.stringify(body),
+          });
+          if (!res.ok) throw new Error('http ' + res.status);
+          msgEl.textContent = t('helpSendOk');
+          msgEl.classList.add('help-form__msg--ok');
+          (document.getElementById('helpSupportMessage') as HTMLTextAreaElement).value = '';
+        } catch (_) {
+          msgEl.textContent = t('helpSendErrNet');
+          msgEl.classList.add('help-form__msg--err');
+        } finally {
+          if (sendBtn) sendBtn.disabled = false;
+        }
+      });
     })();
 
     // ── Topbar: notifications & settings buttons ─────────────────
