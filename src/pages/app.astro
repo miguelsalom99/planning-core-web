@@ -4369,7 +4369,7 @@
               <li class="help-step"><span class="help-step__n">1</span><span>Selecciona la industria y la empresa cuya planificación quieres abrir.</span></li>
               <li class="help-step"><span class="help-step__n">2</span><span>En <b>MRP &amp; Tiempos</b> revisa los tipos de pieza y las horas por operación (ATL, autoclave, NDT, CNC).</span></li>
               <li class="help-step"><span class="help-step__n">3</span><span>En el <b>Gantt semanal</b> pulsa <b>Planificar IA</b> → <b>Generar alternativas</b> para obtener los tres escenarios.</span></li>
-              <li class="help-step"><span class="help-step__n">4</span><span>Compara <b>Fin del plan</b> / <b>Margen entre operaciones</b> / <b>Robustez Monte Carlo</b>, elige un escenario y pulsa <b>Guardar plan</b>.</span></li>
+              <li class="help-step"><span class="help-step__n">4</span><span>Compara <b>Fin del plan</b> y <b>Margen entre operaciones</b>, elige un escenario y pulsa <b>Guardar plan</b>.</span></li>
             </ol>
             <div class="cfg-card__foot">
               <button class="cfg-btn" id="helpReplayTutorial" data-i18n="helpReplayTutorial">Repetir tutorial de bienvenida</button>
@@ -4386,10 +4386,6 @@
               <details>
                 <summary>¿Cómo genera el planificador los tres escenarios?</summary>
                 <p>El motor determinista programa las piezas por las operaciones ATL → autoclave → NDT → CNC en una rejilla de 7 días × 3 turnos. «Óptimo» no deja margen entre operaciones, «Equilibrado» deja 1 turno y «Conservador» deja 2. Más margen = termina más tarde pero absorbe mejor los imprevistos.</p>
-              </details>
-              <details>
-                <summary>¿Qué mide la «Robustez Monte Carlo»?</summary>
-                <p>Ejecuta cientos de simulaciones del plan variando la duración de cada operación y añadiendo averías no planificadas. Devuelve la probabilidad de terminar dentro del horizonte, los percentiles P10/P50/P90 de piezas completadas y de duración, y una puntuación de robustez de 0 a 100.</p>
               </details>
               <details>
                 <summary>¿Para qué sirve «Fin del plan» y «Margen entre operaciones» en las tarjetas?</summary>
