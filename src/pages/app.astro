@@ -1346,6 +1346,8 @@
     .alt-kpi__val    { font-size: .88rem; font-weight: 700; }
     .alt-kpi__key    { font-size: .62rem; color: var(--n50); }
     .alt-card__warnings { font-size: .65rem; color: var(--amber); margin-top: .5rem; }
+    .alt-cards__note { grid-column: 1 / -1; font-size: .68rem; color: var(--n50); line-height: 1.45; margin: -.15rem 0 .1rem; }
+    .alt-cards__note b { color: var(--navy); font-weight: 600; }
 
     /* Monte Carlo robustness block appended to each alternative card */
     .alt-card__sim { margin-top: .7rem; padding-top: .7rem; border-top: 1px dashed var(--n80); font-size: .68rem; }
@@ -5080,13 +5082,73 @@
         }
       });
 
+      // Derive the schedule shape from the 21-shift events grid (7 días × 3 turnos).
+      // On small inputs the deployed summary KPIs (cumplimiento, saturación) come
+      // back identical across the 3 buffers — the real difference is *cuándo*
+      // termina el plan y *cuánto margen* deja entre operaciones ante imprevistos.
+      function altMetrics(alt: any) {
+        const evs = alt.events || [];
+        if (!evs.length) return null;
+        const endIdx = Math.max(...evs.map((e: any) => e.day * 3 + (e.shift - 1) + (e.duration_shifts || 1))); // 1..21, fin exclusivo
+        const lastConsumed = endIdx - 1;
+        const finDay   = Math.floor(lastConsumed / 3);
+        const finShift = (lastConsumed % 3) + 1;
+        const dayLabel = (alt.week_days && alt.week_days[finDay]) || ('Día ' + (finDay + 1));
+        // Margen entre operaciones: turnos que espera una pieza entre acabar ATL y entrar en autoclave.
+        let buffer: number | null = null;
+        evs.filter((e: any) => /^ATL/.test(e.resource)).forEach((a: any) => {
+          const c = evs.find((x: any) => x.resource === 'AUTOCLAVE' && x.title === a.title);
+          if (!c) return;
+          const gap = (c.day * 3 + (c.shift - 1)) - (a.day * 3 + (a.shift - 1) + (a.duration_shifts || 1));
+          if (buffer === null || gap < buffer) buffer = gap;
+        });
+        return { endIdx, finishLabel: `${dayLabel} · T${finShift}`, buffer };
+      }
+
       // Render the 3 alternative cards
       function renderAlternatives(alternatives: any[]) {
         altCards.innerHTML = '';
+
+        const metrics   = alternatives.map(altMetrics);
+        const haveAll   = metrics.every((m: any) => m);
+        const minEnd    = haveAll ? Math.min(...metrics.map((m: any) => m.endIdx)) : 0;
+        const maxEnd    = haveAll ? Math.max(...metrics.map((m: any) => m.endIdx)) : 0;
+        const buffers   = metrics.map((m: any) => (m && m.buffer !== null ? m.buffer : null));
+        const haveBuf   = buffers.every((b: any) => b !== null);
+        const maxBuf    = haveBuf ? Math.max(...buffers as number[]) : 0;
+        const comps     = alternatives.map((a: any) => a.summary.compliance_pct);
+        const sameComp  = comps.every((c: number) => c === comps[0]);
+
+        // When the summary KPIs don't separate the options, spell out the trade-off once.
+        if (haveAll && sameComp && (minEnd !== maxEnd || (haveBuf && Math.min(...buffers as number[]) !== maxBuf))) {
+          const note = document.createElement('div');
+          note.className = 'alt-cards__note';
+          note.innerHTML = `Las 3 opciones cumplen el plan al <b>${comps[0]}%</b>. El compromiso es <b>velocidad de entrega</b> frente a <b>margen ante imprevistos</b>: compara «Fin del plan» y «Margen entre operaciones».`;
+          altCards.appendChild(note);
+        }
+
         alternatives.forEach((alt: any, idx: number) => {
           const s = alt.summary;
+          const m = metrics[idx];
           const compColor = s.compliance_pct >= 90 ? '#16A34A' : s.compliance_pct >= 75 ? '#D97706' : '#DC2626';
           const warnings = [...s.warnings, ...s.qualification_alerts].slice(0, 3);
+
+          let kpi3: string, kpi4: string;
+          if (m) {
+            const fast = haveAll && m.endIdx === minEnd && minEnd !== maxEnd;
+            kpi3 = `<div class="alt-kpi"><span class="alt-kpi__val"${fast ? ' style="color:#16A34A"' : ''}>${m.finishLabel}</span><span class="alt-kpi__key">Fin del plan${fast ? ' · el más rápido' : ''}</span></div>`;
+          } else {
+            kpi3 = `<div class="alt-kpi"><span class="alt-kpi__val">${s.atl_saturation_pct}%</span><span class="alt-kpi__key">Sat. ATL</span></div>`;
+          }
+          if (m && m.buffer !== null) {
+            const b = m.buffer;
+            const roomy = haveBuf && b === maxBuf && b > 0;
+            const bColor = b === 0 ? '#DC2626' : roomy ? '#16A34A' : '';
+            kpi4 = `<div class="alt-kpi"><span class="alt-kpi__val"${bColor ? ` style="color:${bColor}"` : ''}>${b} turno${b === 1 ? '' : 's'}</span><span class="alt-kpi__key">Margen entre ops.${roomy ? ' · el mayor' : b === 0 ? ' · sin colchón' : ''}</span></div>`;
+          } else {
+            kpi4 = `<div class="alt-kpi"><span class="alt-kpi__val">${s.autoclave_saturation_pct}%</span><span class="alt-kpi__key">Sat. Autoclave</span></div>`;
+          }
+
           const card = document.createElement('div');
           card.className = 'alt-card';
           card.innerHTML = `
@@ -5098,8 +5160,8 @@
             <div class="alt-card__kpis">
               <div class="alt-kpi"><span class="alt-kpi__val" style="color:${compColor}">${s.compliance_pct}%</span><span class="alt-kpi__key">Cumplimiento OTD</span></div>
               <div class="alt-kpi"><span class="alt-kpi__val">${s.pieces_scheduled}/${s.pieces_total}</span><span class="alt-kpi__key">Piezas prog.</span></div>
-              <div class="alt-kpi"><span class="alt-kpi__val">${s.atl_saturation_pct}%</span><span class="alt-kpi__key">Sat. ATL</span></div>
-              <div class="alt-kpi"><span class="alt-kpi__val">${s.autoclave_saturation_pct}%</span><span class="alt-kpi__key">Sat. Autoclave</span></div>
+              ${kpi3}
+              ${kpi4}
             </div>
             ${warnings.length ? `<div class="alt-card__warnings">${warnings.map((w: string) => `<div>${w}</div>`).join('')}</div>` : ''}
           `;
