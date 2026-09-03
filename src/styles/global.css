@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800&family=Inter:wght@400;500;600;700;800&display=swap');
 
 :root {
   /* === Paleta oficial Planning Core === */
@@ -15,7 +15,12 @@
   --n80: #D4DDE8;
   --n30: #4A5060;
   --text: #0B1C3A;
+  /* Semantic — status colours shared with the app's Gantt */
+  --ok: #16A34A;
+  --warn: #D97706;
+  --ground: #F5F6F8;      /* off-white page ground, faint steel bias */
   --font: 'Inter', system-ui, sans-serif;
+  --font-display: 'Archivo', 'Inter', system-ui, sans-serif;
   --radius: 8px;
   --radius-lg: 14px;
   --shadow: 0 2px 16px rgba(11,28,58,.08);
@@ -33,13 +38,18 @@ body {
   background: #fff;
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
-  text-align: justify;
+  text-align: left;
   hyphens: none;
   -webkit-hyphens: none;
 }
 
 a { color: inherit; text-decoration: none; }
 img { max-width: 100%; display: block; }
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-display);
+  letter-spacing: -.015em;
+}
 
 h1, h2, h3, h4, h5, h6,
 .section-label,
@@ -116,10 +126,12 @@ textarea { text-align: left; hyphens: none; }
 }
 
 .section-title {
+  font-family: var(--font-display);
   font-size: clamp(1.75rem, 3vw, 2.5rem);
   font-weight: 800;
   color: var(--navy);
-  line-height: 1.15;
+  line-height: 1.12;
+  letter-spacing: -.025em;
   margin-bottom: 1rem;
 }
 
@@ -172,3 +184,8 @@ textarea { text-align: left; hyphens: none; }
 /* ── Page sections spacing ── */
 section { padding: 5rem 0; }
 section:first-of-type { padding-top: 0; }
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after { animation-duration: .001ms !important; transition-duration: .001ms !important; }
+}
