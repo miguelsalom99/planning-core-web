@@ -3,7 +3,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 ---
 <BaseLayout
   title="Producto — Planning Core"
-  description="Cómo funciona Planning Core: Gantt inteligente, escenarios Opt/Eq/Cons, replanificación en tiempo real para manufactura industrial."
+  description="Cómo funciona Planning Core: Gantt en tiempo real, tres escenarios con robustez Monte Carlo medida, y replanificación en segundos para manufactura industrial."
 >
   <!-- HERO -->
   <section class="page-hero">
@@ -39,10 +39,8 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         <div class="feature-block__visual">
           <div class="feature-screen">
             <div class="screen-bar">
-              <span class="screen-dot red"></span>
-              <span class="screen-dot yellow"></span>
-              <span class="screen-dot green"></span>
-              <span class="screen-title">Planning Core — Gantt</span>
+              <span class="screen-dot"></span><span class="screen-dot"></span><span class="screen-dot"></span>
+              <span class="screen-title" data-i18n="home.demo.frame">Planning Core · Planificación semanal</span>
             </div>
             <div class="screen-body">
               <div class="mini-gantt">
@@ -55,13 +53,13 @@ import BaseLayout from '../layouts/BaseLayout.astro';
                   <div class="mg-row">
                     <span class="mg-label" data-i18n={i18nKey}>{row}</span>
                     <div class="mg-track">
-                      <div class="mg-bar" style={`width:${[35,20,28,55][ri]}%;background:${['#1E4DB7','#16A34A','#DC6803','#0891B2'][ri]}`}></div>
-                      {ri < 3 && <div class="mg-bar" style={`width:${[20,35,15][ri]}%;background:${['#7C3AED','#DC6803','#1E4DB7'][ri]};margin-left:3px`}></div>}
+                      <div class="mg-bar" style={`width:${[35,20,28,55][ri]}%;background:${['#1589EE','#2E844A','#F4740B','#7B5EA7'][ri]}`}></div>
+                      {ri < 3 && <div class="mg-bar" style={`width:${[20,35,15][ri]}%;background:${['#7B5EA7','#F4740B','#1589EE'][ri]};margin-left:3px`}></div>}
                     </div>
                   </div>
                 ))}
               </div>
-              <div class="alert-chip" data-i18n="prod.f1.alert">⚠ Colisión detectada en Línea B — Sem 3</div>
+              <div class="alert-chip" data-i18n="prod.f1.alert">Colisión detectada en Línea B — Sem 3</div>
             </div>
           </div>
         </div>
@@ -72,34 +70,38 @@ import BaseLayout from '../layouts/BaseLayout.astro';
           <p class="section-label" data-i18n="prod.f2.label">Escenarios de simulación</p>
           <h2 class="section-title" data-i18n-html="prod.f2.title">3 planes en segundos.<br/>Tú eliges cuál ejecutar.</h2>
           <p class="feature-desc" data-i18n="prod.f2.desc">
-            El motor genera automáticamente tres versiones del plan: Óptimo (máximo throughput),
-            Equilibrado (balance carga-entrega) y Conservador (mínimo riesgo). Compara y decide
-            en segundos, no en horas de reunión.
+            El motor genera tres versiones del plan — Óptimo, Equilibrado y Conservador —
+            y las somete a cientos de simulaciones Monte Carlo. Cada tarjeta trae su fecha
+            de fin, su margen ante imprevistos y su puntuación de robustez. Eliges con datos.
           </p>
           <ul class="feature-list">
-            <li data-i18n="prod.f2.li.0">Óptimo: maximiza producción y OEE</li>
-            <li data-i18n="prod.f2.li.1">Equilibrado: equilibra carga entre recursos</li>
-            <li data-i18n="prod.f2.li.2">Conservador: prioriza fechas de entrega</li>
-            <li data-i18n="prod.f2.li.3">Guardar y comparar escenarios históricos</li>
+            <li data-i18n="prod.f2.li.0">Óptimo: termina antes, sin colchón entre operaciones</li>
+            <li data-i18n="prod.f2.li.1">Equilibrado: 1 turno de margen — rendimiento y robustez</li>
+            <li data-i18n="prod.f2.li.2">Conservador: máximo margen ante disrupciones</li>
+            <li data-i18n="prod.f2.li.3">Robustez Monte Carlo medida en cada escenario</li>
           </ul>
         </div>
         <div class="feature-block__visual">
           <div class="scenarios-card">
             {[
-              { label:'Óptimo', oee:'94%', otd:'91%', color:'#16A34A', desc:'Máximo throughput', i18n: 0 },
-              { label:'Equilibrado', oee:'87%', otd:'97%', color:'#1E4DB7', desc:'Balance recomendado', active:true, i18n: 1 },
-              { label:'Conservador', oee:'78%', otd:'99%', color:'#8BA3C1', desc:'Mínimo riesgo', i18n: 2 },
+              { i:0, label:'Óptimo',      otd:'100%', fin:'Mié · T1', rob:71 },
+              { i:1, label:'Equilibrado', otd:'100%', fin:'Jue · T1', rob:84, active:true },
+              { i:2, label:'Conservador', otd:'100%', fin:'Vie · T1', rob:92 },
             ].map(sc => (
-              <div class={`scenario ${sc.active ? 'scenario--active' : ''}`} style={`--sc:${sc.color}`}>
+              <div class={`scenario ${sc.active ? 'scenario--active' : ''}`}>
                 <div class="scenario__top">
-                  <span class="scenario__label" data-i18n={`prod.f2.sc.${sc.i18n}.label`}>{sc.label}</span>
+                  <span class="scenario__label" data-i18n={`prod.f2.sc.${sc.i}.label`}>{sc.label}</span>
                   {sc.active && <span class="scenario__tag" data-i18n="prod.f2.recommended">Recomendado</span>}
                 </div>
                 <div class="scenario__metrics">
-                  <div class="sc-metric"><span>OEE</span><strong>{sc.oee}</strong></div>
-                  <div class="sc-metric"><span>OTD</span><strong>{sc.otd}</strong></div>
+                  <div class="sc-metric"><span data-i18n="prod.f2.m.otd">Cumplimiento OTD</span><strong>{sc.otd}</strong></div>
+                  <div class="sc-metric"><span data-i18n="home.demo.finish">Fin del plan</span><strong>{sc.fin}</strong></div>
                 </div>
-                <p class="scenario__desc" data-i18n={`prod.f2.sc.${sc.i18n}.desc`}>{sc.desc}</p>
+                <div class="scenario__rob">
+                  <span data-i18n="home.demo.robust">Robustez Monte Carlo</span>
+                  <span class="rob-bar"><i style={`width:${sc.rob}%`}></i></span>
+                  <b>{sc.rob}<em>/100</em></b>
+                </div>
               </div>
             ))}
           </div>
@@ -123,22 +125,16 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         </div>
         <div class="feature-block__visual">
           <div class="replan-card">
-            <div class="replan-event">
-              <span class="event-icon">🔴</span>
-              <div>
-                <strong data-i18n="prod.f3.breakdown">Avería detectada</strong>
-                <span data-i18n="prod.f3.lineA">Línea A — Turno tarde</span>
-              </div>
-              <span class="event-time">14:32</span>
+            <div class="rc-row rc-row--warn">
+              <span class="rc-dot"></span>
+              <div><strong data-i18n="prod.f3.breakdown">Avería detectada</strong><span data-i18n="prod.f3.lineA">Línea A — Turno tarde</span></div>
+              <span class="rc-time">14:32</span>
             </div>
-            <div class="replan-arrow" data-i18n="prod.f3.replanning">↓ Replanificando...</div>
-            <div class="replan-result">
-              <span class="event-icon">✅</span>
-              <div>
-                <strong data-i18n="prod.f3.ready">Nuevo plan listo</strong>
-                <span data-i18n="prod.f3.result">3 OTs reasignadas · OTD: 96% mantenido</span>
-              </div>
-              <span class="event-time">14:32</span>
+            <div class="rc-arrow" data-i18n="prod.f3.replanning">Replanificando…</div>
+            <div class="rc-row rc-row--ok">
+              <span class="rc-dot"></span>
+              <div><strong data-i18n="prod.f3.ready">Nuevo plan listo</strong><span data-i18n="prod.f3.result">3 OTs reasignadas · OTD 96% mantenido</span></div>
+              <span class="rc-time">14:32<em> + 3 s</em></span>
             </div>
           </div>
         </div>
@@ -147,7 +143,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   </section>
 
   <!-- INTEGRATIONS -->
-  <section class="integrations" style="background:var(--n90)">
+  <section class="integrations">
     <div class="container text-center">
       <p class="section-label" data-i18n="prod.int.label">Integraciones</p>
       <h2 class="section-title" data-i18n="prod.int.title">Encima de lo que ya tienes</h2>
@@ -168,104 +164,88 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   <section class="cta-section">
     <div class="container cta-inner">
       <div>
-        <h2 class="section-title" data-i18n-html="prod.cta.title">¿Listo para ver Planning Core<br/>en tu planta?</h2>
-        <p class="section-sub" data-i18n="prod.cta.sub">Demo personalizada para tu sector y tus restricciones reales.</p>
+        <h2 class="section-title section-title--light" data-i18n-html="prod.cta.title">¿Listo para ver Planning Core<br/>en tu planta?</h2>
+        <p class="cta-sub" data-i18n="prod.cta.sub">Demo personalizada para tu sector y tus restricciones reales.</p>
       </div>
-      <div style="display:flex;flex-direction:column;gap:.75rem;flex-shrink:0">
+      <div class="cta-actions">
         <a href="/contacto" class="btn btn--primary" data-i18n="prod.cta.btn1">Solicitar demo →</a>
-        <a href="/precios" class="btn btn--dark" data-i18n="prod.cta.btn2">Ver precios del piloto</a>
+        <a href="/precios" class="btn btn--outline" data-i18n="prod.cta.btn2">Ver precios del piloto</a>
       </div>
     </div>
   </section>
 </BaseLayout>
 
 <style>
-  .page-hero { background: linear-gradient(145deg, #060F20, #0B1C3A); padding: 5rem 0 4rem; }
-  .page-hero__sub { color: var(--silver); max-width: 580px; line-height: 1.7; margin-top: .75rem; font-size: 1.05rem; }
-
-  .features { padding: 5rem 0; }
-
-  .feature-block {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 5rem;
-    align-items: center;
-    margin-bottom: 6rem;
-  }
+  .features { padding: 5.5rem 0; }
+  .feature-block { display: grid; grid-template-columns: 1fr 1fr; gap: 4.5rem; align-items: center; margin-bottom: 5.5rem; }
+  .feature-block:last-child { margin-bottom: 0; }
   .feature-block--reverse .feature-block__text { order: 2; }
   .feature-block--reverse .feature-block__visual { order: 1; }
-
   .feature-desc { font-size: 1rem; color: var(--n30); line-height: 1.7; margin-top: .75rem; margin-bottom: 1.25rem; }
+  .feature-list { list-style: none; display: flex; flex-direction: column; gap: .55rem; }
+  .feature-list li { padding-left: 1.3rem; position: relative; font-size: .9rem; color: var(--n30); line-height: 1.5; }
+  .feature-list li::before { content: ''; position: absolute; left: 0; top: .55em; width: 6px; height: 6px; border-radius: 50%; background: var(--brand); }
 
-  .feature-list { list-style: none; padding: 0; display: flex; flex-direction: column; gap: .6rem; }
-  .feature-list li {
-    padding-left: 1.25rem;
-    position: relative;
-    font-size: .9rem;
-    color: var(--n30);
-    line-height: 1.5;
-  }
-  .feature-list li::before { content: '✓'; position: absolute; left: 0; color: var(--brand); font-weight: 700; }
-
-  /* FEATURE SCREEN */
-  .feature-screen { background: #1A2A42; border-radius: 12px; overflow: hidden; box-shadow: 0 20px 60px rgba(11,28,58,.25); }
-  .screen-bar { display: flex; align-items: center; gap: .5rem; background: #0F1E33; padding: .65rem 1rem; }
-  .screen-dot { width: 10px; height: 10px; border-radius: 50%; }
-  .screen-dot.red { background: #FF5F57; }
-  .screen-dot.yellow { background: #FEBC2E; }
-  .screen-dot.green { background: #28C840; }
-  .screen-title { font-size: .7rem; color: rgba(255,255,255,.35); margin-left: .5rem; }
-  .screen-body { padding: 1.25rem; }
-  .mini-gantt { display: flex; flex-direction: column; gap: .45rem; }
+  /* Screen mock */
+  .feature-screen { background: #0C1E3F; border: 1px solid rgba(255,255,255,.1); border-radius: 12px; overflow: hidden; box-shadow: 0 20px 60px -20px rgba(11,28,58,.4); }
+  .screen-bar { display: flex; align-items: center; gap: .4rem; background: rgba(255,255,255,.02); padding: .7rem 1rem; border-bottom: 1px solid rgba(255,255,255,.07); }
+  .screen-dot { width: 8px; height: 8px; border-radius: 50%; background: rgba(255,255,255,.18); }
+  .screen-title { font-size: .7rem; color: rgba(255,255,255,.45); margin-left: .5rem; }
+  .screen-body { padding: 1.15rem; }
+  .mini-gantt { display: flex; flex-direction: column; gap: .4rem; }
   .mg-row { display: flex; align-items: center; gap: .5rem; }
-  .mg-label { width: 60px; font-size: .65rem; color: rgba(255,255,255,.4); flex-shrink: 0; }
-  .mg-track { flex: 1; height: 20px; background: rgba(255,255,255,.04); border-radius: 3px; display: flex; align-items: center; padding: 0 2px; overflow: hidden; }
-  .mg-bar { height: 16px; border-radius: 2px; }
-  .alert-chip { margin-top: .85rem; background: rgba(220,104,3,.15); border: 1px solid rgba(220,104,3,.3); color: #fb923c; font-size: .7rem; font-weight: 600; padding: .35rem .75rem; border-radius: 6px; }
+  .mg-label { width: 58px; font-size: .62rem; color: rgba(255,255,255,.4); flex-shrink: 0; }
+  .mg-track { flex: 1; height: 18px; border-radius: 3px; background: rgba(255,255,255,.04); background-image: repeating-linear-gradient(90deg, rgba(255,255,255,.05) 0 1px, transparent 1px 12.5%); display: flex; align-items: center; padding: 0 2px; overflow: hidden; }
+  .mg-bar { height: 14px; border-radius: 2px; opacity: .92; }
+  .alert-chip { margin-top: .9rem; background: rgba(217,119,6,.14); border: 1px solid rgba(217,119,6,.3); color: #fb923c; font-size: .68rem; font-weight: 600; padding: .35rem .7rem; border-radius: 6px; display: inline-block; }
 
-  /* SCENARIOS */
-  .scenarios-card { display: flex; flex-direction: column; gap: .75rem; }
-  .scenario {
-    background: var(--n90);
-    border: 1px solid var(--n80);
-    border-left: 3px solid var(--sc);
-    border-radius: var(--radius-lg);
-    padding: 1.25rem 1.5rem;
-    transition: all .2s;
-  }
-  .scenario--active { background: #fff; box-shadow: var(--shadow-lg); }
-  .scenario__top { display: flex; justify-content: space-between; align-items: center; margin-bottom: .75rem; }
-  .scenario__label { font-size: .9rem; font-weight: 700; color: var(--navy); }
-  .scenario__tag { font-size: .65rem; font-weight: 700; background: rgba(30,77,183,.1); color: var(--brand); padding: .2rem .6rem; border-radius: 999px; }
-  .scenario__metrics { display: flex; gap: 1.5rem; }
-  .sc-metric span { display: block; font-size: .65rem; color: var(--silver); text-transform: uppercase; letter-spacing: .06em; margin-bottom: .1rem; }
-  .sc-metric strong { font-size: 1.25rem; font-weight: 800; color: var(--sc); }
-  .scenario__desc { font-size: .8rem; color: var(--silver); margin-top: .5rem; }
+  /* Scenarios */
+  .scenarios-card { display: flex; flex-direction: column; gap: .7rem; }
+  .scenario { background: #fff; border: 1.5px solid var(--n80); border-radius: var(--radius-lg); padding: 1.15rem 1.35rem; transition: border-color .2s, box-shadow .2s; }
+  .scenario--active { border-color: var(--brand); box-shadow: 0 0 0 3px rgba(27,63,139,.1); }
+  .scenario__top { display: flex; justify-content: space-between; align-items: center; margin-bottom: .7rem; }
+  .scenario__label { font-family: var(--font-display); font-size: .92rem; font-weight: 700; color: var(--navy); }
+  .scenario__tag { font-size: .62rem; font-weight: 700; background: rgba(27,63,139,.1); color: var(--brand); padding: .18rem .55rem; border-radius: 999px; }
+  .scenario__metrics { display: flex; gap: 1.75rem; margin-bottom: .7rem; }
+  .sc-metric span { display: block; font-size: .6rem; color: var(--n30); text-transform: uppercase; letter-spacing: .05em; margin-bottom: .15rem; }
+  .sc-metric strong { font-family: var(--font-display); font-size: 1.05rem; font-weight: 800; color: var(--navy); }
+  .scenario__rob { display: grid; grid-template-columns: 1fr auto; align-items: center; column-gap: .6rem; }
+  .scenario__rob > span:first-child { grid-column: 1; font-size: .6rem; color: var(--n30); text-transform: uppercase; letter-spacing: .05em; }
+  .scenario__rob b { grid-column: 2; grid-row: 1 / span 2; font-family: var(--font-display); font-size: .95rem; font-weight: 800; color: var(--ok); }
+  .scenario__rob b em { font-style: normal; font-weight: 500; color: var(--n30); font-size: .68rem; }
+  .rob-bar { grid-column: 1; height: 4px; border-radius: 999px; background: var(--n80); overflow: hidden; margin-top: .2rem; }
+  .rob-bar i { display: block; height: 100%; background: var(--ok); border-radius: inherit; }
 
-  /* REPLAN */
-  .replan-card { background: var(--n90); border: 1px solid var(--n80); border-radius: var(--radius-lg); padding: 1.5rem; }
-  .replan-event, .replan-result { display: flex; align-items: center; gap: 1rem; }
-  .replan-event { opacity: .7; }
-  .event-icon { font-size: 1.25rem; flex-shrink: 0; }
-  .replan-event div strong, .replan-result div strong { display: block; font-size: .9rem; color: var(--navy); font-weight: 700; }
-  .replan-event div span, .replan-result div span { font-size: .8rem; color: var(--n30); }
-  .event-time { margin-left: auto; font-size: .75rem; color: var(--silver); font-variant-numeric: tabular-nums; }
-  .replan-arrow { text-align: center; font-size: .85rem; color: var(--brand); font-weight: 600; padding: 1rem 0; }
+  /* Replan card */
+  .replan-card { background: #fff; border: 1px solid var(--n80); border-radius: var(--radius-lg); padding: 1.4rem; box-shadow: var(--shadow); }
+  .rc-row { display: flex; align-items: center; gap: .85rem; padding: .7rem .85rem; border-radius: 10px; border: 1px solid var(--n80); }
+  .rc-row--warn { border-color: rgba(217,119,6,.35); background: #FEF6EC; }
+  .rc-row--ok { border-color: rgba(22,163,74,.35); background: #F0FBF3; }
+  .rc-dot { width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0; }
+  .rc-row--warn .rc-dot { background: var(--warn); }
+  .rc-row--ok .rc-dot { background: var(--ok); }
+  .rc-row strong { display: block; font-size: .88rem; color: var(--navy); font-weight: 700; }
+  .rc-row span:not(.rc-dot):not(.rc-time) { font-size: .8rem; color: var(--n30); }
+  .rc-time { margin-left: auto; font-size: .74rem; color: var(--n30); font-variant-numeric: tabular-nums; flex-shrink: 0; }
+  .rc-time em { font-style: normal; color: var(--ok); font-weight: 700; }
+  .rc-arrow { text-align: center; font-family: var(--font-display); font-size: .78rem; color: var(--brand); font-weight: 700; padding: .7rem 0; letter-spacing: .02em; }
 
-  /* INTEGRATIONS */
-  .integrations { padding: 5rem 0; }
-  .integrations-grid { display: flex; flex-wrap: wrap; gap: .75rem; justify-content: center; margin-bottom: 1.5rem; }
-  .integration-chip { background: #fff; border: 1px solid var(--n80); border-radius: 999px; padding: .55rem 1.25rem; font-size: .875rem; font-weight: 600; color: var(--navy); box-shadow: var(--shadow); }
-  .integrations-note { font-size: .85rem; color: var(--silver); margin-top: .5rem; }
+  /* Integrations */
+  .integrations { padding: 5.5rem 0; background: #fff; border-top: 1px solid var(--n80); }
+  .integrations-grid { display: flex; flex-wrap: wrap; gap: .7rem; justify-content: center; margin-bottom: 1.5rem; }
+  .integration-chip { background: var(--ground); border: 1px solid var(--n80); border-radius: 999px; padding: .5rem 1.15rem; font-size: .85rem; font-weight: 600; color: var(--navy); }
+  .integrations-note { font-size: .84rem; color: var(--n30); margin-top: .5rem; }
 
   /* CTA */
-  .cta-section { padding: 5rem 0; background: var(--n90); }
-  .cta-inner { display: flex; justify-content: space-between; align-items: center; gap: 3rem; flex-wrap: wrap; }
+  .cta-section { padding: 4.5rem 0; background: linear-gradient(160deg, #060F20, #0B1C3A); }
+  .cta-inner { display: flex; justify-content: space-between; align-items: center; gap: 2.5rem; flex-wrap: wrap; }
+  .cta-sub { color: var(--silver); margin-top: .5rem; font-size: 1rem; }
+  .cta-actions { display: flex; flex-direction: column; gap: .7rem; flex-shrink: 0; }
 
   @media (max-width: 900px) {
-    .feature-block { grid-template-columns: 1fr; gap: 2.5rem; }
+    .feature-block { grid-template-columns: 1fr; gap: 2.25rem; margin-bottom: 4rem; }
     .feature-block--reverse .feature-block__text { order: 1; }
     .feature-block--reverse .feature-block__visual { order: 2; }
-    .cta-inner { flex-direction: column; }
+    .cta-inner { flex-direction: column; align-items: flex-start; }
   }
 </style>
