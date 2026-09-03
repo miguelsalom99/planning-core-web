@@ -1874,6 +1874,37 @@
       overflow-y: auto;
     }
     #industry-selector.hidden { display: none; }
+
+    /* Enterprise selector — between the industry menu and the planning dashboard */
+    #enterprise-selector {
+      flex: 1; display: none; flex-direction: column; align-items: center; justify-content: center;
+      padding: 2.5rem 2rem; background: var(--n90); overflow-y: auto;
+    }
+    #enterprise-selector.show { display: flex; }
+    .ent-back {
+      background: none; border: none; color: var(--brand); font: inherit; font-size: .82rem; font-weight: 600;
+      cursor: pointer; margin-bottom: 1.4rem; display: inline-flex; align-items: center; gap: .35rem;
+    }
+    .ent-back:hover { text-decoration: underline; }
+    .enterprise-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 240px)); gap: 1rem;
+      width: 100%; max-width: 780px; justify-content: center;
+    }
+    .enterprise-card {
+      background: var(--white); border: 1.5px solid var(--n80); border-radius: var(--radius-md);
+      padding: 1.4rem 1.25rem; cursor: pointer; min-height: 130px;
+      display: flex; flex-direction: column; align-items: flex-start; gap: .65rem;
+      transition: border-color var(--transition), box-shadow var(--transition), transform var(--transition);
+    }
+    .enterprise-card:hover { border-color: var(--brand); box-shadow: var(--shadow-md); transform: translateY(-2px); }
+    .enterprise-card__logo { max-width: 168px; max-height: 40px; width: auto; height: auto; }
+    .enterprise-card__name { font-size: 1rem; font-weight: 700; color: var(--navy); }
+    .enterprise-card__meta { font-size: .68rem; color: var(--n50); text-transform: uppercase; letter-spacing: .05em; }
+    .enterprise-card__cta { margin-top: auto; font-size: .78rem; font-weight: 600; color: var(--brand); }
+    .enterprise-card:hover .enterprise-card__cta::after { content: ' \2192'; }
+    .enterprise-empty { text-align: center; max-width: 400px; }
+    .enterprise-empty p { font-size: .9rem; color: var(--n50); line-height: 1.5; margin: 0 0 1.2rem; }
+
     #dashboard-view { display: none; flex: 1; overflow: hidden; }
     #dashboard-view.visible { display: flex; flex-direction: column; flex: 1; overflow: hidden; }
 
@@ -2789,6 +2820,19 @@
         </div>
 
       </div>
+    </div>
+
+    <!-- ── ENTERPRISE SELECTOR (between the industry menu and the planning) ── -->
+    <div id="enterprise-selector">
+      <button class="ent-back" id="entBack" type="button">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+        Cambiar de industria
+      </button>
+      <div class="selector-header">
+        <h2 id="entHeading">Selecciona la empresa</h2>
+        <p id="entSub">Elige la empresa cuya planificación quieres abrir.</p>
+      </div>
+      <div class="enterprise-grid" id="enterprise-grid"></div>
     </div>
 
     <!-- ── DASHBOARD VIEW (shown after industry selected) ── -->
@@ -4513,6 +4557,22 @@
 
   const selectorEl  = document.getElementById('industry-selector');
   const dashboardEl = document.getElementById('dashboard-view');
+  const entSelectorEl = document.getElementById('enterprise-selector');
+
+  let currentUser: any = null;
+  let selectedEnterprise: string | null = null;
+
+  // industry-card slug -> the `industry` value stored on Company rows
+  const IND_SLUG: Record<string, string> = {
+    composites: 'composites-aeronautica', impresion: 'impresion-packaging', fundicion: 'fundicion-metalurgia',
+    muebles: 'fabricacion-muebles', medtech: 'medtech-dispositivos', ferroviario: 'ferroviario-mro',
+    agroalimentario: 'agroalimentario', naval: 'naval-astilleros', construccion: 'construccion-industrial',
+  };
+  const IND_NAME: Record<string, string> = {
+    composites: 'Composites & Aeroespacial', impresion: 'Impresión & Packaging', fundicion: 'Fundición & Metalurgia',
+    muebles: 'Fabricación de Muebles', medtech: 'MedTech & Dispositivos', ferroviario: 'Ferroviario MRO',
+    agroalimentario: 'Agroalimentaria', naval: 'Naval & Astilleros', construccion: 'Construcción Industrial',
+  };
 
   const industriesPanelEl = document.getElementById('industriesPanel');
   const backBtn           = document.getElementById('backToSelector');
@@ -4521,6 +4581,7 @@
 
   function showSelector() {
     selectorEl.classList.remove('hidden');
+    entSelectorEl?.classList.remove('show');
     dashboardEl.classList.remove('visible');
     sidebarEl.classList.add('hidden');
     industriesPanelEl.classList.add('hidden');
@@ -4529,8 +4590,87 @@
     document.querySelectorAll('.ind-item').forEach(el => el.classList.remove('ind-item--active'));
   }
 
+  // Step between the industry menu and the planning: pick which client enterprise
+  // you're planning for. Admins see every company in that sector; a regular user
+  // sees only their own.
+  function showEnterpriseSelector(industry: string) {
+    selectorEl.classList.add('hidden');
+    dashboardEl.classList.remove('visible');
+    sidebarEl.classList.add('hidden');
+    industriesPanelEl.classList.add('hidden');
+    backBtn.classList.add('hidden');
+    backSep.classList.add('hidden');
+    entSelectorEl?.classList.add('show');
+    renderEnterprises(industry);
+  }
+
+  async function renderEnterprises(industry: string) {
+    const grid = document.getElementById('enterprise-grid');
+    const sub  = document.getElementById('entSub');
+    if (!grid) return;
+    const indSlug = IND_SLUG[industry] || industry;
+    if (sub) sub.textContent = 'Elige la empresa cuya planificación quieres abrir · ' + (IND_NAME[industry] || industry);
+    grid.innerHTML = '<div class="enterprise-empty"><p>Cargando empresas…</p></div>';
+
+    let companies: any[] = [];
+    try {
+      if (currentUser && currentUser.is_admin) {
+        const token = localStorage.getItem('pc_token');
+        const res = await fetch(`${API}/admin/companies`, { headers: { Authorization: `Bearer ${token}` } });
+        if (res.ok) companies = (await res.json()).filter((c: any) => (c.industry || '') === indSlug);
+      } else if (currentUser && currentUser.company) {
+        companies = [{ name: currentUser.company, industry: indSlug }];
+      }
+    } catch (_) {}
+
+    if (!companies.length) {
+      grid.innerHTML = `<div class="enterprise-empty">
+        <p>Aún no hay empresas registradas en ${IND_NAME[industry] || 'este sector'}.${currentUser && currentUser.is_admin ? ' Añádelas en Administración → Empresas.' : ''}</p>
+        <button class="btn-ui btn-ui--primary" id="entSkip" type="button">Continuar sin empresa</button>
+      </div>`;
+      stampAstroScope(grid);
+      document.getElementById('entSkip')?.addEventListener('click', () => pickEnterprise(null, industry));
+      return;
+    }
+
+    grid.innerHTML = companies.map((c: any) => {
+      const logo = TENANT_LOGOS[c.name];
+      const nm = String(c.name).replace(/"/g, '&quot;');
+      return `<div class="enterprise-card" data-name="${nm}">
+        ${logo ? `<img class="enterprise-card__logo" src="${logo}" alt="${nm}"/>` : `<div class="enterprise-card__name">${nm}</div>`}
+        <div class="enterprise-card__meta">${c.plan ? c.plan : 'Empresa cliente'}</div>
+        <div class="enterprise-card__cta">Abrir planificación</div>
+      </div>`;
+    }).join('');
+    stampAstroScope(grid);
+    grid.querySelectorAll('.enterprise-card').forEach(card => {
+      card.addEventListener('click', () => pickEnterprise(card.getAttribute('data-name'), industry));
+    });
+  }
+
+  function pickEnterprise(name: string | null, industry: string) {
+    selectedEnterprise = name;
+    if (name) {
+      const cnEl = document.getElementById('co-name');
+      if (cnEl) cnEl.textContent = name;
+      const ciEl = document.getElementById('co-initials');
+      if (ciEl) ciEl.textContent = name.split(' ').map(w => w[0]).slice(0, 2).join('').toUpperCase();
+      applyBranding(name);
+    }
+    entSelectorEl?.classList.remove('show');
+    showDashboard(industry);
+  }
+
+  // Astro scopes <style> to build-time elements; JS-built nodes need the cid
+  // attribute copied from a static ancestor or scoped rules won't match them.
+  function stampAstroScope(root: Element) {
+    const attr = Array.prototype.slice.call(root.attributes).find((a: Attr) => a.name.indexOf('data-astro-cid') === 0);
+    if (attr) root.querySelectorAll('*').forEach(el => el.setAttribute(attr.name, attr.value));
+  }
+
   function showDashboard(industry) {
     selectorEl.classList.add('hidden');
+    entSelectorEl?.classList.remove('show');
     dashboardEl.classList.add('visible');
     sidebarEl.classList.remove('hidden');
     industriesPanelEl.classList.remove('hidden');
@@ -4562,6 +4702,7 @@
   }
 
   function applyUser(user: any) {
+    currentUser = user;
     try {
       const initials = user.name
         ? user.name.split(' ').map((w: string) => w[0]).slice(0,2).join('').toUpperCase()
@@ -4763,21 +4904,22 @@
     if ((e as KeyboardEvent).key === 'Enter') (document.getElementById('login-password') as HTMLInputElement)?.focus();
   });
 
-  // Industry cards in selector view
+  // Industry cards in selector view → go to the enterprise picker first
   document.querySelectorAll('#industry-selector .industry-card').forEach(card => {
-    card.addEventListener('click', () => showDashboard(card.dataset.industry));
+    card.addEventListener('click', () => showEnterpriseSelector((card as HTMLElement).dataset.industry as string));
   });
 
-  // Industry links in sidebar panel
+  // Industry links in sidebar panel → enterprise picker for that sector
   document.querySelectorAll('.ind-item').forEach(link => {
     link.addEventListener('click', e => {
       e.preventDefault();
-      showDashboard(link.dataset.industry);
+      showEnterpriseSelector((link as HTMLElement).dataset.industry as string);
     });
   });
 
   // Back to selector
   backBtn.addEventListener('click', showSelector);
+  document.getElementById('entBack')?.addEventListener('click', showSelector);
 
   // ── Toast ──────────────────────────────────────────────
   function showToast(msg, duration = 3000) {
