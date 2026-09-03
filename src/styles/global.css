@@ -35,13 +35,40 @@ html { scroll-behavior: smooth; font-size: 16px; }
 body {
   font-family: var(--font);
   color: var(--text);
-  background: #fff;
+  background: var(--ground);
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
   text-align: left;
   hyphens: none;
   -webkit-hyphens: none;
 }
+
+main { background: var(--ground); }
+
+/* Shared marketing sub-page hero (producto / precios / contacto) */
+.page-hero {
+  position: relative;
+  background: linear-gradient(160deg, #060F20 0%, #0B1C3A 62%, #0E2751 100%);
+  padding: 5rem 0 4.25rem;
+  overflow: hidden;
+}
+.page-hero::before {
+  content: '';
+  position: absolute; inset: 0;
+  background-image: repeating-linear-gradient(90deg, rgba(255,255,255,.035) 0 1px, transparent 1px 7.6923%);
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 35%, #000);
+  mask-image: linear-gradient(90deg, transparent, #000 35%, #000);
+  pointer-events: none;
+}
+.page-hero .container { position: relative; }
+.page-hero__sub {
+  color: rgba(255,255,255,.62);
+  max-width: 40rem;
+  line-height: 1.7;
+  margin-top: .85rem;
+  font-size: 1.02rem;
+}
+.page-hero .section-label { color: var(--silver); }
 
 a { color: inherit; text-decoration: none; }
 img { max-width: 100%; display: block; }
