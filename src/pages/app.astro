@@ -13,10 +13,25 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
-  <!-- Anti-flicker: apply saved theme before first paint -->
+  <!-- Anti-flicker: apply saved theme / density / language before first paint -->
   <script>
     (function(){
-      try { if (localStorage.getItem('theme') === 'dark') document.documentElement.setAttribute('data-theme','dark'); } catch(e){}
+      try {
+        var s = {};
+        try { s = JSON.parse(localStorage.getItem('pc_settings') || '{}') || {}; } catch(e){}
+        // migrate legacy standalone theme key
+        if (!s.theme && localStorage.getItem('theme')) s.theme = localStorage.getItem('theme') === 'dark' ? 'dark' : 'light';
+        var theme = s.theme || 'system';
+        var dark = theme === 'dark' || (theme === 'system' && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches);
+        if (dark) document.documentElement.setAttribute('data-theme','dark');
+        else document.documentElement.setAttribute('data-theme','light');
+        if (s.density === 'compact') document.documentElement.setAttribute('data-density','compact');
+        document.documentElement.lang = s.lang === 'en' ? 'en' : 'es';
+        var c = s.cellColors || {};
+        ['blue','teal','green','amber','purple','gray'].forEach(function(k){
+          if (c[k]) document.documentElement.style.setProperty('--gb-' + k, c[k]);
+        });
+      } catch(e){}
     })();
   </script>
   <style>
@@ -41,6 +56,13 @@
       --amber-bg:  #FEF3C7;
       --red:       #DC2626;
       --red-bg:    #FEE2E2;
+      /* Gantt status colours — overridable from Configuración (localStorage pc_settings.cellColors) */
+      --gb-blue:   #1B3F8B;
+      --gb-teal:   #0891B2;
+      --gb-green:  #16A34A;
+      --gb-amber:  #D97706;
+      --gb-purple: #7C3AED;
+      --gb-gray:   #64748B;
       --sidebar-w: 228px;
       --topbar-h:  56px;
       --radius:    8px;
@@ -1260,12 +1282,12 @@
     }
     .toast.visible { opacity: 1; transform: translateX(-50%) translateY(0); }
 
-    .gb--blue   { background: var(--brand); }
-    .gb--teal   { background: #0891B2; }
-    .gb--green  { background: var(--green); }
-    .gb--purple { background: #7C3AED; }
-    .gb--amber  { background: var(--amber); }
-    .gb--gray   { background: #64748B; }
+    .gb--blue   { background: var(--gb-blue); }
+    .gb--teal   { background: var(--gb-teal); }
+    .gb--green  { background: var(--gb-green); }
+    .gb--purple { background: var(--gb-purple); }
+    .gb--amber  { background: var(--gb-amber); }
+    .gb--gray   { background: var(--gb-gray); }
 
     /* Turno view — now line (kept for reference; actual styles applied inline by JS) */
     .turno-now-line { pointer-events: none; }
@@ -2334,6 +2356,71 @@
     }
     #ob-reopen.show { display: inline-flex; }
     @media (prefers-reduced-motion: reduce) { .ob-w-bar > i { transition: none; } }
+
+    /* ═══ Compact density (Configuración → Apariencia) ═══ */
+    [data-density="compact"] .panel-page { padding: 1rem; gap: .85rem; }
+    [data-density="compact"] .nav-item { padding: .38rem .7rem; font-size: .78rem; }
+    [data-density="compact"] .nav-section { margin-bottom: .5rem; }
+    [data-density="compact"] .kpi-card { padding: .85rem 1rem; }
+    [data-density="compact"] .main { padding: 1rem; gap: 1rem; }
+    [data-density="compact"] .gantt-grid__corner,
+    [data-density="compact"] .gantt-res,
+    [data-density="compact"] .pg-res-label { padding-top: .35rem; padding-bottom: .35rem; }
+    [data-density="compact"] table td,
+    [data-density="compact"] table th { padding-top: .4rem; padding-bottom: .4rem; }
+    [data-density="compact"] .dash-panel .panel { padding: .85rem; }
+
+    /* ═══ Configuración panel ═══ */
+    .cfg-wrap { display: flex; flex-direction: column; gap: 1rem; max-width: 720px; }
+    .cfg-card {
+      background: var(--white); border: 1px solid var(--n80); border-radius: var(--radius-md);
+      padding: 1.1rem 1.25rem;
+    }
+    .cfg-card__title { font-size: .9rem; font-weight: 700; color: var(--navy); margin-bottom: .25rem; }
+    .cfg-card__sub { font-size: .72rem; color: var(--n50); margin-bottom: .9rem; line-height: 1.45; }
+    .cfg-row {
+      display: flex; align-items: center; justify-content: space-between; gap: 1rem;
+      padding: .55rem 0; border-top: 1px solid var(--n90);
+    }
+    .cfg-row:first-of-type { border-top: none; }
+    .cfg-row__label { font-size: .8rem; color: var(--n30); font-weight: 500; }
+    .cfg-row__hint  { font-size: .68rem; color: var(--n50); margin-top: .1rem; }
+    .cfg-seg { display: inline-flex; border: 1px solid var(--n80); border-radius: var(--radius); overflow: hidden; }
+    .cfg-seg button {
+      font: inherit; font-size: .74rem; font-weight: 600; padding: .35rem .8rem;
+      background: var(--white); color: var(--n50); border: none; cursor: pointer;
+      border-left: 1px solid var(--n80); transition: background var(--transition), color var(--transition);
+    }
+    .cfg-seg button:first-child { border-left: none; }
+    .cfg-seg button.active { background: var(--brand); color: #fff; }
+    .cfg-select {
+      font: inherit; font-size: .78rem; padding: .35rem .6rem; border-radius: var(--radius);
+      border: 1px solid var(--n80); background: var(--white); color: var(--n20); min-width: 160px;
+    }
+    .cfg-colors { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: .7rem; }
+    .cfg-color {
+      display: flex; align-items: center; gap: .6rem; padding: .5rem .6rem;
+      border: 1px solid var(--n80); border-radius: var(--radius); background: var(--white);
+    }
+    .cfg-color input[type="color"] {
+      width: 30px; height: 30px; border: none; border-radius: 6px; padding: 0;
+      background: none; cursor: pointer; flex-shrink: 0;
+    }
+    .cfg-color input[type="color"]::-webkit-color-swatch { border: 1px solid var(--n80); border-radius: 6px; }
+    .cfg-color input[type="color"]::-webkit-color-swatch-wrapper { padding: 0; }
+    .cfg-color__name { font-size: .74rem; color: var(--n30); }
+    .cfg-color__hex  { font-size: .64rem; color: var(--n50); font-variant-numeric: tabular-nums; }
+    .cfg-btn {
+      font: inherit; font-size: .76rem; font-weight: 600; padding: .4rem .9rem;
+      border-radius: var(--radius); border: 1px solid var(--n80); background: var(--white);
+      color: var(--n30); cursor: pointer; transition: background var(--transition);
+    }
+    .cfg-btn:hover { background: var(--n90); }
+    .cfg-btn--danger { color: var(--red); border-color: var(--red-bg); }
+    .cfg-btn--danger:hover { background: var(--red-bg); }
+    .cfg-card__foot { margin-top: .9rem; display: flex; gap: .6rem; flex-wrap: wrap; }
+    [data-theme="dark"] .cfg-select { color: var(--n20); }
+    [data-theme="dark"] .cfg-seg button { background: var(--white); }
   </style>
 </head>
 <body>
@@ -2494,55 +2581,55 @@
     <!-- ── SIDEBAR ── -->
     <nav class="sidebar hidden" id="sidebar">
       <div class="nav-section">
-        <div class="nav-section__label">Planificación</div>
+        <div class="nav-section__label" data-i18n="navSecPlanificacion">Planificación</div>
         <a class="nav-item nav-item--active" href="#" data-panel="gantt">
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 9h18M8 4v5M16 4v5"/></svg>
-          Gantt semanal
+          <span data-i18n="navGantt">Gantt semanal</span>
         </a>
         <a class="nav-item" href="#" data-panel="capacidad">
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18M7 16l4-4 4 4 4-6"/></svg>
-          Capacidad
+          <span data-i18n="navCapacidad">Capacidad</span>
         </a>
         <a class="nav-item" href="#" data-panel="escenarios">
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M15 3h6v6"/><path d="M10 14 21 3"/></svg>
-          Escenarios
+          <span data-i18n="navEscenarios">Escenarios</span>
           <span class="nav-badge nav-badge--blue">2</span>
         </a>
         <a class="nav-item" href="#" data-panel="alertas">
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
-          Alertas
+          <span data-i18n="navAlertas">Alertas</span>
           <span class="nav-badge nav-badge--red">3</span>
         </a>
       </div>
 
       <div class="nav-section">
-        <div class="nav-section__label">Operaciones</div>
+        <div class="nav-section__label" data-i18n="navSecOperaciones">Operaciones</div>
         <a class="nav-item" href="#" data-panel="ordenes">
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
-          Órdenes de fabricación
+          <span data-i18n="navOrdenes">Órdenes de fabricación</span>
         </a>
         <a class="nav-item" href="#" data-panel="recursos">
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
-          Recursos y máquinas
+          <span data-i18n="navRecursos">Recursos y máquinas</span>
         </a>
         <a class="nav-item" href="#" data-panel="kpis">
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><rect x="7" y="10" width="3" height="8"/><rect x="13" y="6" width="3" height="12"/></svg>
-          KPIs del piloto
+          <span data-i18n="navKpis">KPIs del piloto</span>
         </a>
         <a class="nav-item" href="#" data-panel="disrupciones">
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-          Disrupciones
+          <span data-i18n="navDisrupciones">Disrupciones</span>
         </a>
         <a class="nav-item" href="#" data-panel="mrp">
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
-          MRP &amp; Tiempos
+          <span data-i18n="navMrp">MRP &amp; Tiempos</span>
         </a>
       </div>
       <div class="nav-section">
-        <div class="nav-section__label">Auditoría</div>
+        <div class="nav-section__label" data-i18n="navSecAuditoria">Auditoría</div>
         <a class="nav-item" href="#" data-panel="historial">
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-          Historial de planes
+          <span data-i18n="navHistorial">Historial de planes</span>
         </a>
       </div>
 
@@ -2600,26 +2687,26 @@
       </div>
 
       <div class="nav-section" id="nav-admin-section" style="display:none">
-        <div class="nav-section__label">Administración</div>
+        <div class="nav-section__label" data-i18n="navSecAdmin">Administración</div>
         <a class="nav-item" href="#" data-panel="admin">
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-          Empresas y usuarios
+          <span data-i18n="navAdmin">Empresas y usuarios</span>
         </a>
       </div>
 
       <div class="nav-section">
-        <div class="nav-section__label">Sistema</div>
-        <a class="nav-item" href="#">
+        <div class="nav-section__label" data-i18n="navSecSistema">Sistema</div>
+        <a class="nav-item" href="#" data-panel="config">
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
-          Configuración
+          <span data-i18n="navConfig">Configuración</span>
         </a>
         <a class="nav-item" href="#">
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
-          Ayuda & soporte
+          <span data-i18n="navAyuda">Ayuda & soporte</span>
         </a>
         <a class="nav-item nav-item--danger" href="#" id="nav-logout">
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
-          Cerrar sesión
+          <span data-i18n="navLogout">Cerrar sesión</span>
         </a>
       </div>
 
@@ -3247,13 +3334,13 @@
         </div><!-- /#gantt-turno -->
 
         <div class="gantt-legend">
-          <div class="legend-item"><div class="legend-dot" style="background:#1B3F8B"></div>En curso</div>
-          <div class="legend-item"><div class="legend-dot" style="background:#0891B2"></div>Programado</div>
-          <div class="legend-item"><div class="legend-dot" style="background:#16A34A"></div>Completado</div>
-          <div class="legend-item"><div class="legend-dot" style="background:#D97706"></div>En riesgo</div>
-          <div class="legend-item"><div class="legend-dot" style="background:#7C3AED"></div>Pendiente QC</div>
-          <div class="legend-item"><div class="legend-dot" style="background:#64748B"></div>QC / Acabados</div>
-          <div class="gantt-legend__updated">Actualizado hace 8 min</div>
+          <div class="legend-item"><div class="legend-dot" style="background:var(--gb-blue)"></div><span data-i18n="statusEnCurso">En curso</span></div>
+          <div class="legend-item"><div class="legend-dot" style="background:var(--gb-teal)"></div><span data-i18n="statusProgramado">Programado</span></div>
+          <div class="legend-item"><div class="legend-dot" style="background:var(--gb-green)"></div><span data-i18n="statusCompletado">Completado</span></div>
+          <div class="legend-item"><div class="legend-dot" style="background:var(--gb-amber)"></div><span data-i18n="statusEnRiesgo">En riesgo</span></div>
+          <div class="legend-item"><div class="legend-dot" style="background:var(--gb-purple)"></div><span data-i18n="statusPendienteQC">Pendiente QC</span></div>
+          <div class="legend-item"><div class="legend-dot" style="background:var(--gb-gray)"></div><span data-i18n="statusQCAcabados">QC / Acabados</span></div>
+          <div class="gantt-legend__updated" data-i18n="legendUpdated">Actualizado hace 8 min</div>
         </div>
 
         </div><!-- /#gantt-manual-view -->
@@ -4092,6 +4179,110 @@
       </div>
     </div><!-- /#panel-admin -->
 
+    <!-- ── CONFIGURACIÓN ── -->
+    <div id="panel-config" class="dash-panel" style="display:none">
+      <div class="panel-page">
+        <div class="panel-page-header">
+          <div>
+            <div class="panel-page-title" data-i18n="cfgTitle">Configuración</div>
+            <div class="panel-page-sub" data-i18n="cfgSub">Personaliza el idioma, la apariencia y los colores del panel. Los ajustes se guardan en este navegador.</div>
+          </div>
+        </div>
+
+        <div class="cfg-wrap">
+
+          <!-- Idioma -->
+          <div class="cfg-card">
+            <div class="cfg-card__title" data-i18n="cfgLangTitle">Idioma</div>
+            <div class="cfg-card__sub" data-i18n="cfgLangSub">Idioma de la interfaz. Se está desplegando por secciones; el menú y esta pantalla ya están traducidos.</div>
+            <div class="cfg-row">
+              <div>
+                <div class="cfg-row__label" data-i18n="cfgLangLabel">Idioma del sistema</div>
+              </div>
+              <div class="cfg-seg" id="cfgLang">
+                <button type="button" data-val="es">Español</button>
+                <button type="button" data-val="en">English</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Apariencia -->
+          <div class="cfg-card">
+            <div class="cfg-card__title" data-i18n="cfgLookTitle">Apariencia</div>
+            <div class="cfg-card__sub" data-i18n="cfgLookSub">Tema de color y densidad de la información.</div>
+            <div class="cfg-row">
+              <div>
+                <div class="cfg-row__label" data-i18n="cfgThemeLabel">Tema</div>
+                <div class="cfg-row__hint" data-i18n="cfgThemeHint">«Sistema» sigue la configuración de tu equipo.</div>
+              </div>
+              <div class="cfg-seg" id="cfgTheme">
+                <button type="button" data-val="light" data-i18n="cfgThemeLight">Claro</button>
+                <button type="button" data-val="dark" data-i18n="cfgThemeDark">Oscuro</button>
+                <button type="button" data-val="system" data-i18n="cfgThemeSystem">Sistema</button>
+              </div>
+            </div>
+            <div class="cfg-row">
+              <div>
+                <div class="cfg-row__label" data-i18n="cfgDensityLabel">Densidad</div>
+                <div class="cfg-row__hint" data-i18n="cfgDensityHint">«Compacta» reduce márgenes y altura de filas.</div>
+              </div>
+              <div class="cfg-seg" id="cfgDensity">
+                <button type="button" data-val="comfortable" data-i18n="cfgDensityComfortable">Cómoda</button>
+                <button type="button" data-val="compact" data-i18n="cfgDensityCompact">Compacta</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Panel de inicio -->
+          <div class="cfg-card">
+            <div class="cfg-card__title" data-i18n="cfgStartTitle">Panel de inicio</div>
+            <div class="cfg-card__sub" data-i18n="cfgStartSub">Sección que se abre al entrar en una empresa.</div>
+            <div class="cfg-row">
+              <div class="cfg-row__label" data-i18n="cfgStartLabel">Abrir al iniciar</div>
+              <select class="cfg-select" id="cfgStartPanel">
+                <option value="gantt" data-i18n="navGantt">Gantt semanal</option>
+                <option value="capacidad" data-i18n="navCapacidad">Capacidad</option>
+                <option value="escenarios" data-i18n="navEscenarios">Escenarios</option>
+                <option value="alertas" data-i18n="navAlertas">Alertas</option>
+                <option value="ordenes" data-i18n="navOrdenes">Órdenes de fabricación</option>
+                <option value="recursos" data-i18n="navRecursos">Recursos y máquinas</option>
+                <option value="kpis" data-i18n="navKpis">KPIs del piloto</option>
+                <option value="disrupciones" data-i18n="navDisrupciones">Disrupciones</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Colores del Gantt -->
+          <div class="cfg-card">
+            <div class="cfg-card__title" data-i18n="cfgColorsTitle">Colores del Gantt</div>
+            <div class="cfg-card__sub" data-i18n="cfgColorsSub">Color de las barras y la leyenda del Gantt semanal según el estado de la orden.</div>
+            <div class="cfg-colors" id="cfgColors">
+              <label class="cfg-color"><input type="color" data-key="blue"><span><span class="cfg-color__name" data-i18n="statusEnCurso">En curso</span><br><span class="cfg-color__hex"></span></span></label>
+              <label class="cfg-color"><input type="color" data-key="teal"><span><span class="cfg-color__name" data-i18n="statusProgramado">Programado</span><br><span class="cfg-color__hex"></span></span></label>
+              <label class="cfg-color"><input type="color" data-key="green"><span><span class="cfg-color__name" data-i18n="statusCompletado">Completado</span><br><span class="cfg-color__hex"></span></span></label>
+              <label class="cfg-color"><input type="color" data-key="amber"><span><span class="cfg-color__name" data-i18n="statusEnRiesgo">En riesgo</span><br><span class="cfg-color__hex"></span></span></label>
+              <label class="cfg-color"><input type="color" data-key="purple"><span><span class="cfg-color__name" data-i18n="statusPendienteQC">Pendiente QC</span><br><span class="cfg-color__hex"></span></span></label>
+              <label class="cfg-color"><input type="color" data-key="gray"><span><span class="cfg-color__name" data-i18n="statusQCAcabados">QC / Acabados</span><br><span class="cfg-color__hex"></span></span></label>
+            </div>
+            <div class="cfg-card__foot">
+              <button class="cfg-btn" id="cfgColorsReset" data-i18n="cfgColorsReset">Restablecer colores</button>
+            </div>
+          </div>
+
+          <!-- Datos locales -->
+          <div class="cfg-card">
+            <div class="cfg-card__title" data-i18n="cfgDataTitle">Datos locales</div>
+            <div class="cfg-card__sub" data-i18n="cfgDataSub">Estos datos solo se guardan en este navegador (tutorial, tiempos de proceso, turnos y ajustes).</div>
+            <div class="cfg-card__foot">
+              <button class="cfg-btn" id="cfgResetOnboarding" data-i18n="cfgResetOnboarding">Repetir tutorial de bienvenida</button>
+              <button class="cfg-btn cfg-btn--danger" id="cfgClearLocal" data-i18n="cfgClearLocal">Borrar todos los datos locales</button>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div><!-- /#panel-config -->
+
     <!-- ── MODAL: EMPRESA ── -->
     <div class="modal-backdrop" id="companyModal">
       <div class="modal__box" style="max-width:420px">
@@ -4513,6 +4704,161 @@
     'Aernnova': 'data:image/png;base64,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',
   };
 
+  // ═══════════════════════════════════════════════════════════════
+  //  SETTINGS + i18n  (Configuración panel)
+  //  Preferences live in localStorage 'pc_settings' — per browser.
+  // ═══════════════════════════════════════════════════════════════
+  const GB_DEFAULTS: Record<string, string> = {
+    blue: '#1B3F8B', teal: '#0891B2', green: '#16A34A',
+    amber: '#D97706', purple: '#7C3AED', gray: '#64748B',
+  };
+  const SETTINGS_LS = 'pc_settings';
+
+  function getSettings(): any {
+    let s: any = {};
+    try { s = JSON.parse(localStorage.getItem(SETTINGS_LS) || '{}') || {}; } catch (_) {}
+    if (!s.theme) {
+      const legacy = (() => { try { return localStorage.getItem('theme'); } catch (_) { return null; } })();
+      s.theme = legacy === 'dark' ? 'dark' : legacy === 'light' ? 'light' : 'system';
+    }
+    if (s.lang !== 'en') s.lang = 'es';
+    if (s.density !== 'compact') s.density = 'comfortable';
+    if (!s.startPanel) s.startPanel = 'gantt';
+    if (!s.cellColors || typeof s.cellColors !== 'object') s.cellColors = {};
+    return s;
+  }
+  function saveSettings(patch: any) {
+    const next = Object.assign(getSettings(), patch);
+    try { localStorage.setItem(SETTINGS_LS, JSON.stringify(next)); } catch (_) {}
+    return next;
+  }
+
+  // ── i18n dictionary (chrome + Configuración) ──
+  const I18N: Record<string, Record<string, string>> = {
+    es: {
+      navSecPlanificacion: 'Planificación', navSecOperaciones: 'Operaciones', navSecAuditoria: 'Auditoría',
+      navSecAdmin: 'Administración', navSecSistema: 'Sistema',
+      navGantt: 'Gantt semanal', navCapacidad: 'Capacidad', navEscenarios: 'Escenarios', navAlertas: 'Alertas',
+      navOrdenes: 'Órdenes de fabricación', navRecursos: 'Recursos y máquinas', navKpis: 'KPIs del piloto',
+      navDisrupciones: 'Disrupciones', navMrp: 'MRP & Tiempos', navHistorial: 'Historial de planes',
+      navAdmin: 'Empresas y usuarios', navConfig: 'Configuración', navAyuda: 'Ayuda & soporte', navLogout: 'Cerrar sesión',
+      statusEnCurso: 'En curso', statusProgramado: 'Programado', statusCompletado: 'Completado',
+      statusEnRiesgo: 'En riesgo', statusPendienteQC: 'Pendiente QC', statusQCAcabados: 'QC / Acabados',
+      legendUpdated: 'Actualizado hace 8 min',
+      cfgTitle: 'Configuración',
+      cfgSub: 'Personaliza el idioma, la apariencia y los colores del panel. Los ajustes se guardan en este navegador.',
+      cfgLangTitle: 'Idioma', cfgLangLabel: 'Idioma del sistema',
+      cfgLangSub: 'Idioma de la interfaz. Se está desplegando por secciones; el menú y esta pantalla ya están traducidos.',
+      cfgLookTitle: 'Apariencia', cfgLookSub: 'Tema de color y densidad de la información.',
+      cfgThemeLabel: 'Tema', cfgThemeHint: '«Sistema» sigue la configuración de tu equipo.',
+      cfgThemeLight: 'Claro', cfgThemeDark: 'Oscuro', cfgThemeSystem: 'Sistema',
+      cfgDensityLabel: 'Densidad', cfgDensityHint: '«Compacta» reduce márgenes y altura de filas.',
+      cfgDensityComfortable: 'Cómoda', cfgDensityCompact: 'Compacta',
+      cfgStartTitle: 'Panel de inicio', cfgStartSub: 'Sección que se abre al entrar en una empresa.',
+      cfgStartLabel: 'Abrir al iniciar',
+      cfgColorsTitle: 'Colores del Gantt',
+      cfgColorsSub: 'Color de las barras y la leyenda del Gantt semanal según el estado de la orden.',
+      cfgColorsReset: 'Restablecer colores',
+      cfgDataTitle: 'Datos locales',
+      cfgDataSub: 'Estos datos solo se guardan en este navegador (tutorial, tiempos de proceso, turnos y ajustes).',
+      cfgResetOnboarding: 'Repetir tutorial de bienvenida', cfgClearLocal: 'Borrar todos los datos locales',
+      cfgToastSaved: 'Ajustes guardados', cfgToastColors: 'Colores restablecidos',
+      cfgConfirmClear: '¿Borrar todos los datos locales de este navegador? Se cerrará la sesión.',
+    },
+    en: {
+      navSecPlanificacion: 'Planning', navSecOperaciones: 'Operations', navSecAuditoria: 'Audit',
+      navSecAdmin: 'Administration', navSecSistema: 'System',
+      navGantt: 'Weekly Gantt', navCapacidad: 'Capacity', navEscenarios: 'Scenarios', navAlertas: 'Alerts',
+      navOrdenes: 'Work orders', navRecursos: 'Resources & machines', navKpis: 'Pilot KPIs',
+      navDisrupciones: 'Disruptions', navMrp: 'MRP & Times', navHistorial: 'Plan history',
+      navAdmin: 'Companies & users', navConfig: 'Settings', navAyuda: 'Help & support', navLogout: 'Sign out',
+      statusEnCurso: 'In progress', statusProgramado: 'Scheduled', statusCompletado: 'Completed',
+      statusEnRiesgo: 'At risk', statusPendienteQC: 'Pending QC', statusQCAcabados: 'QC / Finishing',
+      legendUpdated: 'Updated 8 min ago',
+      cfgTitle: 'Settings',
+      cfgSub: 'Customize the language, appearance and colors of the panel. Preferences are saved in this browser.',
+      cfgLangTitle: 'Language', cfgLangLabel: 'System language',
+      cfgLangSub: 'Interface language. Rolling out section by section; the menu and this screen are already translated.',
+      cfgLookTitle: 'Appearance', cfgLookSub: 'Color theme and information density.',
+      cfgThemeLabel: 'Theme', cfgThemeHint: '“System” follows your device setting.',
+      cfgThemeLight: 'Light', cfgThemeDark: 'Dark', cfgThemeSystem: 'System',
+      cfgDensityLabel: 'Density', cfgDensityHint: '“Compact” reduces margins and row height.',
+      cfgDensityComfortable: 'Comfortable', cfgDensityCompact: 'Compact',
+      cfgStartTitle: 'Start panel', cfgStartSub: 'The section that opens when you enter a company.',
+      cfgStartLabel: 'Open on start',
+      cfgColorsTitle: 'Gantt colors',
+      cfgColorsSub: 'Color of the weekly Gantt bars and legend, by work-order status.',
+      cfgColorsReset: 'Reset colors',
+      cfgDataTitle: 'Local data',
+      cfgDataSub: 'This data is only stored in this browser (tutorial, process times, shifts and settings).',
+      cfgResetOnboarding: 'Replay welcome tutorial', cfgClearLocal: 'Clear all local data',
+      cfgToastSaved: 'Settings saved', cfgToastColors: 'Colors reset',
+      cfgConfirmClear: 'Clear all local data in this browser? You will be signed out.',
+    },
+  };
+  function t(key: string): string {
+    const lang = getSettings().lang;
+    return (I18N[lang] && I18N[lang][key]) || I18N.es[key] || key;
+  }
+  function applyI18n(root: Document | Element = document) {
+    const lang = getSettings().lang;
+    root.querySelectorAll('[data-i18n]').forEach(el => {
+      const k = el.getAttribute('data-i18n')!;
+      const v = (I18N[lang] && I18N[lang][k]);
+      if (v != null) el.textContent = v;
+    });
+  }
+
+  let _systemThemeMQ: MediaQueryList | null = null;
+  function applySettings() {
+    const s = getSettings();
+    const root = document.documentElement;
+    // theme
+    const wantDark = s.theme === 'dark' ||
+      (s.theme === 'system' && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches);
+    root.setAttribute('data-theme', wantDark ? 'dark' : 'light');
+    if (s.theme === 'system' && window.matchMedia && !_systemThemeMQ) {
+      _systemThemeMQ = window.matchMedia('(prefers-color-scheme: dark)');
+      _systemThemeMQ.addEventListener('change', () => { if (getSettings().theme === 'system') applySettings(); });
+    }
+    // density
+    if (s.density === 'compact') root.setAttribute('data-density', 'compact');
+    else root.removeAttribute('data-density');
+    // gantt colours
+    Object.keys(GB_DEFAULTS).forEach(k => {
+      const v = s.cellColors[k];
+      if (v && v.toLowerCase() !== GB_DEFAULTS[k].toLowerCase()) root.style.setProperty('--gb-' + k, v);
+      else root.style.removeProperty('--gb-' + k);
+    });
+    // language
+    root.lang = s.lang;
+    applyI18n();
+    syncConfigPanel();
+  }
+
+  function syncConfigPanel() {
+    const s = getSettings();
+    const seg = (id: string, val: string) => {
+      const box = document.getElementById(id);
+      if (!box) return;
+      box.querySelectorAll('button').forEach(b =>
+        b.classList.toggle('active', (b as HTMLElement).dataset.val === val));
+    };
+    seg('cfgLang', s.lang);
+    seg('cfgTheme', s.theme);
+    seg('cfgDensity', s.density);
+    const sp = document.getElementById('cfgStartPanel') as HTMLSelectElement | null;
+    if (sp) sp.value = s.startPanel;
+    document.querySelectorAll('#cfgColors .cfg-color').forEach(row => {
+      const input = row.querySelector('input[type="color"]') as HTMLInputElement;
+      const hex   = row.querySelector('.cfg-color__hex') as HTMLElement;
+      const key   = input.dataset.key!;
+      const val   = (s.cellColors[key] || GB_DEFAULTS[key]);
+      input.value = val;
+      if (hex) hex.textContent = val.toUpperCase();
+    });
+  }
+
   const selectorEl  = document.getElementById('industry-selector');
   const dashboardEl = document.getElementById('dashboard-view');
   const entSelectorEl = document.getElementById('enterprise-selector');
@@ -4630,6 +4976,11 @@
       el.classList.toggle('ind-item--active', el.dataset.industry === industry);
     });
     initDashboard();
+    // honour the "start panel" preference (Configuración)
+    const startPanel = getSettings().startPanel;
+    if (startPanel && startPanel !== 'gantt') {
+      (document.querySelector(`.nav-item[data-panel="${startPanel}"]`) as HTMLElement | null)?.click();
+    }
   }
 
   function showLoginForm(errMsg?: string) {
@@ -7465,20 +7816,64 @@
       });
     }
 
-    // ── Theme toggle ─────────────────────────────────────────────
+    // ── Theme toggle (topbar) — writes to pc_settings, delegates to applySettings ──
     const themeToggleBtn = document.getElementById('themeToggleBtn');
-    function applyTheme(dark: boolean) {
-      if (dark) {
-        document.documentElement.setAttribute('data-theme', 'dark');
-        localStorage.setItem('theme', 'dark');
-      } else {
-        document.documentElement.removeAttribute('data-theme');
-        localStorage.setItem('theme', 'light');
-      }
-    }
     themeToggleBtn?.addEventListener('click', () => {
-      applyTheme(document.documentElement.getAttribute('data-theme') !== 'dark');
+      const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+      saveSettings({ theme: isDark ? 'light' : 'dark' });
+      applySettings();
     });
+
+    // ── Configuración panel wiring ──────────────────────────────
+    (function initConfigPanel() {
+      const segWire = (id: string, key: string) => {
+        const box = document.getElementById(id);
+        if (!box) return;
+        box.querySelectorAll('button').forEach(btn => {
+          btn.addEventListener('click', () => {
+            saveSettings({ [key]: (btn as HTMLElement).dataset.val });
+            applySettings();
+            showToast('✓ ' + t('cfgToastSaved'));
+          });
+        });
+      };
+      segWire('cfgLang', 'lang');
+      segWire('cfgTheme', 'theme');
+      segWire('cfgDensity', 'density');
+
+      const sp = document.getElementById('cfgStartPanel') as HTMLSelectElement | null;
+      sp?.addEventListener('change', () => {
+        saveSettings({ startPanel: sp.value });
+        showToast('✓ ' + t('cfgToastSaved'));
+      });
+
+      document.querySelectorAll('#cfgColors input[type="color"]').forEach(inp => {
+        inp.addEventListener('input', () => {
+          const el = inp as HTMLInputElement;
+          const colors = Object.assign({}, getSettings().cellColors, { [el.dataset.key!]: el.value });
+          saveSettings({ cellColors: colors });
+          applySettings();
+        });
+      });
+      document.getElementById('cfgColorsReset')?.addEventListener('click', () => {
+        saveSettings({ cellColors: {} });
+        applySettings();
+        showToast('✓ ' + t('cfgToastColors'));
+      });
+
+      document.getElementById('cfgResetOnboarding')?.addEventListener('click', () => {
+        try { localStorage.removeItem('pc_onboarding'); } catch (_) {}
+        location.reload();
+      });
+      document.getElementById('cfgClearLocal')?.addEventListener('click', () => {
+        if (!confirm(t('cfgConfirmClear'))) return;
+        ['pc_onboarding', 'pc_process_times', 'pc_shift_schedule', 'pc_settings', 'theme', 'pc_token']
+          .forEach(k => { try { localStorage.removeItem(k); } catch (_) {} });
+        location.href = '/app';
+      });
+
+      syncConfigPanel();
+    })();
 
     // ── Topbar: notifications & settings buttons ─────────────────
     function navToPanel(panelId: string) {
@@ -8531,6 +8926,7 @@
     render();
   })();
 
+  applySettings();   // theme / density / language / gantt colours from pc_settings
   init();
 </script>
 
