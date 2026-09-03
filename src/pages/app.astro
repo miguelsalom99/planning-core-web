@@ -2358,16 +2358,6 @@
     }
     #ob-reopen.show { display: inline-flex; }
     @media (prefers-reduced-motion: reduce) { .ob-w-bar > i { transition: none; } }
-
-    /* Per-tenant logo at the top of the sidebar menu */
-    .sidebar__brand {
-      display: flex; align-items: center;
-      padding: 14px 18px 13px;
-      border-bottom: 1px solid var(--n80);
-      margin-bottom: 2px;
-    }
-    .sidebar__brand[hidden] { display: none; }
-    .sidebar__brand img { max-width: 150px; max-height: 30px; width: auto; height: auto; display: block; }
   </style>
 </head>
 <body>
@@ -2532,9 +2522,6 @@
 
     <!-- ── SIDEBAR ── -->
     <nav class="sidebar hidden" id="sidebar">
-      <div class="sidebar__brand" id="sidebar-brand" hidden>
-        <img id="sidebar-brand-img" src="" alt="" />
-      </div>
       <div class="nav-section">
         <div class="nav-section__label">Planificación</div>
         <a class="nav-item nav-item--active" href="#" data-panel="gantt">
@@ -4655,7 +4642,6 @@
       if (cnEl) cnEl.textContent = name;
       const ciEl = document.getElementById('co-initials');
       if (ciEl) ciEl.textContent = name.split(' ').map(w => w[0]).slice(0, 2).join('').toUpperCase();
-      applyBranding(name);
     }
     entSelectorEl?.classList.remove('show');
     showDashboard(industry);
@@ -4725,24 +4711,11 @@
       const cnEl = document.getElementById('co-name');
       if (cnEl) cnEl.textContent = company;
       applyPilot(user.pilot);
-      applyBranding(user.company);
     } catch (e) {
       console.error('applyUser error', e);
     }
     hideOverlay();
     showSelector();
-  }
-
-  // Per-tenant logo shown at the top of the sidebar menu. Keyed by the exact
-  // company name returned in /auth/me. Add a "Company Name": "data:image/png;base64,…"
-  // entry to brand a new tenant.
-  function applyBranding(company: any) {
-    const slot = document.getElementById('sidebar-brand');
-    const img  = document.getElementById('sidebar-brand-img') as HTMLImageElement | null;
-    if (!slot || !img) return;
-    const src = company && TENANT_LOGOS[company];
-    if (src) { img.src = src; img.alt = company; slot.hidden = false; }
-    else { img.removeAttribute('src'); slot.hidden = true; }
   }
 
   // Pilot timeline is per-company (admin sets "Inicio del piloto" + "Semanas").
