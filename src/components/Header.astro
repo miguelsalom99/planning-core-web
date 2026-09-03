@@ -1,11 +1,6 @@
 ---
+import { SECTORS } from '../data/sectors.js';
 const currentPath = Astro.url.pathname;
-
-const industries = [
-  { href: '/sectores/composites-aeronautica', label: 'Composites & Aeroespacial', i18n: 'nav.ind.composites' },
-  { href: '/sectores/impresion-packaging',  label: 'Impresión & Packaging',     i18n: 'nav.ind.print'      },
-  { href: '/sectores/fundicion-metalurgia', label: 'Fundición & Metalurgia',    i18n: 'nav.ind.metal'      },
-];
 ---
 <header class="header" id="header">
   <div class="container header__inner">
@@ -24,8 +19,8 @@ const industries = [
           <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
         </button>
         <div class="dropdown-menu">
-          {industries.map(({ href, label, i18n }) => (
-            <a href={href} class="dropdown-item" data-i18n={i18n}>{label}</a>
+          {SECTORS.map(s => (
+            <a href={`/sectores/${s.slug}`} class="dropdown-item" data-i18n={`sector.${s.slug}.short`}>{s.short}</a>
           ))}
           <div class="dropdown-divider"></div>
           <a href="/sectores" class="dropdown-item dropdown-item--all" data-i18n="nav.viewAll">Ver todos los sectores →</a>
@@ -76,7 +71,7 @@ const industries = [
     top: 0;
     z-index: 200;
     background: #0B1C3A;
-    border-bottom: 1px solid rgba(255,255,255,.07);
+    border-bottom: 1px solid rgba(255,255,255,.08);
     transition: box-shadow .2s;
   }
   .header.scrolled { box-shadow: 0 4px 24px rgba(0,0,0,.3); }
@@ -84,44 +79,46 @@ const industries = [
   .header__inner {
     display: flex;
     align-items: center;
-    height: 68px;
+    height: 64px;
     gap: 2rem;
   }
 
   .header__logo {
     display: flex;
     align-items: center;
+    gap: .5rem;
     flex-shrink: 0;
     text-decoration: none;
   }
 
   .logo-icon {
-    height: 34px;
-    width: 34px;
-    border-radius: 8px;
+    height: 32px;
+    width: 32px;
+    border-radius: 7px;
     object-fit: cover;
     flex-shrink: 0;
   }
   .logo-wordmark {
+    font-family: var(--font-display);
     font-size: 1rem;
-    font-weight: 400;
+    font-weight: 500;
     color: #fff;
     letter-spacing: -.01em;
     line-height: 1;
   }
-  .logo-wordmark strong { font-weight: 700; }
+  .logo-wordmark strong { font-weight: 800; }
 
   .header__nav {
     display: flex;
     align-items: center;
-    gap: .25rem;
+    gap: .1rem;
     flex: 1;
   }
   .nav-link {
     font-size: .875rem;
     font-weight: 500;
     color: rgba(255,255,255,.7);
-    padding: .45rem .85rem;
+    padding: .45rem .8rem;
     border-radius: 6px;
     transition: all .15s;
     white-space: nowrap;
@@ -147,7 +144,7 @@ const industries = [
     position: absolute;
     top: calc(100% + 8px);
     left: 0;
-    min-width: 220px;
+    min-width: 240px;
     background: #112347;
     border: 1px solid rgba(255,255,255,.1);
     border-radius: 10px;
@@ -170,8 +167,8 @@ const industries = [
   .dropdown-item--all { color: rgba(139,194,198,.9); font-size: .78rem; }
   .dropdown-item--all:hover { color: #8BC2C6; background: rgba(139,194,198,.07); }
 
-  .header__actions { display: flex; align-items: center; gap: .75rem; }
-  .btn--sm { padding: .5rem 1.25rem; font-size: .85rem; }
+  .header__actions { display: flex; align-items: center; gap: .7rem; }
+  .btn--sm { padding: .5rem 1.2rem; font-size: .85rem; }
   .btn--ghost {
     background: transparent;
     color: rgba(255,255,255,.8);
@@ -195,9 +192,7 @@ const industries = [
   }
 
   /* Language selector */
-  .lang-selector {
-    position: relative;
-  }
+  .lang-selector { position: relative; }
   .lang-btn {
     display: flex;
     align-items: center;
@@ -273,16 +268,12 @@ const industries = [
     transition: all .2s;
   }
 
-  @media (max-width: 900px) {
-    .logo-img--full { display: none; }
-    .logo-img--icon { display: block; }
-  }
-
-  @media (max-width: 768px) {
+  @media (max-width: 860px) {
+    .header__inner { gap: 1rem; }
     .nav-toggle { display: flex; }
     .header__nav {
       position: fixed;
-      top: 68px;
+      top: 64px;
       left: 0;
       right: 0;
       background: #0B1C3A;
@@ -292,9 +283,23 @@ const industries = [
       border-bottom: 1px solid rgba(255,255,255,.1);
       display: none;
       gap: .25rem;
+      max-height: calc(100vh - 64px);
+      overflow-y: auto;
     }
     .header__nav.open { display: flex; }
     .nav-link { padding: .75rem 1rem; }
+    .nav-dropdown { padding-bottom: 0; margin-bottom: 0; }
+    .dropdown-menu {
+      position: static;
+      display: block;
+      background: rgba(255,255,255,.03);
+      border: none;
+      box-shadow: none;
+      padding: .25rem 0 .25rem 1rem;
+      min-width: 0;
+    }
+    .header__actions .btn--ghost,
+    .header__actions .btn--primary { display: none; }
   }
 </style>
 
