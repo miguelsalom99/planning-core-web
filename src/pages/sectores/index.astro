@@ -4,8 +4,8 @@ import { SECTORS } from '../../data/sectors.js';
 import SectorIcon from '../../components/SectorIcon.astro';
 ---
 <BaseLayout
-  title="Sectores — Planning Core"
-  description="Planning Core adaptado a 8 sectores industriales. Impresión, Fundición, Muebles, MedTech, Ferroviario, Agroalimentario, Naval y Construcción."
+  title="Sectores industriales — Planning Core"
+  description="Planning Core preconfigurado para 9 sectores industriales: Composites, Impresión, Fundición, Muebles, MedTech, Ferroviario, Agroalimentario, Naval y Construcción."
 >
   <section class="page-hero">
     <div class="container">
@@ -21,116 +21,70 @@ import SectorIcon from '../../components/SectorIcon.astro';
 
   <section class="sectors-list">
     <div class="container">
-      {SECTORS.map((s, i) => (
-        <a href={`/sectores/${s.slug}`} class="sector-row" style={`--acc:${s.accent}`}>
-          <div class="sector-row__num">{String(i+1).padStart(2,'0')}</div>
-          <div class="sector-row__icon"><SectorIcon slug={s.slug} size={22} /></div>
-          <div class="sector-row__main">
-            <div class="sector-row__top">
-              <h2 data-i18n={`sector.${s.slug}.name`}>{s.name}</h2>
-            </div>
-            <p class="sector-row__tagline" data-i18n={`sector.${s.slug}.tagline`}>{s.tagline}</p>
-            <p class="sector-row__roi" data-i18n={`sector.${s.slug}.roiHeadline`}>{s.roiHeadline}</p>
-          </div>
-          <div class="sector-row__meta">
-            <div class="meta-item">
-              <span class="meta-label" data-i18n="sectores.meta.cycle">Ciclo de implantación</span>
-              <span class="meta-val" data-i18n={`sector.${s.slug}.cycle`}>{s.cycle}</span>
-            </div>
-          </div>
-          <div class="sector-row__arrow">→</div>
-        </a>
-      ))}
+      <ol class="sl-grid">
+        {SECTORS.map((s, i) => (
+          <li>
+            <a href={`/sectores/${s.slug}`} class="sl-row" style={`--acc:${s.accent}`}>
+              <span class="sl-num">{String(i + 1).padStart(2, '0')}</span>
+              <span class="sl-icon"><SectorIcon slug={s.slug} size={20} /></span>
+              <span class="sl-main">
+                <span class="sl-name" data-i18n={`sector.${s.slug}.name`}>{s.name}</span>
+                <span class="sl-tag" data-i18n={`sector.${s.slug}.tagline`}>{s.tagline}</span>
+                <span class="sl-roi" data-i18n={`sector.${s.slug}.roiHeadline`}>{s.roiHeadline}</span>
+              </span>
+              <span class="sl-meta">
+                <span class="sl-meta-lbl" data-i18n="sectores.meta.cycle">Ciclo de implantación</span>
+                <span class="sl-meta-val" data-i18n={`sector.${s.slug}.cycle`}>{s.cycle}</span>
+              </span>
+              <span class="sl-arrow" aria-hidden="true">→</span>
+            </a>
+          </li>
+        ))}
+      </ol>
     </div>
   </section>
 </BaseLayout>
 
 <style>
-  .page-hero {
-    background: linear-gradient(145deg, #060F20, #0B1C3A);
-    padding: 5rem 0 4rem;
-  }
-  .page-hero__sub {
-    color: var(--silver);
-    max-width: 620px;
-    line-height: 1.7;
-    margin-top: .75rem;
-    font-size: 1.05rem;
-  }
-
-  .sectors-list { padding: 3rem 0 5rem; }
-
-  .sector-row {
-    display: flex;
-    align-items: center;
-    gap: 1.5rem;
-    padding: 1.75rem 2rem;
-    border: 1px solid var(--n80);
-    border-left: 4px solid var(--acc);
-    border-radius: var(--radius-lg);
-    margin-bottom: 1rem;
-    background: #fff;
-    transition: all var(--transition);
-    text-decoration: none;
+  .sectors-list { padding: 3.5rem 0 5.5rem; }
+  .sl-grid { list-style: none; border-top: 1px solid var(--n80); }
+  .sl-row {
+    display: grid;
+    grid-template-columns: 2.4rem 44px 1fr auto 1.2rem;
+    align-items: center; column-gap: 1.5rem;
+    padding: 1.5rem .6rem;
+    border-bottom: 1px solid var(--n80);
     color: inherit;
+    transition: background var(--transition), padding-left var(--transition), box-shadow var(--transition);
   }
-  .sector-row:hover { transform: translateX(4px); box-shadow: var(--shadow-lg); background: var(--n90); }
-
-  .sector-row__num {
-    font-size: .75rem;
-    font-weight: 700;
-    color: var(--silver);
-    flex-shrink: 0;
-    width: 28px;
-  }
-  .sector-row__icon { width: 44px; height: 44px; border-radius: 11px; background: color-mix(in srgb, var(--acc) 10%, transparent); display: flex; align-items: center; justify-content: center; color: var(--acc); flex-shrink: 0; }
-
-  .sector-row__main { flex: 1; min-width: 0; }
-  .sector-row__top { display: flex; align-items: center; gap: .75rem; flex-wrap: wrap; margin-bottom: .35rem; }
-  .sector-row__top h2 { font-size: 1.1rem; font-weight: 700; color: var(--navy); }
-
-  .sector-badge {
-    font-size: .65rem;
-    font-weight: 700;
-    letter-spacing: .06em;
-    text-transform: uppercase;
+  .sl-row:hover { background: #fff; padding-left: 1.1rem; box-shadow: var(--shadow); }
+  .sl-num { font-family: var(--font-display); font-size: .78rem; font-weight: 700; letter-spacing: .1em; color: var(--acc); }
+  .sl-icon {
+    width: 44px; height: 44px; border-radius: 11px;
+    background: color-mix(in srgb, var(--acc) 12%, transparent);
     color: var(--acc);
-    background: color-mix(in srgb, var(--acc) 10%, transparent);
-    border: 1px solid color-mix(in srgb, var(--acc) 25%, transparent);
-    padding: .2rem .65rem;
-    border-radius: 999px;
+    display: flex; align-items: center; justify-content: center;
   }
-
-  .sector-row__tagline {
-    font-size: .9rem;
-    color: var(--n30);
-    font-style: italic;
-    margin-bottom: .3rem;
-  }
-  .sector-row__roi { font-size: .82rem; color: var(--silver); }
-
-  .sector-row__meta {
-    display: flex;
-    gap: 2rem;
-    flex-shrink: 0;
-    border-left: 1px solid var(--n80);
-    padding-left: 2rem;
-  }
-  .meta-item { text-align: center; }
-  .meta-label { display: block; font-size: .65rem; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--silver); margin-bottom: .2rem; }
-  .meta-val { font-size: .85rem; font-weight: 600; color: var(--navy); }
-  .meta-val--accent { color: var(--acc); }
-
-  .sector-row__arrow { font-size: 1.25rem; color: var(--acc); flex-shrink: 0; opacity: 0; transition: opacity .2s; }
-  .sector-row:hover .sector-row__arrow { opacity: 1; }
+  .sl-main { display: flex; flex-direction: column; gap: .2rem; min-width: 0; }
+  .sl-name { font-family: var(--font-display); font-weight: 700; font-size: 1.05rem; color: var(--navy); line-height: 1.2; }
+  .sl-tag { font-size: .9rem; color: var(--n30); }
+  .sl-roi { font-size: .8rem; color: var(--blue-gray); margin-top: .15rem; }
+  .sl-meta { text-align: right; flex-shrink: 0; }
+  .sl-meta-lbl { display: block; font-size: .62rem; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--blue-gray); margin-bottom: .2rem; }
+  .sl-meta-val { font-size: .85rem; font-weight: 600; color: var(--navy); }
+  .sl-arrow { color: var(--acc); font-size: 1.05rem; opacity: 0; transition: opacity var(--transition); }
+  .sl-row:hover .sl-arrow { opacity: 1; }
 
   @media (max-width: 900px) {
-    .sector-row { flex-wrap: wrap; }
-    .sector-row__meta { border-left: none; padding-left: 0; border-top: 1px solid var(--n80); padding-top: 1rem; width: 100%; justify-content: flex-start; gap: 1.5rem; }
-    .sector-row__arrow { display: none; }
-  }
-  @media (max-width: 600px) {
-    .sector-row { padding: 1.25rem; }
-    .sector-row__num { display: none; }
+    .sl-row {
+      grid-template-columns: 44px 1fr;
+      grid-template-areas: 'icon main' 'blank meta';
+      column-gap: 1rem; row-gap: .6rem;
+    }
+    .sl-num { display: none; }
+    .sl-icon { grid-area: icon; }
+    .sl-main { grid-area: main; }
+    .sl-meta { grid-area: meta; text-align: left; }
+    .sl-arrow { display: none; }
   }
 </style>

@@ -10,59 +10,44 @@ export function getStaticPaths() {
 const { sector: s } = Astro.props;
 ---
 <BaseLayout
-  title={`${s.name} — Planning Core`}
-  description={`Planning Core para ${s.name}. ${s.roiHeadline}`}
+  title={`${s.name} — Software de planificación · Planning Core`}
+  description={`Planning Core para ${s.name}: ${s.roiHeadline}. Piloto de 12 semanas, ROI medible con tus propios datos.`}
   accent={s.accent}
 >
-  <!-- PAGE HERO -->
-  <section class="hero" style={`--acc:${s.accent}`}>
-    <div class="container hero__inner">
+  <!-- HERO -->
+  <section class="sd-hero" style={`--acc:${s.accent}`}>
+    <div class="container sd-hero__inner">
       <div>
-        <div class="hero__icon"><SectorIcon slug={s.slug} size={32} /></div>
-        <h1 class="hero__title" data-i18n={`sector.${s.slug}.name`}>{s.name}</h1>
-        <p class="hero__tagline" data-i18n={`sector.${s.slug}.tagline`}>{s.tagline}</p>
-        <p class="hero__roi" data-i18n={`sector.${s.slug}.roiHeadline`}>{s.roiHeadline}</p>
-        <div class="hero__ctas">
-          <a href="/contacto" class="btn btn--primary" style={`background:${s.accent};border-color:${s.accent}`} data-i18n="sectorDetail.cta.demo">
-            Solicitar demo →
-          </a>
+        <div class="sd-hero__icon"><SectorIcon slug={s.slug} size={30} /></div>
+        <h1 class="sd-hero__title" data-i18n={`sector.${s.slug}.name`}>{s.name}</h1>
+        <p class="sd-hero__tagline" data-i18n={`sector.${s.slug}.tagline`}>{s.tagline}</p>
+        <p class="sd-hero__roi" data-i18n={`sector.${s.slug}.roiHeadline`}>{s.roiHeadline}</p>
+        <div class="sd-hero__ctas">
+          <a href="/contacto" class="btn btn--primary" style={`background:${s.accent};border-color:${s.accent}`} data-i18n="sectorDetail.cta.demo">Solicitar demo →</a>
           <a href="/precios" class="btn btn--outline" data-i18n="sectorDetail.cta.pilot">Ver piloto 12 semanas</a>
         </div>
       </div>
-      <div class="hero__meta-box">
-        <div class="meta-row">
-          <span class="meta-lbl" data-i18n="sectorDetail.meta.marketEs">Mercado ES</span>
-          <span class="meta-val" data-i18n={`sector.${s.slug}.marketEs`}>{s.marketEs}</span>
-        </div>
-        <div class="meta-row">
-          <span class="meta-lbl" data-i18n="sectorDetail.meta.marketEu">Mercado EU</span>
-          <span class="meta-val" data-i18n={`sector.${s.slug}.marketEu`}>{s.marketEu}</span>
-        </div>
-        <div class="meta-row">
-          <span class="meta-lbl" data-i18n="sectorDetail.meta.deployment">Implantación</span>
-          <span class="meta-val" data-i18n={`sector.${s.slug}.cycle`}>{s.cycle}</span>
-        </div>
-        <div class="meta-row">
-          <span class="meta-lbl" data-i18n="sectorDetail.meta.icp">ICP</span>
-          <span class="meta-val" data-i18n={`sector.${s.slug}.icp`}>{s.icp}</span>
-        </div>
+      <div class="sd-meta">
+        <div class="sd-meta__row"><span class="sd-meta__k" data-i18n="sectorDetail.meta.marketEs">Mercado ES</span><span class="sd-meta__v" data-i18n={`sector.${s.slug}.marketEs`}>{s.marketEs}</span></div>
+        <div class="sd-meta__row"><span class="sd-meta__k" data-i18n="sectorDetail.meta.marketEu">Mercado EU</span><span class="sd-meta__v" data-i18n={`sector.${s.slug}.marketEu`}>{s.marketEu}</span></div>
+        <div class="sd-meta__row"><span class="sd-meta__k" data-i18n="sectorDetail.meta.deployment">Implantación</span><span class="sd-meta__v" data-i18n={`sector.${s.slug}.cycle`}>{s.cycle}</span></div>
+        <div class="sd-meta__row"><span class="sd-meta__k" data-i18n="sectorDetail.meta.icp">ICP</span><span class="sd-meta__v" data-i18n={`sector.${s.slug}.icp`}>{s.icp}</span></div>
       </div>
     </div>
   </section>
 
   <!-- PAINS -->
-  <section class="pains" style={`--acc:${s.accent}`}>
+  <section class="sd-pains" style={`--acc:${s.accent}`}>
     <div class="container">
       <p class="section-label" data-i18n="sectorDetail.pains.label">El problema</p>
       <h2 class="section-title">
-        <span data-i18n="sectorDetail.pains.titlePrefix">Los dolores de</span>
-        {' '}
+        <span data-i18n="sectorDetail.pains.titlePrefix">Los dolores de</span>{' '}
         <span data-i18n={`sector.${s.slug}.short`}>{s.short || s.name}</span>
       </h2>
-      <div class="pains-grid">
+      <div class="sd-pains__grid">
         {s.pains.map(([title, desc], i) => (
-          <div class="pain-card">
-            <div class="pain-num">0{i+1}</div>
+          <div class="sd-pain">
+            <span class="sd-pain__n">{`0${i + 1}`}</span>
             <h3 data-i18n={`sector.${s.slug}.pain.${i}.title`}>{title}</h3>
             <p data-i18n={`sector.${s.slug}.pain.${i}.desc`}>{desc}</p>
           </div>
@@ -72,53 +57,53 @@ const { sector: s } = Astro.props;
   </section>
 
   <!-- DIFFERENTIATORS -->
-  <section class="diffs" style={`background:var(--navy);--acc:${s.accent}`}>
+  <section class="sd-diffs" style={`--acc:${s.accent}`}>
     <div class="container">
-      <p class="section-label" style="color:rgba(255,255,255,.45)" data-i18n="sectorDetail.diffs.label">Por qué Planning Core</p>
+      <p class="section-label section-label--light" data-i18n="sectorDetail.diffs.label">Por qué Planning Core</p>
       <h2 class="section-title section-title--light" data-i18n="sectorDetail.diffs.title">La solución que encaja</h2>
-      <div class="diffs-list">
+      <div class="sd-diffs__list">
         {s.differentiators.map(([title, desc], i) => (
-          <div class="diff-row">
-            <div class="diff-num">{String(i+1).padStart(2,'0')}</div>
-            <div class="diff-body">
+          <div class="sd-diff">
+            <span class="sd-diff__n">{String(i + 1).padStart(2, '0')}</span>
+            <div>
               <h3 data-i18n={`sector.${s.slug}.diff.${i}.title`}>{title}</h3>
               <p data-i18n={`sector.${s.slug}.diff.${i}.desc`}>{desc}</p>
             </div>
           </div>
         ))}
       </div>
-      <div class="personalizable-bar" data-i18n="sectorDetail.diffs.bar">
-        ✓ &nbsp; 100% personalizable a vuestras necesidades y requerimientos &nbsp;—&nbsp; Sin código. Sin consultores. En semanas.
+      <div class="sd-bar" data-i18n="sectorDetail.diffs.bar">
+        ✓  100% personalizable a vuestras necesidades y requerimientos  —  Sin código. Sin consultores. En semanas.
       </div>
     </div>
   </section>
 
   <!-- PILOT TIMELINE -->
-  <section class="pilot" style={`--acc:${s.accent}`}>
+  <section class="sd-pilot" style={`--acc:${s.accent}`}>
     <div class="container">
       <p class="section-label" data-i18n="sectorDetail.pilot.label">Piloto 12 semanas</p>
       <h2 class="section-title" data-i18n="sectorDetail.pilot.title">De cero a producción en 3 meses</h2>
-      <div class="pilot-steps">
+      <ol class="sd-pilot__steps">
         {s.pilotSteps.map(([phase, desc], i) => (
-          <div class={`pilot-step ${i === 0 ? 'pilot-step--active' : ''}`}>
-            <div class="pilot-step__num">{String(i+1).padStart(2,'0')}</div>
-            <div class="pilot-step__phase" data-i18n={`sector.${s.slug}.pilot.${i}.phase`}>{phase}</div>
-            <div class="pilot-step__desc" data-i18n={`sector.${s.slug}.pilot.${i}.desc`}>{desc}</div>
-          </div>
+          <li class="sd-pstep">
+            <span class="sd-pstep__n">{String(i + 1).padStart(2, '0')}</span>
+            <span class="sd-pstep__phase" data-i18n={`sector.${s.slug}.pilot.${i}.phase`}>{phase}</span>
+            <span class="sd-pstep__desc" data-i18n={`sector.${s.slug}.pilot.${i}.desc`}>{desc}</span>
+          </li>
         ))}
-      </div>
+      </ol>
     </div>
   </section>
 
   <!-- KPIs -->
-  <section class="kpis-sec" style={`background:var(--n90);--acc:${s.accent}`}>
+  <section class="sd-kpis" style={`--acc:${s.accent}`}>
     <div class="container">
       <p class="section-label" data-i18n="sectorDetail.kpis.label">KPIs que se miden</p>
       <h2 class="section-title" data-i18n="sectorDetail.kpis.title">Impacto medible desde la semana 1</h2>
-      <div class="kpis-grid">
+      <div class="sd-kpis__grid">
         {s.kpis.map((kpi, i) => (
-          <div class="kpi-card">
-            <span class="kpi-icon">📊</span>
+          <div class="sd-kpi">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3v18h18"/><rect x="7" y="10" width="3" height="8"/><rect x="13" y="6" width="3" height="12"/></svg>
             <span data-i18n={`sector.${s.slug}.kpi.${i}`}>{kpi}</span>
           </div>
         ))}
@@ -127,201 +112,120 @@ const { sector: s } = Astro.props;
   </section>
 
   <!-- COMPETITORS -->
-  <section class="competitors" style={`--acc:${s.accent}`}>
+  <section class="sd-comp" style={`--acc:${s.accent}`}>
     <div class="container">
       <p class="section-label" data-i18n="sectorDetail.comp.label">Competencia</p>
       <h2 class="section-title" data-i18n="sectorDetail.comp.title">Por qué no las alternativas</h2>
-      <div class="comp-table">
-        <div class="comp-header">
+      <div class="sd-comp__table">
+        <div class="sd-comp__head">
           <span data-i18n="sectorDetail.comp.headerAlt">Alternativa</span>
           <span data-i18n="sectorDetail.comp.headerWhy">Por qué no</span>
         </div>
         {s.competitors.map(([name, why], i) => (
-          <div class="comp-row">
-            <span class="comp-name" data-i18n={`sector.${s.slug}.comp.${i}.name`}>{name}</span>
-            <span class="comp-why" data-i18n={`sector.${s.slug}.comp.${i}.why`}>{why}</span>
+          <div class="sd-comp__row">
+            <span class="sd-comp__name" data-i18n={`sector.${s.slug}.comp.${i}.name`}>{name}</span>
+            <span class="sd-comp__why" data-i18n={`sector.${s.slug}.comp.${i}.why`}>{why}</span>
           </div>
         ))}
-        <div class="comp-row comp-row--us">
-          <span class="comp-name">Planning Core ✓</span>
-          <span class="comp-why" data-i18n="sectorDetail.comp.usWhy">Gantt visual · Escenarios · Sin reemplazar ERP · Piloto en 12 sem</span>
+        <div class="sd-comp__row sd-comp__row--us">
+          <span class="sd-comp__name">Planning Core ✓</span>
+          <span class="sd-comp__why" data-i18n="sectorDetail.comp.usWhy">Gantt visual · Escenarios con robustez medida · Sin reemplazar ERP · Piloto en 12 sem</span>
         </div>
       </div>
     </div>
   </section>
 
   <!-- BOTTOM CTA -->
-  <section class="bottom-cta" style={`--acc:${s.accent};background:${s.accent}`}>
-    <div class="container bottom-cta__inner">
+  <section class="sd-cta" style={`--acc:${s.accent};background:${s.accent}`}>
+    <div class="container sd-cta__inner">
       <div>
-        <h2 style="color:#fff;font-size:1.75rem;font-weight:800;margin-bottom:.5rem" data-i18n="sectorDetail.bottom.title">
-          ¿Listo para empezar el piloto?
-        </h2>
-        <p style="color:rgba(255,255,255,.75);font-size:1rem" data-i18n="sectorDetail.bottom.sub">
-          12 semanas. Sin riesgo. ROI medible.
-        </p>
+        <h2 class="sd-cta__title" data-i18n="sectorDetail.bottom.title">¿Listo para empezar el piloto?</h2>
+        <p class="sd-cta__sub" data-i18n="sectorDetail.bottom.sub">12 semanas. Sin riesgo. ROI medible.</p>
       </div>
-      <a href="/contacto" class="btn" style="background:#fff;color:#0B1C3A;font-weight:700" data-i18n="sectorDetail.bottom.cta">
-        Solicitar demo gratuita →
-      </a>
+      <a href="/contacto" class="btn sd-cta__btn" data-i18n="sectorDetail.bottom.cta">Solicitar demo gratuita →</a>
     </div>
   </section>
 </BaseLayout>
 
 <style>
-  .hero {
-    background: linear-gradient(145deg, #060F20, #0B1C3A);
-    padding: 5rem 0 4rem;
-  }
-  .hero__inner {
-    display: grid;
-    grid-template-columns: 1fr auto;
-    gap: 4rem;
-    align-items: start;
-  }
-  .sector-badge-top {
-    display: inline-flex;
-    font-size: .7rem;
-    font-weight: 700;
-    letter-spacing: .08em;
-    text-transform: uppercase;
-    color: var(--acc);
-    background: color-mix(in srgb, var(--acc) 12%, transparent);
-    border: 1px solid color-mix(in srgb, var(--acc) 30%, transparent);
-    padding: .3rem .9rem;
-    border-radius: 999px;
-    margin-bottom: 1rem;
-  }
-  .hero__icon { width: 64px; height: 64px; border-radius: 16px; background: color-mix(in srgb, var(--acc) 12%, transparent); border: 1px solid color-mix(in srgb, var(--acc) 25%, transparent); display: flex; align-items: center; justify-content: center; color: var(--acc); margin-bottom: 1.25rem; }
-  .hero__title { font-size: clamp(1.75rem, 3.5vw, 2.75rem); font-weight: 800; color: #fff; line-height: 1.1; margin-bottom: .75rem; }
-  .hero__tagline { font-size: 1.1rem; color: var(--acc); font-style: italic; margin-bottom: .75rem; }
-  .hero__roi { font-size: .9rem; color: var(--silver); margin-bottom: 2rem; line-height: 1.6; }
-  .hero__ctas { display: flex; gap: 1rem; flex-wrap: wrap; }
+  /* HERO */
+  .sd-hero { position: relative; overflow: hidden; background: linear-gradient(160deg, #060F20, #0B1C3A 62%, color-mix(in srgb, var(--acc) 22%, #0B1C3A)); padding: 5rem 0 4.25rem; }
+  .sd-hero::before { content: ''; position: absolute; inset: 0; background-image: repeating-linear-gradient(90deg, rgba(255,255,255,.035) 0 1px, transparent 1px 7.6923%); -webkit-mask-image: linear-gradient(90deg, transparent, #000 35%, #000); mask-image: linear-gradient(90deg, transparent, #000 35%, #000); pointer-events: none; }
+  .sd-hero__inner { position: relative; display: grid; grid-template-columns: 1fr auto; gap: 3.5rem; align-items: start; }
+  .sd-hero__icon { width: 60px; height: 60px; border-radius: 15px; background: color-mix(in srgb, var(--acc) 18%, transparent); border: 1px solid color-mix(in srgb, var(--acc) 35%, transparent); display: flex; align-items: center; justify-content: center; color: #fff; margin-bottom: 1.25rem; }
+  .sd-hero__title { font-family: var(--font-display); font-size: clamp(1.9rem, 3.6vw, 2.85rem); font-weight: 800; color: #fff; line-height: 1.08; letter-spacing: -.025em; margin-bottom: .7rem; }
+  .sd-hero__tagline { font-size: 1.05rem; color: var(--silver); margin-bottom: .6rem; }
+  .sd-hero__roi { font-size: .88rem; color: rgba(255,255,255,.55); margin-bottom: 1.9rem; line-height: 1.6; max-width: 34rem; }
+  .sd-hero__ctas { display: flex; gap: .9rem; flex-wrap: wrap; }
 
-  .hero__meta-box {
-    background: rgba(255,255,255,.04);
-    border: 1px solid rgba(255,255,255,.1);
-    border-radius: var(--radius-lg);
-    padding: 1.5rem;
-    min-width: 240px;
-    flex-shrink: 0;
-  }
-  .meta-row { display: flex; justify-content: space-between; gap: 1rem; padding: .6rem 0; border-bottom: 1px solid rgba(255,255,255,.06); }
-  .meta-row:last-child { border-bottom: none; }
-  .meta-lbl { font-size: .72rem; font-weight: 600; color: rgba(255,255,255,.35); text-transform: uppercase; letter-spacing: .06em; }
-  .meta-val { font-size: .82rem; color: rgba(255,255,255,.8); font-weight: 500; text-align: right; }
-  .meta-fit { color: var(--acc); font-weight: 700; }
+  .sd-meta { background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.1); border-radius: var(--radius-lg); padding: 1.4rem 1.5rem; min-width: 250px; flex-shrink: 0; }
+  .sd-meta__row { display: flex; justify-content: space-between; gap: 1rem; padding: .55rem 0; border-top: 1px solid rgba(255,255,255,.07); }
+  .sd-meta__row:first-child { border-top: none; padding-top: 0; }
+  .sd-meta__k { font-size: .68rem; font-weight: 600; color: rgba(255,255,255,.35); text-transform: uppercase; letter-spacing: .06em; }
+  .sd-meta__v { font-size: .8rem; color: rgba(255,255,255,.8); font-weight: 500; text-align: right; }
 
   /* PAINS */
-  .pains { padding: 5rem 0; }
-  .pains-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.25rem; margin-top: 2rem; }
-  .pain-card {
-    background: var(--n90);
-    border: 1px solid var(--n80);
-    border-left: 3px solid var(--acc);
-    border-radius: var(--radius-lg);
-    padding: 1.5rem;
-  }
-  .pain-num {
-    font-size: .7rem;
-    font-weight: 700;
-    color: var(--acc);
-    background: color-mix(in srgb, var(--acc) 10%, transparent);
-    width: 28px;
-    height: 20px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 4px;
-    margin-bottom: .75rem;
-  }
-  .pain-card h3 { font-size: 1rem; font-weight: 700; color: var(--navy); margin-bottom: .5rem; }
-  .pain-card p { font-size: .9rem; color: var(--n30); line-height: 1.65; }
+  .sd-pains { padding: 5.5rem 0; }
+  .sd-pains__grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.1rem; margin-top: 2rem; }
+  .sd-pain { border: 1px solid var(--n80); border-radius: var(--radius-lg); padding: 1.5rem; background: #fff; }
+  .sd-pain__n { font-family: var(--font-display); font-size: .72rem; font-weight: 700; letter-spacing: .1em; color: var(--acc); }
+  .sd-pain h3 { font-size: 1rem; font-weight: 700; color: var(--navy); margin: .6rem 0 .5rem; }
+  .sd-pain p { font-size: .88rem; color: var(--n30); line-height: 1.65; }
 
   /* DIFFS */
-  .diffs { padding: 5rem 0; }
-  .diffs-list { display: flex; flex-direction: column; gap: 1px; margin-top: 2rem; }
-  .diff-row {
-    display: flex;
-    gap: 2rem;
-    align-items: flex-start;
-    background: rgba(255,255,255,.03);
-    border: 1px solid rgba(255,255,255,.06);
-    border-radius: var(--radius);
-    padding: 1.5rem;
-    margin-bottom: .75rem;
-  }
-  .diff-num { font-size: 1.5rem; font-weight: 800; color: var(--acc); flex-shrink: 0; width: 48px; text-align: center; }
-  .diff-body h3 { font-size: 1rem; font-weight: 700; color: #fff; margin-bottom: .35rem; }
-  .diff-body p { font-size: .9rem; color: var(--silver); line-height: 1.65; }
-
-  .personalizable-bar {
-    margin-top: 2rem;
-    background: var(--acc);
-    color: #fff;
-    text-align: center;
-    font-size: .9rem;
-    font-weight: 700;
-    padding: .85rem 1.5rem;
-    border-radius: var(--radius);
-  }
+  .sd-diffs { position: relative; overflow: hidden; background: linear-gradient(180deg, #0B1C3A, #081533); padding: 5.5rem 0; }
+  .section-label--light { color: var(--silver); }
+  .sd-diffs__list { display: flex; flex-direction: column; gap: .7rem; margin-top: 2rem; }
+  .sd-diff { display: grid; grid-template-columns: 3rem 1fr; gap: 1.25rem; align-items: start; background: rgba(255,255,255,.03); border: 1px solid rgba(255,255,255,.08); border-radius: 12px; padding: 1.35rem 1.5rem; }
+  .sd-diff__n { font-family: var(--font-display); font-size: 1.05rem; font-weight: 800; color: color-mix(in srgb, var(--acc) 60%, #fff); }
+  .sd-diff h3 { font-size: 1rem; font-weight: 700; color: #fff; margin-bottom: .3rem; }
+  .sd-diff p { font-size: .88rem; color: var(--silver); line-height: 1.6; }
+  .sd-bar { margin-top: 1.75rem; background: var(--acc); color: #fff; text-align: center; font-size: .86rem; font-weight: 700; padding: .8rem 1.5rem; border-radius: var(--radius); }
 
   /* PILOT */
-  .pilot { padding: 5rem 0; }
-  .pilot-steps { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0; margin-top: 2rem; border: 1px solid var(--n80); border-radius: var(--radius-lg); overflow: hidden; }
-  .pilot-step {
-    padding: 1.75rem 1.5rem;
-    border-right: 1px solid var(--n80);
-    background: var(--n90);
-  }
-  .pilot-step:last-child { border-right: none; }
-  .pilot-step--active { background: var(--navy); }
-  .pilot-step__num { font-size: .65rem; font-weight: 700; color: var(--acc); margin-bottom: .4rem; }
-  .pilot-step__phase { font-size: .95rem; font-weight: 700; color: var(--navy); margin-bottom: .5rem; }
-  .pilot-step--active .pilot-step__phase { color: #fff; }
-  .pilot-step__desc { font-size: .82rem; color: var(--n30); line-height: 1.55; }
-  .pilot-step--active .pilot-step__desc { color: var(--silver); }
+  .sd-pilot { padding: 5.5rem 0; background: #fff; border-top: 1px solid var(--n80); }
+  .sd-pilot__steps { list-style: none; display: grid; grid-template-columns: repeat(4, 1fr); margin-top: 2rem; border-top: 2px solid var(--navy); }
+  .sd-pstep { padding: 1.5rem 1.4rem 0 0; border-right: 1px solid var(--n80); position: relative; display: flex; flex-direction: column; }
+  .sd-pstep:last-child { border-right: none; }
+  .sd-pstep::before { content: ''; position: absolute; top: -6px; left: 0; width: 10px; height: 10px; border-radius: 50%; background: var(--acc); }
+  .sd-pstep__n { font-family: var(--font-display); font-size: .72rem; font-weight: 700; letter-spacing: .1em; color: var(--acc); }
+  .sd-pstep__phase { font-size: .92rem; font-weight: 700; color: var(--navy); margin: .55rem 0 .45rem; }
+  .sd-pstep__desc { font-size: .82rem; color: var(--n30); line-height: 1.55; }
 
   /* KPIS */
-  .kpis-sec { padding: 5rem 0; }
-  .kpis-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; margin-top: 2rem; }
-  .kpi-card {
-    display: flex;
-    align-items: center;
-    gap: .85rem;
-    background: #fff;
-    border: 1px solid var(--n80);
-    border-radius: var(--radius);
-    padding: 1.1rem 1.25rem;
-    font-size: .9rem;
-    color: var(--navy);
-    font-weight: 500;
-  }
-  .kpi-icon { font-size: 1.1rem; }
+  .sd-kpis { padding: 5.5rem 0; }
+  .sd-kpis__grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: .9rem; margin-top: 2rem; }
+  .sd-kpi { display: flex; align-items: center; gap: .85rem; background: #fff; border: 1px solid var(--n80); border-radius: var(--radius); padding: 1.05rem 1.25rem; font-size: .9rem; color: var(--navy); font-weight: 500; }
+  .sd-kpi svg { width: 18px; height: 18px; color: var(--acc); flex-shrink: 0; }
 
   /* COMPETITORS */
-  .competitors { padding: 5rem 0; }
-  .comp-table { margin-top: 2rem; border: 1px solid var(--n80); border-radius: var(--radius-lg); overflow: hidden; }
-  .comp-header { display: grid; grid-template-columns: 220px 1fr; gap: 1rem; padding: .75rem 1.5rem; background: var(--n90); font-size: .72rem; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; color: var(--silver); }
-  .comp-row { display: grid; grid-template-columns: 220px 1fr; gap: 1rem; padding: 1rem 1.5rem; border-top: 1px solid var(--n80); align-items: center; }
-  .comp-row--us { background: color-mix(in srgb, var(--acc) 5%, transparent); border-top: 2px solid var(--acc); }
-  .comp-name { font-size: .9rem; font-weight: 600; color: var(--navy); }
-  .comp-row--us .comp-name { color: var(--acc); }
-  .comp-why { font-size: .87rem; color: var(--n30); }
-  .comp-row--us .comp-why { color: var(--n30); font-weight: 500; }
+  .sd-comp { padding: 5.5rem 0; background: #fff; border-top: 1px solid var(--n80); }
+  .sd-comp__table { margin-top: 2rem; border: 1px solid var(--n80); border-radius: var(--radius-lg); overflow: hidden; }
+  .sd-comp__head { display: grid; grid-template-columns: 220px 1fr; gap: 1rem; padding: .7rem 1.5rem; background: var(--ground); font-size: .68rem; font-weight: 700; text-transform: uppercase; letter-spacing: .07em; color: var(--blue-gray); }
+  .sd-comp__row { display: grid; grid-template-columns: 220px 1fr; gap: 1rem; padding: 1rem 1.5rem; border-top: 1px solid var(--n80); align-items: center; }
+  .sd-comp__row--us { background: color-mix(in srgb, var(--acc) 6%, transparent); border-top: 2px solid var(--acc); }
+  .sd-comp__name { font-size: .9rem; font-weight: 600; color: var(--navy); }
+  .sd-comp__row--us .sd-comp__name { color: var(--acc); }
+  .sd-comp__why { font-size: .86rem; color: var(--n30); }
 
   /* BOTTOM CTA */
-  .bottom-cta { padding: 3.5rem 0; }
-  .bottom-cta__inner { display: flex; justify-content: space-between; align-items: center; gap: 2rem; flex-wrap: wrap; }
+  .sd-cta { padding: 3.5rem 0; }
+  .sd-cta__inner { display: flex; justify-content: space-between; align-items: center; gap: 2rem; flex-wrap: wrap; }
+  .sd-cta__title { font-family: var(--font-display); color: #fff; font-size: 1.6rem; font-weight: 800; margin-bottom: .4rem; letter-spacing: -.02em; }
+  .sd-cta__sub { color: rgba(255,255,255,.8); font-size: 1rem; }
+  .sd-cta__btn { background: #fff; color: #0B1C3A; font-weight: 700; }
 
   @media (max-width: 900px) {
-    .hero__inner { grid-template-columns: 1fr; }
-    .hero__meta-box { width: 100%; }
-    .pains-grid { grid-template-columns: 1fr; }
-    .pilot-steps { grid-template-columns: 1fr; }
-    .pilot-step { border-right: none; border-bottom: 1px solid var(--n80); }
-    .kpis-grid { grid-template-columns: 1fr; }
-    .comp-header, .comp-row { grid-template-columns: 1fr; gap: .25rem; }
-    .comp-header span:first-child { display: none; }
+    .sd-hero__inner { grid-template-columns: 1fr; }
+    .sd-meta { width: 100%; }
+    .sd-pains__grid { grid-template-columns: 1fr; }
+    .sd-pilot__steps { grid-template-columns: 1fr 1fr; }
+    .sd-pstep { border-right: none; border-bottom: 1px solid var(--n80); padding-bottom: 1.3rem; }
+    .sd-kpis__grid { grid-template-columns: 1fr; }
+    .sd-comp__head, .sd-comp__row { grid-template-columns: 1fr; gap: .25rem; }
+    .sd-comp__head span:first-child { display: none; }
+  }
+  @media (max-width: 560px) {
+    .sd-pilot__steps { grid-template-columns: 1fr; }
   }
 </style>
