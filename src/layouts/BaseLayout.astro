@@ -3,28 +3,76 @@ import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import '../styles/global.css';
 
+const SITE = 'https://planning-core-web.vercel.app';
+
 const {
   title = 'Planning Core — Software de Planificación para Manufactura',
-  description = 'Planning Core es el Gantt inteligente para manufactura industrial. Planifica producción, gestiona capacidad y toma decisiones en tiempo real. Sin código, sin IT, en semanas.',
+  description = 'El Gantt inteligente para manufactura industrial. Planifica producción, mide la robustez de cada plan y replanifica en segundos cuando la realidad cambia. Sin código, sin IT, en 12 semanas.',
   accent = '#1E4DB7',
+  ogImage = '/images/logo-stacked.png',
 } = Astro.props;
+
+const canonical = new URL(Astro.url.pathname, SITE).href;
+const ogImageUrl = new URL(ogImage, SITE).href;
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'SoftwareApplication',
+  name: 'Planning Core',
+  applicationCategory: 'BusinessApplication',
+  operatingSystem: 'Web',
+  description,
+  url: SITE,
+  offers: {
+    '@type': 'Offer',
+    description: 'Piloto de 12 semanas — ROI medible con tus propios datos antes de contratar.',
+  },
+  publisher: { '@type': 'Organization', name: 'Planning Core', url: SITE },
+};
 ---
 <!DOCTYPE html>
 <html lang="es">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="robots" content="noindex, nofollow" />
+    <meta name="robots" content="index, follow" />
+    <meta name="theme-color" content="#0B1C3A" />
     <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon.png" />
     <link rel="shortcut icon" href="/favicon.ico" />
+
+    <!-- Open Graph / Twitter -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Planning Core" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogImageUrl} />
+    <meta property="og:locale" content="es_ES" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImageUrl} />
+
+    <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800&family=Inter:wght@400;500;600;700;800&display=swap"
+    />
+
     <style define:vars={{ accent }}>
       :root { --page-accent: var(--accent); }
     </style>
-    <!-- Anti-flicker: apply saved theme/lang before first paint -->
-    <script>
+
+    <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+
+    <!-- Anti-flicker: apply saved theme before first paint -->
+    <script is:inline>
       (function(){
         try {
           if (localStorage.getItem('theme') === 'dark') {
@@ -33,6 +81,9 @@ const {
         } catch(e){}
       })();
     </script>
+
+    <!-- Vercel Web Analytics (no-op if not enabled on the project) -->
+    <script defer src="/_vercel/insights/script.js"></script>
   </head>
   <body>
     <Header />
