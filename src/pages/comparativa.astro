@@ -1,0 +1,248 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+const COLS = [
+  { k: 'excel', label: 'Excel / manual' },
+  { k: 'aps',   label: 'APS tradicional' },
+  { k: 'erp',   label: 'Módulo del ERP' },
+  { k: 'pc',    label: 'Planning Core', us: true },
+];
+
+const ROWS = [
+  {
+    k: 'time', dim: 'Tiempo hasta producción',
+    excel: 'Semanas de montaje manual', aps: '12–18 meses',
+    erp: 'Meses + integrador', pc: '12 semanas',
+  },
+  {
+    k: 'cost', dim: 'Coste de arranque',
+    excel: 'Barato en licencia, caro en horas', aps: 'Seis cifras + consultores',
+    erp: 'Licencia + proyecto de integración', pc: 'Piloto sin coste de implantación',
+  },
+  {
+    k: 'who', dim: 'Quién lo opera',
+    excel: 'Cada jefe de turno, a su manera', aps: 'Un planificador dedicado a tiempo completo',
+    erp: 'IT y un consultor externo', pc: 'Tus planificadores, sin código',
+  },
+  {
+    k: 'replan', dim: 'Replanificar ante un imprevisto',
+    excel: 'Rehacerlo a mano', aps: 'Recalcular — lento y manual',
+    erp: 'MRP por lotes, normalmente nocturno', pc: 'Segundos, con un clic',
+  },
+  {
+    k: 'scenarios', dim: 'Escenarios de plan',
+    excel: 'Uno, el que cabe en tu cabeza', aps: 'Uno «óptimo»',
+    erp: 'Uno', pc: 'Tres, con su compromiso explícito',
+  },
+  {
+    k: 'robust', dim: 'Robustez del plan',
+    excel: 'Desconocida', aps: 'Desconocida',
+    erp: 'Desconocida', pc: 'Puntuación Monte Carlo por escenario',
+  },
+  {
+    k: 'erpRel', dim: 'Relación con tu ERP',
+    excel: 'Vive al margen', aps: 'Lo sustituye',
+    erp: 'Te ata más a él', pc: 'Encima, vía API',
+  },
+  {
+    k: 'sector', dim: 'Lógica de tu sector',
+    excel: 'La montas tú', aps: 'Proyecto de configuración',
+    erp: 'Genérica', pc: 'Preconfigurada',
+  },
+];
+
+const VS = [
+  {
+    k: 'excel', title: 'vs. Excel y planificación manual',
+    body: 'Excel no miente por maldad: miente porque no se entera. En cuanto una máquina se para, el plan del lunes deja de describir tu planta — y nadie lo sabe hasta la reunión del martes. Planning Core mantiene un único plan vivo y te dice, antes de publicarlo, cuánto aguanta.',
+  },
+  {
+    k: 'aps', title: 'vs. APS tradicional',
+    body: 'Un APS clásico resuelve el problema entero: reescribe tu modelo de datos, ocupa a un planificador a tiempo completo y tarda más de un año en dar valor. Y cuando por fin funciona, te entrega un plan «óptimo» y frágil. Planning Core hace menos, a propósito: planes que aguantan, en 12 semanas, operados por tu equipo.',
+  },
+  {
+    k: 'erp', title: 'vs. el módulo de planificación de tu ERP',
+    body: 'El MRP de tu ERP registra y recalcula por lotes; no es una herramienta de decisión en planta. No tiene Gantt visual, no compara escenarios y no mide riesgo. Planning Core se conecta por API y añade exactamente esa capa — sin atarte más al ERP.',
+  },
+];
+
+const NOT = [
+  'No optimizamos cada segundo de tu planta al milímetro.',
+  'No reemplazamos tu ERP ni tu MES.',
+  'No prometemos una IA que planifica sola.',
+  'Hacemos una cosa: planes que aguantan, rápido, operados por tu gente.',
+];
+---
+<BaseLayout
+  title="Comparativa — Planning Core vs. Excel, APS y módulos de ERP"
+  description="Por qué Planning Core y no lo de siempre: 12 semanas frente a más de un año, tres escenarios con robustez medida, y una capa sobre tu ERP en vez de un reemplazo."
+>
+  <section class="page-hero">
+    <div class="container">
+      <p class="section-label" data-i18n="comp.hero.label">Comparativa</p>
+      <h1 class="section-title section-title--light" data-i18n-html="comp.hero.title">La planificación que mide<br/>lo que las demás suponen</h1>
+      <p class="page-hero__sub" data-i18n="comp.hero.sub">
+        Excel, un APS clásico o el MRP de tu ERP te dan un plan y te piden que
+        confíes. Planning Core te da tres, cada uno con su puntuación de robustez, y
+        te deja elegir con datos — en 12 semanas y sin reemplazar nada.
+      </p>
+    </div>
+  </section>
+
+  <!-- MATRIX -->
+  <section class="matrix-section">
+    <div class="container">
+      <div class="matrix-scroll">
+        <table class="matrix">
+          <thead>
+            <tr>
+              <th class="matrix__corner" data-i18n="comp.col.dim">Qué comparamos</th>
+              {COLS.map(c => (
+                <th class={c.us ? 'matrix__col matrix__col--us' : 'matrix__col'} data-i18n={`comp.col.${c.k}`}>{c.label}</th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {ROWS.map(r => (
+              <tr>
+                <th scope="row" class="matrix__dim" data-i18n={`comp.row.${r.k}.dim`}>{r.dim}</th>
+                {[r.excel, r.aps, r.erp, r.pc].map((val, i) => (
+                  <td class={COLS[i].us ? 'matrix__cell matrix__cell--us' : 'matrix__cell'} data-i18n={`comp.row.${r.k}.${COLS[i].k}`}>{val}</td>
+                ))}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- VS NARRATIVE -->
+  <section class="vs-section">
+    <div class="container">
+      <p class="section-label" data-i18n="comp.vs.label">En detalle</p>
+      <h2 class="section-title" data-i18n="comp.vs.title">Contra qué compites hoy</h2>
+      <div class="vs-list">
+        {VS.map(v => (
+          <article class="vs-item">
+            <h3 data-i18n={`comp.vs.${v.k}.title`}>{v.title}</h3>
+            <p data-i18n={`comp.vs.${v.k}.body`}>{v.body}</p>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- WHAT WE DON'T DO -->
+  <section class="not-section">
+    <div class="container">
+      <p class="section-label section-label--light" data-i18n="comp.not.label">Honestidad</p>
+      <h2 class="section-title section-title--light" data-i18n="comp.not.title">Lo que Planning Core no hace</h2>
+      <ul class="not-list">
+        {NOT.map((n, i) => (
+          <li class={i === NOT.length - 1 ? 'not-item not-item--last' : 'not-item'} data-i18n={`comp.not.${i}`}>{n}</li>
+        ))}
+      </ul>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="comp-cta">
+    <div class="container comp-cta__inner">
+      <div>
+        <h2 class="section-title section-title--light" data-i18n="comp.cta.title">¿Ves dónde encaja en tu planta?</h2>
+        <p class="comp-cta__sub" data-i18n="comp.cta.sub">Una llamada de 30 min y una demo con tus restricciones reales.</p>
+      </div>
+      <div class="comp-cta__actions">
+        <a href="/contacto" class="btn btn--primary" data-i18n="comp.cta.btn1">Solicitar demo →</a>
+        <a href="/precios" class="btn btn--outline" data-i18n="comp.cta.btn2">Ver el piloto de 12 semanas</a>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .section-label--light { color: var(--silver); }
+
+  .matrix-section { padding: 4rem 0 1rem; }
+  .matrix-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  .matrix {
+    width: 100%;
+    min-width: 720px;
+    border-collapse: collapse;
+    font-size: .86rem;
+  }
+  .matrix th, .matrix td {
+    text-align: left;
+    padding: .95rem 1.1rem;
+    vertical-align: top;
+    border-bottom: 1px solid var(--n80);
+  }
+  .matrix__corner {
+    font-size: .68rem; font-weight: 700; text-transform: uppercase; letter-spacing: .07em;
+    color: var(--blue-gray);
+  }
+  .matrix__col {
+    font-family: var(--font-display); font-weight: 700; font-size: .82rem;
+    color: var(--n30);
+  }
+  .matrix__col--us { color: var(--brand); }
+  .matrix thead th { border-bottom: 2px solid var(--navy); }
+  .matrix__dim {
+    font-weight: 700; color: var(--navy); font-size: .82rem;
+    width: 15rem;
+  }
+  .matrix__cell { color: var(--n30); line-height: 1.45; }
+  .matrix__cell--us {
+    color: var(--navy); font-weight: 600;
+    background: color-mix(in srgb, var(--brand) 6%, transparent);
+    border-left: 1px solid color-mix(in srgb, var(--brand) 20%, transparent);
+    border-right: 1px solid color-mix(in srgb, var(--brand) 20%, transparent);
+  }
+  .matrix tbody tr:last-child .matrix__cell--us { border-bottom: 2px solid var(--brand); }
+  .matrix thead .matrix__col--us {
+    background: color-mix(in srgb, var(--brand) 8%, transparent);
+    border-left: 1px solid color-mix(in srgb, var(--brand) 20%, transparent);
+    border-right: 1px solid color-mix(in srgb, var(--brand) 20%, transparent);
+  }
+
+  .vs-section { padding: 5rem 0; background: #fff; border-top: 1px solid var(--n80); }
+  .vs-list { display: flex; flex-direction: column; gap: 1rem; margin-top: 2rem; }
+  .vs-item {
+    border-top: 1px solid var(--n80);
+    padding-top: 1.4rem;
+  }
+  .vs-item h3 {
+    font-family: var(--font-display); font-size: 1.05rem; font-weight: 700;
+    color: var(--navy); margin-bottom: .5rem;
+  }
+  .vs-item p { font-size: .92rem; color: var(--n30); line-height: 1.7; max-width: 60ch; }
+
+  .not-section {
+    padding: 5rem 0;
+    background: linear-gradient(160deg, #060F20, #0B1C3A);
+  }
+  .not-list { list-style: none; margin-top: 2rem; display: flex; flex-direction: column; }
+  .not-item {
+    font-size: .95rem; color: rgba(255,255,255,.7); line-height: 1.5;
+    padding: .95rem 0 .95rem 1.6rem; position: relative;
+    border-top: 1px solid rgba(255,255,255,.09);
+  }
+  .not-item::before {
+    content: '×'; position: absolute; left: 0; top: .85rem;
+    color: #f87171; font-weight: 700; font-size: 1rem;
+  }
+  .not-item--last {
+    color: #fff; font-weight: 600;
+  }
+  .not-item--last::before { content: '✓'; color: #4ade80; }
+
+  .comp-cta { padding: 4.5rem 0; background: var(--navy); }
+  .comp-cta__inner { display: flex; justify-content: space-between; align-items: center; gap: 2.5rem; flex-wrap: wrap; }
+  .comp-cta__sub { color: var(--silver); margin-top: .5rem; }
+  .comp-cta__actions { display: flex; flex-direction: column; gap: .7rem; flex-shrink: 0; }
+
+  @media (max-width: 820px) {
+    .comp-cta__inner { flex-direction: column; align-items: flex-start; }
+  }
+</style>

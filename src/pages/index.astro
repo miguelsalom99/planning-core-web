@@ -12,30 +12,29 @@ import SectorIcon from '../components/SectorIcon.astro';
       <div class="hero__content">
         <div class="badge hero__badge">
           <span class="hero__badge-dot"></span>
-          <span data-i18n="home.hero.badge">El cuello de botella de esta tarde ya existe</span>
+          <span data-i18n="home.hero.badge">El plan «óptimo» se rompe el martes</span>
         </div>
         <h1 class="hero__title" data-i18n-html="home.hero.title">
-          Tu equipo trabaja con<br/>
-          <span class="hero__accent">el plan del lunes.</span>
+          Elige un plan que aguante,<br/>
+          <span class="hero__accent">no uno que solo se vea bien.</span>
         </h1>
         <p class="hero__sub" data-i18n-html="home.hero.sub">
-          La planta real lleva horas siendo otra cosa. Tu jefe de turno ya tomó
-          tres decisiones a ojo — y tú te enteras mañana en la reunión.
-          <br/><br/>
-          <span class="hero__relief">Planning Core</span> mantiene un único plan vivo:
-          detecta la desviación, y te da tres escenarios de replanificación —
-          medidos contra cientos de simulaciones — en segundos.
+          Todo software de planificación te entrega un plan «óptimo»: impecable en
+          papel, frágil en planta. Planning Core genera tres, simula cientos de
+          imprevistos sobre cada uno y te da su
+          <span class="hero__relief">puntuación de robustez</span> — eliges el que
+          encaja con tu tolerancia al riesgo, con datos y no a ojo.
         </p>
         <div class="hero__ctas">
-          <a href="/contacto" class="btn btn--primary" data-i18n="home.hero.cta1">Quiero visibilidad ahora →</a>
-          <a href="/producto" class="btn btn--outline" data-i18n="home.hero.cta2">Ver cómo funciona</a>
+          <a href="/contacto" class="btn btn--primary" data-i18n="home.hero.cta1">Quiero verlo con mis datos →</a>
+          <a href="#stress" class="btn btn--outline" data-i18n="home.hero.cta2">Ver la robustez en acción</a>
         </div>
         <div class="hero__trust">
-          <span data-i18n="home.hero.trust1">Sin reemplazar tu ERP</span>
+          <span data-i18n="home.hero.trust1">Robustez medida, no supuesta</span>
           <span class="hero__trust-sep">·</span>
-          <span data-i18n="home.hero.trust2">Operativo en 12 semanas</span>
+          <span data-i18n="home.hero.trust2">Sin reemplazar tu ERP</span>
           <span class="hero__trust-sep">·</span>
-          <span data-i18n="home.hero.trust3">ROI medible desde el día 1</span>
+          <span data-i18n="home.hero.trust3">Operativo en 12 semanas</span>
         </div>
       </div>
 
@@ -95,7 +94,7 @@ import SectorIcon from '../components/SectorIcon.astro';
       <span class="proof__sep"></span>
       <div class="proof__item"><strong>3&nbsp;s</strong><span data-i18n="home.proof.scenarios">para replanificar la semana</span></div>
       <span class="proof__sep"></span>
-      <div class="proof__item"><strong>0</strong><span data-i18n="home.proof.code">líneas de código para arrancar</span></div>
+      <div class="proof__item"><strong>300</strong><span data-i18n="home.proof.sims">imprevistos simulados por plan</span></div>
     </div>
   </div>
 
@@ -134,49 +133,56 @@ import SectorIcon from '../components/SectorIcon.astro';
     </div>
   </section>
 
-  <!-- ═══ REALITY CHANGES — centrepiece ═══ -->
-  <section class="replan" id="replan">
+  <!-- ═══ STRESS TEST — centrepiece / the differentiator ═══ -->
+  <section class="replan" id="stress">
     <div class="replan__grid" aria-hidden="true"></div>
     <div class="container">
-      <p class="section-label section-label--light" data-i18n="home.replan.label">La realidad cambia</p>
-      <h2 class="section-title section-title--light replan__title" data-i18n-html="home.replan.title">
-        El plan óptimo del lunes<br/>dura hasta el primer imprevisto.
+      <p class="section-label section-label--light" data-i18n="home.stress.label">Ponlo a prueba</p>
+      <h2 class="section-title section-title--light replan__title" data-i18n-html="home.stress.title">
+        El plan que no has puesto a prueba<br/>no es un plan. Es una apuesta.
       </h2>
-      <p class="replan__sub" data-i18n="home.replan.sub">
-        Una avería, una urgencia, un operario de baja. Planning Core detecta la
-        desviación y devuelve un plan nuevo sin romper las fechas comprometidas.
+      <p class="replan__sub" data-i18n="home.stress.sub">
+        Lanza un imprevisto y observa cómo responde cada escenario. La puntuación
+        de robustez ya predecía cuál iba a aguantar.
       </p>
 
-      <div class="timeline" data-timeline>
-        <div class="tl-step tl-step--a is-active">
-          <div class="tl-tag" data-i18n="home.replan.t0.tag">Lunes · 08:00</div>
-          <div class="tl-body">
-            <b data-i18n="home.replan.t0.title">Plan óptimo publicado</b>
-            <span data-i18n="home.replan.t0.desc">Equilibrado · 4/4 piezas · OTD 100%</span>
+      <div class="stress" data-stress>
+        <div class="stress__controls">
+          <span class="stress__ctl-label" data-i18n="home.stress.trigger">Lanza un imprevisto:</span>
+          <div class="stress__chips" role="group" aria-label="Imprevistos">
+            <button class="stress-chip" type="button" data-disr="autoclave" aria-pressed="false" data-i18n="home.stress.d.autoclave">Avería de autoclave · 2 turnos</button>
+            <button class="stress-chip" type="button" data-disr="rush" aria-pressed="false" data-i18n="home.stress.d.rush">Pedido urgente · entrega 48 h</button>
+            <button class="stress-chip" type="button" data-disr="sick" aria-pressed="false" data-i18n="home.stress.d.sick">Operario clave de baja · 1 turno</button>
           </div>
-          <span class="tl-dot tl-dot--ok"></span>
+          <button class="stress-reset" type="button" data-stress-reset hidden data-i18n="home.stress.reset">Reiniciar</button>
         </div>
-        <div class="tl-line" aria-hidden="true"></div>
-        <div class="tl-step tl-step--b">
-          <div class="tl-tag tl-tag--warn" data-i18n="home.replan.t1.tag">Lunes · 14:07</div>
-          <div class="tl-body">
-            <b data-i18n="home.replan.t1.title">Avería en AUTOCLAVE-01</b>
-            <span data-i18n="home.replan.t1.desc">2 turnos fuera de servicio · 6 órdenes afectadas</span>
-          </div>
-          <span class="tl-dot tl-dot--warn"></span>
+
+        <div class="stress__grid" aria-live="polite">
+          {[
+            { key: 'opt', rob: 71 },
+            { key: 'bal', rob: 84 },
+            { key: 'con', rob: 92 },
+          ].map(s => (
+            <div class="scard" data-scard={s.key}>
+              <div class="scard__head">
+                <span class="scard__label" data-i18n={`home.gantt.${s.key}`}>{s.key === 'opt' ? 'Óptimo' : s.key === 'bal' ? 'Equilibrado' : 'Conservador'}</span>
+                <span class="scard__rob"><span data-i18n="home.stress.rob">Robustez</span> <b>{s.rob}</b></span>
+              </div>
+              <div class="scard__bar"><i style={`width:${s.rob}%`}></i></div>
+              <div class="scard__result" data-scard-result>
+                <span class="scard__state" data-st="idle" data-i18n="home.stress.idle">Plan publicado · listo</span>
+                <span class="scard__state scard__state--ok" data-st="held" data-i18n="home.stress.held" hidden>Absorbido</span>
+                <span class="scard__state scard__state--bad" data-st="broke" data-i18n="home.stress.broke" hidden>Fechas rotas</span>
+                <span class="scard__metric" data-sm hidden></span>
+                <span class="scard__note" data-sn hidden></span>
+              </div>
+            </div>
+          ))}
         </div>
-        <div class="tl-line" aria-hidden="true"></div>
-        <div class="tl-step tl-step--c">
-          <div class="tl-tag tl-tag--ok" data-i18n="home.replan.t2.tag">Lunes · 14:07 + 3 s</div>
-          <div class="tl-body">
-            <b data-i18n="home.replan.t2.title">Replanificado</b>
-            <span data-i18n="home.replan.t2.desc">3 órdenes reasignadas al turno de tarde · OTD 96% · sin fechas rotas</span>
-          </div>
-          <span class="tl-dot tl-dot--ok"></span>
-        </div>
+        <p class="stress__caption" data-i18n="home.stress.caption">Datos de ejemplo. Con tus datos, la robustez se calcula sobre tu planta real.</p>
       </div>
 
-      <a href="/producto" class="btn btn--outline replan__cta" data-i18n="home.replan.cta">Ver la replanificación en detalle →</a>
+      <a href="/comparativa" class="btn btn--outline replan__cta" data-i18n="home.stress.cta">Ver cómo se compara con lo de siempre →</a>
     </div>
   </section>
 
@@ -218,11 +224,11 @@ import SectorIcon from '../components/SectorIcon.astro';
         <div class="value__list">
           <div class="vi">
             <span class="vi__k">01</span>
-            <div><strong data-i18n="home.value.0.title">Replanifica en segundos</strong><span data-i18n="home.value.0.desc">Un imprevisto no cuesta una reunión de dos horas. Cuesta tres segundos.</span></div>
+            <div><strong data-i18n="home.value.1.title">Robustez medida, no supuesta</strong><span data-i18n="home.value.1.desc">Cada escenario trae su puntuación Monte Carlo: sabes cuál aguanta antes de elegirlo.</span></div>
           </div>
           <div class="vi">
             <span class="vi__k">02</span>
-            <div><strong data-i18n="home.value.1.title">Robustez medida, no supuesta</strong><span data-i18n="home.value.1.desc">Cada escenario trae su puntuación Monte Carlo: sabes cuál aguanta antes de elegirlo.</span></div>
+            <div><strong data-i18n="home.value.0.title">Replanifica en segundos</strong><span data-i18n="home.value.0.desc">Un imprevisto no cuesta una reunión de dos horas. Cuesta tres segundos.</span></div>
           </div>
           <div class="vi">
             <span class="vi__k">03</span>
@@ -435,6 +441,7 @@ import SectorIcon from '../components/SectorIcon.astro';
     position: relative; overflow: hidden;
     background: linear-gradient(180deg, #0B1C3A, #081533);
     padding: 5.5rem 0;
+    scroll-margin-top: 80px;
   }
   .replan__grid {
     position: absolute; inset: 0;
@@ -443,34 +450,59 @@ import SectorIcon from '../components/SectorIcon.astro';
   }
   .replan .container { position: relative; }
   .section-label--light { color: var(--silver); }
-  .replan__title { max-width: 20ch; }
+  .replan__title { max-width: 30ch; }
   .replan__sub { color: rgba(255,255,255,.6); font-size: 1.02rem; line-height: 1.65; max-width: 34rem; margin: .5rem 0 2.6rem; }
 
-  .timeline { display: flex; flex-direction: column; }
-  .tl-step {
-    display: grid; grid-template-columns: 128px 1fr 12px; align-items: center; gap: 1.25rem;
-    padding: .95rem 1.25rem;
-    border: 1px solid rgba(255,255,255,.08);
-    border-radius: 12px;
-    background: rgba(255,255,255,.02);
-    opacity: .32;
-    transform: translateY(6px);
-    transition: opacity .5s ease, transform .5s ease, border-color .5s ease, background .5s ease;
+  /* Interactive stress-test */
+  .stress { margin-top: .5rem; }
+  .stress__controls { display: flex; flex-wrap: wrap; align-items: center; gap: .7rem .9rem; margin-bottom: 1.6rem; }
+  .stress__ctl-label { font-size: .8rem; color: rgba(255,255,255,.5); font-weight: 600; }
+  .stress__chips { display: flex; flex-wrap: wrap; gap: .5rem; }
+  .stress-chip {
+    font: inherit; font-size: .78rem; font-weight: 600;
+    padding: .5rem .9rem; border-radius: 999px; cursor: pointer;
+    background: rgba(255,255,255,.05); color: rgba(255,255,255,.72);
+    border: 1px solid rgba(255,255,255,.12);
+    transition: background .15s, border-color .15s, color .15s;
   }
-  .tl-step.is-active { opacity: 1; transform: none; }
-  .tl-step--b.is-active { border-color: rgba(217,119,6,.4); background: rgba(217,119,6,.07); }
-  .tl-step--c.is-active { border-color: rgba(22,163,74,.4); background: rgba(22,163,74,.07); }
-  .tl-tag { font-family: var(--font-display); font-size: .7rem; font-weight: 700; letter-spacing: .04em; color: rgba(255,255,255,.55); text-transform: uppercase; }
-  .tl-tag--warn { color: #fb923c; }
-  .tl-tag--ok { color: #4ade80; }
-  .tl-body { display: flex; flex-direction: column; gap: .12rem; }
-  .tl-body b { font-size: .95rem; color: #fff; font-weight: 700; }
-  .tl-body span { font-size: .82rem; color: rgba(255,255,255,.55); }
-  .tl-dot { width: 10px; height: 10px; border-radius: 50%; background: rgba(255,255,255,.25); }
-  .tl-dot--ok { background: #16A34A; }
-  .tl-dot--warn { background: #D97706; }
-  .tl-line { width: 1px; height: 18px; margin-left: calc(1.25rem + 64px); background: rgba(255,255,255,.15); }
+  .stress-chip:hover { background: rgba(255,255,255,.1); color: #fff; }
+  .stress-chip[aria-pressed="true"] { background: rgba(217,119,6,.16); border-color: rgba(217,119,6,.45); color: #fdba74; }
+  .stress-chip:focus-visible { outline: 2px solid #8BC2C6; outline-offset: 2px; }
+  .stress-reset {
+    font: inherit; font-size: .76rem; font-weight: 600; cursor: pointer;
+    background: none; border: none; color: rgba(255,255,255,.5);
+    text-decoration: underline; text-underline-offset: 3px;
+  }
+  .stress-reset:hover { color: #fff; }
+
+  .stress__grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; }
+  .scard {
+    background: rgba(255,255,255,.03);
+    border: 1px solid rgba(255,255,255,.1);
+    border-radius: 14px;
+    padding: 1.35rem 1.4rem;
+    transition: border-color .35s ease, background .35s ease;
+  }
+  .scard--ok  { border-color: rgba(22,163,74,.45);  background: rgba(22,163,74,.08); }
+  .scard--bad { border-color: rgba(220,68,68,.5);   background: rgba(220,68,68,.09); }
+  .scard__head { display: flex; justify-content: space-between; align-items: baseline; gap: .5rem; margin-bottom: .8rem; }
+  .scard__label { font-family: var(--font-display); font-size: 1rem; font-weight: 700; color: #fff; }
+  .scard__rob { font-size: .64rem; color: rgba(255,255,255,.45); text-transform: uppercase; letter-spacing: .04em; white-space: nowrap; }
+  .scard__rob b { font-family: var(--font-display); font-size: .95rem; color: #8BC2C6; margin-left: .25rem; }
+  .scard__bar { height: 4px; border-radius: 999px; background: rgba(255,255,255,.12); overflow: hidden; margin-bottom: 1rem; }
+  .scard__bar i { display: block; height: 100%; background: #8BC2C6; border-radius: inherit; }
+  .scard__result { display: flex; flex-direction: column; gap: .3rem; min-height: 4.5rem; }
+  .scard__state { font-size: .82rem; font-weight: 700; color: rgba(255,255,255,.6); }
+  .scard__state--ok  { color: #4ade80; }
+  .scard__state--bad { color: #f87171; }
+  .scard__metric { font-size: .8rem; color: rgba(255,255,255,.78); font-variant-numeric: tabular-nums; }
+  .scard__note { font-size: .76rem; color: rgba(255,255,255,.45); line-height: 1.4; }
+  .stress__caption { font-size: .72rem; color: rgba(255,255,255,.35); margin-top: 1rem; }
   .replan__cta { margin-top: 2.4rem; }
+
+  @media (max-width: 760px) {
+    .stress__grid { grid-template-columns: 1fr; }
+  }
 
   /* ─────────────── SECTORS ─────────────── */
   .sectors { padding: 5.5rem 0; }
@@ -565,24 +597,65 @@ import SectorIcon from '../components/SectorIcon.astro';
 </style>
 
 <script>
-  // Replan timeline — advance the 3 steps once in view (respects reduced-motion)
-  const tl = document.querySelector('[data-timeline]');
-  if (tl) {
-    const steps = [...tl.querySelectorAll('.tl-step')];
-    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    if (reduce) {
-      steps.forEach(s => s.classList.add('is-active'));
-    } else {
-      let played = false;
-      const io = new IntersectionObserver((entries) => {
-        entries.forEach(e => {
-          if (!e.isIntersecting || played) return;
-          played = true;
-          steps.forEach((s, i) => setTimeout(() => s.classList.add('is-active'), 550 + i * 900));
-        });
-      }, { threshold: 0.4 });
-      io.observe(tl);
-    }
+  // Interactive stress-test — trigger a disruption, show how each scenario responds
+  const stress = document.querySelector('[data-stress]');
+  if (stress) {
+    type Cell = { ok: boolean; otd: number; slip: Record<string, string>; note: Record<string, string> };
+    const DISR: Record<string, Record<string, Cell>> = {
+      autoclave: {
+        opt: { ok: false, otd: 88, slip: { es: '+2 días', en: '+2 days' }, note: { es: 'sin colchón que absorba la parada', en: 'no buffer to absorb the outage' } },
+        bal: { ok: true,  otd: 100, slip: { es: 'sin desvío', en: 'on time' }, note: { es: 'el turno de margen la absorbe', en: 'the buffer shift absorbs it' } },
+        con: { ok: true,  otd: 100, slip: { es: 'sin desvío', en: 'on time' }, note: { es: 'de sobra', en: 'with room to spare' } },
+      },
+      rush: {
+        opt: { ok: false, otd: 92, slip: { es: '+1 día', en: '+1 day' }, note: { es: 'desplaza 3 órdenes comprometidas', en: 'pushes back 3 committed orders' } },
+        bal: { ok: true,  otd: 100, slip: { es: 'sin desvío', en: 'on time' }, note: { es: 'encaja en el margen', en: 'fits into the buffer' } },
+        con: { ok: true,  otd: 100, slip: { es: 'sin desvío', en: 'on time' }, note: { es: 'encaja sin tocar el resto', en: 'fits without touching the rest' } },
+      },
+      sick: {
+        opt: { ok: false, otd: 90, slip: { es: '+1 día', en: '+1 day' }, note: { es: 'CNC se queda sin cubrir', en: 'CNC left uncovered' } },
+        bal: { ok: true,  otd: 96,  slip: { es: 'sin desvío', en: 'on time' }, note: { es: 'se reasigna dentro del turno', en: 'reassigned within the shift' } },
+        con: { ok: true,  otd: 100, slip: { es: 'sin desvío', en: 'on time' }, note: { es: 'holgura de sobra', en: 'plenty of slack' } },
+      },
+    };
+    const OTD = { es: 'OTD', en: 'OTD' } as Record<string, string>;
+    const cards = [...stress.querySelectorAll<HTMLElement>('[data-scard]')];
+    const chips = [...stress.querySelectorAll<HTMLElement>('[data-disr]')];
+    const resetBtn = stress.querySelector<HTMLButtonElement>('[data-stress-reset]');
+    let active: string | null = null;
+
+    const render = () => {
+      const lang = document.documentElement.lang === 'en' ? 'en' : 'es';
+      cards.forEach(card => {
+        const key = card.dataset.scard!;
+        const idle  = card.querySelector<HTMLElement>('[data-st="idle"]')!;
+        const held  = card.querySelector<HTMLElement>('[data-st="held"]')!;
+        const broke = card.querySelector<HTMLElement>('[data-st="broke"]')!;
+        const sm = card.querySelector<HTMLElement>('[data-sm]')!;
+        const sn = card.querySelector<HTMLElement>('[data-sn]')!;
+        if (!active) {
+          card.classList.remove('scard--ok', 'scard--bad');
+          idle.hidden = false; held.hidden = true; broke.hidden = true; sm.hidden = true; sn.hidden = true;
+          return;
+        }
+        const o = DISR[active][key];
+        card.classList.toggle('scard--ok', o.ok);
+        card.classList.toggle('scard--bad', !o.ok);
+        idle.hidden = true;
+        held.hidden = !o.ok;
+        broke.hidden = o.ok;
+        sm.hidden = false; sn.hidden = false;
+        sm.textContent = `${OTD[lang]} ${o.otd}% · ${o.slip[lang]}`;
+        sn.textContent = o.note[lang];
+      });
+      chips.forEach(c => c.setAttribute('aria-pressed', String(c.dataset.disr === active)));
+      if (resetBtn) resetBtn.hidden = !active;
+    };
+
+    chips.forEach(c => c.addEventListener('click', () => { active = c.dataset.disr!; render(); }));
+    resetBtn?.addEventListener('click', () => { active = null; render(); });
+    new MutationObserver(() => render()).observe(document.documentElement, { attributes: true, attributeFilter: ['lang'] });
+    render();
   }
 
   // Hero planner mock — switch scenario, update gantt + KPIs
