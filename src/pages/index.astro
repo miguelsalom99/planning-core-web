@@ -45,23 +45,23 @@ import SectorIcon from '../components/SectorIcon.astro';
             <span class="planner__dot"></span><span class="planner__dot"></span><span class="planner__dot"></span>
             <span class="planner__name" data-i18n="home.demo.frame">Planning Core · Planificación semanal</span>
           </div>
-          <div class="planner__scenarios">
-            <button class="scn" type="button"><span data-i18n="home.gantt.opt">Óptimo</span></button>
-            <button class="scn scn--on" type="button"><span data-i18n="home.gantt.bal">Equilibrado</span></button>
-            <button class="scn" type="button"><span data-i18n="home.gantt.con">Conservador</span></button>
+          <div class="planner__scenarios" data-planner>
+            <button class="scn" type="button" data-scn="opt"><span data-i18n="home.gantt.opt">Óptimo</span></button>
+            <button class="scn scn--on" type="button" data-scn="bal"><span data-i18n="home.gantt.bal">Equilibrado</span></button>
+            <button class="scn" type="button" data-scn="con"><span data-i18n="home.gantt.con">Conservador</span></button>
           </div>
           <div class="planner__gantt">
             {[
-              { r: 'ATL-01',    c: '#1589EE', l: 6,  w: 14 },
-              { r: 'ATL-02',    c: '#1589EE', l: 6,  w: 14 },
-              { r: 'AUTOCLAVE', c: '#F4740B', l: 24, w: 20 },
-              { r: 'NDT',       c: '#7B5EA7', l: 46, w: 16 },
-              { r: 'CNC',       c: '#2E844A', l: 64, w: 16 },
+              { r: 'ATL-01',    c: '#1589EE' },
+              { r: 'ATL-02',    c: '#1589EE' },
+              { r: 'AUTOCLAVE', c: '#F4740B' },
+              { r: 'NDT',       c: '#7B5EA7' },
+              { r: 'CNC',       c: '#2E844A' },
             ].map(row => (
               <div class="grow">
                 <span class="grow__label">{row.r}</span>
                 <span class="grow__track">
-                  <span class="grow__bar" style={`left:${row.l}%;width:${row.w}%;background:${row.c}`}></span>
+                  <span class="grow__bar" data-bar style={`background:${row.c}`}></span>
                 </span>
               </div>
             ))}
@@ -69,16 +69,16 @@ import SectorIcon from '../components/SectorIcon.astro';
           <div class="planner__kpis">
             <div class="pk">
               <span class="pk__k" data-i18n="home.demo.finish">Fin del plan</span>
-              <b class="pk__v" data-i18n="home.demo.finishVal">Jue · T1</b>
+              <b class="pk__v" data-pk="finish">Jue · T1</b>
             </div>
             <div class="pk">
               <span class="pk__k" data-i18n="home.demo.buffer">Margen entre ops.</span>
-              <b class="pk__v" data-i18n="home.demo.bufferVal">1 turno</b>
+              <b class="pk__v" data-pk="buffer">1 turno</b>
             </div>
             <div class="pk pk--wide">
               <span class="pk__k" data-i18n="home.demo.robust">Robustez Monte Carlo</span>
-              <span class="pk__meter"><i style="width:84%"></i></span>
-              <b class="pk__v pk__v--ok">84<span>/100</span></b>
+              <span class="pk__meter"><i data-pk="robBar" style="width:84%"></i></span>
+              <b class="pk__v pk__v--ok"><span data-pk="rob">84</span><span>/100</span></b>
             </div>
           </div>
         </div>
@@ -370,11 +370,14 @@ import SectorIcon from '../components/SectorIcon.astro';
   .planner__scenarios { display: flex; gap: .4rem; padding: .8rem .9rem .3rem; }
   .scn {
     font: inherit; font-size: .68rem; font-weight: 600;
-    padding: .28rem .7rem; border-radius: 999px; cursor: default;
+    padding: .28rem .7rem; border-radius: 999px; cursor: pointer;
     background: rgba(255,255,255,.05); color: rgba(255,255,255,.5);
     border: 1px solid transparent;
+    transition: background .2s ease, color .2s ease, border-color .2s ease;
   }
-  .scn--on { background: rgba(38,81,178,.28); color: #bcd1ff; border-color: rgba(120,160,255,.35); }
+  .scn:hover { color: rgba(255,255,255,.8); background: rgba(255,255,255,.09); }
+  .scn:focus-visible { outline: 2px solid #8BC2C6; outline-offset: 2px; }
+  .scn--on, .scn--on:hover { background: rgba(38,81,178,.28); color: #bcd1ff; border-color: rgba(120,160,255,.35); }
   .planner__gantt { padding: .6rem .9rem .3rem; display: flex; flex-direction: column; gap: .34rem; }
   .grow { display: flex; align-items: center; gap: .55rem; }
   .grow__label { width: 62px; flex-shrink: 0; font-size: .62rem; color: rgba(255,255,255,.4); font-variant-numeric: tabular-nums; }
@@ -383,7 +386,8 @@ import SectorIcon from '../components/SectorIcon.astro';
     background: rgba(255,255,255,.04);
     background-image: repeating-linear-gradient(90deg, rgba(255,255,255,.05) 0 1px, transparent 1px 12.5%);
   }
-  .grow__bar { position: absolute; top: 2px; bottom: 2px; border-radius: 2px; opacity: .92; }
+  .grow__bar { position: absolute; top: 2px; bottom: 2px; border-radius: 2px; opacity: .92; transition: left .4s cubic-bezier(.4,0,.2,1), width .4s cubic-bezier(.4,0,.2,1); }
+  .pk__meter i { transition: width .4s cubic-bezier(.4,0,.2,1); }
   .planner__kpis {
     padding: .8rem .9rem 1rem; margin-top: .3rem;
     border-top: 1px solid rgba(255,255,255,.07);
@@ -579,5 +583,60 @@ import SectorIcon from '../components/SectorIcon.astro';
       }, { threshold: 0.4 });
       io.observe(tl);
     }
+  }
+
+  // Hero planner mock — switch scenario, update gantt + KPIs
+  const planner = document.querySelector('[data-planner]');
+  if (planner) {
+    const SCN = {
+      opt: {
+        bars: [[6,14],[6,14],[22,15],[39,13],[54,13]],
+        finish: { es: 'Mié · T1', en: 'Wed · S1' },
+        buffer: { es: '0 turnos', en: '0 shifts' },
+        rob: 71,
+      },
+      bal: {
+        bars: [[6,14],[6,14],[24,20],[46,16],[64,16]],
+        finish: { es: 'Jue · T1', en: 'Thu · S1' },
+        buffer: { es: '1 turno', en: '1 shift' },
+        rob: 84,
+      },
+      con: {
+        bars: [[6,14],[6,14],[26,23],[51,18],[71,18]],
+        finish: { es: 'Vie · T1', en: 'Fri · S1' },
+        buffer: { es: '2 turnos', en: '2 shifts' },
+        rob: 92,
+      },
+    };
+    const bars = [...document.querySelectorAll('[data-bar]')];
+    const pk = (k: string) => document.querySelector<HTMLElement>(`[data-pk="${k}"]`);
+    let current = 'bal';
+
+    const render = (key: string) => {
+      const s = SCN[key as keyof typeof SCN];
+      if (!s) return;
+      current = key;
+      const lang = document.documentElement.lang === 'en' ? 'en' : 'es';
+      bars.forEach((b, i) => {
+        const [l, w] = s.bars[i] || [0, 0];
+        b.style.left = l + '%';
+        b.style.width = w + '%';
+      });
+      const f = pk('finish'); if (f) f.textContent = s.finish[lang];
+      const bf = pk('buffer'); if (bf) bf.textContent = s.buffer[lang];
+      const rb = pk('robBar'); if (rb) rb.style.width = s.rob + '%';
+      const r = pk('rob'); if (r) r.textContent = String(s.rob);
+      planner.querySelectorAll('.scn').forEach(btn => {
+        btn.classList.toggle('scn--on', (btn as HTMLElement).dataset.scn === key);
+      });
+    };
+
+    planner.querySelectorAll('.scn').forEach(btn => {
+      btn.addEventListener('click', () => render((btn as HTMLElement).dataset.scn!));
+    });
+    // Re-render when <html lang> flips (BaseLayout's applyLang), so KPI strings stay in sync
+    new MutationObserver(() => render(current))
+      .observe(document.documentElement, { attributes: true, attributeFilter: ['lang'] });
+    render('bal');
   }
 </script>
