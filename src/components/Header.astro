@@ -12,6 +12,7 @@ const currentPath = Astro.url.pathname;
     <nav class="header__nav" id="nav">
       <a href="/" class={`nav-link ${currentPath === '/' ? 'nav-link--active' : ''}`} data-i18n="nav.inicio">Inicio</a>
       <a href="/producto" class={`nav-link ${currentPath.startsWith('/producto') ? 'nav-link--active' : ''}`} data-i18n="nav.producto">Producto</a>
+      <a href="/comparativa" class={`nav-link ${currentPath.startsWith('/comparativa') ? 'nav-link--active' : ''}`} data-i18n="nav.comparativa">Comparativa</a>
 
       <div class="nav-dropdown">
         <button class={`nav-link nav-link--btn ${currentPath.startsWith('/sectores') ? 'nav-link--active' : ''}`}>
