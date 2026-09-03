@@ -263,31 +263,6 @@
     .back-btn svg { flex-shrink: 0; }
     .back-btn.hidden, .back-sep.hidden { display: none; }
 
-    .topbar__company {
-      display: flex;
-      align-items: center;
-      gap: .5rem;
-    }
-    .company-avatar {
-      width: 26px;
-      height: 26px;
-      border-radius: 6px;
-      background: linear-gradient(135deg, rgba(139,194,198,.3), rgba(139,194,198,.15));
-      border: 1px solid rgba(139,194,198,.3);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: .6rem;
-      font-weight: 800;
-      color: var(--silver);
-      letter-spacing: .03em;
-    }
-    .company-name {
-      font-size: .8rem;
-      color: rgba(255,255,255,.75);
-      font-weight: 500;
-    }
-
     .topbar__sep {
       width: 1px;
       height: 18px;
@@ -2198,7 +2173,6 @@
       .topbar__brand { width: auto; padding: 0 .5rem 0 0; border-right: none; }
       .topbar__brand-name { display: none; }
       .topbar__center { padding: 0 .5rem; gap: .5rem; min-width: 0; }
-      .topbar__company .company-name { display: none; }
       .pilot-chip { display: none; }
       .topbar__sep { display: none; }
       .user-info { display: none; }
@@ -2439,11 +2413,6 @@
         Industrias
       </button>
       <div class="topbar__sep back-sep hidden"></div>
-      <div class="topbar__company">
-        <div class="company-avatar" id="co-initials">—</div>
-        <span class="company-name" id="co-name">Cargando…</span>
-      </div>
-      <div class="topbar__sep"></div>
       <div class="pilot-chip">
         <span class="pilot-chip__label">Piloto</span>
         <span class="pilot-chip__val">Sem. 7 / 12</span>
@@ -4637,12 +4606,6 @@
 
   function pickEnterprise(name: string | null, industry: string) {
     selectedEnterprise = name;
-    if (name) {
-      const cnEl = document.getElementById('co-name');
-      if (cnEl) cnEl.textContent = name;
-      const ciEl = document.getElementById('co-initials');
-      if (ciEl) ciEl.textContent = name.split(' ').map(w => w[0]).slice(0, 2).join('').toUpperCase();
-    }
     entSelectorEl?.classList.remove('show');
     showDashboard(industry);
   }
@@ -4704,12 +4667,6 @@
       // here directly — stash the flag and let initDashboard apply it once
       // the dashboard is actually shown.
       localStorage.setItem('pc_is_admin', user.is_admin ? 'true' : 'false');
-      const company    = user.company || 'Mi empresa';
-      const coInitials = company.split(' ').map((w: string) => w[0]).slice(0,2).join('').toUpperCase();
-      const ciEl = document.getElementById('co-initials');
-      if (ciEl) ciEl.textContent = coInitials;
-      const cnEl = document.getElementById('co-name');
-      if (cnEl) cnEl.textContent = company;
       applyPilot(user.pilot);
     } catch (e) {
       console.error('applyUser error', e);
