@@ -5116,6 +5116,7 @@
           }
           altCards.appendChild(card);
         });
+        stampAstroScope(altCards);   // JS-built cards need the Astro cid or scoped CSS won't match
         altCards.style.display = '';
         // Auto-render the recommended (equilibrado) alternative
         if (alternatives[1]) renderPlannerGantt(alternatives[1]);
@@ -5135,6 +5136,7 @@
           el.textContent = 'Simulando robustez (Monte Carlo)…';
           c.appendChild(el);
         });
+        stampAstroScope(altCards);
         try {
           const res = await fetch(`${API}/api/plan/simulate`, {
             method: 'POST',
@@ -5179,6 +5181,7 @@
             <div class="alt-sim__foot">${sim.iterations} iteraciones Monte Carlo</div>
           `;
         });
+        stampAstroScope(altCards);
       }
 
       // Render the composites planner Gantt
@@ -5262,6 +5265,7 @@
 
         // Update subtitle
         if (ganttSubEl) ganttSubEl.textContent = `${alt.summary.label} · ${alt.week_label} · ${alt.summary.pieces_scheduled} piezas`;
+        stampAstroScope(plannerView);   // grid rows/cells/events are JS-built — stamp so scoped CSS applies
         manualView.style.display = 'none';
         plannerView.style.display = '';
       }
