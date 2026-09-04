@@ -23,10 +23,10 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       <h2 class="section-title" data-i18n="precios.phases.title">12 semanas de cero a go-live</h2>
       <ol class="phases-grid">
         {[
-          { phase:'Semanas 1–2', title:'Mapeo y configuración', desc:'Mapeamos tus máquinas, turnos, operarios y restricciones. Sin código, sin IT. Tú defines, nosotros configuramos.', i: 0 },
-          { phase:'Semanas 3–5', title:'Restricciones y validación', desc:'Configuramos la lógica de tu sector: secuencias, cuellos de botella, ventanas de mantenimiento. Plan generado vs. tu realidad.', i: 1 },
-          { phase:'Semanas 6–8', title:'Uso en paralelo', desc:'Corres Planning Core en paralelo con tu sistema actual. Comparas el plan generado con lo que realmente ejecutas.', i: 2 },
-          { phase:'Semanas 9–12', title:'Go-live y scorecard', desc:'Go-live completo. Scorecard de impacto semanal con las métricas acordadas. El ROI medido con tus propios datos.', i: 3 },
+          { phase:'Semanas 1-2', title:'Mapeo y configuración', desc:'Mapeamos tus máquinas, turnos, operarios y restricciones. Sin código, sin IT. Tú defines, nosotros configuramos.', i: 0 },
+          { phase:'Semanas 3-5', title:'Restricciones y validación', desc:'Configuramos la lógica de tu sector: secuencias, cuellos de botella, ventanas de mantenimiento. Plan generado vs. tu realidad.', i: 1 },
+          { phase:'Semanas 6-8', title:'Uso en paralelo', desc:'Corres Planning Core en paralelo con tu sistema actual. Comparas el plan generado con lo que realmente ejecutas.', i: 2 },
+          { phase:'Semanas 9-12', title:'Go-live y scorecard', desc:'Go-live completo. Scorecard de impacto semanal con las métricas acordadas. El ROI medido con tus propios datos.', i: 3 },
         ].map(p => (
           <li class="phase-card">
             <span class="phase-num">{`0${p.i + 1}`}</span>
