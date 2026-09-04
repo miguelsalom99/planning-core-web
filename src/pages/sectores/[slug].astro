@@ -159,10 +159,10 @@ const { sector: s } = Astro.props;
   .sd-hero__ctas { display: flex; gap: .9rem; flex-wrap: wrap; }
 
   .sd-meta { background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.1); border-radius: var(--radius-lg); padding: 1.4rem 1.5rem; min-width: 250px; flex-shrink: 0; }
-  .sd-meta__row { display: flex; justify-content: space-between; gap: 1rem; padding: .55rem 0; border-top: 1px solid rgba(255,255,255,.07); }
+  .sd-meta__row { display: flex; flex-direction: column; gap: .2rem; padding: .55rem 0; border-top: 1px solid rgba(255,255,255,.07); }
   .sd-meta__row:first-child { border-top: none; padding-top: 0; }
-  .sd-meta__k { font-size: .68rem; font-weight: 600; color: rgba(255,255,255,.35); text-transform: uppercase; letter-spacing: .06em; }
-  .sd-meta__v { font-size: .8rem; color: rgba(255,255,255,.8); font-weight: 500; text-align: right; }
+  .sd-meta__k { font-size: .68rem; font-weight: 600; color: rgba(255,255,255,.5); text-transform: uppercase; letter-spacing: .06em; }
+  .sd-meta__v { font-size: .8rem; color: rgba(255,255,255,.8); font-weight: 500; text-align: left; }
 
   /* PAINS */
   .sd-pains { padding: 5.5rem 0; }
