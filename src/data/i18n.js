@@ -49,7 +49,7 @@ export const EN = {
   'home.gantt.con':    'Conservative',
 
   'home.proof.sectors':   'pre-configured sectors',
-  'home.proof.pilotN':    '12 wk',
+  'home.proof.pilotN':    '12 weeks',
   'home.proof.pilot':     'from pilot to production',
   'home.proof.scenarios': 'to replan the week',
   'home.proof.sims':      'disruptions simulated per plan',
