@@ -351,7 +351,7 @@ import SectorIcon from '../components/SectorIcon.astro';
   .hero__ctas { display: flex; gap: .9rem; flex-wrap: wrap; margin-bottom: 1.6rem; }
   .hero__trust {
     display: flex; gap: .6rem; flex-wrap: wrap; align-items: center;
-    font-size: .78rem; color: rgba(255,255,255,.42);
+    font-size: .78rem; color: rgba(255,255,255,.55);
   }
   .hero__trust-sep { opacity: .4; }
 
@@ -491,13 +491,13 @@ import SectorIcon from '../components/SectorIcon.astro';
   .scard__rob b { font-family: var(--font-display); font-size: .95rem; color: #8BC2C6; margin-left: .25rem; }
   .scard__bar { height: 4px; border-radius: 999px; background: rgba(255,255,255,.12); overflow: hidden; margin-bottom: 1rem; }
   .scard__bar i { display: block; height: 100%; background: #8BC2C6; border-radius: inherit; }
-  .scard__result { display: flex; flex-direction: column; gap: .3rem; min-height: 4.5rem; }
+  .scard__result { display: flex; flex-direction: column; gap: .3rem; min-height: 2.5rem; }
   .scard__state { font-size: .82rem; font-weight: 700; color: rgba(255,255,255,.6); }
   .scard__state--ok  { color: #4ade80; }
   .scard__state--bad { color: #f87171; }
   .scard__metric { font-size: .8rem; color: rgba(255,255,255,.78); font-variant-numeric: tabular-nums; }
   .scard__note { font-size: .76rem; color: rgba(255,255,255,.45); line-height: 1.4; }
-  .stress__caption { font-size: .72rem; color: rgba(255,255,255,.35); margin-top: 1rem; }
+  .stress__caption { font-size: .72rem; color: rgba(255,255,255,.5); margin-top: 1rem; }
   .replan__cta { margin-top: 2.4rem; }
 
   @media (max-width: 760px) {
@@ -547,7 +547,7 @@ import SectorIcon from '../components/SectorIcon.astro';
     display: grid; grid-template-columns: 1fr 1fr;
     border: 1px solid var(--n80); border-radius: var(--radius-lg); overflow: hidden;
     box-shadow: var(--shadow); background: #fff;
-    position: sticky; top: 6rem;
+    align-self: center;
   }
   .cmp { padding: 1.5rem 1.4rem; }
   .cmp--old { background: #FBF5F4; border-right: 1px solid var(--n80); }
