@@ -11,7 +11,7 @@ const COLS = [
 const ROWS = [
   {
     k: 'time', dim: 'Tiempo hasta producción',
-    excel: 'Semanas de montaje manual', aps: '12–18 meses',
+    excel: 'Semanas de montaje manual', aps: '12-18 meses',
     erp: 'Meses + integrador', pc: '12 semanas',
   },
   {
@@ -26,7 +26,7 @@ const ROWS = [
   },
   {
     k: 'replan', dim: 'Replanificar ante un imprevisto',
-    excel: 'Rehacerlo a mano', aps: 'Recalcular — lento y manual',
+    excel: 'Rehacerlo a mano', aps: 'Recalcular: lento y manual',
     erp: 'MRP por lotes, normalmente nocturno', pc: 'Segundos, con un clic',
   },
   {
@@ -54,7 +54,7 @@ const ROWS = [
 const VS = [
   {
     k: 'excel', title: 'vs. Excel y planificación manual',
-    body: 'Excel no miente por maldad: miente porque no se entera. En cuanto una máquina se para, el plan del lunes deja de describir tu planta — y nadie lo sabe hasta la reunión del martes. Planning Core mantiene un único plan vivo y te dice, antes de publicarlo, cuánto aguanta.',
+    body: 'Excel no miente por maldad: miente porque no se entera. En cuanto una máquina se para, el plan del lunes deja de describir tu planta, y nadie lo sabe hasta la reunión del martes. Planning Core mantiene un único plan vivo y te dice, antes de publicarlo, cuánto aguanta.',
   },
   {
     k: 'aps', title: 'vs. APS tradicional',
@@ -62,7 +62,7 @@ const VS = [
   },
   {
     k: 'erp', title: 'vs. el módulo de planificación de tu ERP',
-    body: 'El MRP de tu ERP registra y recalcula por lotes; no es una herramienta de decisión en planta. No tiene Gantt visual, no compara escenarios y no mide riesgo. Planning Core se conecta por API y añade exactamente esa capa — sin atarte más al ERP.',
+    body: 'El MRP de tu ERP registra y recalcula por lotes; no es una herramienta de decisión en planta. No tiene Gantt visual, no compara escenarios y no mide riesgo. Planning Core se conecta por API y añade exactamente esa capa, sin atarte más al ERP.',
   },
 ];
 
@@ -84,7 +84,7 @@ const NOT = [
       <p class="page-hero__sub" data-i18n="comp.hero.sub">
         Excel, un APS clásico o el MRP de tu ERP te dan un plan y te piden que
         confíes. Planning Core te da tres, cada uno con su puntuación de robustez, y
-        te deja elegir con datos — en 12 semanas y sin reemplazar nada.
+        te deja elegir con datos, en 12 semanas y sin reemplazar nada.
       </p>
     </div>
   </section>
