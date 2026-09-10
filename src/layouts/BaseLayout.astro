@@ -1,6 +1,7 @@
 ---
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
+import ChatWidget from '../components/ChatWidget.astro';
 import '../styles/global.css';
 
 const SITE = 'https://planning-core-web.vercel.app';
@@ -91,6 +92,7 @@ const jsonLd = {
       <slot />
     </main>
     <Footer />
+    <ChatWidget />
   </body>
 </html>
 
