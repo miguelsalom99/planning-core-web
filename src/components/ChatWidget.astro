@@ -1,0 +1,423 @@
+---
+/**
+ * Planning Core website assistant — floating chat widget.
+ *
+ * Rendered once from BaseLayout.astro on every marketing page (not in /app).
+ * Talks only to the backend endpoint POST /api/chat, which owns the Anthropic
+ * API key. This component never sees a key and sends no credentials.
+ *
+ * Styling: a single <style is:global> block, every selector namespaced `.pcw`.
+ * Global (not scoped) on purpose so nodes created at runtime by the <script>
+ * are styled too — Astro's scoped CSS only matches markup present at build.
+ *
+ * i18n: static Spanish is in the markup with data-i18n; English comes from
+ * src/data/i18n.js (pcw.* keys) via BaseLayout's applyLang(). Strings that
+ * only exist in JS (errors, status) are in the T dict inside the script.
+ */
+const API = 'https://composite-replanning-api.vercel.app/api/chat';
+---
+
+<div class="pcw" data-api={API}>
+  <button id="pcw-launch" class="pcw-launch" type="button"
+          aria-label="Abrir el asistente" aria-expanded="false" aria-controls="pcw-panel">
+    <svg class="pcw-launch-ico pcw-ico-chat" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+         stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/>
+    </svg>
+    <svg class="pcw-launch-ico pcw-ico-close" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+         stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+    </svg>
+  </button>
+
+  <div id="pcw-panel" class="pcw-panel" role="dialog" aria-modal="false"
+       aria-labelledby="pcw-title" hidden>
+    <header class="pcw-head">
+      <div class="pcw-head-txt">
+        <span id="pcw-title" class="pcw-title" data-i18n="pcw.title">Asistente de Planning Core</span>
+        <span class="pcw-sub" data-i18n="pcw.subtitle">IA · respuestas sobre el producto</span>
+      </div>
+      <button id="pcw-reset" class="pcw-iconbtn" type="button"
+              aria-label="Nueva conversación" title="Nueva conversación">
+        <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor"
+             stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/>
+        </svg>
+      </button>
+      <button id="pcw-close" class="pcw-iconbtn" type="button" aria-label="Cerrar">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor"
+             stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+        </svg>
+      </button>
+    </header>
+
+    <div id="pcw-msgs" class="pcw-msgs" aria-live="polite">
+      <div id="pcw-welcome" class="pcw-msg pcw-msg--bot">
+        <p class="pcw-bubble" data-i18n="pcw.welcome">
+          Hola. Soy el asistente de Planning Core. Puedo explicarte qué es, cómo funciona,
+          los sectores, el piloto de 12 semanas y las dudas más habituales. ¿Qué te gustaría saber?
+        </p>
+      </div>
+      <div id="pcw-suggest" class="pcw-suggest">
+        <button class="pcw-chip" type="button" data-i18n="pcw.q1">¿Qué es Planning Core?</button>
+        <button class="pcw-chip" type="button" data-i18n="pcw.q2">¿Cómo funciona?</button>
+        <button class="pcw-chip" type="button" data-i18n="pcw.q3">¿Para qué puedo usarlo?</button>
+        <button class="pcw-chip" type="button" data-i18n="pcw.q4">¿Cómo empiezo?</button>
+        <button class="pcw-chip" type="button" data-i18n="pcw.q5">¿Cómo es el piloto de 12 semanas?</button>
+      </div>
+    </div>
+
+    <form id="pcw-form" class="pcw-form">
+      <textarea id="pcw-input" class="pcw-input" rows="1" maxlength="1500"
+                placeholder="Escribe tu pregunta…" data-i18n-placeholder="pcw.placeholder"
+                aria-label="Escribe tu pregunta"></textarea>
+      <button id="pcw-send" class="pcw-sendbtn" type="submit" aria-label="Enviar">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor"
+             stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/>
+        </svg>
+      </button>
+    </form>
+    <p class="pcw-foot" data-i18n="pcw.disclaimer">
+      Respuestas generadas por IA. Pueden contener errores; el equipo puede darte una respuesta definitiva.
+    </p>
+  </div>
+</div>
+
+<style is:global>
+  .pcw {
+    --pcw-navy: #0B1C3A;
+    --pcw-panel: #ffffff;
+    --pcw-panel-head: #0B1C3A;
+    --pcw-border: rgba(11,28,58,.12);
+    --pcw-text: #1a2338;
+    --pcw-muted: #5b6577;
+    --pcw-accent: #1E4DB7;
+    --pcw-teal: #2f7d83;
+    --pcw-bot-bg: #f1f4f9;
+    --pcw-user-bg: #1E4DB7;
+    font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  }
+  .pcw [hidden] { display: none !important; }
+
+  :root[data-theme="dark"] .pcw {
+    --pcw-panel: #0f1f3d;
+    --pcw-panel-head: #0b1730;
+    --pcw-border: rgba(255,255,255,.12);
+    --pcw-text: #e8ecf4;
+    --pcw-muted: #9aa6bd;
+    --pcw-bot-bg: #17294a;
+    --pcw-user-bg: #2a5fd0;
+  }
+
+  /* Launcher */
+  .pcw-launch {
+    position: fixed; right: 20px; bottom: 20px; z-index: 2147483000;
+    width: 56px; height: 56px; border-radius: 999px; border: none; cursor: pointer;
+    background: var(--pcw-navy); color: #fff;
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 10px 30px rgba(11,28,58,.35);
+    transition: transform .15s ease, box-shadow .15s ease;
+  }
+  .pcw-launch:hover { transform: translateY(-2px); box-shadow: 0 14px 36px rgba(11,28,58,.45); }
+  .pcw-launch:focus-visible { outline: 3px solid var(--pcw-accent); outline-offset: 3px; }
+  .pcw-launch-ico { width: 25px; height: 25px; }
+  .pcw-ico-close { display: none; }
+  .pcw.pcw--open .pcw-ico-chat { display: none; }
+  .pcw.pcw--open .pcw-ico-close { display: block; }
+
+  /* Panel */
+  .pcw-panel {
+    position: fixed; right: 20px; bottom: 88px; z-index: 2147483000;
+    width: 380px; max-width: calc(100vw - 40px); height: 560px; max-height: calc(100vh - 120px);
+    background: var(--pcw-panel); color: var(--pcw-text);
+    border: 1px solid var(--pcw-border); border-radius: 16px; overflow: hidden;
+    display: flex; flex-direction: column;
+    box-shadow: 0 24px 60px rgba(11,28,58,.32);
+    animation: pcw-in .16s ease-out;
+  }
+  @keyframes pcw-in { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+  @media (prefers-reduced-motion: reduce) {
+    .pcw-panel, .pcw-launch { animation: none; transition: none; }
+  }
+
+  .pcw-head {
+    display: flex; align-items: center; gap: 8px;
+    padding: 13px 12px 13px 16px; background: var(--pcw-panel-head); color: #fff;
+  }
+  .pcw-head-txt { display: flex; flex-direction: column; flex: 1; min-width: 0; }
+  .pcw-title { font-family: Archivo, Inter, sans-serif; font-weight: 700; font-size: .95rem; letter-spacing: -.01em; }
+  .pcw-sub { font-size: .72rem; color: rgba(255,255,255,.62); margin-top: 1px; }
+  .pcw-iconbtn {
+    flex-shrink: 0; width: 30px; height: 30px; border-radius: 7px; border: none; cursor: pointer;
+    background: rgba(255,255,255,.08); color: rgba(255,255,255,.85);
+    display: flex; align-items: center; justify-content: center; transition: background .12s;
+  }
+  .pcw-iconbtn:hover { background: rgba(255,255,255,.18); color: #fff; }
+  .pcw-iconbtn:focus-visible { outline: 2px solid #fff; outline-offset: 1px; }
+
+  .pcw-msgs { flex: 1; overflow-y: auto; padding: 16px; display: flex; flex-direction: column; gap: 12px; }
+  .pcw-msg { display: flex; }
+  .pcw-msg--user { justify-content: flex-end; }
+  .pcw-bubble {
+    max-width: 82%; padding: 10px 13px; border-radius: 14px; font-size: .86rem; line-height: 1.5;
+    white-space: pre-wrap; word-wrap: break-word; margin: 0;
+  }
+  .pcw-msg--bot .pcw-bubble { background: var(--pcw-bot-bg); color: var(--pcw-text); border-bottom-left-radius: 5px; }
+  .pcw-msg--user .pcw-bubble { background: var(--pcw-user-bg); color: #fff; border-bottom-right-radius: 5px; }
+  .pcw-msg--err .pcw-bubble { background: #fdeceb; color: #9a2a22; border: 1px solid #f3c7c3; }
+  :root[data-theme="dark"] .pcw-msg--err .pcw-bubble { background: #3a1f1d; color: #f4b7b1; border-color: #6d3a35; }
+  .pcw-retry {
+    margin-top: 6px; font-size: .8rem; font-weight: 600; color: var(--pcw-accent);
+    background: none; border: none; cursor: pointer; padding: 0; text-decoration: underline;
+  }
+
+  .pcw-suggest { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 2px; }
+  .pcw-chip {
+    font-family: inherit; font-size: .8rem; color: var(--pcw-accent); cursor: pointer;
+    background: transparent; border: 1px solid var(--pcw-border); border-radius: 999px; padding: 6px 11px;
+    transition: background .12s, border-color .12s;
+  }
+  .pcw-chip:hover { background: rgba(30,77,183,.08); border-color: var(--pcw-accent); }
+  .pcw-chip:focus-visible { outline: 2px solid var(--pcw-accent); outline-offset: 1px; }
+
+  .pcw-typing { display: inline-flex; gap: 4px; padding: 12px 13px; }
+  .pcw-typing span {
+    width: 6px; height: 6px; border-radius: 50%; background: var(--pcw-muted);
+    animation: pcw-blink 1.2s infinite ease-in-out both;
+  }
+  .pcw-typing span:nth-child(2) { animation-delay: .16s; }
+  .pcw-typing span:nth-child(3) { animation-delay: .32s; }
+  @keyframes pcw-blink { 0%, 80%, 100% { opacity: .25; } 40% { opacity: 1; } }
+
+  .pcw-form { display: flex; gap: 8px; align-items: flex-end; padding: 10px 12px 6px; border-top: 1px solid var(--pcw-border); }
+  .pcw-input {
+    flex: 1; resize: none; max-height: 110px; font-family: inherit; font-size: .86rem; line-height: 1.4;
+    color: var(--pcw-text); background: var(--pcw-panel);
+    border: 1px solid var(--pcw-border); border-radius: 10px; padding: 9px 11px;
+  }
+  .pcw-input:focus { outline: 2px solid var(--pcw-accent); outline-offset: -1px; border-color: transparent; }
+  .pcw-sendbtn {
+    flex-shrink: 0; width: 38px; height: 38px; border-radius: 10px; border: none; cursor: pointer;
+    background: var(--pcw-accent); color: #fff; display: flex; align-items: center; justify-content: center;
+    transition: opacity .12s, transform .12s;
+  }
+  .pcw-sendbtn:hover { transform: translateY(-1px); }
+  .pcw-sendbtn:disabled { opacity: .45; cursor: default; transform: none; }
+  .pcw-sendbtn:focus-visible { outline: 2px solid var(--pcw-accent); outline-offset: 2px; }
+
+  .pcw-foot { margin: 0; padding: 4px 14px 12px; font-size: .68rem; color: var(--pcw-muted); text-align: center; }
+
+  @media (max-width: 560px) {
+    .pcw-panel {
+      right: 0; bottom: 0; width: 100vw; max-width: 100vw; height: 100dvh; max-height: 100dvh;
+      border-radius: 0; border: none;
+    }
+    .pcw-launch { right: 16px; bottom: 16px; }
+  }
+
+  @media print { .pcw { display: none !important; } }
+</style>
+
+<script>
+  type Role = 'user' | 'assistant';
+  interface Turn { role: Role; content: string; }
+
+  const root = document.querySelector<HTMLElement>('.pcw');
+  if (root) {
+    const API = root.dataset.api as string;
+    const launch = document.getElementById('pcw-launch') as HTMLButtonElement;
+    const panel = document.getElementById('pcw-panel') as HTMLElement;
+    const closeBtn = document.getElementById('pcw-close') as HTMLButtonElement;
+    const resetBtn = document.getElementById('pcw-reset') as HTMLButtonElement;
+    const msgs = document.getElementById('pcw-msgs') as HTMLElement;
+    const suggest = document.getElementById('pcw-suggest') as HTMLElement;
+    const form = document.getElementById('pcw-form') as HTMLFormElement;
+    const input = document.getElementById('pcw-input') as HTMLTextAreaElement;
+    const sendBtn = document.getElementById('pcw-send') as HTMLButtonElement;
+
+    const STORE = 'pcw_thread';
+    const MAX_SEND = 10;
+    let thread: Turn[] = [];
+    let busy = false;
+
+    const lang = (): 'es' | 'en' =>
+      (localStorage.getItem('pc_lang') === 'en' ? 'en' : 'es');
+
+    if (lang() === 'en') {
+      launch.setAttribute('aria-label', 'Open the assistant');
+      closeBtn.setAttribute('aria-label', 'Close');
+      resetBtn.setAttribute('aria-label', 'New conversation');
+      resetBtn.setAttribute('title', 'New conversation');
+      input.setAttribute('aria-label', 'Type your question');
+      sendBtn.setAttribute('aria-label', 'Send');
+    }
+
+    const T = {
+      es: {
+        err: 'No he podido responder ahora mismo. Vuelve a intentarlo o escríbenos desde /contacto.',
+        net: 'Problema de conexión. Revisa tu red e inténtalo de nuevo.',
+        rate: 'Has enviado muchos mensajes seguidos. Espera un momento e inténtalo de nuevo.',
+        retry: 'Reintentar',
+      },
+      en: {
+        err: "I couldn't answer right now. Please try again or reach us through /contacto.",
+        net: 'Connection problem. Check your network and try again.',
+        rate: "You've sent a lot of messages in a row. Please wait a moment and try again.",
+        retry: 'Retry',
+      },
+    };
+    const t = (k: keyof typeof T['es']) => T[lang()][k];
+
+    // ---- persistence -----------------------------------------------------
+    function load() {
+      try {
+        const raw = sessionStorage.getItem(STORE);
+        if (raw) thread = JSON.parse(raw);
+      } catch { thread = []; }
+      if (thread.length) {
+        suggest.hidden = true;
+        thread.forEach(m => addBubble(m.role === 'user' ? 'user' : 'bot', m.content));
+      }
+    }
+    function save() {
+      try { sessionStorage.setItem(STORE, JSON.stringify(thread)); } catch {}
+    }
+
+    // ---- rendering (text only — never innerHTML of model output) ---------
+    function addBubble(kind: 'user' | 'bot' | 'err', text: string): HTMLElement {
+      const wrap = document.createElement('div');
+      wrap.className = 'pcw-msg pcw-msg--' + kind;
+      const p = document.createElement('p');
+      p.className = 'pcw-bubble';
+      const parts = text.split('\n');
+      parts.forEach((line, i) => {
+        p.appendChild(document.createTextNode(line));
+        if (i < parts.length - 1) p.appendChild(document.createElement('br'));
+      });
+      wrap.appendChild(p);
+      msgs.appendChild(wrap);
+      msgs.scrollTop = msgs.scrollHeight;
+      return wrap;
+    }
+
+    function showTyping(): HTMLElement {
+      const wrap = document.createElement('div');
+      wrap.className = 'pcw-msg pcw-msg--bot';
+      wrap.innerHTML = '<span class="pcw-typing"><span></span><span></span><span></span></span>';
+      msgs.appendChild(wrap);
+      msgs.scrollTop = msgs.scrollHeight;
+      return wrap;
+    }
+
+    function autosize() {
+      input.style.height = 'auto';
+      input.style.height = Math.min(input.scrollHeight, 110) + 'px';
+    }
+
+    // ---- send ----------------------------------------------------------
+    async function send(text: string) {
+      const q = text.trim();
+      if (!q || busy) return;
+      busy = true;
+      sendBtn.disabled = true;
+      suggest.hidden = true;
+
+      thread.push({ role: 'user', content: q.slice(0, 1500) });
+      save();
+      addBubble('user', q);
+      input.value = '';
+      autosize();
+
+      const typing = showTyping();
+      const ctrl = new AbortController();
+      const timer = window.setTimeout(() => ctrl.abort(), 30000);
+
+      try {
+        const res = await fetch(API, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ messages: thread.slice(-MAX_SEND), lang: lang() }),
+          signal: ctrl.signal,
+        });
+        window.clearTimeout(timer);
+        typing.remove();
+
+        if (res.status === 429) { failure(t('rate'), q); return; }
+        if (!res.ok) { failure(t('err'), q); return; }
+
+        const data = await res.json();
+        const reply = (data && typeof data.reply === 'string') ? data.reply : t('err');
+        thread.push({ role: 'assistant', content: reply });
+        save();
+        addBubble('bot', reply);
+      } catch {
+        window.clearTimeout(timer);
+        typing.remove();
+        failure(t('net'), q);
+      } finally {
+        busy = false;
+        sendBtn.disabled = false;
+        input.focus();
+      }
+    }
+
+    function failure(message: string, lastQuestion: string) {
+      // drop the unanswered user turn so a retry doesn't duplicate it
+      if (thread.length && thread[thread.length - 1].role === 'user') {
+        thread.pop();
+        save();
+      }
+      const wrap = addBubble('err', message);
+      const retry = document.createElement('button');
+      retry.className = 'pcw-retry';
+      retry.type = 'button';
+      retry.textContent = t('retry');
+      retry.addEventListener('click', () => { wrap.remove(); send(lastQuestion); });
+      wrap.appendChild(retry);
+      busy = false;
+      sendBtn.disabled = false;
+    }
+
+    // ---- open / close --------------------------------------------------
+    function open() {
+      panel.hidden = false;
+      root!.classList.add('pcw--open');
+      launch.setAttribute('aria-expanded', 'true');
+      setTimeout(() => input.focus(), 60);
+    }
+    function close() {
+      panel.hidden = true;
+      root!.classList.remove('pcw--open');
+      launch.setAttribute('aria-expanded', 'false');
+      launch.focus();
+    }
+    function toggle() { panel.hidden ? open() : close(); }
+
+    launch.addEventListener('click', toggle);
+    closeBtn.addEventListener('click', close);
+    resetBtn.addEventListener('click', () => {
+      thread = [];
+      save();
+      msgs.querySelectorAll('.pcw-msg:not(#pcw-welcome)').forEach(n => n.remove());
+      suggest.hidden = false;
+      input.focus();
+    });
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Escape' && !panel.hidden) close();
+    });
+
+    suggest.querySelectorAll('.pcw-chip').forEach(chip => {
+      chip.addEventListener('click', () => send((chip as HTMLElement).textContent || ''));
+    });
+
+    form.addEventListener('submit', e => { e.preventDefault(); send(input.value); });
+    input.addEventListener('input', autosize);
+    input.addEventListener('keydown', e => {
+      if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); send(input.value); }
+    });
+
+    load();
+  }
+</script>
