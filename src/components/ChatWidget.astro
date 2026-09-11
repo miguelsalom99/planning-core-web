@@ -109,6 +109,7 @@ const API = 'https://composite-replanning-api.vercel.app/api/chat';
     --pcw-muted: #9aa6bd;
     --pcw-bot-bg: #17294a;
     --pcw-user-bg: #2a5fd0;
+    --pcw-teal: #8BC2C6;
   }
 
   /* Launcher */
@@ -168,6 +169,9 @@ const API = 'https://composite-replanning-api.vercel.app/api/chat';
   .pcw-msg--user .pcw-bubble { background: var(--pcw-user-bg); color: #fff; border-bottom-right-radius: 5px; }
   .pcw-msg--err .pcw-bubble { background: #fdeceb; color: #9a2a22; border: 1px solid #f3c7c3; }
   :root[data-theme="dark"] .pcw-msg--err .pcw-bubble { background: #3a1f1d; color: #f4b7b1; border-color: #6d3a35; }
+  .pcw-link { color: var(--pcw-teal); font-weight: 600; text-decoration: underline; text-underline-offset: 2px; }
+  .pcw-link:hover { text-decoration-thickness: 2px; }
+  .pcw-msg--err .pcw-link { color: inherit; }
   .pcw-retry {
     margin-top: 6px; font-size: .8rem; font-weight: 600; color: var(--pcw-accent);
     background: none; border: none; cursor: pointer; padding: 0; text-decoration: underline;
@@ -286,14 +290,43 @@ const API = 'https://composite-replanning-api.vercel.app/api/chat';
     }
 
     // ---- rendering (text only — never innerHTML of model output) ---------
+    //
+    // The model/FAQ only ever writes plain-text page paths (e.g. "/contacto"),
+    // never HTML or markdown links — SYSTEM_RULES on the backend forbids that.
+    // Here, in trusted widget code, a fixed whitelist of known site paths is
+    // turned into real <a> elements. Nothing outside that whitelist can ever
+    // become a link, so this can't be used to inject an arbitrary href.
+    const SITE_PATHS = ['/contacto', '/producto', '/precios', '/comparativa', '/sectores'];
+    const PATH_RE = new RegExp(
+      '(' + SITE_PATHS.map(p => p.replace('/', '\\/')).join('|') + ')(?![a-zA-Z0-9-])', 'g'
+    );
+
+    function appendLinkified(container: HTMLElement, line: string, linkify: boolean) {
+      if (!linkify) { container.appendChild(document.createTextNode(line)); return; }
+      let last = 0;
+      PATH_RE.lastIndex = 0;
+      let m: RegExpExecArray | null;
+      while ((m = PATH_RE.exec(line))) {
+        if (m.index > last) container.appendChild(document.createTextNode(line.slice(last, m.index)));
+        const a = document.createElement('a');
+        a.href = m[1];
+        a.className = 'pcw-link';
+        a.textContent = m[1];
+        container.appendChild(a);
+        last = m.index + m[1].length;
+      }
+      if (last < line.length) container.appendChild(document.createTextNode(line.slice(last)));
+    }
+
     function addBubble(kind: 'user' | 'bot' | 'err', text: string): HTMLElement {
       const wrap = document.createElement('div');
       wrap.className = 'pcw-msg pcw-msg--' + kind;
       const p = document.createElement('p');
       p.className = 'pcw-bubble';
+      const linkify = kind !== 'user';
       const parts = text.split('\n');
       parts.forEach((line, i) => {
-        p.appendChild(document.createTextNode(line));
+        appendLinkified(p, line, linkify);
         if (i < parts.length - 1) p.appendChild(document.createElement('br'));
       });
       wrap.appendChild(p);
