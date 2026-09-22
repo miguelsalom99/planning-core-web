@@ -5130,6 +5130,23 @@
   const backSep           = document.querySelector('.back-sep');
   const sidebarEl         = document.getElementById('sidebar');
 
+  // F-02: a non-admin may only navigate to the industry their company/sector
+  // is assigned to. This is a UI gate for usability + least-surprise; the real
+  // boundary is enforced server-side. Admins (or users whose industry we cannot
+  // determine) see every industry.
+  function applySectorGate() {
+    const cards = document.querySelectorAll('.industry-card, .ind-item');
+    const allowed = new Set<string>();
+    if (currentUser && currentUser.company_industry) allowed.add(currentUser.company_industry);
+    if (currentUser && currentUser.sector) String(currentUser.sector).split(',').map((s: string) => s.trim()).filter(Boolean).forEach((s: string) => allowed.add(s));
+    const showAll = (!currentUser || currentUser.is_admin || allowed.size === 0);
+    cards.forEach(el => {
+      const key = (el as HTMLElement).getAttribute('data-industry') || '';
+      const full = IND_SLUG[key] || key;
+      (el as HTMLElement).style.display = (showAll || allowed.has(full) || allowed.has(key)) ? '' : 'none';
+    });
+  }
+
   function showSelector() {
     selectorEl.classList.remove('hidden');
     entSelectorEl?.classList.remove('show');
@@ -5139,6 +5156,7 @@
     backBtn.classList.add('hidden');
     backSep.classList.add('hidden');
     document.querySelectorAll('.ind-item').forEach(el => el.classList.remove('ind-item--active'));
+    applySectorGate();
   }
 
   // Step between the industry menu and the planning: pick which client enterprise
@@ -7740,14 +7758,14 @@
         }
         tbody.innerHTML = adminCompanies.map(c => `
           <tr>
-            <td style="font-weight:600">${c.name}</td>
+            <td style="font-weight:600">${escapeHtml(c.name)}</td>
             <td style="font-size:.78rem;color:var(--n30)">${c.industry ? (INDUSTRY_LABELS[c.industry] || c.industry) : '<span style="color:var(--n80)">—</span>'}</td>
             <td>${c.plan ? `<span class="admin-badge admin-badge--plan">${PLAN_LABELS[c.plan] || c.plan}</span>` : '<span style="color:var(--n80)">—</span>'}</td>
             <td style="font-size:.78rem;color:var(--n50)">${c.user_count} usuario${c.user_count !== 1 ? 's' : ''}</td>
             <td style="font-size:.78rem;color:var(--n50)">${new Date(c.created_at).toLocaleDateString('es-ES')}</td>
             <td>
               <button class="admin-action-btn" data-edit-company="${c.id}">Editar</button>
-              <button class="admin-action-btn del" data-del-company="${c.id}" data-del-company-name="${c.name}">Eliminar</button>
+              <button class="admin-action-btn del" data-del-company="${c.id}" data-del-company-name="${escapeHtml(c.name)}">Eliminar</button>
             </td>
           </tr>`).join('');
 
@@ -7764,7 +7782,7 @@
         const sel = document.getElementById('au-company-id')!;
         const cur = (sel as HTMLSelectElement).value;
         sel.innerHTML = '<option value="">— Sin empresa —</option>' +
-          adminCompanies.map(c => `<option value="${c.id}">${c.name}${c.industry ? ' · ' + (INDUSTRY_LABELS[c.industry] || c.industry) : ''}</option>`).join('');
+          adminCompanies.map(c => `<option value="${c.id}">${escapeHtml(c.name)}${c.industry ? ' · ' + (INDUSTRY_LABELS[c.industry] || c.industry) : ''}</option>`).join('');
         (sel as HTMLSelectElement).value = cur;
       }
 
@@ -7835,10 +7853,10 @@
         tbody.innerHTML = users.map(u => {
           const companyName = u.company_id ? (adminCompanies.find((c: any) => c.id === u.company_id)?.name || u.company || '—') : (u.company || '—');
           const sectors = u.is_admin ? '<span style="color:var(--amber);font-size:.72rem">Todos</span>'
-            : (u.sector ? u.sector.split(',').map((s: string) => s.trim()).join(', ') : '<span style="color:var(--red);font-size:.72rem">Sin asignar</span>');
+            : (u.sector ? escapeHtml(u.sector.split(',').map((s: string) => s.trim()).join(', ')) : '<span style="color:var(--red);font-size:.72rem">Sin asignar</span>');
           return `<tr>
-            <td><div style="font-weight:600">${u.name}</div><div style="font-size:.72rem;color:var(--n50)">${u.email}</div></td>
-            <td style="font-size:.78rem;color:var(--n30)">${companyName}</td>
+            <td><div style="font-weight:600">${escapeHtml(u.name)}</div><div style="font-size:.72rem;color:var(--n50)">${escapeHtml(u.email)}</div></td>
+            <td style="font-size:.78rem;color:var(--n30)">${escapeHtml(companyName)}</td>
             <td style="font-size:.78rem;color:var(--n50)">${sectors}</td>
             <td><span class="admin-badge ${u.is_admin ? 'admin-badge--admin' : ''}" style="${!u.is_admin ? 'background:var(--n90);color:var(--n50)' : ''}">${u.is_admin ? 'Admin' : 'Cliente'}</span></td>
             <td><span class="admin-badge ${u.is_active ? 'admin-badge--active' : 'admin-badge--inactive'}">${u.is_active ? 'Activo' : 'Inactivo'}</span></td>
@@ -7846,7 +7864,7 @@
             <td>
               <button class="admin-action-btn" data-edit-user="${u.id}">Editar</button>
               <button class="admin-action-btn" data-toggle-user="${u.id}" data-toggle-active="${u.is_active}">${u.is_active ? 'Revocar' : 'Reactivar'}</button>
-              <button class="admin-action-btn del" data-del-user="${u.id}" data-del-user-name="${u.name}">Eliminar</button>
+              <button class="admin-action-btn del" data-del-user="${u.id}" data-del-user-name="${escapeHtml(u.name)}">Eliminar</button>
             </td>
           </tr>`;
         }).join('');
