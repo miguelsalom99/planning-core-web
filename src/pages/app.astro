@@ -397,8 +397,13 @@
     .settings-dropdown__divider { height: 1px; background: var(--n90); margin: .3rem .4rem; }
     .settings-dropdown__item--danger { color: var(--red); }
     .settings-dropdown__item--danger:hover { background: var(--red-bg); }
+    .user-menu__head { padding: .55rem .75rem .5rem; }
+    .user-menu__name { font-size: .85rem; font-weight: 600; color: var(--n20); }
+    .user-menu__email { font-size: .74rem; color: var(--n50); word-break: break-all; margin-top: .1rem; }
+    .user-menu__role { font-size: .68rem; font-weight: 600; letter-spacing: .04em; text-transform: uppercase; color: var(--brand); margin-top: .3rem; }
 
     .user-pill {
+      position: relative;
       display: flex;
       align-items: center;
       gap: .5rem;
@@ -2622,7 +2627,32 @@
           <span class="user-name" id="user-name">—</span>
           <span class="user-role" id="user-role">—</span>
         </div>
-      </div>
+        <!-- User account dropdown (basics + logout) -->
+        <div class="settings-dropdown user-menu" id="userMenu">
+          <div class="user-menu__head">
+            <div class="user-menu__name" id="userMenuName">—</div>
+            <div class="user-menu__email" id="userMenuEmail">—</div>
+            <div class="user-menu__role" id="userMenuRole">—</div>
+          </div>
+          <div class="settings-dropdown__divider"></div>
+          <div class="settings-dropdown__item" data-user-action="config">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+            Configuración
+          </div>
+          <div class="settings-dropdown__item" data-user-action="ayuda">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+            Ayuda &amp; soporte
+          </div>
+          <div class="settings-dropdown__item" data-user-action="seguridad">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            Pregunta de seguridad
+          </div>
+          <div class="settings-dropdown__divider"></div>
+          <div class="settings-dropdown__item settings-dropdown__item--danger" data-user-action="logout">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+            Cerrar sesión
+          </div>
+        </div>      </div>
     </div>
   </header>
 
@@ -8534,6 +8564,49 @@
           setTimeout(() => { window.location.href = '/'; }, 1000);
         } else if (action === 'seguridad') {
           openSecurityQuestionModal();
+        }
+      });
+    });
+
+    // User pill (top-right) -> account dropdown: basics + logout
+    const userPill = document.getElementById('user-pill');
+    const userMenu = document.getElementById('userMenu');
+
+    function populateUserMenu() {
+      const u: any = currentUser || {};
+      const nm = document.getElementById('userMenuName');
+      const em = document.getElementById('userMenuEmail');
+      const rl = document.getElementById('userMenuRole');
+      if (nm) nm.textContent = u.name || u.email || 'Usuario';
+      if (em) em.textContent = u.email || '';
+      if (rl) rl.textContent = u.is_admin ? 'Administrador' : 'Usuario';
+    }
+
+    userPill?.addEventListener('click', e => {
+      if (userMenu && userMenu.contains(e.target as Node)) return; // let inner clicks through
+      e.stopPropagation();
+      if (!userMenu?.classList.contains('open')) populateUserMenu();
+      userMenu?.classList.toggle('open');
+    });
+
+    document.addEventListener('click', e => {
+      if (userMenu && !userPill?.contains(e.target as Node)) userMenu.classList.remove('open');
+    });
+
+    userMenu?.querySelectorAll('[data-user-action]').forEach(item => {
+      item.addEventListener('click', e => {
+        e.stopPropagation();
+        userMenu.classList.remove('open');
+        const action = (item as HTMLElement).dataset.userAction;
+        if (action === 'config' || action === 'ayuda') {
+          (document.querySelector(`.nav-item[data-panel="${action}"]`) as HTMLElement | null)?.click();
+        } else if (action === 'seguridad') {
+          openSecurityQuestionModal();
+        } else if (action === 'logout') {
+          localStorage.removeItem('pc_token');
+          localStorage.removeItem('pc_email');
+          showToast('Sesión cerrada');
+          setTimeout(() => { window.location.href = '/'; }, 1000);
         }
       });
     });
