@@ -5873,20 +5873,32 @@
           const color = score >= 80 ? '#16A34A' : score >= 55 ? '#D97706' : '#DC2626';
           const pc = p.pieces_completed || {};
           const mk = p.makespan_shifts  || {};
+          // A-08: show the 95% confidence interval, not a false-precision point.
+          const sci = Array.isArray(p.robustness_score_ci) ? p.robustness_score_ci : null;
+          const sciTxt = sci ? `<span style="font-size:.6rem;font-weight:500;color:var(--n50);margin-left:.35rem">IC95 ${sci[0]}–${sci[1]}</span>` : '';
+          const whci = Array.isArray(p.within_horizon_ci) ? p.within_horizon_ci : null;
+          const whTxt = whci ? ` <span style="font-size:.62rem;color:var(--n50)">(${Math.round(whci[0]*100)}–${Math.round(whci[1]*100)}%)</span>` : '';
+          // A-02: label results honestly until the model is calibrated with real data.
+          const calibrated = !!(sim.model && sim.model.calibrated);
+          const badge = calibrated ? '' :
+            `<div style="font-size:.64rem;font-weight:600;color:#B7791F;background:rgba(183,121,31,.10);border:1px solid rgba(183,121,31,.30);border-radius:6px;padding:2px 7px;margin-bottom:.45rem;display:inline-block">Modelo ilustrativo · parámetros sin calibrar</div>`;
+          const trunc = sim.truncated ? ' · ⚠ interrumpido por límite de tiempo' : '';
           holder.className = 'alt-card__sim';
           holder.innerHTML = `
+            ${badge}
             <div class="alt-sim__head">
               <span class="alt-sim__title">Robustez Monte Carlo</span>
               <span class="alt-sim__score" style="color:${color}">${score}<span>/100</span></span>
             </div>
+            ${sciTxt ? `<div style="text-align:right;margin:-.2rem 0 .3rem">${sciTxt}</div>` : ''}
             <div class="alt-sim__bar"><div style="width:${Math.max(2, score)}%;background:${color}"></div></div>
             <div class="alt-sim__rows">
-              <div><span>Prob. dentro de plazo</span><b>${Math.round((p.within_horizon_probability || 0) * 100)}%</b></div>
+              <div><span>Prob. dentro de plazo</span><b>${Math.round((p.within_horizon_probability || 0) * 100)}%${whTxt}</b></div>
               <div><span>Piezas completas · P50 / P10</span><b>${pc.p50 ?? '–'} / ${pc.p10 ?? '–'}</b></div>
               <div><span>Duración turnos · P50 / P90</span><b>${mk.p50 ?? '–'} / ${mk.p90 ?? '–'}</b></div>
               <div><span>Exceso esperado</span><b>${p.expected_overflow ?? 0}</b></div>
             </div>
-            <div class="alt-sim__foot">${sim.iterations} iteraciones Monte Carlo</div>
+            <div class="alt-sim__foot">${sim.iterations} iteraciones Monte Carlo${trunc}</div>
           `;
         });
         stampAstroScope(altCards);
