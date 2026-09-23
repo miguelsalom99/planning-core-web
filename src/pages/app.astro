@@ -309,6 +309,27 @@
     [data-theme="dark"] .ctx-opt:hover { background: rgba(255,255,255,.06); }
     @media (max-width: 860px) { .ctx-seg--static, .ctx-bar .ctx-arrow:first-of-type, .ctx-bar > .ctx-seg--static + .ctx-arrow { display: none; } }
 
+    /* Plant Map module */
+    .pm-toolbar { display: flex; gap: .4rem; align-items: center; }
+    .pm-toolbar .btn-ui { padding: .35rem .6rem; }
+    .pm-layout { display: flex; gap: 14px; height: 560px; margin-top: 14px; }
+    .pm-canvas-wrap { flex: 1; position: relative; background: var(--n95); border: 1px solid var(--n90); border-radius: 12px; overflow: hidden; }
+    #pmCanvas { width: 100%; height: 100%; display: block; cursor: grab; touch-action: none; }
+    #pmCanvas.pm-grabbing { cursor: grabbing; }
+    .pm-panel { width: 288px; flex: none; background: var(--white); border: 1px solid var(--n90); border-radius: 12px; padding: 16px; overflow-y: auto; }
+    .pm-panel__empty { color: var(--n50); font-size: .85rem; text-align: center; margin-top: 48px; }
+    .pm-field { margin-bottom: 11px; }
+    .pm-field__k { font-family: ui-monospace, monospace; font-size: .62rem; text-transform: uppercase; letter-spacing: .05em; color: var(--n50); margin-bottom: 2px; }
+    .pm-field__v { font-size: .9rem; color: var(--n20); }
+    .pm-empty { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; color: var(--n50); text-align: center; padding: 24px; gap: 8px; }
+    .pm-modal-back { position: fixed; inset: 0; background: rgba(0,0,0,.45); display: flex; align-items: center; justify-content: center; z-index: 1000; }
+    .pm-modal { background: var(--white); border-radius: 14px; padding: 22px; width: 380px; max-width: 92vw; box-shadow: 0 20px 50px rgba(0,0,0,.3); }
+    .pm-modal h3 { margin: 0 0 14px; font-size: 1.05rem; }
+    .pm-modal label { display: block; font-size: .68rem; text-transform: uppercase; letter-spacing: .04em; color: var(--n50); margin: 10px 0 3px; }
+    .pm-modal input, .pm-modal select { width: 100%; padding: .5rem .6rem; border: 1px solid var(--n90); border-radius: 7px; background: var(--white); color: var(--n20); font-size: .9rem; font-family: inherit; box-sizing: border-box; }
+    .pm-modal__actions { display: flex; gap: 8px; justify-content: flex-end; margin-top: 18px; }
+    @media (max-width: 860px) { .pm-layout { flex-direction: column; height: auto; } .pm-panel { width: auto; } .pm-canvas-wrap { height: 360px; } }
+
     .pilot-chip {
       display: flex;
       align-items: center;
@@ -2736,6 +2757,10 @@
 
       <div class="nav-section">
         <div class="nav-section__label" data-i18n="navSecOperaciones">Operaciones</div>
+        <a class="nav-item" href="#" data-panel="plantmap">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"/><line x1="8" y1="2" x2="8" y2="18"/><line x1="16" y1="6" x2="16" y2="22"/></svg>
+          <span data-i18n="navPlantMap">Mapa de planta</span>
+        </a>
         <a class="nav-item" href="#" data-panel="ordenes">
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
           <span data-i18n="navOrdenes">Órdenes de fabricación</span>
@@ -3882,6 +3907,36 @@
     </div><!-- /#panel-ordenes -->
 
     <!-- ── PANEL: RECURSOS ── -->
+    <div id="panel-plantmap" class="dash-panel" style="display:none">
+      <div class="panel-page">
+        <div class="panel-page-header">
+          <div>
+            <div class="panel-page-title">Mapa de planta</div>
+            <div class="panel-page-sub" id="pmSub">Distribución física de departamentos</div>
+          </div>
+          <div class="pm-toolbar">
+            <button class="btn-ui" id="pmZoomOut" type="button" title="Alejar">−</button>
+            <button class="btn-ui" id="pmZoomReset" type="button" title="Ajustar">Ajustar</button>
+            <button class="btn-ui" id="pmZoomIn" type="button" title="Acercar">+</button>
+            <button class="btn-ui btn-ui--primary" id="pmAddDept" type="button" style="display:none">+ Departamento</button>
+          </div>
+        </div>
+        <div class="pm-layout">
+          <div class="pm-canvas-wrap" id="pmCanvasWrap">
+            <svg id="pmCanvas" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet"></svg>
+            <div class="pm-empty" id="pmEmpty" hidden>
+              <div style="font-weight:600">Aún no hay departamentos ubicados</div>
+              <div style="font-size:.82rem">Crea uno con "+ Departamento" o selecciona una planta.</div>
+            </div>
+          </div>
+          <aside class="pm-panel" id="pmPanel">
+            <div class="pm-panel__empty" id="pmPanelEmpty">Selecciona un departamento en el mapa para ver su información.</div>
+            <div id="pmPanelBody" hidden></div>
+          </aside>
+        </div>
+      </div>
+    </div><!-- /#panel-plantmap -->
+
     <div id="panel-recursos" class="dash-panel" style="display:none">
       <div class="panel-page">
         <div class="panel-page-header">
@@ -5399,6 +5454,197 @@
   }
   function _ctxPickSection(sec: any) { _ctxClose('ctxSectionMenu'); _ctxSetSection(sec); }
 
+  // ── Plant Map module (MVP) ──────────────────────────────────────────────
+  // Interactive SVG floor plan of the current plant's departments (sections),
+  // wired to /api/plants/{id}/map + geometry PATCH. Pan/zoom, click→panel,
+  // admin drag-to-move + create. Tenant scoping is enforced server-side.
+  let pmData: any = null;
+  let pmView = { x: 0, y: 0, w: 800, h: 600 };
+  let pmSelId: number | null = null;
+  let pmIsAdmin = false;
+  let pmWired = false;
+  let pmPanMoved = false;
+  const PM_NS = 'http://www.w3.org/2000/svg';
+
+  function pmEl(tag: string, attrs: Record<string, any>) {
+    const e = document.createElementNS(PM_NS, tag);
+    for (const k in attrs) e.setAttribute(k, String(attrs[k]));
+    return e;
+  }
+  function pmApplyView() {
+    const svg = document.getElementById('pmCanvas');
+    if (svg) svg.setAttribute('viewBox', `${pmView.x} ${pmView.y} ${pmView.w} ${pmView.h}`);
+  }
+  function pmShowEmpty(show: boolean) {
+    const e = document.getElementById('pmEmpty'); if (e) e.hidden = !show;
+  }
+  function pmScale() {
+    const svg = document.getElementById('pmCanvas'); if (!svg) return 1;
+    const r = svg.getBoundingClientRect();
+    return r.width ? pmView.w / r.width : 1;
+  }
+
+  async function initPlantMap() {
+    const svg = document.getElementById('pmCanvas'); if (!svg) return;
+    pmIsAdmin = localStorage.getItem('pc_is_admin') === 'true';
+    const addBtn = document.getElementById('pmAddDept'); if (addBtn) addBtn.style.display = pmIsAdmin ? '' : 'none';
+    pmWireOnce();
+    const plantId = (window as any).pcContext ? (window as any).pcContext.plantId : null;
+    await pmLoad(plantId);
+  }
+
+  async function pmLoad(plantId: number | null) {
+    const token = localStorage.getItem('pc_token');
+    try {
+      let pid = plantId;
+      if (!pid) {
+        const pr = await fetch(`${API}/api/plants`, { headers: { Authorization: `Bearer ${token}` } });
+        const plants = pr.ok ? await pr.json() : [];
+        pid = (plants && plants.length) ? plants[0].id : null;
+      }
+      if (!pid) { pmShowEmpty(true); return; }
+      const res = await fetch(`${API}/api/plants/${pid}/map`, { headers: { Authorization: `Bearer ${token}` } });
+      if (!res.ok) { pmShowEmpty(true); return; }
+      pmData = await res.json();
+      pmData.plant_id = pid;
+      if ((window as any).pcContext) (window as any).pcContext.plantId = pid;
+      const sub = document.getElementById('pmSub');
+      if (sub) sub.textContent = `${pmData.plant.name} · ${(pmData.departments || []).length} departamentos`;
+      pmFit(); pmRender();
+    } catch (_) { pmShowEmpty(true); }
+  }
+
+  function pmFit() {
+    const d = (pmData && pmData.departments) || [];
+    if (!d.length) { pmView = { x: 0, y: 0, w: 800, h: 600 }; pmApplyView(); pmShowEmpty(true); return; }
+    pmShowEmpty(false);
+    let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+    d.forEach((s: any) => { minX = Math.min(minX, s.pos_x); minY = Math.min(minY, s.pos_y); maxX = Math.max(maxX, s.pos_x + s.width); maxY = Math.max(maxY, s.pos_y + s.height); });
+    const pad = 48;
+    pmView = { x: minX - pad, y: minY - pad, w: (maxX - minX) + pad * 2, h: (maxY - minY) + pad * 2 };
+    pmApplyView();
+  }
+
+  function pmRender() {
+    const svg = document.getElementById('pmCanvas'); if (!svg) return;
+    while (svg.firstChild) svg.removeChild(svg.firstChild);
+    (pmData && pmData.departments || []).forEach((s: any) => {
+      const g = pmEl('g', { 'data-id': s.id }); (g as any).style.cursor = 'pointer';
+      const sel = s.id === pmSelId;
+      g.appendChild(pmEl('rect', { x: s.pos_x, y: s.pos_y, width: s.width, height: s.height, rx: 9, fill: 'var(--white)', stroke: sel ? 'var(--brand)' : s.color, 'stroke-width': sel ? 3 : 1.5 }));
+      g.appendChild(pmEl('rect', { x: s.pos_x, y: s.pos_y, width: 6, height: s.height, rx: 3, fill: s.color }));
+      const name = pmEl('text', { x: s.pos_x + 16, y: s.pos_y + 26, 'font-size': 13, 'font-weight': 700, fill: 'var(--n20)' }); name.textContent = s.name; g.appendChild(name);
+      const kind = pmEl('text', { x: s.pos_x + 16, y: s.pos_y + 42, 'font-size': 10, fill: 'var(--n50)', 'font-family': 'ui-monospace,monospace' }); kind.textContent = s.kind || ''; g.appendChild(kind);
+      if (s.capacity != null) {
+        const inner = s.width - 32;
+        const bw = Math.max(0, Math.min(1, s.capacity / 100)) * inner;
+        const cy = s.pos_y + s.height - 16;
+        const capColor = s.capacity >= 90 ? 'var(--red)' : s.capacity >= 70 ? 'var(--amber)' : 'var(--green)';
+        g.appendChild(pmEl('rect', { x: s.pos_x + 16, y: cy, width: inner, height: 6, rx: 3, fill: 'var(--n90)' }));
+        g.appendChild(pmEl('rect', { x: s.pos_x + 16, y: cy, width: bw, height: 6, rx: 3, fill: capColor }));
+        const ct = pmEl('text', { x: s.pos_x + 16, y: cy - 4, 'font-size': 9, fill: 'var(--n50)', 'font-family': 'ui-monospace,monospace' }); ct.textContent = Math.round(s.capacity) + '% cap.'; g.appendChild(ct);
+      }
+      g.addEventListener('click', (e) => { e.stopPropagation(); pmSelId = s.id; pmRender(); pmShowPanel(s); });
+      if (pmIsAdmin) pmMakeDraggable(g, s);
+      svg.appendChild(g);
+    });
+  }
+
+  function pmMakeDraggable(g: Element, s: any) {
+    let drag = false, sx = 0, sy = 0, moved = false;
+    g.addEventListener('pointerdown', (e: any) => { e.stopPropagation(); drag = true; moved = false; sx = e.clientX; sy = e.clientY; g.setPointerCapture(e.pointerId); });
+    g.addEventListener('pointermove', (e: any) => { if (!drag) return; const sc = pmScale(); const dx = (e.clientX - sx) * sc, dy = (e.clientY - sy) * sc; g.setAttribute('transform', `translate(${dx} ${dy})`); moved = true; });
+    g.addEventListener('pointerup', async (e: any) => { if (!drag) return; drag = false; if (!moved) return; const sc = pmScale(); const dx = (e.clientX - sx) * sc, dy = (e.clientY - sy) * sc; s.pos_x = Math.max(0, Math.round(s.pos_x + dx)); s.pos_y = Math.max(0, Math.round(s.pos_y + dy)); g.removeAttribute('transform'); pmRender(); await pmSaveGeom(s); });
+  }
+  async function pmSaveGeom(s: any) {
+    const token = localStorage.getItem('pc_token');
+    try {
+      await fetch(`${API}/api/sections/${s.id}/geometry`, { method: 'PATCH', headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' }, body: JSON.stringify({ pos_x: Math.round(s.pos_x), pos_y: Math.round(s.pos_y), width: Math.round(s.width), height: Math.round(s.height) }) });
+    } catch (_) {}
+  }
+
+  function pmShowPanel(s: any) {
+    const empty = document.getElementById('pmPanelEmpty'); if (empty) empty.hidden = true;
+    const body = document.getElementById('pmPanelBody'); if (!body) return; body.hidden = false;
+    const cap = s.capacity != null ? `<div class="pm-field"><div class="pm-field__k">Capacidad</div><div class="pm-field__v">${Math.round(s.capacity)}%</div></div>` : '';
+    body.innerHTML = `
+      <div style="font-size:1.05rem;font-weight:700;margin-bottom:12px;color:var(--n20)">${escapeHtml(s.name)}</div>
+      <div class="pm-field"><div class="pm-field__k">Tipo</div><div class="pm-field__v">${escapeHtml(s.kind || '—')}</div></div>
+      ${s.owner ? `<div class="pm-field"><div class="pm-field__k">Responsable</div><div class="pm-field__v">${escapeHtml(s.owner)}</div></div>` : ''}
+      ${cap}
+      <div class="pm-field"><div class="pm-field__k">Posición</div><div class="pm-field__v">${Math.round(s.pos_x)}, ${Math.round(s.pos_y)} · ${Math.round(s.width)}×${Math.round(s.height)}</div></div>`;
+  }
+  function pmClearPanel() {
+    const empty = document.getElementById('pmPanelEmpty'); if (empty) empty.hidden = false;
+    const body = document.getElementById('pmPanelBody'); if (body) body.hidden = true;
+  }
+
+  function pmWireOnce() {
+    if (pmWired) return; pmWired = true;
+    const svg = document.getElementById('pmCanvas'); if (!svg) return;
+    svg.addEventListener('pointerdown', (e: any) => {
+      if ((e.target as Element).closest && (e.target as Element).closest('g[data-id]')) return;
+      pmPanMoved = false;
+      const sx = e.clientX, sy = e.clientY, ox = pmView.x, oy = pmView.y;
+      svg.classList.add('pm-grabbing');
+      const move = (ev: any) => { const sc = pmScale(); pmView.x = ox - (ev.clientX - sx) * sc; pmView.y = oy - (ev.clientY - sy) * sc; pmPanMoved = true; pmApplyView(); };
+      const up = () => { svg.classList.remove('pm-grabbing'); window.removeEventListener('pointermove', move); window.removeEventListener('pointerup', up); };
+      window.addEventListener('pointermove', move); window.addEventListener('pointerup', up);
+    });
+    svg.addEventListener('wheel', (e: any) => { e.preventDefault(); pmZoomAt(e.deltaY < 0 ? 0.9 : 1.1, e); }, { passive: false });
+    svg.addEventListener('click', () => { if (pmPanMoved) { pmPanMoved = false; return; } pmSelId = null; pmRender(); pmClearPanel(); });
+    document.getElementById('pmZoomIn')?.addEventListener('click', () => pmZoom(0.85));
+    document.getElementById('pmZoomOut')?.addEventListener('click', () => pmZoom(1.18));
+    document.getElementById('pmZoomReset')?.addEventListener('click', () => pmFit());
+    document.getElementById('pmAddDept')?.addEventListener('click', pmOpenCreate);
+  }
+  function pmZoom(f: number) { const cx = pmView.x + pmView.w / 2, cy = pmView.y + pmView.h / 2; pmView.w *= f; pmView.h *= f; pmView.x = cx - pmView.w / 2; pmView.y = cy - pmView.h / 2; pmApplyView(); }
+  function pmZoomAt(f: number, e: any) {
+    const svg = document.getElementById('pmCanvas'); if (!svg) return; const r = svg.getBoundingClientRect();
+    const rx = (e.clientX - r.left) / r.width, ry = (e.clientY - r.top) / r.height;
+    const px = pmView.x + rx * pmView.w, py = pmView.y + ry * pmView.h;
+    pmView.w *= f; pmView.h *= f; pmView.x = px - rx * pmView.w; pmView.y = py - ry * pmView.h; pmApplyView();
+  }
+
+  function pmOpenCreate() {
+    if (!pmIsAdmin || !pmData) return;
+    const back = document.createElement('div'); back.className = 'pm-modal-back';
+    back.innerHTML = `<div class="pm-modal">
+      <h3>Nuevo departamento</h3>
+      <label>Tipo</label>
+      <select id="pmcType"><option value="production">Producción</option><option value="warehouse">Almacén</option><option value="quality">Calidad</option><option value="maintenance">Mantenimiento</option><option value="tooling">Utillaje</option><option value="logistics">Logística</option><option value="office">Oficina</option><option value="custom">Otro</option></select>
+      <label>Nombre</label><input id="pmcName" maxlength="120" placeholder="p. ej. Línea de montaje 2"/>
+      <label>Responsable (opcional)</label><input id="pmcOwner" maxlength="120"/>
+      <label>Capacidad % (opcional)</label><input id="pmcCap" type="number" min="0" max="100"/>
+      <div id="pmcErr" style="color:var(--red);font-size:.8rem;margin-top:8px;display:none"></div>
+      <div class="pm-modal__actions"><button class="btn-ui" id="pmcCancel" type="button">Cancelar</button><button class="btn-ui btn-ui--primary" id="pmcSave" type="button">Crear</button></div>
+    </div>`;
+    // Stamp Astro scope so .pm-modal / .btn-ui scoped CSS applies to this body-appended node.
+    const cidEl = document.getElementById('panel-plantmap');
+    const cidAttr = cidEl && Array.prototype.slice.call(cidEl.attributes).find((a: Attr) => a.name.indexOf('data-astro-cid') === 0);
+    if (cidAttr) { back.setAttribute(cidAttr.name, cidAttr.value); stampAstroScope(back); }
+    document.body.appendChild(back);
+    const close = () => back.remove();
+    back.addEventListener('click', (e) => { if (e.target === back) close(); });
+    (back.querySelector('#pmcCancel') as HTMLElement)?.addEventListener('click', close);
+    (back.querySelector('#pmcSave') as HTMLElement)?.addEventListener('click', async () => {
+      const name = (back.querySelector('#pmcName') as HTMLInputElement).value.trim();
+      const err = back.querySelector('#pmcErr') as HTMLElement;
+      if (!name) { err.textContent = 'El nombre es obligatorio.'; err.style.display = 'block'; return; }
+      const kind = (back.querySelector('#pmcType') as HTMLSelectElement).value;
+      const owner = (back.querySelector('#pmcOwner') as HTMLInputElement).value.trim() || null;
+      const capV = (back.querySelector('#pmcCap') as HTMLInputElement).value;
+      const capacity = capV === '' ? null : parseFloat(capV);
+      let py = 40; (pmData.departments || []).forEach((s: any) => { py = Math.max(py, s.pos_y + s.height + 30); });
+      const token = localStorage.getItem('pc_token');
+      try {
+        const res = await fetch(`${API}/admin/sections`, { method: 'POST', headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' }, body: JSON.stringify({ plant_id: pmData.plant_id, name, kind, owner, capacity, pos_x: 40, pos_y: py, width: 150, height: 96 }) });
+        if (res.ok) { close(); await pmLoad(pmData.plant_id); }
+        else { err.textContent = 'No se pudo crear el departamento.'; err.style.display = 'block'; }
+      } catch (_) { err.textContent = 'Error de red.'; err.style.display = 'block'; }
+    });
+  }
+
   function showDashboard(industry) {
     selectorEl.classList.add('hidden');
     entSelectorEl?.classList.remove('show');
@@ -6819,6 +7065,7 @@
         if (p === 'recursos') renderResourceCards();
         if (p === 'disrupciones') loadDisrupciones();
         if (p === 'ordenes') loadCheckpointsForOrders();
+        if (p === 'plantmap') initPlantMap();
       });
     });
 
