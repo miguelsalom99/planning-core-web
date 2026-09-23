@@ -5563,9 +5563,23 @@
 
   function pmMakeDraggable(g: Element, s: any) {
     let drag = false, sx = 0, sy = 0, moved = false;
+    const DRAG_THRESH = 4; // screen px; a press that moves less than this is a click-to-select, not a drag
     g.addEventListener('pointerdown', (e: any) => { e.stopPropagation(); drag = true; moved = false; sx = e.clientX; sy = e.clientY; g.setPointerCapture(e.pointerId); });
-    g.addEventListener('pointermove', (e: any) => { if (!drag) return; const sc = pmScale(); const dx = (e.clientX - sx) * sc, dy = (e.clientY - sy) * sc; g.setAttribute('transform', `translate(${dx} ${dy})`); moved = true; });
-    g.addEventListener('pointerup', async (e: any) => { if (!drag) return; drag = false; if (!moved) return; const sc = pmScale(); const dx = (e.clientX - sx) * sc, dy = (e.clientY - sy) * sc; s.pos_x = Math.max(0, Math.round(s.pos_x + dx)); s.pos_y = Math.max(0, Math.round(s.pos_y + dy)); g.removeAttribute('transform'); pmRender(); await pmSaveGeom(s); });
+    g.addEventListener('pointermove', (e: any) => {
+      if (!drag) return;
+      // Ignore sub-threshold jitter: applying a transform here would move the node out
+      // from under the pointer and suppress the native click, breaking click-to-select.
+      if (!moved && Math.abs(e.clientX - sx) < DRAG_THRESH && Math.abs(e.clientY - sy) < DRAG_THRESH) return;
+      moved = true;
+      const sc = pmScale(); const dx = (e.clientX - sx) * sc, dy = (e.clientY - sy) * sc; g.setAttribute('transform', `translate(${dx} ${dy})`);
+    });
+    g.addEventListener('pointerup', async (e: any) => {
+      if (!drag) return; drag = false;
+      // Select on tap. We can't rely on the native click event: once a drag applies a
+      // transform the element moves and the browser fires no click, so selection is done here.
+      if (!moved) { pmSelId = s.id; pmRender(); pmShowPanel(s); return; }
+      const sc = pmScale(); const dx = (e.clientX - sx) * sc, dy = (e.clientY - sy) * sc; s.pos_x = Math.max(0, Math.round(s.pos_x + dx)); s.pos_y = Math.max(0, Math.round(s.pos_y + dy)); g.removeAttribute('transform'); pmRender(); await pmSaveGeom(s);
+    });
   }
   async function pmSaveGeom(s: any) {
     const token = localStorage.getItem('pc_token');
