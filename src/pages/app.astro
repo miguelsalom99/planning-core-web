@@ -5493,8 +5493,11 @@
 
   async function initPlantMap() {
     const svg = document.getElementById('pmCanvas'); if (!svg) return;
-    pmIsAdmin = localStorage.getItem('pc_is_admin') === 'true';
-    const addBtn = document.getElementById('pmAddDept'); if (addBtn) addBtn.style.display = pmIsAdmin ? '' : 'none';
+    // Pilot decision: any authenticated company user may edit their own plant
+    // (the server enforces tenant scoping). Full Viewer/Planner/Admin roles are
+    // the next milestone; until then editing is enabled for all logged-in users.
+    pmIsAdmin = true;
+    const addBtn = document.getElementById('pmAddDept'); if (addBtn) addBtn.style.display = '';
     pmWireOnce();
     const plantId = (window as any).pcContext ? (window as any).pcContext.plantId : null;
     await pmLoad(plantId);
@@ -5645,7 +5648,7 @@
       let py = 40; (pmData.departments || []).forEach((s: any) => { py = Math.max(py, s.pos_y + s.height + 30); });
       const token = localStorage.getItem('pc_token');
       try {
-        const res = await fetch(`${API}/admin/sections`, { method: 'POST', headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' }, body: JSON.stringify({ plant_id: pmData.plant_id, name, kind, owner, capacity, pos_x: 40, pos_y: py, width: 150, height: 96 }) });
+        const res = await fetch(`${API}/api/sections`, { method: 'POST', headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' }, body: JSON.stringify({ plant_id: pmData.plant_id, name, kind, owner, capacity, pos_x: 40, pos_y: py, width: 150, height: 96 }) });
         if (res.ok) { close(); await pmLoad(pmData.plant_id); }
         else { err.textContent = 'No se pudo crear el departamento.'; err.style.display = 'block'; }
       } catch (_) { err.textContent = 'Error de red.'; err.style.display = 'block'; }
