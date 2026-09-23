@@ -5471,6 +5471,13 @@
     for (const k in attrs) e.setAttribute(k, String(attrs[k]));
     return e;
   }
+  // Module-scope HTML escape — `escapeHtml` lives inside initDashboard() and is
+  // not reachable from here, so define our own for the info panel.
+  function pmEsc(s: any): string {
+    return String(s == null ? '' : s).replace(/[&<>"']/g, (c) => (
+      { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' } as Record<string, string>
+    )[c]);
+  }
   function pmApplyView() {
     const svg = document.getElementById('pmCanvas');
     if (svg) svg.setAttribute('viewBox', `${pmView.x} ${pmView.y} ${pmView.w} ${pmView.h}`);
@@ -5568,9 +5575,9 @@
     const body = document.getElementById('pmPanelBody'); if (!body) return; body.hidden = false;
     const cap = s.capacity != null ? `<div class="pm-field"><div class="pm-field__k">Capacidad</div><div class="pm-field__v">${Math.round(s.capacity)}%</div></div>` : '';
     body.innerHTML = `
-      <div style="font-size:1.05rem;font-weight:700;margin-bottom:12px;color:var(--n20)">${escapeHtml(s.name)}</div>
-      <div class="pm-field"><div class="pm-field__k">Tipo</div><div class="pm-field__v">${escapeHtml(s.kind || '—')}</div></div>
-      ${s.owner ? `<div class="pm-field"><div class="pm-field__k">Responsable</div><div class="pm-field__v">${escapeHtml(s.owner)}</div></div>` : ''}
+      <div style="font-size:1.05rem;font-weight:700;margin-bottom:12px;color:var(--n20)">${pmEsc(s.name)}</div>
+      <div class="pm-field"><div class="pm-field__k">Tipo</div><div class="pm-field__v">${pmEsc(s.kind || '—')}</div></div>
+      ${s.owner ? `<div class="pm-field"><div class="pm-field__k">Responsable</div><div class="pm-field__v">${pmEsc(s.owner)}</div></div>` : ''}
       ${cap}
       <div class="pm-field"><div class="pm-field__k">Posición</div><div class="pm-field__v">${Math.round(s.pos_x)}, ${Math.round(s.pos_y)} · ${Math.round(s.width)}×${Math.round(s.height)}</div></div>`;
   }
