@@ -291,6 +291,24 @@
       background: rgba(255,255,255,.1);
     }
 
+    /* Phase 1: persistent context breadcrumb (Industry / Company / Plant / Section) */
+    .ctx-bar { display: flex; align-items: center; gap: .3rem; min-width: 0; }
+    .ctx-bar[hidden], .ctx-menu[hidden] { display: none !important; }
+    .ctx-arrow { color: rgba(255,255,255,.28); font-size: .8rem; }
+    .ctx-seg { font-size: .78rem; color: rgba(255,255,255,.72); white-space: nowrap; max-width: 15ch; overflow: hidden; text-overflow: ellipsis; }
+    .ctx-seg--static { font-weight: 500; }
+    .ctx-seg--pick { display: inline-flex; align-items: center; gap: .25rem; background: transparent; border: 1px solid transparent; border-radius: 6px; padding: .2rem .45rem; cursor: pointer; font-weight: 600; color: rgba(255,255,255,.88); position: relative; font-family: inherit; }
+    .ctx-seg--pick:hover { background: rgba(255,255,255,.08); border-color: rgba(255,255,255,.12); }
+    .ctx-seg--pick svg { opacity: .55; flex-shrink: 0; }
+    .ctx-menu { position: absolute; top: calc(100% + 6px); left: 0; min-width: 190px; max-height: 320px; overflow-y: auto; background: var(--white); border: 1px solid var(--n90); border-radius: 8px; box-shadow: 0 8px 24px rgba(0,0,0,.18); z-index: 650; padding: .3rem; text-align: left; }
+    .ctx-opt { padding: .5rem .6rem; font-size: .8rem; color: var(--n20); border-radius: 5px; cursor: pointer; white-space: nowrap; }
+    .ctx-opt:hover { background: var(--n95); }
+    .ctx-opt--active { font-weight: 600; color: var(--brand); }
+    [data-theme="dark"] .ctx-menu { background: #1E293B; border-color: #334155; }
+    [data-theme="dark"] .ctx-opt { color: #E2E8F0; }
+    [data-theme="dark"] .ctx-opt:hover { background: rgba(255,255,255,.06); }
+    @media (max-width: 860px) { .ctx-seg--static, .ctx-bar .ctx-arrow:first-of-type, .ctx-bar > .ctx-seg--static + .ctx-arrow { display: none; } }
+
     .pilot-chip {
       display: flex;
       align-items: center;
@@ -2572,6 +2590,24 @@
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
         Industrias
       </button>
+      <div class="topbar__sep back-sep hidden"></div>
+      <div class="ctx-bar" id="ctxBar" hidden>
+        <span class="ctx-seg ctx-seg--static" id="ctxIndustry" title="Industria">—</span>
+        <span class="ctx-arrow">/</span>
+        <span class="ctx-seg ctx-seg--static" id="ctxCompany" title="Empresa">—</span>
+        <span class="ctx-arrow">/</span>
+        <button class="ctx-seg ctx-seg--pick" id="ctxPlantBtn" type="button" title="Planta">
+          <span id="ctxPlantName">—</span>
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+          <div class="ctx-menu" id="ctxPlantMenu" hidden></div>
+        </button>
+        <span class="ctx-arrow">/</span>
+        <button class="ctx-seg ctx-seg--pick" id="ctxSectionBtn" type="button" title="Sección">
+          <span id="ctxSectionName">—</span>
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+          <div class="ctx-menu" id="ctxSectionMenu" hidden></div>
+        </button>
+      </div>
       <div class="topbar__sep back-sep hidden"></div>
       <div class="pilot-chip">
         <span class="pilot-chip__label">Piloto</span>
@@ -5259,6 +5295,110 @@
     if (attr) root.querySelectorAll('*').forEach(el => el.setAttribute(attr.name, attr.value));
   }
 
+  // ── Phase 1: persistent context selector (Industry / Company / Plant / Section) ──
+  // Wired to the tenant-scoped /api/plants + /api/plants/{id}/sections endpoints.
+  // Keeps the working context visible + persistent (localStorage) and exposes it
+  // as window.pcContext for later section-workspace / AI-context features.
+  let ctxPlants: any[] = [];
+  let ctxSections: any[] = [];
+  let ctxPlant: any = null;
+  let ctxSection: any = null;
+  let _ctxWired = false;
+
+  function _ctxToken() { return localStorage.getItem('pc_token'); }
+  function _ctxClose(id: string) { const m = document.getElementById(id); if (m) m.hidden = true; }
+  function _ctxToggle(openId: string, closeId: string) {
+    _ctxClose(closeId);
+    const o = document.getElementById(openId); if (o) o.hidden = !o.hidden;
+  }
+  function _ctxWire() {
+    if (_ctxWired) return;
+    _ctxWired = true;
+    document.getElementById('ctxPlantBtn')?.addEventListener('click', (e) => { e.stopPropagation(); _ctxToggle('ctxPlantMenu', 'ctxSectionMenu'); });
+    document.getElementById('ctxSectionBtn')?.addEventListener('click', (e) => { e.stopPropagation(); _ctxToggle('ctxSectionMenu', 'ctxPlantMenu'); });
+    document.addEventListener('click', () => { _ctxClose('ctxPlantMenu'); _ctxClose('ctxSectionMenu'); });
+  }
+
+  function _ctxBuildMenu(menuId: string, items: any[], labelFn: (x: any) => string, onPick: (x: any) => void, activeId: any) {
+    const menu = document.getElementById(menuId); if (!menu) return;
+    menu.innerHTML = '';
+    if (!items.length) {
+      const empty = document.createElement('div');
+      empty.className = 'ctx-opt'; empty.style.opacity = '.6'; empty.textContent = 'Sin elementos';
+      menu.appendChild(empty);
+    } else {
+      items.forEach((it) => {
+        const opt = document.createElement('div');
+        opt.className = 'ctx-opt' + (it.id === activeId ? ' ctx-opt--active' : '');
+        opt.textContent = labelFn(it);
+        opt.addEventListener('click', (e) => { e.stopPropagation(); onPick(it); });
+        menu.appendChild(opt);
+      });
+    }
+    stampAstroScope(menu);
+  }
+
+  async function initContextBar(industry: string, companyName: string | null) {
+    const bar = document.getElementById('ctxBar'); if (!bar) return;
+    _ctxWire();
+    const indLabel = (typeof IND_NAME !== 'undefined' && IND_NAME[industry]) ? IND_NAME[industry] : (industry || '—');
+    const company = companyName || (currentUser && currentUser.company) || '—';
+    const iEl = document.getElementById('ctxIndustry'); if (iEl) iEl.textContent = indLabel;
+    const cEl = document.getElementById('ctxCompany'); if (cEl) cEl.textContent = company;
+    (window as any).pcContext = { industry, industryLabel: indLabel, company, plantId: null, plant: null, sectionId: null, section: null };
+    await _ctxLoadPlants();
+  }
+
+  async function _ctxLoadPlants() {
+    const bar = document.getElementById('ctxBar'); const token = _ctxToken();
+    if (!bar || !token) return;
+    try {
+      const res = await fetch(`${API}/api/plants`, { headers: { Authorization: `Bearer ${token}` } });
+      if (!res.ok) { bar.hidden = true; return; }
+      ctxPlants = await res.json();
+    } catch (_) { bar.hidden = true; return; }
+    if (!Array.isArray(ctxPlants) || !ctxPlants.length) { bar.hidden = true; return; }
+    bar.hidden = false;
+    const savedId = parseInt(localStorage.getItem('pc_plant') || '', 10);
+    const plant = ctxPlants.find(p => p.id === savedId) || ctxPlants.find(p => p.is_default) || ctxPlants[0];
+    await _ctxSetPlant(plant, true);
+  }
+
+  async function _ctxSetPlant(plant: any, restoreSection: boolean) {
+    ctxPlant = plant;
+    localStorage.setItem('pc_plant', String(plant.id));
+    const el = document.getElementById('ctxPlantName'); if (el) el.textContent = plant.name;
+    (window as any).pcContext.plantId = plant.id; (window as any).pcContext.plant = plant.name;
+    _ctxBuildMenu('ctxPlantMenu', ctxPlants, (p) => p.name, (p) => _ctxPickPlant(p), ctxPlant && ctxPlant.id);
+    await _ctxLoadSections(plant.id, restoreSection);
+  }
+  async function _ctxPickPlant(plant: any) {
+    _ctxClose('ctxPlantMenu');
+    if (ctxPlant && ctxPlant.id === plant.id) return;
+    localStorage.removeItem('pc_section');
+    await _ctxSetPlant(plant, false);
+  }
+
+  async function _ctxLoadSections(plantId: number, restore: boolean) {
+    const token = _ctxToken(); ctxSections = [];
+    try {
+      const res = await fetch(`${API}/api/plants/${plantId}/sections`, { headers: { Authorization: `Bearer ${token}` } });
+      if (res.ok) ctxSections = await res.json();
+    } catch (_) {}
+    if (!Array.isArray(ctxSections)) ctxSections = [];
+    const savedId = restore ? parseInt(localStorage.getItem('pc_section') || '', 10) : NaN;
+    const sec = ctxSections.find(s => s.id === savedId) || ctxSections[0] || null;
+    _ctxSetSection(sec);
+  }
+  function _ctxSetSection(sec: any) {
+    ctxSection = sec;
+    const el = document.getElementById('ctxSectionName'); if (el) el.textContent = sec ? sec.name : '—';
+    if (sec) localStorage.setItem('pc_section', String(sec.id));
+    (window as any).pcContext.sectionId = sec ? sec.id : null; (window as any).pcContext.section = sec ? sec.name : null;
+    _ctxBuildMenu('ctxSectionMenu', ctxSections, (s) => s.name, (s) => _ctxPickSection(s), ctxSection && ctxSection.id);
+  }
+  function _ctxPickSection(sec: any) { _ctxClose('ctxSectionMenu'); _ctxSetSection(sec); }
+
   function showDashboard(industry) {
     selectorEl.classList.add('hidden');
     entSelectorEl?.classList.remove('show');
@@ -5271,6 +5411,7 @@
       el.classList.toggle('ind-item--active', el.dataset.industry === industry);
     });
     initDashboard();
+    initContextBar(industry, selectedEnterprise);
     // honour the "start panel" preference (Configuración)
     const startPanel = getSettings().startPanel;
     if (startPanel && startPanel !== 'gantt') {
