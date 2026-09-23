@@ -321,7 +321,8 @@
     .pm-field { margin-bottom: 11px; }
     .pm-field__k { font-family: ui-monospace, monospace; font-size: .62rem; text-transform: uppercase; letter-spacing: .05em; color: var(--n50); margin-bottom: 2px; }
     .pm-field__v { font-size: .9rem; color: var(--n20); }
-    .pm-empty { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; color: var(--n50); text-align: center; padding: 24px; gap: 8px; }
+    .pm-empty { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; color: var(--n50); text-align: center; padding: 24px; gap: 8px; pointer-events: none; }
+    .pm-empty[hidden] { display: none !important; }
     .pm-modal-back { position: fixed; inset: 0; background: rgba(0,0,0,.45); display: flex; align-items: center; justify-content: center; z-index: 1000; }
     .pm-modal { background: var(--white); border-radius: 14px; padding: 22px; width: 380px; max-width: 92vw; box-shadow: 0 20px 50px rgba(0,0,0,.3); }
     .pm-modal h3 { margin: 0 0 14px; font-size: 1.05rem; }
