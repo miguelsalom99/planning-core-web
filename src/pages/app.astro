@@ -4336,11 +4336,12 @@
                 <th>Empresa</th>
                 <th>Sectores</th>
                 <th>Rol</th>
+                <th>Módulos</th>
                 <th>Estado</th>
                 <th>Último acceso</th>
                 <th></th>
               </tr></thead>
-              <tbody id="usersBody"><tr><td colspan="7" style="text-align:center;padding:2rem;color:var(--n50)">Cargando…</td></tr></tbody>
+              <tbody id="usersBody"><tr><td colspan="8" style="text-align:center;padding:2rem;color:var(--n50)">Cargando…</td></tr></tbody>
             </table>
           </div>
         </div>
@@ -4477,6 +4478,15 @@
         </div>
       </div>
     </div><!-- /#panel-config -->
+
+    <!-- ── SIN ACCESO / PENDIENTE DE PERMISOS ── -->
+    <div id="panel-noaccess" class="dash-panel" style="display:none">
+      <div style="max-width:520px;margin:4rem auto;text-align:center;padding:2rem;border:1px solid var(--n80);border-radius:12px;background:var(--white, #fff)">
+        <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="color:var(--n50)"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+        <h2 style="font-size:1.1rem;margin:.9rem 0 .5rem">Sin acceso a este módulo</h2>
+        <p id="noaccess-msg" style="font-size:.88rem;color:var(--n30);line-height:1.5;margin:0"></p>
+      </div>
+    </div>
 
     <!-- ── AYUDA & SOPORTE ── -->
     <div id="panel-ayuda" class="dash-panel" style="display:none">
@@ -4710,9 +4720,11 @@
           <div class="form-group">
             <label class="form-label">Rol</label>
             <select class="form-input" id="au-role">
-              <option value="false">Cliente</option>
-              <option value="true">Administrador</option>
+              <option value="user">Usuario estándar — solo los módulos que le asignes</option>
+              <option value="company_admin">Administrador de empresa — todos los módulos del plan</option>
+              <option value="platform_admin" id="au-role-platform">Administrador de plataforma (Planning Core)</option>
             </select>
+            <div id="au-role-hint" style="font-size:.72rem;color:var(--n50)">Un usuario estándar se crea sin módulos: al guardarlo podrás asignarle permisos.</div>
           </div>
           <div class="form-group" id="au-active-group" style="display:none">
             <label class="form-label">Acceso</label>
@@ -4726,6 +4738,54 @@
         <div class="modal__footer">
           <button class="btn-ui" id="adminUserModalCancel">Cancelar</button>
           <button class="btn-ui btn-ui--primary" id="adminUserModalSave">Guardar usuario</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── MODAL: PERMISOS DE MÓDULOS (usuario) ── -->
+    <div class="modal-backdrop" id="userModulesModal">
+      <div class="modal__box" style="max-width:520px">
+        <div class="modal__header">
+          <h3 class="modal__title">Permisos de módulos</h3>
+          <button class="modal__close" id="userModulesModalClose">×</button>
+        </div>
+        <div class="modal__body" style="display:flex;flex-direction:column;gap:.75rem">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:1rem">
+            <div>
+              <div id="um-user-name" style="font-weight:700"></div>
+              <div id="um-user-role" style="font-size:.78rem;color:var(--n50)"></div>
+            </div>
+            <span id="um-status" class="admin-badge"></span>
+          </div>
+          <div style="font-size:.78rem;color:var(--n30)">Módulos incluidos en el plan de la empresa. El usuario solo verá y podrá usar los que estén activados.</div>
+          <div style="display:flex;gap:.5rem">
+            <button class="admin-action-btn" id="um-all">Activar todos</button>
+            <button class="admin-action-btn" id="um-none">Desactivar todos</button>
+          </div>
+          <div id="um-list" style="display:flex;flex-direction:column;border:1px solid var(--n80);border-radius:8px"></div>
+          <div id="userModulesModalErr" style="font-size:.8rem;color:var(--red);min-height:1rem"></div>
+        </div>
+        <div class="modal__footer">
+          <button class="btn-ui" id="userModulesModalCancel">Cancelar</button>
+          <button class="btn-ui btn-ui--primary" id="userModulesModalSave">Guardar permisos</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── MODAL: MÓDULOS CONTRATADOS (empresa) ── -->
+    <div class="modal-backdrop" id="companyModulesModal">
+      <div class="modal__box" style="max-width:520px">
+        <div class="modal__header">
+          <h3 class="modal__title" id="cm-title">Módulos contratados</h3>
+          <button class="modal__close" id="companyModulesModalClose">×</button>
+        </div>
+        <div class="modal__body" style="display:flex;flex-direction:column;gap:.75rem">
+          <div id="cm-hint" style="font-size:.78rem;color:var(--n30)"></div>
+          <div id="cm-list" style="display:flex;flex-direction:column;border:1px solid var(--n80);border-radius:8px"></div>
+          <div id="companyModulesModalErr" style="font-size:.8rem;color:var(--red);min-height:1rem"></div>
+        </div>
+        <div class="modal__footer">
+          <button class="btn-ui" id="companyModulesModalDone">Cerrar</button>
         </div>
       </div>
     </div>
@@ -5242,6 +5302,82 @@
   let currentUser: any = null;
   let selectedEnterprise: string | null = null;
 
+  // ── Module access ────────────────────────────────────────────────────────
+  // Mirrors the API's effective access (`user.modules` from /auth/me: the
+  // company's contract, intersected with admin grants for standard users).
+  // This is UX only — every gated endpoint re-checks server-side and 403s.
+  // Panels not listed here are denied, so a new panel must be mapped to show.
+  const PANEL_MODULE: Record<string, string | null> = {
+    gantt: 'gantt', historial: 'gantt', alertas: 'gantt',
+    capacidad: 'capacity', escenarios: 'scenarios', plantmap: 'plant_map',
+    ordenes: 'orders', recursos: 'resources', kpis: 'kpis',
+    disrupciones: 'disruptions', mrp: 'mrp',
+    admin: '@admin',            // administrators only
+    config: null, ayuda: null, noaccess: null,  // always available
+  };
+
+  function hasAccess(moduleKey: string): boolean {
+    return !!currentUser && Array.isArray(currentUser.modules) && currentUser.modules.includes(moduleKey);
+  }
+
+  function canOpenPanel(panel: string): boolean {
+    if (!(panel in PANEL_MODULE)) return false;
+    const key = PANEL_MODULE[panel];
+    if (key === null) return true;
+    if (key === '@admin') return !!currentUser?.is_admin;
+    return hasAccess(key);
+  }
+
+  function firstAllowedPanel(): string {
+    const order = ['gantt', 'plantmap', 'escenarios', 'capacidad', 'ordenes', 'recursos', 'disrupciones', 'mrp', 'kpis'];
+    return order.find(canOpenPanel) || 'noaccess';
+  }
+
+  // Hide every nav entry and panel the user can't open, and any nav section
+  // left empty by that. Re-run whenever currentUser changes.
+  function applyModuleVisibility() {
+    document.querySelectorAll('.nav-item[data-panel]').forEach(el => {
+      const panel = (el as HTMLElement).dataset.panel!;
+      if (panel === 'admin') return;  // governed by initAdminPanel
+      (el as HTMLElement).style.display = canOpenPanel(panel) ? '' : 'none';
+    });
+    document.querySelectorAll('.dash-panel').forEach(el => {
+      const panel = el.id.replace(/^panel-/, '');
+      if (!canOpenPanel(panel)) (el as HTMLElement).style.display = 'none';
+    });
+    document.querySelectorAll('#sidebar .nav-section').forEach(sec => {
+      if (sec.id === 'nav-admin-section') return;
+      const items = [...sec.querySelectorAll('.nav-item')] as HTMLElement[];
+      if (!items.length) return;
+      (sec as HTMLElement).style.display = items.some(i => i.style.display !== 'none') ? '' : 'none';
+    });
+  }
+
+  function openNoAccessPanel() {
+    document.querySelectorAll('.nav-item[data-panel]').forEach(n => n.classList.remove('nav-item--active'));
+    document.querySelectorAll('.dash-panel').forEach(p => (p as HTMLElement).style.display = 'none');
+    const status = currentUser?.permission_status;
+    const msg = document.getElementById('noaccess-msg');
+    if (msg) msg.textContent = status === 'pending'
+      ? 'Tu cuenta está pendiente de permisos. Un administrador de tu empresa debe asignarte los módulos con los que vas a trabajar.'
+      : 'No tienes acceso a este módulo. Pide a un administrador de tu empresa que te lo asigne.';
+    const p = document.getElementById('panel-noaccess');
+    if (p) p.style.display = '';
+  }
+
+  // Single choke point for every way into a panel: sidebar clicks, the many
+  // programmatic `.nav-item.click()` shortcuts (search, alerts, onboarding,
+  // quick actions) and the saved start panel all dispatch a click, and this
+  // capture-phase listener runs before any of their handlers.
+  document.addEventListener('click', (e: MouseEvent) => {
+    const el = (e.target as HTMLElement | null)?.closest?.('[data-panel]') as HTMLElement | null;
+    if (!el || !el.dataset.panel) return;
+    if (canOpenPanel(el.dataset.panel)) return;
+    e.preventDefault();
+    e.stopImmediatePropagation();
+    openNoAccessPanel();
+  }, true);
+
   // industry-card slug -> the `industry` value stored on Company rows
   const IND_SLUG: Record<string, string> = {
     composites: 'composites-aeronautica', impresion: 'impresion-packaging', fundicion: 'fundicion-metalurgia',
@@ -5729,9 +5865,15 @@
     });
     initDashboard();
     initContextBar(industry, selectedEnterprise);
-    // honour the "start panel" preference (Configuración)
-    const startPanel = getSettings().startPanel;
-    if (startPanel && startPanel !== 'gantt') {
+    // honour the "start panel" preference (Configuración) — only if the user
+    // may open it; otherwise land on their first permitted module, or on the
+    // "pending permissions" screen when they have none.
+    applyModuleVisibility();
+    const saved = getSettings().startPanel;
+    const startPanel = saved && canOpenPanel(saved) ? saved : firstAllowedPanel();
+    if (startPanel === 'noaccess') {
+      openNoAccessPanel();
+    } else if (startPanel !== 'gantt') {
       (document.querySelector(`.nav-item[data-panel="${startPanel}"]`) as HTMLElement | null)?.click();
     }
   }
@@ -5766,12 +5908,14 @@
       const unEl = document.getElementById('user-name');
       if (unEl) unEl.textContent = user.name || user.email;
       const urEl = document.getElementById('user-role');
-      if (urEl) urEl.textContent = user.is_admin ? 'Administrador' : 'Usuario';
+      if (urEl) urEl.textContent = user.role === 'platform_admin' ? 'Admin. plataforma'
+        : user.is_admin ? 'Administrador' : 'Usuario';
       // initAdminPanel lives inside initDashboard's scope (sidebar DOM isn't
-      // mounted/relevant until the dashboard shows), so we can't call it from
-      // here directly — stash the flag and let initDashboard apply it once
-      // the dashboard is actually shown.
+      // mounted/relevant until the dashboard shows); it reads currentUser when
+      // the dashboard is shown. The localStorage flag is kept only for older
+      // cached bundles — nothing in this file trusts it for access decisions.
       localStorage.setItem('pc_is_admin', user.is_admin ? 'true' : 'false');
+      applyModuleVisibility();
       applyPilot(user.pilot);
     } catch (e) {
       console.error('applyUser error', e);
@@ -5972,7 +6116,7 @@
     if (dashboardReady) return;
     dashboardReady = true;
 
-    initAdminPanel(localStorage.getItem('pc_is_admin') === 'true');
+    initAdminPanel(!!currentUser?.is_admin);
 
     // 1. Gantt tab switching (Semana / Turno)
     const ganttSemana  = document.getElementById('gantt-semana');
@@ -8205,6 +8349,33 @@
       const navSection = document.getElementById('nav-admin-section');
       if (navSection) navSection.style.display = '';
 
+      // Platform admin (Planning Core) manages every tenant, plans and contracts.
+      // A company admin manages only their own company's users and permissions —
+      // the API enforces this; the UI just doesn't offer what would be refused.
+      const isPlatform = currentUser?.role === 'platform_admin';
+      if (!isPlatform) {
+        const nb = document.getElementById('newCompanyBtn'); if (nb) nb.style.display = 'none';
+        document.getElementById('au-role-platform')?.remove();
+        const cp = document.getElementById('cmp-plan') as HTMLSelectElement | null; if (cp) cp.disabled = true;
+      }
+      const ROLE_LABELS: Record<string, string> = {
+        platform_admin: 'Admin plataforma', company_admin: 'Admin empresa',
+        plant_manager: 'Jefe de planta', department_manager: 'Jefe de departamento', user: 'Usuario',
+      };
+      const STATUS_BADGES: Record<string, [string, string]> = {
+        full:    ['Todos (plan)', 'background:#FEF3C7;color:#92400E'],
+        pending: ['Pendiente de permisos', 'background:#FEE2E2;color:#B91C1C'],
+        review:  ['Revisar permisos', 'background:#FFEDD5;color:#C2410C'],
+        active:  ['', 'background:#DCFCE7;color:#166534'],
+      };
+      function statusBadge(u: any): string {
+        const st = u.permission_status || 'pending';
+        const [label, style] = STATUS_BADGES[st] || STATUS_BADGES.pending;
+        const n = (u.modules || []).length;
+        const text = st === 'active' ? `${n} módulo${n !== 1 ? 's' : ''}` : st === 'review' ? `${label} (${n})` : label;
+        return `<span class="admin-badge" style="${style}">${escapeHtml(text)}</span>`;
+      }
+
       const INDUSTRY_LABELS: Record<string, string> = {
         'composites-aeronautica': '✈️ Composites & Aeronáutica',
         'impresion-packaging': '🖨️ Impresión & Packaging',
@@ -8266,12 +8437,16 @@
             <td style="font-size:.78rem;color:var(--n50)">${new Date(c.created_at).toLocaleDateString('es-ES')}</td>
             <td>
               <button class="admin-action-btn" data-edit-company="${c.id}">Editar</button>
-              <button class="admin-action-btn del" data-del-company="${c.id}" data-del-company-name="${escapeHtml(c.name)}">Eliminar</button>
+              <button class="admin-action-btn" data-company-modules="${c.id}">Módulos (${(c.modules || []).length})</button>
+              ${isPlatform ? `<button class="admin-action-btn del" data-del-company="${c.id}" data-del-company-name="${escapeHtml(c.name)}">Eliminar</button>` : ''}
             </td>
           </tr>`).join('');
 
         tbody.querySelectorAll('[data-edit-company]').forEach(btn => {
           btn.addEventListener('click', () => openCompanyModal(parseInt((btn as HTMLElement).dataset.editCompany!)));
+        });
+        tbody.querySelectorAll('[data-company-modules]').forEach(btn => {
+          btn.addEventListener('click', () => openCompanyModulesModal(parseInt((btn as HTMLElement).dataset.companyModules!)));
         });
         tbody.querySelectorAll('[data-del-company]').forEach(btn => {
           const el = btn as HTMLElement;
@@ -8345,12 +8520,12 @@
           const users = await res.json();
           adminUsersList = users;
           renderAdminUsers(users);
-        } catch { document.getElementById('usersBody')!.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:2rem;color:var(--red)">Error al cargar usuarios</td></tr>'; }
+        } catch { document.getElementById('usersBody')!.innerHTML = '<tr><td colspan="8" style="text-align:center;padding:2rem;color:var(--red)">Error al cargar usuarios</td></tr>'; }
       }
 
       function renderAdminUsers(users: any[]) {
         const tbody = document.getElementById('usersBody')!;
-        if (!users.length) { tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:2rem;color:var(--n50)">No hay usuarios todavía</td></tr>'; return; }
+        if (!users.length) { tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;padding:2rem;color:var(--n50)">No hay usuarios todavía</td></tr>'; return; }
         tbody.innerHTML = users.map(u => {
           const companyName = u.company_id ? (adminCompanies.find((c: any) => c.id === u.company_id)?.name || u.company || '—') : (u.company || '—');
           const sectors = u.is_admin ? '<span style="color:var(--amber);font-size:.72rem">Todos</span>'
@@ -8359,11 +8534,13 @@
             <td><div style="font-weight:600">${escapeHtml(u.name)}</div><div style="font-size:.72rem;color:var(--n50)">${escapeHtml(u.email)}</div></td>
             <td style="font-size:.78rem;color:var(--n30)">${escapeHtml(companyName)}</td>
             <td style="font-size:.78rem;color:var(--n50)">${sectors}</td>
-            <td><span class="admin-badge ${u.is_admin ? 'admin-badge--admin' : ''}" style="${!u.is_admin ? 'background:var(--n90);color:var(--n50)' : ''}">${u.is_admin ? 'Admin' : 'Cliente'}</span></td>
+            <td><span class="admin-badge ${u.is_admin ? 'admin-badge--admin' : ''}" style="${!u.is_admin ? 'background:var(--n90);color:var(--n50)' : ''}">${escapeHtml(ROLE_LABELS[u.role] || (u.is_admin ? 'Admin' : 'Usuario'))}</span></td>
+            <td>${statusBadge(u)}</td>
             <td><span class="admin-badge ${u.is_active ? 'admin-badge--active' : 'admin-badge--inactive'}">${u.is_active ? 'Activo' : 'Inactivo'}</span></td>
             <td style="font-size:.72rem;color:var(--n50)">${u.last_login ? new Date(u.last_login).toLocaleDateString('es-ES') : 'Nunca'}</td>
             <td>
               <button class="admin-action-btn" data-edit-user="${u.id}">Editar</button>
+              ${u.is_admin ? '' : `<button class="admin-action-btn" data-perms-user="${u.id}">Permisos</button>`}
               <button class="admin-action-btn" data-toggle-user="${u.id}" data-toggle-active="${u.is_active}">${u.is_active ? 'Revocar' : 'Reactivar'}</button>
               <button class="admin-action-btn del" data-del-user="${u.id}" data-del-user-name="${escapeHtml(u.name)}">Eliminar</button>
             </td>
@@ -8372,6 +8549,9 @@
 
         tbody.querySelectorAll('[data-edit-user]').forEach(btn => {
           btn.addEventListener('click', () => openUserModal(parseInt((btn as HTMLElement).dataset.editUser!)));
+        });
+        tbody.querySelectorAll('[data-perms-user]').forEach(btn => {
+          btn.addEventListener('click', () => openUserModulesModal(parseInt((btn as HTMLElement).dataset.permsUser!)));
         });
         tbody.querySelectorAll('[data-toggle-user]').forEach(btn => {
           btn.addEventListener('click', async () => {
@@ -8405,7 +8585,9 @@
         (document.getElementById('au-name') as HTMLInputElement).value = u?.name || '';
         (document.getElementById('au-email') as HTMLInputElement).value = u?.email || '';
         (document.getElementById('au-password') as HTMLInputElement).value = '';
-        (document.getElementById('au-role') as HTMLSelectElement).value = u?.is_admin ? 'true' : 'false';
+        const roleSel = document.getElementById('au-role') as HTMLSelectElement;
+        // Roles without an option here (plant/department manager) are set via the API; show them as standard.
+        roleSel.value = u?.role && roleSel.querySelector(`option[value="${u.role}"]`) ? u.role : (u?.is_admin ? 'company_admin' : 'user');
         (document.getElementById('au-company-id') as HTMLSelectElement).value = u?.company_id ? String(u.company_id) : '';
         const currentSectors = new Set((u?.sector || '').split(',').map((s: string) => s.trim()).filter(Boolean));
         document.querySelectorAll('#au-sectors input').forEach(i => {
@@ -8427,7 +8609,14 @@
         }
 
         populateCompanySelect();
-        (document.getElementById('au-company-id') as HTMLSelectElement).value = u?.company_id ? String(u.company_id) : '';
+        const coSel = document.getElementById('au-company-id') as HTMLSelectElement;
+        coSel.value = u?.company_id ? String(u.company_id) : '';
+        if (!isPlatform) {
+          // A company admin only ever creates users in their own company (the API
+          // forces it); adminCompanies holds just that one company for them.
+          if (!coSel.value && adminCompanies[0]) coSel.value = String(adminCompanies[0].id);
+          coSel.disabled = true;
+        }
         document.getElementById('adminUserModal')!.classList.add('open');
       }
 
@@ -8439,7 +8628,8 @@
         const password = (document.getElementById('au-password') as HTMLInputElement).value;
         const companyIdRaw = (document.getElementById('au-company-id') as HTMLSelectElement).value;
         const sectors = [...document.querySelectorAll('#au-sectors input:checked')].map(i => (i as HTMLInputElement).value).join(',') || null;
-        const is_admin = (document.getElementById('au-role') as HTMLSelectElement).value === 'true';
+        const role = (document.getElementById('au-role') as HTMLSelectElement).value;
+        const is_admin = role === 'company_admin' || role === 'platform_admin';  // legacy field, kept in sync
 
         if (!name || !email) { errEl.textContent = 'Nombre y email son obligatorios'; return; }
         if (!editingUserId && !password) { errEl.textContent = 'La contraseña es obligatoria para un usuario nuevo'; return; }
@@ -8448,21 +8638,144 @@
 
         let url = `${API_BASE}/admin/users`;
         let method = 'POST';
-        let body: any = { name, email, password, company_id: companyIdRaw ? parseInt(companyIdRaw) : null, sector: sectors, is_admin };
+        let body: any = { name, email, password, company_id: companyIdRaw ? parseInt(companyIdRaw) : null, sector: sectors, role, is_admin };
+        const editedUser = editingUserId ? adminUsersList.find((x: any) => x.id === editingUserId) : null;
         if (editingUserId) {
           url = `${API_BASE}/admin/users/${editingUserId}`;
           method = 'PATCH';
           const is_active = (document.getElementById('au-active') as HTMLSelectElement).value === 'true';
-          body = { name, email, company_id: companyIdRaw ? parseInt(companyIdRaw) : null, sector: sectors, is_admin, is_active };
+          body = { name, email, company_id: companyIdRaw ? parseInt(companyIdRaw) : null, sector: sectors, is_active };
+          // Only send a role change when the selector actually changed, so a
+          // plant/department manager shown as "standard" isn't downgraded.
+          const shownRole = editedUser?.role && document.querySelector(`#au-role option[value="${editedUser.role}"]`) ? editedUser.role : (editedUser?.is_admin ? 'company_admin' : 'user');
+          if (role !== shownRole) { body.role = role; body.is_admin = is_admin; }
           if (password) body.new_password = password;
         }
 
         const res = await fetch(url, { method, headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
-        if (!res.ok) { const d = await res.json(); errEl.textContent = d.detail || 'Error al guardar'; return; }
+        if (!res.ok) { const d = await res.json().catch(() => ({})); errEl.textContent = d.detail || 'Error al guardar'; return; }
+        const saved = await res.json().catch(() => null);
         document.getElementById('adminUserModal')!.classList.remove('open');
-        loadAdminUsers();
+        await loadAdminUsers();
         showToast(editingUserId ? '✓ Usuario actualizado' : '✓ Usuario creado');
+        // A new standard user has no access until modules are assigned: go straight there.
+        if (!editingUserId && saved && !saved.is_admin) openUserModulesModal(saved.id);
       }
+
+      // ── Permisos de módulos por usuario ──
+      let permsUserId: number | null = null;
+      let permsModules: any[] = [];
+
+      function renderToggleRow(m: any, checked: boolean, disabled: boolean, attr: string): string {
+        return `<label style="display:flex;align-items:center;justify-content:space-between;gap:1rem;padding:.65rem .85rem;border-bottom:1px solid var(--n90);cursor:${disabled ? 'default' : 'pointer'}">
+            <span><span style="font-weight:600;font-size:.86rem">${escapeHtml(m.name)}</span>
+            ${m.description ? `<span style="display:block;font-size:.72rem;color:var(--n50)">${escapeHtml(m.description)}</span>` : ''}</span>
+            <span style="display:flex;align-items:center;gap:.5rem;flex-shrink:0">
+              <span data-onoff style="font-size:.7rem;font-weight:700;letter-spacing:.04em;color:${checked ? 'var(--green, #16A34A)' : 'var(--n50)'}">${checked ? 'ON' : 'OFF'}</span>
+              <input type="checkbox" ${attr}="${escapeHtml(m.key)}" ${checked ? 'checked' : ''} ${disabled ? 'disabled' : ''} style="width:18px;height:18px;accent-color:var(--brand)">
+            </span>
+          </label>`;
+      }
+
+      function wireOnOff(list: HTMLElement) {
+        list.querySelectorAll('input[type=checkbox]').forEach(cb => cb.addEventListener('change', () => {
+          const lbl = cb.closest('label')?.querySelector('[data-onoff]') as HTMLElement | null;
+          const on = (cb as HTMLInputElement).checked;
+          if (lbl) { lbl.textContent = on ? 'ON' : 'OFF'; lbl.style.color = on ? 'var(--green, #16A34A)' : 'var(--n50)'; }
+        }));
+      }
+
+      async function openUserModulesModal(userId: number) {
+        const token = localStorage.getItem('pc_token');
+        const errEl = document.getElementById('userModulesModalErr')!;
+        errEl.textContent = '';
+        const res = await fetch(`${API_BASE}/admin/users/${userId}/modules`, { headers: { Authorization: `Bearer ${token}` } });
+        if (!res.ok) { const d = await res.json().catch(() => ({})); showToast(`⚠ ${d.detail || 'No se pudieron cargar los permisos'}`); return; }
+        const data = await res.json();
+        permsUserId = userId;
+        permsModules = data.modules || [];
+        document.getElementById('um-user-name')!.textContent = data.name || '';
+        document.getElementById('um-user-role')!.textContent = `Rol: ${ROLE_LABELS[data.role] || data.role}`;
+        document.getElementById('um-status')!.outerHTML = `<span id="um-status">${statusBadge({ permission_status: data.status, modules: permsModules.filter((m: any) => m.enabled) })}</span>`;
+        const list = document.getElementById('um-list')!;
+        list.innerHTML = permsModules.length
+          ? permsModules.map((m: any) => renderToggleRow(m, !!m.enabled, false, 'data-um-key')).join('')
+          : '<div style="padding:1rem;font-size:.82rem;color:var(--n50)">La empresa no tiene módulos contratados.</div>';
+        wireOnOff(list);
+        document.getElementById('userModulesModal')!.classList.add('open');
+      }
+
+      function setAllPerms(on: boolean) {
+        document.querySelectorAll('#um-list input[data-um-key]').forEach(cb => {
+          (cb as HTMLInputElement).checked = on;
+          cb.dispatchEvent(new Event('change'));
+        });
+      }
+
+      async function saveUserModules() {
+        if (permsUserId == null) return;
+        const token = localStorage.getItem('pc_token');
+        const errEl = document.getElementById('userModulesModalErr')!;
+        const modules: Record<string, boolean> = {};
+        document.querySelectorAll('#um-list input[data-um-key]').forEach(cb => {
+          modules[(cb as HTMLInputElement).getAttribute('data-um-key')!] = (cb as HTMLInputElement).checked;
+        });
+        const res = await fetch(`${API_BASE}/admin/users/${permsUserId}/modules`, {
+          method: 'PUT',
+          headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
+          body: JSON.stringify({ modules }),
+        });
+        if (!res.ok) { const d = await res.json().catch(() => ({})); errEl.textContent = d.detail || 'Error al guardar los permisos'; return; }
+        document.getElementById('userModulesModal')!.classList.remove('open');
+        showToast('✓ Permisos guardados');
+        loadAdminUsers();
+      }
+
+      const closePerms = () => document.getElementById('userModulesModal')!.classList.remove('open');
+      document.getElementById('userModulesModalClose')?.addEventListener('click', closePerms);
+      document.getElementById('userModulesModalCancel')?.addEventListener('click', closePerms);
+      document.getElementById('userModulesModalSave')?.addEventListener('click', saveUserModules);
+      document.getElementById('um-all')?.addEventListener('click', () => setAllPerms(true));
+      document.getElementById('um-none')?.addEventListener('click', () => setAllPerms(false));
+      document.getElementById('userModulesModal')?.addEventListener('click', (e: MouseEvent) => {
+        if (e.target === document.getElementById('userModulesModal')) closePerms();
+      });
+
+      // ── Módulos contratados por empresa (editable solo por la plataforma) ──
+      async function openCompanyModulesModal(companyId: number) {
+        const token = localStorage.getItem('pc_token');
+        const errEl = document.getElementById('companyModulesModalErr')!;
+        errEl.textContent = '';
+        const res = await fetch(`${API_BASE}/admin/companies/${companyId}/modules`, { headers: { Authorization: `Bearer ${token}` } });
+        if (!res.ok) { showToast('⚠ No se pudieron cargar los módulos'); return; }
+        const data = await res.json();
+        const company = adminCompanies.find((c: any) => c.id === companyId);
+        document.getElementById('cm-title')!.textContent = `Módulos contratados · ${company?.name || ''}`;
+        document.getElementById('cm-hint')!.textContent = isPlatform
+          ? `Plan: ${company?.plan ? (PLAN_LABELS[company.plan] || company.plan) : '—'}. Cambiar el plan de la empresa restablece estos módulos al paquete del plan; aquí puedes añadir o quitar módulos sueltos.`
+          : 'Módulos incluidos en vuestra suscripción. Para ampliarla, contacta con Planning Core.';
+        const list = document.getElementById('cm-list')!;
+        list.innerHTML = (data.modules || []).map((m: any) => renderToggleRow(m, !!m.contracted, !isPlatform, 'data-cm-key')).join('');
+        wireOnOff(list);
+        list.querySelectorAll('input[data-cm-key]').forEach(cb => cb.addEventListener('change', async () => {
+          const input = cb as HTMLInputElement;
+          const r = await fetch(`${API_BASE}/admin/companies/${companyId}/modules/${input.getAttribute('data-cm-key')}`, {
+            method: 'PUT',
+            headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
+            body: JSON.stringify({ enabled: input.checked }),
+          });
+          if (!r.ok) {
+            input.checked = !input.checked;
+            input.dispatchEvent(new Event('change'));
+            errEl.textContent = 'No se pudo actualizar el contrato';
+          }
+        }));
+        document.getElementById('companyModulesModal')!.classList.add('open');
+      }
+
+      const closeCompanyModules = () => { document.getElementById('companyModulesModal')!.classList.remove('open'); loadAdminCompanies(); };
+      document.getElementById('companyModulesModalClose')?.addEventListener('click', closeCompanyModules);
+      document.getElementById('companyModulesModalDone')?.addEventListener('click', closeCompanyModules);
 
       document.getElementById('newUserBtn')?.addEventListener('click', () => openUserModal());
       document.getElementById('adminUserModalClose')?.addEventListener('click', () => { document.getElementById('adminUserModal')!.classList.remove('open'); });
@@ -8745,6 +9058,7 @@
 
     // ── Topbar: notifications & settings buttons ─────────────────
     function navToPanel(panelId: string) {
+      if (!canOpenPanel(panelId)) { openNoAccessPanel(); closeMobileSidebar(); return; }
       document.querySelectorAll('.nav-item[data-panel]').forEach(n => n.classList.remove('nav-item--active'));
       document.querySelector(`.nav-item[data-panel="${panelId}"]`)?.classList.add('nav-item--active');
       document.querySelectorAll('.dash-panel').forEach(p => (p as HTMLElement).style.display = 'none');
@@ -8812,7 +9126,7 @@
         const res = await fetch(`${API_BASE}/planificaciones`, { headers: { Authorization: `Bearer ${token}` } });
         searchCache.planificaciones = res.ok ? await res.json() : [];
       } catch { searchCache.planificaciones = []; }
-      if (localStorage.getItem('pc_is_admin') === 'true') {
+      if (currentUser?.is_admin) {
         try {
           const [compRes, usersRes] = await Promise.all([
             fetch(`${API_BASE}/admin/companies`, { headers: { Authorization: `Bearer ${token}` } }),
