@@ -323,6 +323,12 @@
     .pm-field__v { font-size: .9rem; color: var(--n20); }
     .pm-empty { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; color: var(--n50); text-align: center; padding: 24px; gap: 8px; pointer-events: none; }
     .pm-empty[hidden] { display: none !important; }
+    .pm-legend { position: absolute; left: 12px; bottom: 12px; background: color-mix(in srgb, var(--white) 90%, transparent); border: 1px solid var(--n90); border-radius: 10px; padding: 9px 11px; display: flex; flex-direction: column; gap: 5px; box-shadow: 0 4px 14px rgba(0,0,0,.08); backdrop-filter: blur(5px); max-width: 220px; pointer-events: none; }
+    .pm-legend[hidden] { display: none !important; }
+    .pm-legend__t { font-family: ui-monospace, monospace; font-size: .56rem; text-transform: uppercase; letter-spacing: .08em; color: var(--n50); }
+    .pm-legend__row { display: flex; align-items: center; gap: 7px; font-size: .73rem; color: var(--n20); text-transform: capitalize; }
+    .pm-legend__sw { width: 10px; height: 10px; border-radius: 3px; flex: none; }
+    .pm-chip { display: inline-flex; align-items: center; font-family: ui-monospace, monospace; font-size: .64rem; font-weight: 600; padding: 2px 7px; border-radius: 6px; margin-left: 6px; vertical-align: middle; }
     .pm-modal-back { position: fixed; inset: 0; background: rgba(0,0,0,.45); display: flex; align-items: center; justify-content: center; z-index: 1000; }
     .pm-modal { background: var(--white); border-radius: 14px; padding: 22px; width: 380px; max-width: 92vw; box-shadow: 0 20px 50px rgba(0,0,0,.3); }
     .pm-modal h3 { margin: 0 0 14px; font-size: 1.05rem; }
@@ -3929,6 +3935,7 @@
               <div style="font-weight:600">Aún no hay departamentos ubicados</div>
               <div style="font-size:.82rem">Crea uno con "+ Departamento" o selecciona una planta.</div>
             </div>
+            <div class="pm-legend" id="pmLegend" hidden></div>
           </div>
           <aside class="pm-panel" id="pmPanel">
             <div class="pm-panel__empty" id="pmPanelEmpty">Selecciona un departamento en el mapa para ver su información.</div>
@@ -5559,6 +5566,38 @@
       if (pmIsAdmin) pmMakeDraggable(g, s);
       svg.appendChild(g);
     });
+    pmRenderLegend();
+  }
+
+  // Capacity → operational state (the map's decision cue: which department is a
+  // bottleneck). Null when capacity isn't set yet, so the UI can prompt for it.
+  function pmCapState(c: any) {
+    if (c == null) return null;
+    if (c >= 90) return { label: 'En riesgo', color: 'var(--red)' };
+    if (c >= 70) return { label: 'Ajustado', color: 'var(--amber)' };
+    return { label: 'Holgado', color: 'var(--green)' };
+  }
+
+  // Legend so the map is self-explanatory ("what am I looking at?"): the
+  // department types present + what the capacity colours mean, only when relevant.
+  function pmRenderLegend() {
+    const el = document.getElementById('pmLegend'); if (!el) return;
+    const deps = (pmData && pmData.departments) || [];
+    if (!deps.length) { el.hidden = true; return; }
+    const seen = new Map();
+    deps.forEach((d: any) => { const k = d.kind || 'otro'; if (!seen.has(k)) seen.set(k, d.color); });
+    let html = '<div class="pm-legend__t">Departamentos</div>';
+    seen.forEach((color: string, k: string) => {
+      html += `<div class="pm-legend__row"><span class="pm-legend__sw" style="background:${pmEsc(color)}"></span>${pmEsc(k)}</div>`;
+    });
+    if (deps.some((d: any) => d.capacity != null)) {
+      html += '<div class="pm-legend__t" style="margin-top:4px">Capacidad</div>'
+        + '<div class="pm-legend__row"><span class="pm-legend__sw" style="background:var(--red)"></span>En riesgo · ≥ 90%</div>'
+        + '<div class="pm-legend__row"><span class="pm-legend__sw" style="background:var(--amber)"></span>Ajustado · 70–89%</div>'
+        + '<div class="pm-legend__row"><span class="pm-legend__sw" style="background:var(--green)"></span>Holgado · &lt; 70%</div>';
+    }
+    el.innerHTML = html;
+    el.hidden = false;
   }
 
   function pmMakeDraggable(g: Element, s: any) {
@@ -5591,13 +5630,18 @@
   function pmShowPanel(s: any) {
     const empty = document.getElementById('pmPanelEmpty'); if (empty) empty.hidden = true;
     const body = document.getElementById('pmPanelBody'); if (!body) return; body.hidden = false;
-    const cap = s.capacity != null ? `<div class="pm-field"><div class="pm-field__k">Capacidad</div><div class="pm-field__v">${Math.round(s.capacity)}%</div></div>` : '';
+    const cs = pmCapState(s.capacity);
+    const cap = s.capacity != null
+      ? `<div class="pm-field"><div class="pm-field__k">Capacidad</div><div class="pm-field__v">${Math.round(s.capacity)}%<span class="pm-chip" style="background:color-mix(in srgb, ${cs.color} 15%, transparent);color:${cs.color}">${cs.label}</span></div></div>`
+      : `<div class="pm-field"><div class="pm-field__k">Capacidad</div><div class="pm-field__v" style="color:var(--n50)">Sin definir · añádela para ver la carga</div></div>`;
+    const hint = pmIsAdmin ? `<div style="margin-top:14px;font-size:.72rem;color:var(--n50);border-top:1px solid var(--n90);padding-top:10px">Arrastra el departamento en el mapa para reubicarlo.</div>` : '';
     body.innerHTML = `
       <div style="font-size:1.05rem;font-weight:700;margin-bottom:12px;color:var(--n20)">${pmEsc(s.name)}</div>
-      <div class="pm-field"><div class="pm-field__k">Tipo</div><div class="pm-field__v">${pmEsc(s.kind || '—')}</div></div>
+      <div class="pm-field"><div class="pm-field__k">Tipo</div><div class="pm-field__v" style="text-transform:capitalize">${pmEsc(s.kind || '—')}</div></div>
       ${s.owner ? `<div class="pm-field"><div class="pm-field__k">Responsable</div><div class="pm-field__v">${pmEsc(s.owner)}</div></div>` : ''}
       ${cap}
-      <div class="pm-field"><div class="pm-field__k">Posición</div><div class="pm-field__v">${Math.round(s.pos_x)}, ${Math.round(s.pos_y)} · ${Math.round(s.width)}×${Math.round(s.height)}</div></div>`;
+      <div class="pm-field"><div class="pm-field__k">Posición</div><div class="pm-field__v">${Math.round(s.pos_x)}, ${Math.round(s.pos_y)} · ${Math.round(s.width)}×${Math.round(s.height)}</div></div>
+      ${hint}`;
   }
   function pmClearPanel() {
     const empty = document.getElementById('pmPanelEmpty'); if (empty) empty.hidden = false;
