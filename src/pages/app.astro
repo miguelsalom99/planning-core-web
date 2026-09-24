@@ -5597,6 +5597,7 @@
         + '<div class="pm-legend__row"><span class="pm-legend__sw" style="background:var(--green)"></span>Holgado · &lt; 70%</div>';
     }
     el.innerHTML = html;
+    stampAstroScope(el);   // JS-built rows/swatches need the Astro cid or scoped CSS won't match
     el.hidden = false;
   }
 
@@ -5642,6 +5643,7 @@
       ${cap}
       <div class="pm-field"><div class="pm-field__k">Posición</div><div class="pm-field__v">${Math.round(s.pos_x)}, ${Math.round(s.pos_y)} · ${Math.round(s.width)}×${Math.round(s.height)}</div></div>
       ${hint}`;
+    stampAstroScope(body);   // JS-built fields/chip need the Astro cid or scoped CSS won't match
   }
   function pmClearPanel() {
     const empty = document.getElementById('pmPanelEmpty'); if (empty) empty.hidden = false;
