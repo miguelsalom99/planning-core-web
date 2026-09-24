@@ -5316,6 +5316,14 @@
     config: null, ayuda: null, noaccess: null,  // always available
   };
 
+  // HTML-escape any server/user-supplied value before it goes into an HTML
+  // template string. Top-level so every builder in this file can reach it
+  // (the older escapeHtml lives inside initDashboard's scope).
+  function escHtml(v: unknown): string {
+    return String(v ?? '').replace(/[&<>"']/g, c => (
+      { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' } as Record<string, string>)[c]);
+  }
+
   function hasAccess(moduleKey: string): boolean {
     return !!currentUser && Array.isArray(currentUser.modules) && currentUser.modules.includes(moduleKey);
   }
@@ -5469,7 +5477,7 @@
 
     grid.innerHTML = companies.map((c: any) => {
       const logo = TENANT_LOGOS[c.name];
-      const nm = String(c.name).replace(/"/g, '&quot;');
+      const nm = escHtml(c.name);  // audit S3: company names are tenant-controlled
       return `<div class="enterprise-card" data-name="${nm}">
         ${logo ? `<img class="enterprise-card__logo" src="${logo}" alt="${nm}"/>` : `<div class="enterprise-card__name">${nm}</div>`}
         <div class="enterprise-card__cta">Abrir planificación</div>
@@ -6411,7 +6419,7 @@
               ${kpi3}
               ${kpi4}
             </div>
-            ${warnings.length ? `<div class="alt-card__warnings">${warnings.map((w: string) => `<div>${w}</div>`).join('')}</div>` : ''}
+            ${warnings.length ? `<div class="alt-card__warnings">${warnings.map((w: string) => `<div>${escHtml(w)}</div>`).join('')}</div>` : ''}
           `;
           card.addEventListener('click', () => {
             document.querySelectorAll('.alt-card').forEach(c => c.classList.remove('alt-card--selected'));
@@ -6545,7 +6553,7 @@
 
           const label = document.createElement('div');
           label.className = 'pg-res-label';
-          label.innerHTML = `<div><div class="pg-res-name">${res}</div><div class="pg-res-type">${RES_LABELS[res] || ''}</div></div>`;
+          label.innerHTML = `<div><div class="pg-res-name">${escHtml(res)}</div><div class="pg-res-type">${escHtml(RES_LABELS[res] || '')}</div></div>`;
           row.appendChild(label);
 
           const timeline = document.createElement('div');
@@ -6568,7 +6576,7 @@
             const el = document.createElement('div');
             el.className = 'pg-event';
             el.style.cssText = `grid-column:${col}/span ${Math.min(span, 22-col)};grid-row:1;background:${ev.color}22;border-left:3px solid ${ev.color};color:${ev.color}`;
-            el.innerHTML = `<span class="pg-event-title">${ev.title}</span><span class="pg-event-sub">${ev.subtitle}</span>`;
+            el.innerHTML = `<span class="pg-event-title">${escHtml(ev.title)}</span><span class="pg-event-sub">${escHtml(ev.subtitle)}</span>`;
             el.title = `${ev.title} · ${ev.subtitle}\nDía ${ev.day+1} · Turno ${ev.shift} · ${ev.duration_shifts} turno(s)`;
             timeline.appendChild(el);
           });
@@ -7023,11 +7031,11 @@
         tr.dataset.entryId = String(e.id ?? e.localId ?? '');
         tr.dataset.localId = String(e.localId ?? '');
         tr.innerHTML = `
-          <td style="font-weight:600;max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${e.nombre}">${e.nombre}</td>
-          <td style="color:var(--n40);font-size:.8rem;max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${e.descripcion || '—'}</td>
-          <td><span class="chip" style="font-size:.72rem;padding:.2rem .55rem">${datos.escenario || '—'}</span></td>
+          <td style="font-weight:600;max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${escHtml(e.nombre)}">${escHtml(e.nombre)}</td>
+          <td style="color:var(--n40);font-size:.8rem;max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${escHtml(e.descripcion || '—')}</td>
+          <td><span class="chip" style="font-size:.72rem;padding:.2rem .55rem">${escHtml(datos.escenario || '—')}</span></td>
           <td style="font-size:.82rem">${(datos.ordenes || []).length} órdenes</td>
-          <td style="font-size:.78rem;color:var(--n40)">${e.usuario_email || localStorage.getItem('pc_email') || '—'}</td>
+          <td style="font-size:.78rem;color:var(--n40)">${escHtml(e.usuario_email || localStorage.getItem('pc_email') || '—')}</td>
           <td style="font-size:.78rem;white-space:nowrap">${fecha}</td>
           <td style="display:flex;gap:.35rem;padding:.5rem .75rem">
             <button class="btn-ui btn-ui--primary" style="font-size:.72rem;padding:.3rem .6rem" data-action="load">Cargar</button>
@@ -8431,7 +8439,7 @@
         tbody.innerHTML = adminCompanies.map(c => `
           <tr>
             <td style="font-weight:600">${escapeHtml(c.name)}</td>
-            <td style="font-size:.78rem;color:var(--n30)">${c.industry ? (INDUSTRY_LABELS[c.industry] || c.industry) : '<span style="color:var(--n80)">—</span>'}</td>
+            <td style="font-size:.78rem;color:var(--n30)">${c.industry ? escHtml(INDUSTRY_LABELS[c.industry] || c.industry) : '<span style="color:var(--n80)">—</span>'}</td>
             <td>${c.plan ? `<span class="admin-badge admin-badge--plan">${PLAN_LABELS[c.plan] || c.plan}</span>` : '<span style="color:var(--n80)">—</span>'}</td>
             <td style="font-size:.78rem;color:var(--n50)">${c.user_count} usuario${c.user_count !== 1 ? 's' : ''}</td>
             <td style="font-size:.78rem;color:var(--n50)">${new Date(c.created_at).toLocaleDateString('es-ES')}</td>
@@ -8458,7 +8466,7 @@
         const sel = document.getElementById('au-company-id')!;
         const cur = (sel as HTMLSelectElement).value;
         sel.innerHTML = '<option value="">— Sin empresa —</option>' +
-          adminCompanies.map(c => `<option value="${c.id}">${escapeHtml(c.name)}${c.industry ? ' · ' + (INDUSTRY_LABELS[c.industry] || c.industry) : ''}</option>`).join('');
+          adminCompanies.map(c => `<option value="${c.id}">${escapeHtml(c.name)}${c.industry ? ' · ' + escHtml(INDUSTRY_LABELS[c.industry] || c.industry) : ''}</option>`).join('');
         (sel as HTMLSelectElement).value = cur;
       }
 
@@ -8804,13 +8812,13 @@
         }
         tbody.innerHTML = adminPieceTypes.map((pt: any) => `
           <tr>
-            <td style="font-weight:600">${pt.name}</td>
-            <td style="font-size:.78rem;color:var(--n30)">${pt.layup_type}</td>
+            <td style="font-weight:600">${escHtml(pt.name)}</td>
+            <td style="font-size:.78rem;color:var(--n30)">${escHtml(pt.layup_type)}</td>
             <td style="font-size:.78rem;color:var(--n50);white-space:nowrap">${pt.atl_hours}h / ${pt.autoclave_hours}h / ${pt.ndt_hours}h / ${pt.cnc_hours}h</td>
             <td style="font-size:.78rem;color:var(--n50);white-space:nowrap">${pt.workers_atl}/${pt.workers_bag}/${pt.workers_autoclave}/${pt.workers_ndt}/${pt.workers_cnc}</td>
             <td>
               <button class="admin-action-btn" data-edit-pt="${pt.id}">Editar</button>
-              <button class="admin-action-btn del" data-del-pt="${pt.id}" data-del-pt-name="${pt.name}">Eliminar</button>
+              <button class="admin-action-btn del" data-del-pt="${pt.id}" data-del-pt-name="${escHtml(pt.name)}">Eliminar</button>
             </td>
           </tr>`).join('');
 
