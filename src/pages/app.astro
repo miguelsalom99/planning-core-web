@@ -3960,120 +3960,56 @@
     <!-- ── PANEL: KPIs ── -->
     <div id="panel-kpis" class="dash-panel" style="display:none">
       <div class="panel-page">
-        <div class="panel-page-header">
+        <!-- KPI Intelligence: every value is computed server-side from the company's own data (GET /api/kpis). -->
+        <div class="pcx-kpi-head">
           <div>
-            <div class="panel-page-title">KPIs del piloto</div>
-            <div class="panel-page-sub">Semana 7 de 12 · Evolución acumulada desde inicio del piloto</div>
+            <div class="panel-page-title">Inteligencia de KPIs</div>
+            <div class="panel-page-sub" id="kpiSub">Qué está pasando, por qué, qué impacto tiene y qué hacer.</div>
+          </div>
+          <div class="pcx-kpi-controls">
+            <select class="form-input pcx-select" id="kpiPeriod" aria-label="Periodo">
+              <option value="7">Últimos 7 días</option>
+              <option value="28" selected>Últimas 4 semanas</option>
+              <option value="90">Últimos 3 meses</option>
+              <option value="365">Último año</option>
+            </select>
+            <select class="form-input pcx-select" id="kpiPlant" aria-label="Planta"><option value="">Todas las plantas</option></select>
+            <button class="btn-ui btn-ui--primary pcx-ask" id="kpiAskCopilot" type="button" style="display:none">Preguntar al copiloto</button>
           </div>
         </div>
-        <div class="kpis-grid">
-          <!-- OEE -->
-          <div class="kpi-full-card">
-            <div class="kpi-full-card__label">OEE acumulado</div>
-            <div class="kpi-full-card__val">87%</div>
-            <div class="kpi-full-card__target">Objetivo: 82%  ·  <span style="color:var(--green);font-weight:700">+5 pp</span></div>
-            <div class="kpi-trend">
-              <div class="kpi-trend__bar" style="height:44%;background:var(--n80)"></div>
-              <div class="kpi-trend__bar" style="height:55%;background:var(--n80)"></div>
-              <div class="kpi-trend__bar" style="height:67%;background:var(--n80)"></div>
-              <div class="kpi-trend__bar" style="height:78%;background:var(--brand);opacity:.5"></div>
-              <div class="kpi-trend__bar" style="height:100%;background:var(--brand)"></div>
-            </div>
-          </div>
-          <!-- Cumplimiento -->
-          <div class="kpi-full-card">
-            <div class="kpi-full-card__label">Cumplimiento plan</div>
-            <div class="kpi-full-card__val">94%</div>
-            <div class="kpi-full-card__target">Objetivo: 85%  ·  <span style="color:var(--green);font-weight:700">+9 pp</span></div>
-            <div class="kpi-trend">
-              <div class="kpi-trend__bar" style="height:44%;background:var(--n80)"></div>
-              <div class="kpi-trend__bar" style="height:55%;background:var(--n80)"></div>
-              <div class="kpi-trend__bar" style="height:67%;background:var(--n80)"></div>
-              <div class="kpi-trend__bar" style="height:80%;background:var(--green);opacity:.5"></div>
-              <div class="kpi-trend__bar" style="height:100%;background:var(--green)"></div>
-            </div>
-          </div>
-          <!-- Setup -->
-          <div class="kpi-full-card">
-            <div class="kpi-full-card__label">Reducción setup</div>
-            <div class="kpi-full-card__val">−18%</div>
-            <div class="kpi-full-card__target">Objetivo: −10%  ·  <span style="color:var(--green);font-weight:700">Superado</span></div>
-            <div class="kpi-trend">
-              <div class="kpi-trend__bar" style="height:28%;background:var(--n80)"></div>
-              <div class="kpi-trend__bar" style="height:50%;background:var(--n80)"></div>
-              <div class="kpi-trend__bar" style="height:67%;background:var(--n80)"></div>
-              <div class="kpi-trend__bar" style="height:83%;background:var(--green);opacity:.5"></div>
-              <div class="kpi-trend__bar" style="height:100%;background:var(--green)"></div>
-            </div>
-          </div>
-          <!-- Lead time -->
-          <div class="kpi-full-card">
-            <div class="kpi-full-card__label">Lead time</div>
-            <div class="kpi-full-card__val">−6%</div>
-            <div class="kpi-full-card__target">Objetivo: −15%  ·  <span style="color:var(--amber);font-weight:700">En progreso</span></div>
-            <div class="kpi-trend">
-              <div class="kpi-trend__bar" style="height:7%;background:var(--n80)"></div>
-              <div class="kpi-trend__bar" style="height:13%;background:var(--n80)"></div>
-              <div class="kpi-trend__bar" style="height:27%;background:var(--n80)"></div>
-              <div class="kpi-trend__bar" style="height:67%;background:var(--amber);opacity:.5"></div>
-              <div class="kpi-trend__bar" style="height:100%;background:var(--amber)"></div>
-            </div>
-          </div>
-          <!-- Órdenes riesgo -->
-          <div class="kpi-full-card">
-            <div class="kpi-full-card__label">Órdenes en riesgo</div>
-            <div class="kpi-full-card__val">2</div>
-            <div class="kpi-full-card__target">Objetivo: 0  ·  <span style="color:var(--amber);font-weight:700">−4 desde sem. 1</span></div>
-            <div class="kpi-trend">
-              <div class="kpi-trend__bar" style="height:100%;background:var(--n80)"></div>
-              <div class="kpi-trend__bar" style="height:83%;background:var(--n80)"></div>
-              <div class="kpi-trend__bar" style="height:67%;background:var(--n80)"></div>
-              <div class="kpi-trend__bar" style="height:50%;background:var(--amber);opacity:.5"></div>
-              <div class="kpi-trend__bar" style="height:33%;background:var(--amber)"></div>
-            </div>
-          </div>
-          <!-- Utilización media -->
-          <div class="kpi-full-card">
-            <div class="kpi-full-card__label">Utiliz. media recursos</div>
-            <div class="kpi-full-card__val">72%</div>
-            <div class="kpi-full-card__target">Objetivo: 80%  ·  <span style="color:var(--amber);font-weight:700">−8 pp</span></div>
-            <div class="kpi-trend">
-              <div class="kpi-trend__bar" style="height:85%;background:var(--n80)"></div>
-              <div class="kpi-trend__bar" style="height:86%;background:var(--n80)"></div>
-              <div class="kpi-trend__bar" style="height:88%;background:var(--n80)"></div>
-              <div class="kpi-trend__bar" style="height:89%;background:var(--amber);opacity:.5"></div>
-              <div class="kpi-trend__bar" style="height:100%;background:var(--amber)"></div>
-            </div>
-          </div>
-          <!-- Coordinación -->
-          <div class="kpi-full-card">
-            <div class="kpi-full-card__label">Tiempo coordinación</div>
-            <div class="kpi-full-card__val">−35%</div>
-            <div class="kpi-full-card__target">Referencia: −0%  ·  <span style="color:var(--green);font-weight:700">Excelente</span></div>
-            <div class="kpi-trend">
-              <div class="kpi-trend__bar" style="height:29%;background:var(--n80)"></div>
-              <div class="kpi-trend__bar" style="height:51%;background:var(--n80)"></div>
-              <div class="kpi-trend__bar" style="height:69%;background:var(--n80)"></div>
-              <div class="kpi-trend__bar" style="height:86%;background:var(--green);opacity:.5"></div>
-              <div class="kpi-trend__bar" style="height:100%;background:var(--green)"></div>
-            </div>
-          </div>
-          <!-- Turno noche -->
-          <div class="kpi-full-card">
-            <div class="kpi-full-card__label">Eficiencia turno noche</div>
-            <div class="kpi-full-card__val">61%</div>
-            <div class="kpi-full-card__target">Referencia: 55%  ·  <span style="color:var(--green);font-weight:700">+6 pp</span></div>
-            <div class="kpi-trend">
-              <div class="kpi-trend__bar" style="height:55%;background:var(--n80)"></div>
-              <div class="kpi-trend__bar" style="height:68%;background:var(--n80)"></div>
-              <div class="kpi-trend__bar" style="height:76%;background:var(--n80)"></div>
-              <div class="kpi-trend__bar" style="height:90%;background:var(--brand);opacity:.5"></div>
-              <div class="kpi-trend__bar" style="height:100%;background:var(--brand)"></div>
-            </div>
-          </div>
+        <div id="kpiOverview">
+          <div id="kpiConclusion" class="pcx-summary"></div>
+          <div id="kpiGrid" class="pcx-kpi-grid"></div>
+          <div id="kpiUnavailable" class="pcx-unavailable"></div>
         </div>
+        <div id="kpiDetail" style="display:none"></div>
       </div>
     </div><!-- /#panel-kpis -->
+
+    <!-- ── PLANNING COPILOT (drawer) ── -->
+    <button class="pcx-fab" id="copilotFab" type="button" style="display:none" aria-label="Abrir el copiloto de planificación">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l1.9 4.6L18.5 9l-4.6 1.9L12 15.5l-1.9-4.6L5.5 9l4.6-1.4z"/><path d="M19 15l.9 2.1L22 18l-2.1.9L19 21l-.9-2.1L16 18l2.1-.9z"/></svg>
+      <span>Copiloto</span>
+    </button>
+    <aside class="pcx-drawer" id="copilotDrawer" aria-label="Copiloto de planificación" aria-hidden="true">
+      <div class="pcx-drawer__head">
+        <div>
+          <div class="pcx-drawer__title">Copiloto de planificación</div>
+          <div class="pcx-drawer__ctx" id="copilotCtx"></div>
+        </div>
+        <div style="display:flex;gap:.35rem">
+          <button class="pcx-icon-btn" id="copilotReset" type="button" title="Nueva conversación">↺</button>
+          <button class="pcx-icon-btn" id="copilotClose" type="button" title="Cerrar">×</button>
+        </div>
+      </div>
+      <div class="pcx-drawer__body" id="copilotLog" aria-live="polite"></div>
+      <div class="pcx-chips" id="copilotChips"></div>
+      <form class="pcx-drawer__foot" id="copilotForm">
+        <textarea id="copilotInput" rows="2" maxlength="2000" placeholder="Pregunta sobre tu plan, tus KPI o un escenario «¿qué pasa si…?»"></textarea>
+        <button class="btn-ui btn-ui--primary" id="copilotSend" type="submit">Enviar</button>
+      </form>
+      <div class="pcx-drawer__note">Respuestas generadas con IA a partir de los datos de tu empresa y simulaciones; verifica las decisiones críticas.</div>
+    </aside>
 
     <!-- ── PANEL: DISRUPCIONES ── -->
     <div id="panel-disrupciones" class="dash-panel" style="display:none">
@@ -5085,6 +5021,91 @@
   Configuración guiada
 </button>
 
+<style is:global>
+  /* ── KPI Intelligence + Planning Copilot (runtime-built nodes, so global + pcx- prefix) ── */
+  .pcx-kpi-head { display:flex; justify-content:space-between; align-items:flex-end; gap:1rem; flex-wrap:wrap; margin-bottom:1rem; }
+  .pcx-kpi-controls { display:flex; gap:.5rem; flex-wrap:wrap; }
+  .pcx-select { width:auto; min-width:150px; font-size:.8rem; padding:.4rem .6rem; }
+  .pcx-summary { background:var(--white); border:1px solid var(--n80); border-left:4px solid var(--brand); border-radius:10px; padding:1rem 1.1rem; margin-bottom:1rem; }
+  .pcx-summary h3 { margin:0 0 .35rem; font-size:.78rem; text-transform:uppercase; letter-spacing:.05em; color:var(--n50); }
+  .pcx-summary p { margin:0; font-size:.92rem; line-height:1.55; color:var(--n20); }
+  .pcx-actions { margin:.75rem 0 0; padding:0; list-style:none; display:grid; gap:.5rem; }
+  .pcx-action { background:var(--n90); border-radius:8px; padding:.6rem .75rem; font-size:.82rem; color:var(--n30); line-height:1.45; }
+  .pcx-action b { color:var(--n20); display:block; margin-bottom:.15rem; }
+  .pcx-action .pcx-impact { color:var(--green); font-weight:600; }
+  .pcx-kpi-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(250px, 1fr)); gap:.85rem; }
+  .pcx-kpi { background:var(--white); border:1px solid var(--n80); border-radius:12px; padding:1rem; display:flex; flex-direction:column; gap:.45rem; cursor:pointer; text-align:left; font:inherit; color:inherit; transition:box-shadow .15s, border-color .15s; }
+  .pcx-kpi:hover, .pcx-kpi:focus-visible { border-color:var(--brand); box-shadow:0 4px 16px rgba(27,63,139,.12); outline:none; }
+  .pcx-kpi__top { display:flex; justify-content:space-between; gap:.5rem; align-items:flex-start; }
+  .pcx-kpi__name { font-size:.8rem; font-weight:600; color:var(--n30); line-height:1.3; }
+  .pcx-kpi__val { font-size:1.75rem; font-weight:800; color:var(--n20); line-height:1.1; }
+  .pcx-kpi__meta { font-size:.75rem; color:var(--n50); }
+  .pcx-kpi__insight { font-size:.78rem; color:var(--n30); line-height:1.4; border-top:1px dashed var(--n80); padding-top:.45rem; }
+  .pcx-st { font-size:.66rem; font-weight:700; padding:.2rem .5rem; border-radius:99px; white-space:nowrap; }
+  .pcx-st--ok { background:var(--green-bg); color:var(--green); }
+  .pcx-st--warn { background:var(--amber-bg); color:var(--amber); }
+  .pcx-st--bad { background:var(--red-bg); color:var(--red); }
+  .pcx-st--none { background:var(--n90); color:var(--n50); }
+  .pcx-trend--good { color:var(--green); font-weight:700; } .pcx-trend--bad { color:var(--red); font-weight:700; } .pcx-trend--flat { color:var(--n50); }
+  .pcx-spark { display:flex; align-items:flex-end; gap:3px; height:30px; }
+  .pcx-spark span { flex:1; background:var(--n80); border-radius:2px 2px 0 0; min-height:2px; }
+  .pcx-spark span.pcx-last { background:var(--brand); }
+  .pcx-unavailable { margin-top:1.1rem; }
+  .pcx-unavailable h4 { font-size:.78rem; color:var(--n50); margin:0 0 .5rem; text-transform:uppercase; letter-spacing:.05em; }
+  .pcx-unav-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(220px, 1fr)); gap:.6rem; }
+  .pcx-unav { border:1px dashed var(--n80); border-radius:10px; padding:.7rem .8rem; font-size:.78rem; color:var(--n50); }
+  .pcx-unav b { color:var(--n30); display:block; margin-bottom:.2rem; }
+  .pcx-detail-head { display:flex; align-items:center; gap:.75rem; flex-wrap:wrap; margin-bottom:1rem; }
+  .pcx-back { background:none; border:1px solid var(--n80); border-radius:8px; padding:.35rem .7rem; cursor:pointer; color:var(--n30); font:inherit; font-size:.8rem; }
+  .pcx-sections { display:grid; grid-template-columns:repeat(auto-fit, minmax(320px, 1fr)); gap:.9rem; }
+  .pcx-sec { background:var(--white); border:1px solid var(--n80); border-radius:12px; padding:1rem 1.1rem; }
+  .pcx-sec--wide { grid-column:1 / -1; }
+  .pcx-sec h3 { margin:0 0 .6rem; font-size:.86rem; color:var(--n20); }
+  .pcx-sec p, .pcx-sec li { font-size:.84rem; color:var(--n30); line-height:1.5; }
+  .pcx-sec ul { margin:0; padding-left:1.1rem; }
+  .pcx-dl { display:grid; grid-template-columns:auto 1fr; gap:.35rem .8rem; font-size:.82rem; margin:0; }
+  .pcx-dl dt { color:var(--n50); font-weight:600; } .pcx-dl dd { margin:0; color:var(--n30); }
+  .pcx-seg { display:inline-flex; border:1px solid var(--n80); border-radius:8px; overflow:hidden; }
+  .pcx-seg button { background:none; border:0; padding:.3rem .65rem; font:inherit; font-size:.75rem; color:var(--n30); cursor:pointer; }
+  .pcx-seg button.pcx-on { background:var(--brand); color:#fff; }
+  .pcx-chart { width:100%; height:190px; display:block; margin-top:.6rem; }
+  .pcx-driver { margin-bottom:.6rem; }
+  .pcx-driver__row { display:flex; justify-content:space-between; font-size:.82rem; color:var(--n20); font-weight:600; }
+  .pcx-bar { height:7px; background:var(--n90); border-radius:99px; overflow:hidden; margin:.25rem 0 .15rem; }
+  .pcx-bar i { display:block; height:100%; background:var(--amber); }
+  .pcx-muted { font-size:.74rem; color:var(--n50); }
+  .pcx-conclusion { background:var(--n90); border-radius:10px; padding:.9rem 1rem; font-size:.9rem; line-height:1.55; color:var(--n20); }
+  .pcx-empty { padding:1.2rem; text-align:center; color:var(--n50); font-size:.85rem; border:1px dashed var(--n80); border-radius:10px; }
+  .pcx-target { display:flex; gap:.4rem; align-items:center; margin-top:.5rem; }
+  .pcx-target input { width:90px; }
+  .pcx-fab { position:fixed; right:1.25rem; bottom:1.25rem; z-index:900; display:flex; align-items:center; gap:.45rem; background:var(--brand); color:#fff; border:0; border-radius:99px; padding:.7rem 1.05rem; font:inherit; font-weight:700; font-size:.85rem; box-shadow:0 8px 24px rgba(27,63,139,.35); cursor:pointer; }
+  .pcx-drawer { position:fixed; top:0; right:0; height:100vh; width:min(430px, 100vw); z-index:950; background:var(--white); border-left:1px solid var(--n80); box-shadow:-10px 0 30px rgba(0,0,0,.12); display:flex; flex-direction:column; transform:translateX(105%); transition:transform .22s ease; }
+  .pcx-drawer.pcx-open { transform:none; }
+  .pcx-drawer__head { display:flex; justify-content:space-between; align-items:flex-start; padding:1rem 1rem .7rem; border-bottom:1px solid var(--n80); }
+  .pcx-drawer__title { font-weight:800; color:var(--n20); }
+  .pcx-drawer__ctx { font-size:.74rem; color:var(--n50); margin-top:.15rem; }
+  .pcx-icon-btn { background:none; border:1px solid var(--n80); border-radius:8px; width:30px; height:30px; cursor:pointer; color:var(--n30); font-size:1rem; line-height:1; }
+  .pcx-drawer__body { flex:1; overflow-y:auto; padding:1rem; display:flex; flex-direction:column; gap:.75rem; }
+  .pcx-msg { max-width:92%; padding:.65rem .8rem; border-radius:12px; font-size:.86rem; line-height:1.5; white-space:pre-wrap; word-wrap:break-word; }
+  .pcx-msg--user { align-self:flex-end; background:var(--brand); color:#fff; border-bottom-right-radius:4px; }
+  .pcx-msg--bot { align-self:flex-start; background:var(--n90); color:var(--n20); border-bottom-left-radius:4px; }
+  .pcx-msg--err { align-self:flex-start; background:var(--red-bg); color:var(--red); }
+  .pcx-thinking { align-self:flex-start; font-size:.8rem; color:var(--n50); font-style:italic; }
+  .pcx-card { align-self:stretch; border:1px solid var(--n80); border-radius:10px; padding:.7rem .8rem; font-size:.78rem; color:var(--n30); background:var(--white); }
+  .pcx-card h4 { margin:0 0 .4rem; font-size:.8rem; color:var(--n20); }
+  .pcx-card table { width:100%; border-collapse:collapse; font-size:.75rem; }
+  .pcx-card th, .pcx-card td { text-align:left; padding:.25rem .3rem; border-bottom:1px solid var(--n90); }
+  .pcx-card th { color:var(--n50); font-weight:600; }
+  .pcx-delta--good { color:var(--green); font-weight:700; } .pcx-delta--bad { color:var(--red); font-weight:700; }
+  .pcx-chips { display:flex; flex-wrap:wrap; gap:.35rem; padding:0 1rem .6rem; }
+  .pcx-chip { border:1px solid var(--n80); background:var(--white); color:var(--n30); border-radius:99px; padding:.3rem .65rem; font:inherit; font-size:.74rem; cursor:pointer; }
+  .pcx-chip:hover { border-color:var(--brand); color:var(--brand); }
+  .pcx-drawer__foot { display:flex; gap:.5rem; padding:.7rem 1rem; border-top:1px solid var(--n80); }
+  .pcx-drawer__foot textarea { flex:1; resize:none; border:1px solid var(--n80); border-radius:10px; padding:.5rem .6rem; font:inherit; font-size:.85rem; background:var(--white); color:var(--n20); }
+  .pcx-drawer__note { font-size:.68rem; color:var(--n50); padding:0 1rem .8rem; }
+  @media (max-width: 640px) { .pcx-fab span { display:none; } .pcx-sections { grid-template-columns:1fr; } }
+</style>
+
 <script>
   import * as XLSX from 'xlsx';
   const API = 'https://composite-replanning-api.vercel.app';
@@ -5324,6 +5345,421 @@
       { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' } as Record<string, string>)[c]);
   }
 
+  // ── Safe DOM builder for the KPI dashboard + copilot: every value goes in via
+  // textContent / setAttribute, never innerHTML, so server or AI text cannot
+  // inject markup.
+  function el(tag: string, props: Record<string, any> = {}, ...kids: any[]): HTMLElement {
+    const n = document.createElement(tag);
+    for (const [k, v] of Object.entries(props)) {
+      if (v == null || v === false) continue;
+      if (k === 'class') n.className = String(v);
+      else if (k === 'text') n.textContent = String(v);
+      else if (k.startsWith('on') && typeof v === 'function') n.addEventListener(k.slice(2), v);
+      else n.setAttribute(k, String(v));
+    }
+    for (const c of kids.flat()) {
+      if (c == null || c === false) continue;
+      n.appendChild(typeof c === 'string' || typeof c === 'number' ? document.createTextNode(String(c)) : c);
+    }
+    return n;
+  }
+  function svgEl(tag: string, attrs: Record<string, any>): SVGElement {
+    const n = document.createElementNS('http://www.w3.org/2000/svg', tag);
+    for (const [k, v] of Object.entries(attrs)) n.setAttribute(k, String(v));
+    return n;
+  }
+  async function apiJson(path: string, init: RequestInit = {}) {
+    const res = await fetch(`${API}${path}`, {
+      ...init,
+      headers: { Authorization: `Bearer ${localStorage.getItem('pc_token')}`, 'Content-Type': 'application/json',
+                 ...(init.headers || {}) },
+    });
+    const body = await res.json().catch(() => ({}));
+    if (!res.ok) throw Object.assign(new Error(body.detail || `HTTP ${res.status}`), { status: res.status });
+    return body;
+  }
+
+  // The plan currently open in the planner (last "Planificar" request) — the
+  // copilot's context for "¿cómo va mi plan?" and what-if simulations.
+  let lastPlanRequest: any = null;
+
+  // ── KPI Intelligence dashboard ────────────────────────────────────────────
+  const KPI_STATUS: Record<string, [string, string]> = {
+    healthy: ['En objetivo', 'pcx-st pcx-st--ok'], attention: ['Requiere atención', 'pcx-st pcx-st--warn'],
+    critical: ['Crítico', 'pcx-st pcx-st--bad'], no_data: ['Sin datos', 'pcx-st pcx-st--none'],
+  };
+  const kpiState = { period: 28, plant: '', detailKey: null as string | null, gran: 'week', detailPeriod: 90, resource: '' };
+
+  function fmtKpi(v: any, unit: string): string {
+    if (v == null) return '—';
+    const n = Math.round(Number(v) * 10) / 10;
+    return unit === '%' ? `${n}%` : `${n} ${unit}`;
+  }
+  function trendClass(k: any): string {
+    const d = k.trend?.direction;
+    if (!d || d === 'flat' || k.previous == null) return 'pcx-trend--flat';
+    const better = k.direction === 'higher' ? d === 'up' : k.direction === 'lower' ? d === 'down'
+      : Math.abs(k.value - k.target) < Math.abs(k.previous - k.target);
+    return better ? 'pcx-trend--good' : 'pcx-trend--bad';
+  }
+  function trendText(k: any): string {
+    if (k.pct_change == null) return '';
+    const arrow = k.trend?.direction === 'up' ? '↑' : k.trend?.direction === 'down' ? '↓' : '→';
+    const streak = k.trend?.worsening_periods >= 2 ? ` · empeora ${k.trend.worsening_periods} periodos` : '';
+    return `${arrow} ${k.pct_change > 0 ? '+' : ''}${k.pct_change}% vs. periodo anterior${streak}`;
+  }
+  function sparkBars(values: any[]): HTMLElement {
+    const nums = values.filter(v => v != null) as number[];
+    const max = Math.max(1, ...nums.map(Math.abs));
+    const wrap = el('div', { class: 'pcx-spark', 'aria-hidden': 'true' });
+    values.forEach((v, i) => {
+      const h = v == null ? 0 : Math.max(6, Math.round((Math.abs(v) / max) * 100));
+      wrap.appendChild(el('span', { style: `height:${h}%;${v == null ? 'opacity:.25' : ''}`,
+                                    class: i === values.length - 1 ? 'pcx-last' : '' }));
+    });
+    return wrap;
+  }
+
+  async function loadKpiOverview() {
+    const grid = document.getElementById('kpiGrid');
+    const concl = document.getElementById('kpiConclusion');
+    const unav = document.getElementById('kpiUnavailable');
+    if (!grid || !concl || !unav) return;
+    document.getElementById('kpiOverview')!.style.display = '';
+    document.getElementById('kpiDetail')!.style.display = 'none';
+    kpiState.detailKey = null;
+    grid.replaceChildren(el('div', { class: 'pcx-empty', text: 'Calculando indicadores…' }));
+    let data: any;
+    try {
+      const q = `?period_days=${kpiState.period}${kpiState.plant ? `&plant_id=${encodeURIComponent(kpiState.plant)}` : ''}`;
+      data = await apiJson(`/api/kpis${q}`);
+    } catch (e: any) {
+      grid.replaceChildren(el('div', { class: 'pcx-empty', text: e.status === 403
+        ? 'Tu usuario no tiene acceso al módulo de KPIs.' : 'No se pudieron cargar los KPIs. Inténtalo de nuevo.' }));
+      return;
+    }
+    const cov = data.data_coverage || {};
+    document.getElementById('kpiSub')!.textContent =
+      `Basado en ${cov.simulations ?? 0} simulaciones, ${cov.disruptions ?? 0} disrupciones y ${cov.milestones ?? 0} hitos del periodo.`;
+    concl.replaceChildren(
+      el('h3', { text: 'Conclusión ejecutiva' }),
+      el('p', { text: data.conclusion }),
+      (data.recommendations || []).length ? el('ul', { class: 'pcx-actions' },
+        (data.recommendations || []).slice(0, 3).map((r: any) => el('li', { class: 'pcx-action' },
+          el('b', { text: r.title }), r.why, ' ', el('span', { class: 'pcx-impact', text: `Impacto esperado: ${r.expected_impact}` })))) : null,
+    );
+    grid.replaceChildren(...(data.kpis || []).map((k: any) => {
+      const [stTxt, stCls] = KPI_STATUS[k.status] || KPI_STATUS.no_data;
+      return el('button', { class: 'pcx-kpi', type: 'button', onclick: () => openKpiDetail(k.key),
+                            'aria-label': `${k.name}: ${fmtKpi(k.value, k.unit)}, ${stTxt}. Ver análisis` },
+        el('div', { class: 'pcx-kpi__top' }, el('div', { class: 'pcx-kpi__name', text: k.name }), el('span', { class: stCls, text: stTxt })),
+        el('div', { class: 'pcx-kpi__val', text: fmtKpi(k.value, k.unit) }),
+        el('div', { class: 'pcx-kpi__meta' },
+          `Objetivo ${fmtKpi(k.target, k.unit)}`,
+          k.gap != null ? ` · brecha ${k.gap > 0 ? '+' : ''}${Math.round(k.gap * 10) / 10}` : ''),
+        k.pct_change != null ? el('div', { class: `pcx-kpi__meta ${trendClass(k)}`, text: trendText(k) }) : null,
+        sparkBars(k.spark || []),
+        k.insight ? el('div', { class: 'pcx-kpi__insight', text: k.insight })
+          : k.empty_hint ? el('div', { class: 'pcx-kpi__insight', text: k.empty_hint }) : null,
+      );
+    }));
+    unav.replaceChildren(
+      el('h4', { text: 'Indicadores de negocio pendientes de conectar' }),
+      el('div', { class: 'pcx-unav-grid' }, (data.unavailable || []).map((u: any) =>
+        el('div', { class: 'pcx-unav' }, el('b', { text: u.name }), `Requiere: ${u.requires}`))),
+    );
+  }
+
+  function kpiChart(series: any[], target: number, unit: string): SVGElement {
+    const W = 640, H = 190, P = { l: 38, r: 10, t: 12, b: 26 };
+    const vals = series.map(p => p.value).filter((v: any) => v != null) as number[];
+    const max = Math.max(target || 0, ...vals, 1) * 1.1;
+    const svg = svgEl('svg', { viewBox: `0 0 ${W} ${H}`, class: 'pcx-chart', role: 'img',
+                               'aria-label': 'Serie histórica del indicador con línea de objetivo' });
+    const y = (v: number) => P.t + (H - P.t - P.b) * (1 - v / max);
+    const bw = (W - P.l - P.r) / Math.max(1, series.length);
+    [0, 0.5, 1].forEach(f => {
+      const v = max * f;
+      svg.appendChild(svgEl('line', { x1: P.l, x2: W - P.r, y1: y(v), y2: y(v), stroke: 'var(--n90)' }));
+      const t = svgEl('text', { x: 2, y: y(v) + 4, 'font-size': 10, fill: 'var(--n50)' }); t.textContent = fmtKpi(Math.round(v), unit === '%' ? '%' : ''); svg.appendChild(t);
+    });
+    series.forEach((p, i) => {
+      if (p.value == null) return;
+      const x = P.l + i * bw + bw * 0.15;
+      const r = svgEl('rect', { x, y: y(p.value), width: Math.max(2, bw * 0.7), height: Math.max(1, y(0) - y(p.value)),
+                                rx: 2, fill: 'var(--brand)', opacity: i === series.length - 1 ? 1 : 0.55 });
+      const tt = svgEl('title', {}); tt.textContent = `${p.period}: ${fmtKpi(p.value, unit)}`; r.appendChild(tt);
+      svg.appendChild(r);
+    });
+    const step = Math.max(1, Math.ceil(series.length / 6));
+    series.forEach((p, i) => {
+      if (i % step) return;
+      const t = svgEl('text', { x: P.l + i * bw, y: H - 8, 'font-size': 10, fill: 'var(--n50)' });
+      t.textContent = String(p.period).slice(5); svg.appendChild(t);
+    });
+    if (target != null) {
+      svg.appendChild(svgEl('line', { x1: P.l, x2: W - P.r, y1: y(target), y2: y(target), stroke: 'var(--red)',
+                                      'stroke-dasharray': '5 4', 'stroke-width': 1.5 }));
+      const t = svgEl('text', { x: W - P.r - 90, y: y(target) - 4, 'font-size': 10, fill: 'var(--red)' });
+      t.textContent = `Objetivo ${fmtKpi(target, unit)}`; svg.appendChild(t);
+    }
+    return svg;
+  }
+
+  async function openKpiDetail(key: string) {
+    const box = document.getElementById('kpiDetail');
+    if (!box) return;
+    kpiState.detailKey = key;
+    document.getElementById('kpiOverview')!.style.display = 'none';
+    box.style.display = '';
+    box.replaceChildren(el('div', { class: 'pcx-empty', text: 'Analizando el indicador…' }));
+    let d: any;
+    try {
+      const q = new URLSearchParams({ period_days: String(kpiState.detailPeriod), granularity: kpiState.gran });
+      if (kpiState.plant) q.set('plant_id', kpiState.plant);
+      if (kpiState.resource) q.set('resource', kpiState.resource);
+      d = await apiJson(`/api/kpis/${encodeURIComponent(key)}?${q}`);
+    } catch (e: any) {
+      box.replaceChildren(el('button', { class: 'pcx-back', type: 'button', text: '← Todos los KPIs', onclick: loadKpiOverview }),
+                          el('div', { class: 'pcx-empty', text: 'No se pudo cargar el análisis.' }));
+      return;
+    }
+    const s = d.summary;
+    const [stTxt, stCls] = KPI_STATUS[s.status] || KPI_STATUS.no_data;
+    const seg = (opts: [string, string][], cur: string, on: (v: string) => void) =>
+      el('div', { class: 'pcx-seg', role: 'group' }, opts.map(([v, label]) =>
+        el('button', { type: 'button', class: v === cur ? 'pcx-on' : '', text: label, 'aria-pressed': String(v === cur),
+                       onclick: () => { on(v); openKpiDetail(key); } })));
+    const canEditTarget = !!currentUser?.is_admin;
+    const targetInput = el('input', { class: 'form-input', type: 'number', step: 'any', min: '0', value: String(s.target) }) as HTMLInputElement;
+    const drivers = d.root_causes?.drivers || [];
+    box.replaceChildren(
+      el('div', { class: 'pcx-detail-head' },
+        el('button', { class: 'pcx-back', type: 'button', text: '← Todos los KPIs', onclick: loadKpiOverview }),
+        el('div', { class: 'panel-page-title', text: d.name }), el('span', { class: stCls, text: stTxt })),
+      el('div', { class: 'pcx-sections' },
+        el('section', { class: 'pcx-sec pcx-sec--wide' },
+          el('h3', { text: 'Conclusión ejecutiva' }), el('div', { class: 'pcx-conclusion', text: d.conclusion }),
+          el('div', { class: 'pcx-chips', style: 'padding:.7rem 0 0' },
+            ['¿Por qué está cambiando este KPI?', '¿Qué debería mejorar primero?', 'Resume los mayores riesgos'].map(q =>
+              hasAccess('copilot') ? el('button', { class: 'pcx-chip', type: 'button', text: q, onclick: () => openCopilot(q) }) : null))),
+        el('section', { class: 'pcx-sec' },
+          el('h3', { text: '1 · Definición' }),
+          el('dl', { class: 'pcx-dl' },
+            el('dt', { text: 'Qué mide' }), el('dd', { text: d.definition.what }),
+            el('dt', { text: 'Por qué importa' }), el('dd', { text: d.definition.why }),
+            el('dt', { text: 'Cálculo' }), el('dd', { text: d.definition.formula }),
+            el('dt', { text: 'Fuentes' }), el('dd', { text: (d.definition.sources || []).join(' · ') }),
+            d.definition.reference ? el('dt', { text: 'Referencia' }) : null,
+            d.definition.reference ? el('dd', { text: d.definition.reference }) : null),
+          el('div', { class: 'pcx-muted', style: 'margin-top:.6rem' },
+            `Actual ${fmtKpi(s.value, d.unit)} · objetivo ${fmtKpi(s.target, d.unit)}`,
+            s.gap != null ? ` · brecha ${s.gap > 0 ? '+' : ''}${Math.round(s.gap * 10) / 10}` : '',
+            s.pct_change != null ? ` · ${s.pct_change > 0 ? '+' : ''}${s.pct_change}% vs. periodo anterior` : ''),
+          canEditTarget ? el('div', { class: 'pcx-target' }, el('label', { class: 'pcx-muted', text: 'Objetivo de la empresa' }), targetInput,
+            el('button', { class: 'btn-ui', type: 'button', text: 'Guardar', onclick: async () => {
+              try {
+                await apiJson(`/api/kpis/${encodeURIComponent(key)}/target`, { method: 'PUT', body: JSON.stringify({ target: Number(targetInput.value) }) });
+                showToast('✓ Objetivo actualizado'); openKpiDetail(key);
+              } catch (e: any) { showToast(`⚠ ${e.message}`); }
+            } })) : null),
+        el('section', { class: 'pcx-sec' },
+          el('h3', { text: '2 · Evolución histórica' }),
+          el('div', { style: 'display:flex;gap:.5rem;flex-wrap:wrap' },
+            seg([['day', 'Día'], ['week', 'Semana'], ['month', 'Mes']], kpiState.gran, v => { kpiState.gran = v; }),
+            seg([['30', '30 d'], ['90', '90 d'], ['365', '1 año']], String(kpiState.detailPeriod), v => { kpiState.detailPeriod = Number(v); })),
+          kpiChart(d.series || [], s.target, d.unit),
+          el('div', { class: 'pcx-muted' },
+            `Mismo periodo del año anterior: ${fmtKpi(d.year_over_year?.last_year, d.unit)} (actual ${fmtKpi(d.year_over_year?.current, d.unit)})`),
+          (d.filters?.unsupported || []).length ? el('div', { class: 'pcx-muted', text: `Filtros no aplicables: ${d.filters.unsupported.join('; ')}.` }) : null,
+          el('div', { class: 'pcx-muted', text: `Filtros por ${(d.filters?.not_available || []).join(' y ')} disponibles cuando se conecten esos datos.` })),
+        el('section', { class: 'pcx-sec' },
+          el('h3', { text: '3 · Causas asociadas' }),
+          drivers.length ? el('div', {}, drivers.map((x: any) => el('div', { class: 'pcx-driver' },
+            el('div', { class: 'pcx-driver__row' }, el('span', { text: x.factor }), el('span', { text: x.share_pct != null ? `${x.share_pct}%` : '' })),
+            x.share_pct != null ? el('div', { class: 'pcx-bar' }, el('i', { style: `width:${Math.min(100, x.share_pct)}%` })) : null,
+            el('div', { class: 'pcx-muted', text: x.evidence }))))
+            : el('p', { text: 'Sin causas registradas en el periodo. Registra disrupciones para poder explicar los cambios.' }),
+          d.root_causes?.method ? el('div', { class: 'pcx-muted', text: d.root_causes.method }) : null),
+        el('section', { class: 'pcx-sec' },
+          el('h3', { text: '4 · Impacto' }),
+          (d.impact?.items || []).length ? el('ul', {}, d.impact.items.map((i: string) => el('li', { text: i })))
+            : el('p', { text: 'No hay datos suficientes para estimar el impacto operativo.' }),
+          el('div', { class: 'pcx-muted', text: d.impact?.economic })),
+        el('section', { class: 'pcx-sec pcx-sec--wide' },
+          el('h3', { text: '5 · Acciones recomendadas' }),
+          (d.recommendations || []).length ? el('ul', { class: 'pcx-actions' }, d.recommendations.map((r: any) =>
+            el('li', { class: 'pcx-action' }, el('b', { text: r.title }), `Por qué: ${r.why} `,
+              el('span', { class: 'pcx-impact', text: `Impacto esperado: ${r.expected_impact}` }),
+              el('div', { class: 'pcx-muted', text: `Base: ${r.basis}` }))))
+            : el('p', { text: s.status === 'healthy' ? 'El indicador está en objetivo: no hay acciones urgentes.'
+                                                     : 'No hay datos suficientes para recomendar una acción concreta.' })),
+      ),
+    );
+  }
+
+  function initKpiDashboard() {
+    const per = document.getElementById('kpiPeriod') as HTMLSelectElement | null;
+    const plant = document.getElementById('kpiPlant') as HTMLSelectElement | null;
+    per?.addEventListener('change', () => { kpiState.period = Number(per.value); loadKpiOverview(); });
+    plant?.addEventListener('change', () => {
+      kpiState.plant = plant.value;
+      kpiState.detailKey ? openKpiDetail(kpiState.detailKey) : loadKpiOverview();
+    });
+    apiJson('/api/plants').then((plants: any[]) => {
+      if (!plant) return;
+      plants.forEach(p => plant.appendChild(el('option', { value: String(p.id), text: p.name })));
+      if (plants.length < 2) plant.style.display = 'none';
+    }).catch(() => { if (plant) plant.style.display = 'none'; });
+    const ask = document.getElementById('kpiAskCopilot');
+    if (ask && hasAccess('copilot')) {
+      ask.style.display = '';
+      ask.addEventListener('click', () => openCopilot());
+    }
+  }
+
+  // ── Planning Copilot ──────────────────────────────────────────────────────
+  const copilotState = { history: [] as { role: 'user' | 'assistant'; content: string }[], busy: false };
+
+  function copilotPage(): { page: string; kpi_key: string | null; label: string } {
+    const kpisOpen = (document.getElementById('panel-kpis') as HTMLElement | null)?.style.display !== 'none';
+    if (kpisOpen) return { page: 'kpis', kpi_key: kpiState.detailKey, label: kpiState.detailKey ? 'KPIs · análisis del indicador' : 'KPIs · visión general' };
+    return { page: 'planner', kpi_key: null, label: lastPlanRequest ? `Planificador · semana del ${lastPlanRequest.week_start}` : 'Planificador · sin plan generado' };
+  }
+
+  function copilotChips() {
+    const box = document.getElementById('copilotChips');
+    if (!box) return;
+    const ctx = copilotPage();
+    const qs = ctx.page === 'kpis'
+      ? ['¿Por qué está bajando este KPI?', '¿Qué debería mejorar primero?', 'Resume los mayores riesgos']
+      : ['Estado actual del plan', '¿Qué órdenes debo priorizar?', '¿Por qué es arriesgado este plan?',
+         '¿Qué pasa si la demanda sube un 15%?', '¿Qué pasa si el autoclave pierde un 20% de capacidad?',
+         '¿Y si un proveedor se retrasa 2 días?', 'Crea una estrategia de producción para esta semana'];
+    box.replaceChildren(...qs.map(q => el('button', { class: 'pcx-chip', type: 'button', text: q,
+      onclick: () => sendCopilot(q, q === 'Estado actual del plan' ? 'status' : undefined) })));
+    document.getElementById('copilotCtx')!.textContent = ctx.label;
+  }
+
+  function copilotCard(a: any): HTMLElement | null {
+    if (a.type === 'scenario') {
+      const rows = Object.keys(a.scenario || {}).map(lab => {
+        const b = a.baseline?.[lab] || {}, s2 = a.scenario[lab];
+        const dc = s2.confianza_cumplimiento_pct - (b.confianza_cumplimiento_pct ?? 0);
+        return el('tr', {}, el('td', { text: lab }),
+          el('td', {}, `${b.confianza_cumplimiento_pct ?? '—'}% → ${s2.confianza_cumplimiento_pct}% `,
+            el('span', { class: dc < 0 ? 'pcx-delta--bad' : dc > 0 ? 'pcx-delta--good' : '', text: `(${dc > 0 ? '+' : ''}${dc} pp)` })),
+          el('td', { text: `${s2.piezas_p50}/${s2.piezas_total}` }),
+          el('td', { text: `${b.operaciones_fuera_de_plan ?? '—'} → ${s2.operaciones_fuera_de_plan}` }));
+      });
+      return el('div', { class: 'pcx-card' }, el('h4', { text: `Escenario simulado: ${a.label}` }),
+        el('table', {}, el('thead', {}, el('tr', {}, ['Alternativa', 'Confianza', 'Piezas p50', 'Ops. fuera'].map(h => el('th', { text: h })))),
+          el('tbody', {}, rows)),
+        el('ul', { style: 'margin:.4rem 0 0;padding-left:1rem' }, (a.assumptions || []).map((x: string) => el('li', { class: 'pcx-muted', text: x }))));
+    }
+    if (a.type === 'plan_status') {
+      return el('div', { class: 'pcx-card' }, el('h4', { text: `Estado del plan: ${a.estado}` }),
+        el('table', {}, el('thead', {}, el('tr', {}, ['Alternativa', 'Confianza', 'Piezas', 'Autoclave'].map(h => el('th', { text: h })))),
+          el('tbody', {}, (a.alternativas || []).map((x: any) => el('tr', {}, el('td', { text: x.alternativa }),
+            el('td', { text: `${x.confianza_cumplimiento_pct ?? '—'}%` }), el('td', { text: `${x.piezas_programadas}/${x.piezas_total}` }),
+            el('td', { text: `${x.saturacion_autoclave_pct}%` }))))),
+        el('div', { class: 'pcx-muted', text: `Fuente: ${a.fuente}${a.mejor ? ` · alternativa más robusta: ${a.mejor}` : ''}` }));
+    }
+    if (a.type === 'kpi' && a.key) {
+      return el('button', { class: 'pcx-chip', type: 'button', text: 'Abrir el análisis del KPI', onclick: () => {
+        (document.querySelector('.nav-item[data-panel="kpis"]') as HTMLElement | null)?.click();
+        openKpiDetail(a.key);
+      } });
+    }
+    return null;
+  }
+
+  function copilotLogAppend(node: HTMLElement) {
+    const log = document.getElementById('copilotLog')!;
+    log.appendChild(node);
+    log.scrollTop = log.scrollHeight;
+  }
+
+  async function sendCopilot(text: string, pageOverride?: string) {
+    const q = (text || '').trim();
+    if (!q || copilotState.busy) return;
+    openCopilot();
+    copilotState.busy = true;
+    (document.getElementById('copilotSend') as HTMLButtonElement).disabled = true;
+    copilotState.history.push({ role: 'user', content: q });
+    copilotLogAppend(el('div', { class: 'pcx-msg pcx-msg--user', text: q }));
+    const thinking = el('div', { class: 'pcx-thinking', text: 'Analizando tus datos… (puede tardar hasta un minuto si simulo escenarios)' });
+    copilotLogAppend(thinking);
+    let hist = copilotState.history.slice(-12);
+    while (hist.length && hist[0].role !== 'user') hist = hist.slice(1);
+    const ctx = copilotPage();
+    try {
+      const res = await apiJson('/api/copilot', { method: 'POST', body: JSON.stringify({
+        messages: hist, page: pageOverride || ctx.page, kpi_key: ctx.kpi_key, plan: lastPlanRequest,
+      }) });
+      thinking.remove();
+      copilotState.history.push({ role: 'assistant', content: res.reply });
+      copilotLogAppend(el('div', { class: 'pcx-msg pcx-msg--bot', text: res.reply }));
+      (res.artifacts || []).forEach((a: any) => { const c = copilotCard(a); if (c) copilotLogAppend(c); });
+    } catch (e: any) {
+      thinking.remove();
+      copilotState.history.pop();
+      copilotLogAppend(el('div', { class: 'pcx-msg pcx-msg--err', text: e.status === 429
+        ? 'Has alcanzado el límite de consultas del copiloto. Inténtalo más tarde.'
+        : e.status === 403 ? 'Tu usuario no tiene acceso al copiloto.' : `No se pudo obtener respuesta (${e.message}).` }));
+    } finally {
+      copilotState.busy = false;
+      (document.getElementById('copilotSend') as HTMLButtonElement).disabled = false;
+    }
+  }
+
+  function openCopilot(prefill?: string) {
+    const d = document.getElementById('copilotDrawer');
+    if (!d || !hasAccess('copilot')) return;
+    d.classList.add('pcx-open');
+    d.setAttribute('aria-hidden', 'false');
+    copilotChips();
+    const log = document.getElementById('copilotLog')!;
+    if (!log.childElementCount) {
+      copilotLogAppend(el('div', { class: 'pcx-msg pcx-msg--bot', text:
+        'Hola. Conozco tu plan abierto, tus KPI y puedo simular escenarios. Pregúntame qué está pasando, por qué, ' +
+        'qué impacto tiene o qué harías — siempre te diré en qué datos me baso.' }));
+    }
+    const input = document.getElementById('copilotInput') as HTMLTextAreaElement;
+    if (prefill) { input.value = prefill; }
+    input.focus();
+  }
+
+  function setCopilotAvailable(on: boolean) {
+    const fab = document.getElementById('copilotFab');
+    if (fab) fab.style.display = on && hasAccess('copilot') ? '' : 'none';
+    if (!on) document.getElementById('copilotDrawer')?.classList.remove('pcx-open');
+  }
+
+  function initCopilot() {
+    document.getElementById('copilotFab')?.addEventListener('click', () => openCopilot());
+    document.getElementById('copilotClose')?.addEventListener('click', () => {
+      const d = document.getElementById('copilotDrawer')!;
+      d.classList.remove('pcx-open'); d.setAttribute('aria-hidden', 'true');
+    });
+    document.getElementById('copilotReset')?.addEventListener('click', () => {
+      copilotState.history = [];
+      document.getElementById('copilotLog')!.replaceChildren();
+      openCopilot();
+    });
+    const input = document.getElementById('copilotInput') as HTMLTextAreaElement | null;
+    document.getElementById('copilotForm')?.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const v = input?.value || '';
+      if (input) input.value = '';
+      sendCopilot(v);
+    });
+    input?.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); document.getElementById('copilotForm')?.dispatchEvent(new Event('submit')); }
+    });
+    setCopilotAvailable(true);
+  }
+
   function hasAccess(moduleKey: string): boolean {
     return !!currentUser && Array.isArray(currentUser.modules) && currentUser.modules.includes(moduleKey);
   }
@@ -5421,6 +5857,7 @@
   }
 
   function showSelector() {
+    setCopilotAvailable(false);
     selectorEl.classList.remove('hidden');
     entSelectorEl?.classList.remove('show');
     dashboardEl.classList.remove('visible');
@@ -5872,6 +6309,7 @@
       el.classList.toggle('ind-item--active', el.dataset.industry === industry);
     });
     initDashboard();
+    setCopilotAvailable(true);
     initContextBar(industry, selectedEnterprise);
     // honour the "start panel" preference (Configuración) — only if the user
     // may open it; otherwise land on their first permitted module, or on the
@@ -6125,6 +6563,8 @@
     dashboardReady = true;
 
     initAdminPanel(!!currentUser?.is_admin);
+    initKpiDashboard();
+    initCopilot();
 
     // 1. Gantt tab switching (Semana / Turno)
     const ganttSemana  = document.getElementById('gantt-semana');
@@ -6315,6 +6755,7 @@
 
         try {
           const body = buildPlanRequest();
+          lastPlanRequest = body;  // copilot context: the plan on screen
           const res = await fetch(`${API}/api/plan/alternatives`, {
             method: 'POST',
             headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
@@ -7289,6 +7730,7 @@
         if (p === 'disrupciones') loadDisrupciones();
         if (p === 'ordenes') loadCheckpointsForOrders();
         if (p === 'plantmap') initPlantMap();
+        if (p === 'kpis') loadKpiOverview();
       });
     });
 
