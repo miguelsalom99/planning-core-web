@@ -5046,6 +5046,10 @@
   .pcx-st--warn { background:var(--amber-bg); color:var(--amber); }
   .pcx-st--bad { background:var(--red-bg); color:var(--red); }
   .pcx-st--none { background:var(--n90); color:var(--n50); }
+  .pcx-kpi__impact { font-size:.76rem; color:var(--n20); line-height:1.4; }
+  .pcx-conf { font-size:.7rem; color:var(--n50); }
+  .pcx-conf b { font-weight:600; }
+  .pcx-conf--low b { color:var(--red); }
   .pcx-trend--good { color:var(--green); font-weight:700; } .pcx-trend--bad { color:var(--red); font-weight:700; } .pcx-trend--flat { color:var(--n50); }
   .pcx-spark { display:flex; align-items:flex-end; gap:3px; height:30px; }
   .pcx-spark span { flex:1; background:var(--n80); border-radius:2px 2px 0 0; min-height:2px; }
@@ -5388,6 +5392,12 @@
     healthy: ['En objetivo', 'pcx-st pcx-st--ok'], attention: ['Requiere atención', 'pcx-st pcx-st--warn'],
     critical: ['Crítico', 'pcx-st pcx-st--bad'], no_data: ['Sin datos', 'pcx-st pcx-st--none'],
   };
+  const KPI_CONF: Record<string, string> = { high: 'alta', medium: 'media', low: 'baja' };
+  function confLine(c: any): HTMLElement | null {
+    if (!c || !KPI_CONF[c.level]) return null;
+    return el('div', { class: `pcx-conf${c.level === 'low' ? ' pcx-conf--low' : ''}`, title: c.reason },
+      'Confianza ', el('b', { text: KPI_CONF[c.level] }), ` · ${c.reason}`);
+  }
   const kpiState = { period: 28, plant: '', detailKey: null as string | null, gran: 'week', detailPeriod: 90, resource: '' };
 
   function fmtKpi(v: any, unit: string): string {
@@ -5450,7 +5460,7 @@
     );
     grid.replaceChildren(...(data.kpis || []).map((k: any) => {
       const [stTxt, stCls] = KPI_STATUS[k.status] || KPI_STATUS.no_data;
-      return el('button', { class: 'pcx-kpi', type: 'button', onclick: () => openKpiDetail(k.key),
+      return el('button', { class: 'pcx-kpi', type: 'button', onclick: () => openKpiDetail(k.key), title: k.description || '',
                             'aria-label': `${k.name}: ${fmtKpi(k.value, k.unit)}, ${stTxt}. Ver análisis` },
         el('div', { class: 'pcx-kpi__top' }, el('div', { class: 'pcx-kpi__name', text: k.name }), el('span', { class: stCls, text: stTxt })),
         el('div', { class: 'pcx-kpi__val', text: fmtKpi(k.value, k.unit) }),
@@ -5459,8 +5469,10 @@
           k.gap != null ? ` · brecha ${k.gap > 0 ? '+' : ''}${Math.round(k.gap * 10) / 10}` : ''),
         k.pct_change != null ? el('div', { class: `pcx-kpi__meta ${trendClass(k)}`, text: trendText(k) }) : null,
         sparkBars(k.spark || []),
+        k.impact ? el('div', { class: 'pcx-kpi__impact', text: `Impacto: ${k.impact}` }) : null,
         k.insight ? el('div', { class: 'pcx-kpi__insight', text: k.insight })
           : k.empty_hint ? el('div', { class: 'pcx-kpi__insight', text: k.empty_hint }) : null,
+        confLine(k.confidence),
       );
     }));
     unav.replaceChildren(
@@ -5556,6 +5568,8 @@
             `Actual ${fmtKpi(s.value, d.unit)} · objetivo ${fmtKpi(s.target, d.unit)}`,
             s.gap != null ? ` · brecha ${s.gap > 0 ? '+' : ''}${Math.round(s.gap * 10) / 10}` : '',
             s.pct_change != null ? ` · ${s.pct_change > 0 ? '+' : ''}${s.pct_change}% vs. periodo anterior` : ''),
+          s.impact ? el('div', { class: 'pcx-kpi__impact', style: 'margin-top:.4rem', text: `Impacto: ${s.impact}` }) : null,
+          confLine(s.confidence),
           canEditTarget ? el('div', { class: 'pcx-target' }, el('label', { class: 'pcx-muted', text: 'Objetivo de la empresa' }), targetInput,
             el('button', { class: 'btn-ui', type: 'button', text: 'Guardar', onclick: async () => {
               try {
