@@ -8470,14 +8470,31 @@
         (sel as HTMLSelectElement).value = cur;
       }
 
+      // A stored value that predates the current option list (legacy free text)
+      // would otherwise silently become "— Sin asignar —" and be wiped on save.
+      // Show it as its own option so it round-trips unchanged; the API accepts
+      // an unchanged legacy value but refuses any new unknown one.
+      function setSelectKeepingLegacy(sel: HTMLSelectElement, value: string | null | undefined) {
+        sel.querySelectorAll('option[data-legacy]').forEach(o => o.remove());
+        const v = value || '';
+        if (v && ![...sel.options].some(o => o.value === v)) {
+          const opt = document.createElement('option');
+          opt.value = v;
+          opt.textContent = `${v} (valor anterior)`;
+          opt.dataset.legacy = '1';
+          sel.appendChild(opt);
+        }
+        sel.value = v;
+      }
+
       function openCompanyModal(id?: number) {
         editingCompanyId = id || null;
         document.getElementById('companyModalTitle')!.textContent = id ? 'Editar empresa' : 'Nueva empresa';
         document.getElementById('companyModalErr')!.textContent = '';
         const c = id ? adminCompanies.find(x => x.id === id) : null;
         (document.getElementById('cmp-name') as HTMLInputElement).value = c?.name || '';
-        (document.getElementById('cmp-industry') as HTMLSelectElement).value = c?.industry || '';
-        (document.getElementById('cmp-plan') as HTMLSelectElement).value = c?.plan || '';
+        setSelectKeepingLegacy(document.getElementById('cmp-industry') as HTMLSelectElement, c?.industry);
+        setSelectKeepingLegacy(document.getElementById('cmp-plan') as HTMLSelectElement, c?.plan);
         (document.getElementById('cmp-pilot-start') as HTMLInputElement).value = c?.pilot_start || '';
         (document.getElementById('cmp-pilot-weeks') as HTMLInputElement).value = c?.pilot_weeks != null ? String(c.pilot_weeks) : '';
         document.getElementById('companyModal')!.style.display = 'flex';
