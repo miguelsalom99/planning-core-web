@@ -5660,7 +5660,8 @@
     const ctx = copilotPage();
     const qs = ctx.page === 'kpis'
       ? ['¿Por qué está bajando este KPI?', '¿Qué debería mejorar primero?', 'Resume los mayores riesgos']
-      : ['Estado actual del plan', '¿Qué órdenes debo priorizar?', '¿Por qué es arriesgado este plan?',
+      : ['Estado actual del plan', '¿Cabe este plan con la capacidad actual?',
+         '¿Podemos añadir 20 piezas más esta semana?', '¿Qué órdenes debo priorizar?', '¿Por qué es arriesgado este plan?',
          '¿Qué pasa si la demanda sube un 15%?', '¿Qué pasa si el autoclave pierde un 20% de capacidad?',
          '¿Y si un proveedor se retrasa 2 días?', 'Crea una estrategia de producción para esta semana'];
     box.replaceChildren(...qs.map(q => el('button', { class: 'pcx-chip', type: 'button', text: q,
@@ -5691,6 +5692,28 @@
             el('td', { text: `${x.confianza_cumplimiento_pct ?? '—'}%` }), el('td', { text: `${x.piezas_programadas}/${x.piezas_total}` }),
             el('td', { text: `${x.saturacion_autoclave_pct}%` }))))),
         el('div', { class: 'pcx-muted', text: `Fuente: ${a.fuente}${a.mejor ? ` · alternativa más robusta: ${a.mejor}` : ''}` }));
+    }
+    if (a.type === 'capacity') {
+      // Verdict + confidence come from the capacity engine, not from the AI text.
+      const cls: Record<string, string> = { viable: 'pcx-st pcx-st--ok', riesgo: 'pcx-st pcx-st--warn', imposible: 'pcx-st pcx-st--bad' };
+      const top = (a.resources || []).slice(0, 5);
+      return el('div', { class: 'pcx-card' },
+        el('div', { class: 'pcx-kpi__top' }, el('h4', { text: `Capacidad: ${a.label || 'plan'}` }),
+          el('span', { class: cls[a.verdict] || 'pcx-st pcx-st--none', text: a.verdict_label || a.verdict })),
+        el('div', { text: a.summary }),
+        el('ul', { style: 'margin:.3rem 0;padding-left:1rem' }, (a.reasons || []).map((r: string) => el('li', { text: r }))),
+        el('table', {}, el('thead', {}, el('tr', {}, ['Recurso', 'Carga', 'Turnos (nec./disp.)', 'Exceso'].map(h => el('th', { text: h })))),
+          el('tbody', {}, top.map((r: any) => el('tr', {}, el('td', { text: r.resource }),
+            el('td', { class: r.load_pct == null || r.load_pct > 100 ? 'pcx-delta--bad' : r.load_pct >= 85 ? '' : 'pcx-delta--good',
+                       text: r.load_pct == null ? 'sin capacidad' : `${r.load_pct}%` }),
+            el('td', { text: `${r.demand_shifts} / ${r.available_shifts}` }),
+            el('td', { text: r.excess_hours ? `${r.excess_hours} h` : '—' }))))),
+        (a.alternatives || []).length ? el('div', {}, el('h4', { style: 'margin-top:.5rem', text: 'Alternativas validadas' }),
+          el('ul', { style: 'margin:.2rem 0;padding-left:1rem' }, a.alternatives.map((x: any) => el('li', {},
+            el('b', { text: `${x.action}: ` }), x.detail, ' ',
+            el('span', { class: cls[x.result_verdict] || 'pcx-st', text: `→ ${x.result_label}` }))))) : null,
+        el('div', { class: 'pcx-muted', text: `Confianza ${a.confidence?.level || '—'}: ${(a.confidence?.reasons || []).join(' ')}` }),
+        el('div', { class: 'pcx-muted', text: `${a.horizon}. ${a.overtime} ${a.demand_scope}` }));
     }
     if (a.type === 'kpi' && a.key) {
       return el('button', { class: 'pcx-chip', type: 'button', text: 'Abrir el análisis del KPI', onclick: () => {
