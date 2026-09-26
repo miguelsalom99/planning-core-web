@@ -5349,6 +5349,19 @@
       { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' } as Record<string, string>)[c]);
   }
 
+  // Server-side logout (audit S6): revokes every session of this account, so a
+  // token copied out of localStorage stops working too. Best-effort and
+  // non-blocking (keepalive survives the reload that follows); the local token
+  // is always dropped by the caller.
+  function revokeServerSession(): void {
+    const token = localStorage.getItem('pc_token');
+    if (!token) return;
+    try {
+      fetch(`${API}/auth/logout`, { method: 'POST', headers: { Authorization: `Bearer ${token}` }, keepalive: true })
+        .catch(() => {});
+    } catch { /* offline: the token still expires on its own */ }
+  }
+
   // ── Safe DOM builder for the KPI dashboard + copilot: every value goes in via
   // textContent / setAttribute, never innerHTML, so server or AI text cannot
   // inject markup.
@@ -8303,8 +8316,8 @@
       tr.innerHTML = `
         <td style="padding:.4rem .6rem">
           <div style="display:flex;align-items:center;gap:.4rem">
-            <span class="time-dot" style="background:${t.color};cursor:pointer" title="Cambiar color" data-colorpick="${idx}"></span>
-            <input class="time-name-input" data-field="label" data-idx="${idx}" value="${t.label}" placeholder="Nombre proceso" />
+            <span class="time-dot" style="background:${escHtml(t.color)};cursor:pointer" title="Cambiar color" data-colorpick="${idx}"></span>
+            <input class="time-name-input" data-field="label" data-idx="${idx}" value="${escHtml(t.label)}" placeholder="Nombre proceso" />
           </div>
         </td>
         <td><input class="time-input" data-field="setup"     data-idx="${idx}" type="number" min="0"  max="480" step="5" value="${t.setup}"  /></td>
@@ -8646,8 +8659,8 @@
           tr.innerHTML = `
             <td>
               <div style="display:flex;align-items:center;gap:.4rem">
-                <span class="shift-dot shift-color-dot" data-si="${si}" style="background:${s.color};cursor:pointer;flex-shrink:0" title="Cambiar color"></span>
-                <input class="time-name-input shift-name-input" data-si="${si}" type="text" value="${s.label}" maxlength="40" style="min-width:80px" />
+                <span class="shift-dot shift-color-dot" data-si="${si}" style="background:${escHtml(s.color)};cursor:pointer;flex-shrink:0" title="Cambiar color"></span>
+                <input class="time-name-input shift-name-input" data-si="${si}" type="text" value="${escHtml(s.label)}" maxlength="40" style="min-width:80px" />
               </div>
             </td>
             <td><input class="time-hm" data-sfield="start" data-si="${si}" type="time" value="${s.start}" ${!s.active?'disabled':''} /></td>
@@ -9052,7 +9065,12 @@
           btn.addEventListener('click', async () => {
             if (!confirm(`¿Eliminar a ${el.dataset.delUserName}?`)) return;
             const token = localStorage.getItem('pc_token');
-            await fetch(`${API_BASE}/admin/users/${el.dataset.delUser}`, { method: 'DELETE', headers: { Authorization: `Bearer ${token}` } });
+            const res = await fetch(`${API_BASE}/admin/users/${el.dataset.delUser}`, { method: 'DELETE', headers: { Authorization: `Bearer ${token}` } });
+            if (!res.ok) {
+              // e.g. 409: the user owns planning history -> deactivate instead.
+              const d = await res.json().catch(() => ({}));
+              showToast(`⚠ ${d.detail || 'No se pudo eliminar el usuario'}`);
+            }
             loadAdminUsers();
           });
         });
@@ -9136,6 +9154,9 @@
         const res = await fetch(url, { method, headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
         if (!res.ok) { const d = await res.json().catch(() => ({})); errEl.textContent = d.detail || 'Error al guardar'; return; }
         const saved = await res.json().catch(() => null);
+        // Changing your own password revokes your other sessions; the API hands
+        // this one a fresh token so you stay signed in here.
+        if (saved?.access_token) localStorage.setItem('pc_token', saved.access_token);
         document.getElementById('adminUserModal')!.classList.remove('open');
         await loadAdminUsers();
         showToast(editingUserId ? '✓ Usuario actualizado' : '✓ Usuario creado');
@@ -9824,6 +9845,7 @@
             document.querySelector('.mrp-tab[data-mrptab="tiempos"]')?.dispatchEvent(new MouseEvent('click'));
           }, 50);
         } else if (action === 'logout') {
+          revokeServerSession();
           localStorage.removeItem('pc_token');
           localStorage.removeItem('pc_email');
           showToast('Sesión cerrada');
@@ -9869,6 +9891,7 @@
         } else if (action === 'seguridad') {
           openSecurityQuestionModal();
         } else if (action === 'logout') {
+          revokeServerSession();
           localStorage.removeItem('pc_token');
           localStorage.removeItem('pc_email');
           showToast('Sesión cerrada');
@@ -10491,6 +10514,7 @@
   // Logout
   document.getElementById('nav-logout').addEventListener('click', e => {
     e.preventDefault();
+    revokeServerSession();
     localStorage.removeItem('pc_token');
     location.reload();
   });
