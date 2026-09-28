@@ -4102,6 +4102,23 @@
 
         <!-- ── TAB: MRP ── -->
         <div id="mrpTabMrp">
+          <!-- Guided data preparation (content built from /api/mrp/dictionary) -->
+          <div class="mrpg" id="mrpGuide">
+            <div class="mrpg__head">
+              <div>
+                <div class="mrpg__title">Prepara tus datos de planificación</div>
+                <div class="mrpg__sub" id="mrpgCounts">Tu archivo necesita unas pocas columnas; cada una explica qué poner (icono ⓘ).</div>
+              </div>
+              <div class="mrpg__actions">
+                <button class="btn-ui btn-ui--primary" id="mrpgTemplate" type="button" style="font-size:.78rem">Descargar plantilla Excel</button>
+                <button class="btn-ui" id="mrpgReqBtn" type="button" aria-expanded="false" aria-controls="mrpgReq" style="font-size:.78rem">Ver requisitos de datos</button>
+                <button class="btn-ui" id="mrpgHowBtn" type="button" aria-expanded="false" aria-controls="mrpgHow" style="font-size:.78rem">Cómo preparar tu Excel</button>
+              </div>
+            </div>
+            <div class="mrpg__panel" id="mrpgReq" hidden></div>
+            <div class="mrpg__panel" id="mrpgHow" hidden></div>
+          </div>
+
           <!-- Drop zone -->
           <div class="mrp-dropzone" id="mrpDropzone">
             <input type="file" id="mrpFileInput" accept=".csv,.xlsx,.xls,.ods" style="display:none" />
@@ -4111,6 +4128,9 @@
             <div class="mrp-dropzone__title">Arrastra tu Excel o CSV aquí, o <span id="mrpBrowse" style="color:var(--brand);text-decoration:underline;cursor:pointer">selecciona archivo</span></div>
             <div class="mrp-dropzone__sub">Formatos: .xlsx, .xls, .ods, .csv · Columnas: OF, Descripción, Cantidad, Unidad, Fecha necesidad, Stock actual, Lead time (días) · <span id="mrpTemplateLink">Descargar plantilla Excel</span></div>
           </div>
+
+          <!-- File analysis (after upload): readiness, per-column results, issues, normalisation -->
+          <div class="mrpa" id="mrpAnalysis" hidden aria-live="polite"></div>
 
           <!-- Toolbar (hidden until data loaded) -->
           <div class="mrp-toolbar" id="mrpToolbar" style="display:none">
@@ -4127,14 +4147,15 @@
             <table class="mrp-table" id="mrpTable">
               <thead>
                 <tr>
-                  <th>OF / Material</th>
-                  <th>Descripción</th>
-                  <th>Cant.</th>
-                  <th>Unidad</th>
-                  <th>Fecha necesidad</th>
-                  <th>Stock actual</th>
-                  <th>Lead time</th>
-                  <th>Estado</th>
+                  <th data-help="of">OF / Material</th>
+                  <th data-help="desc">Descripción</th>
+                  <th data-help="cant">Cant.</th>
+                  <th data-help="unidad">Unidad</th>
+                  <th data-help="fecha">Fecha necesidad</th>
+                  <th data-help="stock">Stock actual</th>
+                  <th data-help="lead">Lead time</th>
+                  <th data-help="neta">Nec. neta</th>
+                  <th data-help="estado">Estado</th>
                 </tr>
               </thead>
               <tbody id="mrpBody"></tbody>
@@ -4155,14 +4176,14 @@
             <table class="time-table" id="timeTable">
               <thead>
                 <tr>
-                  <th style="min-width:130px">Recurso / Proceso</th>
-                  <th>Setup (min)</th>
-                  <th>Ciclo (min/ud)</th>
-                  <th>Buffer (%)</th>
-                  <th>Turnos</th>
-                  <th>Operarios/turno</th>
-                  <th>Ud/jornada</th>
-                  <th>Carga</th>
+                  <th style="min-width:130px" data-help="t:label">Recurso / Proceso</th>
+                  <th data-help="t:setup">Setup (min)</th>
+                  <th data-help="t:ciclo">Ciclo (min/ud)</th>
+                  <th data-help="t:buffer">Buffer (%)</th>
+                  <th data-help="t:turnos">Turnos</th>
+                  <th data-help="t:operarios">Operarios/turno</th>
+                  <th data-help="t:uds">Ud/jornada</th>
+                  <th data-help="t:carga">Carga</th>
                   <th></th>
                 </tr>
               </thead>
@@ -5108,6 +5129,67 @@
   .pcx-drawer__foot textarea { flex:1; resize:none; border:1px solid var(--n80); border-radius:10px; padding:.5rem .6rem; font:inherit; font-size:.85rem; background:var(--white); color:var(--n20); }
   .pcx-drawer__note { font-size:.68rem; color:var(--n50); padding:0 1rem .8rem; }
   @media (max-width: 640px) { .pcx-fab span { display:none; } .pcx-sections { grid-template-columns:1fr; } }
+
+  /* ── MRP & Tiempos: data guidance (field help, requirements, file analysis) ── */
+  .fh-btn { display:inline-flex; align-items:center; justify-content:center; width:16px; height:16px; margin-left:.3rem; border-radius:50%; border:1px solid var(--n70); background:var(--white); color:var(--n40); font:600 10px/1 Georgia, serif; font-style:italic; cursor:pointer; vertical-align:middle; padding:0; text-transform:none; letter-spacing:0; }
+  .fh-btn:hover, .fh-btn:focus-visible { border-color:var(--brand); color:var(--brand); outline:none; }
+  .fh-pop { position:absolute; z-index:1200; width:min(380px, calc(100vw - 32px)); max-height:70vh; overflow:auto; background:var(--white); color:var(--n20); border:1px solid var(--n80); border-radius:12px; box-shadow:0 14px 40px rgba(15,23,42,.2); padding:.9rem 1rem; font-size:.82rem; line-height:1.45; text-transform:none; letter-spacing:0; font-weight:400; }
+  .fh-pop h4 { margin:0; font-size:.95rem; }
+  .fh-pop h5 { margin:.7rem 0 .15rem; font-size:.72rem; text-transform:uppercase; letter-spacing:.04em; color:var(--n40); }
+  .fh-pop p { margin:0; }
+  .fh-pop ul { margin:.1rem 0 0; padding-left:1rem; }
+  .fh-pop__head { display:flex; align-items:flex-start; justify-content:space-between; gap:.5rem; }
+  .fh-pop__close { border:0; background:none; font-size:1.1rem; cursor:pointer; color:var(--n40); line-height:1; }
+  .fh-tag { display:inline-block; border-radius:99px; padding:.08rem .5rem; font-size:.7rem; font-weight:700; }
+  .fh-tag--req { background:rgba(220,38,38,.1); color:var(--red); }
+  .fh-tag--opt { background:var(--n95); color:var(--n40); }
+  .fh-tag--der { background:rgba(30,77,183,.1); color:var(--brand); }
+  .fh-note { font-size:.72rem; color:var(--n50); margin-top:.6rem; }
+  .mrpg { border:1px solid var(--n90); border-radius:var(--radius-md, 10px); padding:.9rem 1rem; margin-bottom:1rem; background:var(--white); }
+  .mrpg__head { display:flex; flex-wrap:wrap; gap:.75rem; align-items:center; justify-content:space-between; }
+  .mrpg__title { font-weight:700; font-size:.95rem; }
+  .mrpg__sub { font-size:.78rem; color:var(--n40); margin-top:.15rem; }
+  .mrpg__actions { display:flex; flex-wrap:wrap; gap:.4rem; }
+  .mrpg__panel { margin-top:.9rem; border-top:1px dashed var(--n85, var(--n90)); padding-top:.8rem; font-size:.82rem; }
+  .mrpg__cols { display:grid; grid-template-columns:repeat(3, 1fr); gap:.8rem; }
+  .mrpg__cols h5 { margin:0 0 .3rem; font-size:.74rem; text-transform:uppercase; letter-spacing:.04em; color:var(--n40); }
+  .mrpg__cols p { margin:0 0 .4rem; font-size:.74rem; color:var(--n50); }
+  .mrpg__field { display:flex; align-items:center; gap:.35rem; width:100%; text-align:left; border:0; background:none; padding:.25rem 0; font:inherit; color:var(--n20); cursor:pointer; }
+  .mrpg__field:hover { color:var(--brand); }
+  .mrpg__deps { display:flex; flex-direction:column; gap:.35rem; margin:.8rem 0; }
+  .mrpg__dep { display:flex; flex-wrap:wrap; align-items:center; gap:.35rem; font-size:.78rem; }
+  .mrpg__pill { border:1px solid var(--n80); border-radius:6px; padding:.12rem .45rem; background:var(--n98); }
+  .mrpg__pill--res { border-color:var(--brand); color:var(--brand); font-weight:600; }
+  .mrpg__steps { margin:0; padding-left:1.2rem; }
+  .mrpg__steps li { margin:.2rem 0; }
+  .mrpg__ex { width:100%; border-collapse:collapse; font-size:.78rem; margin-top:.4rem; }
+  .mrpg__ex th, .mrpg__ex td { border-bottom:1px solid var(--n95); padding:.3rem .45rem; text-align:left; }
+  .mrpa { border:1px solid var(--n90); border-radius:var(--radius-md, 10px); padding:1rem; margin:1rem 0; background:var(--white); font-size:.82rem; }
+  .mrpa h4 { margin:0 0 .4rem; font-size:.9rem; }
+  .mrpa__facts { list-style:none; padding:0; margin:.2rem 0 .8rem; display:flex; flex-wrap:wrap; gap:.4rem 1.2rem; }
+  .mrpa__ok { color:var(--green); } .mrpa__warn { color:var(--amber); } .mrpa__bad { color:var(--red); }
+  .mrpa__score { display:flex; flex-wrap:wrap; align-items:center; gap:1rem; padding:.7rem .8rem; border-radius:10px; background:var(--n98); margin-bottom:.8rem; }
+  .mrpa__big { font-size:1.9rem; font-weight:800; line-height:1; }
+  .mrpa__bd { display:flex; gap:1rem; font-size:.76rem; color:var(--n40); }
+  .mrpa__bd b { display:block; font-size:.95rem; color:var(--n20); }
+  .mrpa__col { border-bottom:1px solid var(--n95); }
+  .mrpa__col > button { display:flex; flex-wrap:wrap; gap:.3rem .8rem; align-items:center; width:100%; text-align:left; border:0; background:none; padding:.45rem 0; font:inherit; color:inherit; cursor:pointer; }
+  .mrpa__col > button b { min-width:140px; }
+  .mrpa__rows { width:100%; border-collapse:collapse; font-size:.76rem; margin:.2rem 0 .6rem; }
+  .mrpa__rows td, .mrpa__rows th { padding:.25rem .4rem; border-bottom:1px solid var(--n95); text-align:left; }
+  .mrpa__msg { border-left:3px solid var(--red); padding:.45rem .7rem; margin:.5rem 0; background:rgba(220,38,38,.04); border-radius:0 8px 8px 0; }
+  .mrpa__msg--warning { border-left-color:var(--amber); background:rgba(217,119,6,.05); }
+  .mrpa__msg p { margin:.2rem 0; }
+  .mrpa__actions { display:flex; flex-wrap:wrap; gap:.5rem; margin-top:.8rem; }
+  .mrpa details { margin-top:.6rem; }
+  .mrpa summary { cursor:pointer; font-weight:600; }
+  .time-err { color:var(--red); font-size:.78rem; }
+  .time-input[aria-invalid="true"] { border-color:var(--red) !important; }
+  @media (max-width: 640px) {
+    .fh-pop { position:fixed; left:0 !important; right:0; bottom:0; top:auto !important; width:auto; max-height:80vh; border-radius:16px 16px 0 0; }
+    .mrpg__cols { grid-template-columns:1fr; }
+    .fh-btn { width:22px; height:22px; font-size:12px; }
+  }
 </style>
 
 <script>
@@ -8202,17 +8284,110 @@
       try { return JSON.parse(localStorage.getItem(MRP_LS) || '[]'); } catch { return []; }
     }
 
-    // ── CSV helpers ────────────────────────────────────────────────
-    function parseCsv(text: string): any[] {
-      const lines = text.trim().split(/\r?\n/);
-      if (lines.length < 2) return [];
-      // Skip header row
-      return lines.slice(1).map(line => {
-        const cols = line.split(/,(?=(?:[^"]*"[^"]*")*[^"]*$)/).map(c => c.replace(/^"|"$/g, '').trim());
-        const [of_, desc, cant, unidad, fecha, stock, lead] = cols;
-        if (!of_) return null;
-        return { of: of_, desc: desc || '', cant: parseFloat(cant) || 0, unidad: unidad || 'ud', fecha: fecha || '', stock: parseFloat(stock) || 0, lead: parseInt(lead) || 0 };
-      }).filter(Boolean);
+    // ── Data guidance: one dictionary (served by /api/mrp/dictionary) drives
+    // the field help, the requirements panel, the template and the validator.
+    let mrpDict: any = null;
+    async function loadMrpDict(): Promise<any> {
+      if (mrpDict) return mrpDict;
+      try { mrpDict = await apiJson('/api/mrp/dictionary'); } catch { mrpDict = null; }
+      return mrpDict;
+    }
+    const FH_STATUS: Record<string, [string, string]> = {
+      required: ['Obligatorio', 'fh-tag fh-tag--req'], optional: ['Opcional', 'fh-tag fh-tag--opt'],
+      derived: ['Calculado por Planning Core', 'fh-tag fh-tag--der'],
+    };
+    function findField(ref: string): any {
+      if (!mrpDict) return null;
+      const tiempos = ref.startsWith('t:');
+      const key = tiempos ? ref.slice(2) : ref;
+      const pool = tiempos ? [...mrpDict.tiempos, ...mrpDict.tiempos_derived] : [...mrpDict.mrp, ...mrpDict.mrp_derived];
+      return pool.find((f: any) => f.key === key) || null;
+    }
+    let fhOpen: HTMLElement | null = null;
+    function closeFieldHelp() { fhOpen?.remove(); fhOpen = null; }
+    function fieldHelpCard(f: any): HTMLElement {
+      const [st, cls] = FH_STATUS[f.status] || FH_STATUS.optional;
+      const derived = f.status === 'derived';
+      const sec = (title: string, body: any) => body ? [el('h5', { text: title }), typeof body === 'string' ? el('p', { text: body }) : body] : null;
+      return el('div', {},
+        el('div', { class: 'fh-pop__head' },
+          el('div', {}, el('h4', { text: f.label }), el('span', { class: cls, text: st })),
+          el('button', { class: 'fh-pop__close', type: 'button', 'aria-label': 'Cerrar ayuda', text: '×', onclick: closeFieldHelp })),
+        sec('¿Qué es?', f.what),
+        sec('¿Por qué lo necesita Planning Core?', f.why),
+        derived ? sec('Cómo se calcula', f.formula) : sec('¿Qué debo introducir?', f.enter),
+        sec('Formato y unidad', derived ? f.unit : [f.format, f.unit ? `Unidad: ${f.unit}.` : ''].join(' ').trim()),
+        sec('Ejemplo', derived ? f.example : `${f.example}${f.example_meaning ? ' — ' + f.example_meaning : ''}`),
+        derived ? null : sec('Si lo dejas vacío', f.if_empty),
+        (f.where || []).length ? sec('¿Dónde suele encontrarse?', el('ul', {}, f.where.map((w: string) => el('li', { text: w })))) : null,
+        derived ? sec('¿Tengo que incluirlo?', 'No: Planning Core lo calcula a partir de los otros datos.')
+                : sec('¿Lo puede calcular Planning Core?', 'No: es un dato de tu planta que tiene que venir en el archivo.'),
+        el('div', { class: 'fh-note', text: 'Los ejemplos son ilustrativos: usa los datos reales de tu planta. Las fuentes indicadas son habituales en fabricación; comprueba cuál aplica en tu empresa.' }));
+    }
+    function openFieldHelp(ref: string, anchor: HTMLElement) {
+      closeFieldHelp();
+      const f = findField(ref);
+      if (!f) { showToast('La ayuda de este campo no está disponible ahora mismo.'); return; }
+      const pop = el('div', { class: 'fh-pop', role: 'dialog', 'aria-label': `Ayuda: ${f.label}` }, fieldHelpCard(f));
+      document.body.appendChild(pop);
+      const r = anchor.getBoundingClientRect();
+      const maxLeft = window.scrollX + document.documentElement.clientWidth - pop.offsetWidth - 16;
+      pop.style.left = `${Math.max(16, Math.min(window.scrollX + r.left, maxLeft))}px`;
+      pop.style.top = `${window.scrollY + r.bottom + 6}px`;
+      fhOpen = pop;
+      (pop.querySelector('.fh-pop__close') as HTMLElement | null)?.focus();
+    }
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') closeFieldHelp(); });
+    document.addEventListener('click', e => {
+      const tgt = e.target as HTMLElement;
+      if (fhOpen && !fhOpen.contains(tgt) && !tgt.closest('.fh-btn, .mrpg__field')) closeFieldHelp();
+    });
+    function helpButton(ref: string, label: string): HTMLElement {
+      return el('button', { class: 'fh-btn', type: 'button', text: 'i', 'aria-label': `Qué significa «${label}»`,
+        title: `Qué significa «${label}»`,
+        onclick: (e: Event) => { e.stopPropagation(); openFieldHelp(ref, e.currentTarget as HTMLElement); } });
+    }
+    function decorateHelpHeaders() {
+      document.querySelectorAll('th[data-help]').forEach(th => {
+        if (th.querySelector('.fh-btn')) return;
+        th.appendChild(helpButton((th as HTMLElement).dataset.help!, (th.textContent || '').trim()));
+      });
+    }
+    function renderRequirements() {
+      const box = document.getElementById('mrpgReq');
+      const how = document.getElementById('mrpgHow');
+      const counts = document.getElementById('mrpgCounts');
+      if (!box || !how) return;
+      if (!mrpDict) {
+        box.replaceChildren(el('p', { text: 'No se pudo cargar la guía de datos. Recarga la página para intentarlo de nuevo.' }));
+        return;
+      }
+      const c = mrpDict.counts;
+      if (counts) counts.textContent = `Obligatorios: ${c.required} · Opcionales: ${c.optional} · Calculados por Planning Core: ${c.derived}. Pulsa ⓘ en cualquier columna para ver qué poner.`;
+      const item = (f: any, mark: string) => el('button', { class: 'mrpg__field', type: 'button',
+        onclick: (e: Event) => { e.stopPropagation(); openFieldHelp(f.key, e.currentTarget as HTMLElement); } },
+        el('span', { 'aria-hidden': 'true', text: mark }), f.label, f.unit ? el('span', { class: 'pcx-muted', text: ` (${f.unit})` }) : null);
+      const req = mrpDict.mrp.filter((f: any) => f.status === 'required');
+      const opt = mrpDict.mrp.filter((f: any) => f.status === 'optional');
+      const pill = (x: string, res = false) => el('span', { class: `mrpg__pill${res ? ' mrpg__pill--res' : ''}`, text: x });
+      box.replaceChildren(
+        el('div', { class: 'mrpg__cols' },
+          el('div', {}, el('h5', { text: `Obligatorios (${req.length})` }),
+            el('p', { text: 'Sin ellos Planning Core no puede calcular el plan de forma fiable.' }), req.map((f: any) => item(f, '✓'))),
+          el('div', {}, el('h5', { text: `Opcionales (${opt.length})` }),
+            el('p', { text: 'Mejoran el plan. Si faltan se usa un valor por defecto que verás en la revisión.' }), opt.map((f: any) => item(f, '○'))),
+          el('div', {}, el('h5', { text: `Calculados (${mrpDict.mrp_derived.length})` }),
+            el('p', { text: 'Planning Core los calcula: no hace falta incluirlos.' }), mrpDict.mrp_derived.map((f: any) => item(f, 'ƒ')))),
+        el('h5', { style: 'margin:.9rem 0 .2rem', text: 'Cómo se convierten tus datos en el plan' }),
+        el('div', { class: 'mrpg__deps' }, mrpDict.dependencies.map((d: any) => el('div', { class: 'mrpg__dep' },
+          d.parts.map((x: string, i: number) => i % 2 ? el('span', { text: x }) : pill(x)), el('span', { text: '=' }), pill(d.result, true)))),
+        el('h5', { style: 'margin:.9rem 0 .2rem', text: 'Ejemplo ilustrativo — sustitúyelo por los datos reales de tu planta' }),
+        el('table', { class: 'mrpg__ex' },
+          el('thead', {}, el('tr', {}, ['Columna', 'Ejemplo', 'Significado'].map(h => el('th', { text: h })))),
+          el('tbody', {}, [...mrpDict.mrp.map((f: any) => el('tr', {}, el('td', { text: f.label }), el('td', { text: String(f.example) }), el('td', { text: f.example_meaning }))),
+                           ...mrpDict.mrp_derived.map((f: any) => el('tr', {}, el('td', { text: `${f.label} (calculado)` }), el('td', { text: f.example }), el('td', { text: f.formula })))])));
+      how.replaceChildren(el('ol', { class: 'mrpg__steps' }, (mrpDict.guide_steps || []).map((s: string, i: number) =>
+        el('li', {}, i === 0 ? el('button', { class: 'mrpg__field', type: 'button', style: 'display:inline;padding:0;color:var(--brand);text-decoration:underline', text: s, onclick: downloadTemplate }) : s))));
     }
 
     function rowStatus(row: any): { label: string; cls: string } {
@@ -8226,27 +8401,29 @@
       return { label: `${days}d`, cls: 'mrp-ok' };
     }
 
-    function downloadTemplate() {
-      const rows = [
-        ['OF', 'Descripcion', 'Cantidad', 'Unidad', 'Fecha_necesidad', 'Stock_actual', 'Lead_time_dias'],
-        ['OF-2050', 'Carcasa motor B',    10, 'piezas', '2026-06-05',  3, 3],
-        ['OF-2051', 'Placa soporte XL',    5, 'piezas', '2026-06-08',  0, 5],
-        ['OF-2052', 'Valvula hidraulica', 20, 'piezas', '2026-06-10', 12, 2],
-      ];
-      const wb  = XLSX.utils.book_new();
-      const ws  = XLSX.utils.aoa_to_sheet(rows);
-      ws['!cols'] = [14, 22, 10, 10, 16, 12, 16].map(w => ({ wch: w }));
-      XLSX.utils.book_append_sheet(wb, ws, 'MRP');
-      XLSX.writeFile(wb, 'plantilla_mrp.xlsx');
+    async function downloadTemplate() {
+      // The MRP sheet keeps the exact header the importer reads and no example
+      // rows; explanations and illustrative data are on separate sheets.
+      let spec: any = null;
+      try { spec = await apiJson('/api/mrp/template'); } catch { spec = null; }
+      const sheets = spec?.sheets || [{ name: 'MRP', col_widths: [14, 26, 10, 10, 16, 12, 16],
+        rows: [['OF', 'Descripcion', 'Cantidad', 'Unidad', 'Fecha_necesidad', 'Stock_actual', 'Lead_time_dias']] }];
+      const wb = XLSX.utils.book_new();
+      sheets.forEach((s: any) => {
+        const ws = XLSX.utils.aoa_to_sheet(s.rows);
+        ws['!cols'] = (s.col_widths || []).map((w: number) => ({ wch: w }));
+        XLSX.utils.book_append_sheet(wb, ws, s.name);
+      });
+      XLSX.writeFile(wb, spec?.file_name || 'plantilla_mrp.xlsx');
     }
 
-    // ── Render MRP table ──────────────────────────────────────────
+    // ── Render MRP table (values from the file go in as text, never markup) ──
     function renderMrpTable(rows: any[]) {
       const tbody   = document.getElementById('mrpBody')!;
       const toolbar = document.getElementById('mrpToolbar')!;
       const wrap    = document.getElementById('mrpTableWrap')!;
       const count   = document.getElementById('mrpCount');
-      tbody.innerHTML = '';
+      tbody.replaceChildren();
 
       if (rows.length === 0) {
         toolbar.style.display = 'none';
@@ -8258,20 +8435,20 @@
       wrap.style.display    = '';
       if (count) count.textContent = `${rows.length} líneas cargadas`;
 
+      const num = { style: 'text-align:right;font-variant-numeric:tabular-nums' };
       rows.forEach(row => {
         const st  = rowStatus(row);
-        const net = row.cant - row.stock;
-        const tr  = document.createElement('tr');
-        tr.innerHTML = `
-          <td style="font-weight:600">${row.of}</td>
-          <td>${row.desc}</td>
-          <td style="text-align:right;font-variant-numeric:tabular-nums">${row.cant}</td>
-          <td style="color:var(--n40)">${row.unidad}</td>
-          <td style="white-space:nowrap">${row.fecha || '—'}</td>
-          <td style="text-align:right">${row.stock}</td>
-          <td style="text-align:right">${row.lead}d</td>
-          <td><span class="${st.cls}" style="font-size:.78rem;font-weight:600">${st.label}</span></td>`;
-        tbody.appendChild(tr);
+        const net = Math.max(0, (Number(row.cant) || 0) - (Number(row.stock) || 0));
+        tbody.appendChild(el('tr', {},
+          el('td', { style: 'font-weight:600', text: row.of }),
+          el('td', { text: row.desc }),
+          el('td', { ...num, text: row.cant }),
+          el('td', { style: 'color:var(--n40)', text: row.unidad }),
+          el('td', { style: 'white-space:nowrap', text: row.fecha || '—' }),
+          el('td', { ...num, text: row.stock }),
+          el('td', { ...num, text: `${row.lead}d` }),
+          el('td', { ...num, style: 'text-align:right;font-weight:600', text: net }),
+          el('td', {}, el('span', { class: st.cls, style: 'font-size:.78rem;font-weight:600', text: st.label }))));
       });
     }
 
@@ -8464,6 +8641,17 @@
       });
 
       // ── MRP tab setup ──
+      decorateHelpHeaders();
+      loadMrpDict().then(renderRequirements);
+      document.getElementById('mrpgTemplate')?.addEventListener('click', downloadTemplate);
+      for (const [btnId, panelId] of [['mrpgReqBtn', 'mrpgReq'], ['mrpgHowBtn', 'mrpgHow']]) {
+        const btn = document.getElementById(btnId), panel = document.getElementById(panelId);
+        btn?.addEventListener('click', () => {
+          if (!panel) return;
+          panel.hidden = !panel.hidden;
+          btn.setAttribute('aria-expanded', String(!panel.hidden));
+        });
+      }
       const dropzone   = document.getElementById('mrpDropzone')!;
       const fileInput  = document.getElementById('mrpFileInput') as HTMLInputElement;
       const browse     = document.getElementById('mrpBrowse');
@@ -8485,20 +8673,13 @@
         if (fileInput.files?.[0]) loadFile(fileInput.files[0]);
       });
 
-      function sheetToRows(sheet: any): any[] {
-        const data: any[][] = XLSX.utils.sheet_to_json(sheet, { header: 1, defval: '' });
-        if (data.length < 2) return [];
-        return data.slice(1).map((cols: any[]) => {
-          const [of_, desc, cant, unidad, fecha, stock, lead] = cols.map((c: any) => String(c ?? '').trim());
-          if (!of_) return null;
-          // Normalize Excel date serial numbers
-          let fechaStr = fecha;
-          if (fecha && !isNaN(Number(fecha))) {
-            const d = XLSX.SSF.parse_date_code(Number(fecha));
-            fechaStr = `${d.y}-${String(d.m).padStart(2,'0')}-${String(d.d).padStart(2,'0')}`;
-          }
-          return { of: of_, desc: desc || '', cant: parseFloat(cant) || 0, unidad: unidad || 'ud', fecha: fechaStr, stock: parseFloat(stock) || 0, lead: parseInt(lead) || 0 };
-        }).filter(Boolean);
+      // Upload → parse (first sheet named "MRP", else the first) → server
+      // validation → analysis. Only rows without errors are ever loaded.
+      let lastUpload: { header: any[]; rows: any[][]; name: string } | null = null;
+
+      function workbookToAoa(wb: any): any[][] {
+        const name = wb.SheetNames.find((n: string) => n.trim().toUpperCase() === 'MRP') || wb.SheetNames[0];
+        return XLSX.utils.sheet_to_json(wb.Sheets[name], { header: 1, defval: '', raw: true, blankrows: false });
       }
 
       function loadFile(file: File) {
@@ -8508,23 +8689,135 @@
 
         const reader = new FileReader();
         reader.onload = e => {
-          let rows: any[] = [];
-          if (isExcel) {
-            const wb    = XLSX.read(e.target?.result, { type: 'array', cellDates: false });
-            const sheet = wb.Sheets[wb.SheetNames[0]];
-            rows = sheetToRows(sheet);
-          } else {
-            rows = parseCsv(e.target?.result as string);
+          let aoa: any[][] = [];
+          try {
+            const wb = isExcel
+              ? XLSX.read(e.target?.result, { type: 'array', cellDates: false })
+              : XLSX.read(e.target?.result as string, { type: 'string', raw: true });
+            aoa = workbookToAoa(wb);
+          } catch {
+            showToast('No se pudo leer el archivo. Comprueba que no esté dañado o protegido con contraseña.');
+            return;
           }
-          if (rows.length === 0) { showToast('No se encontraron filas válidas en el archivo'); return; }
-          localStorage.setItem(MRP_LS, JSON.stringify(rows));
-          renderMrpTable(rows);
-          showToast(`✓ ${rows.length} líneas MRP cargadas`);
-          const sub = document.getElementById('mrpSub');
-          if (sub) sub.textContent = `${rows.length} líneas · ${file.name}`;
+          if (aoa.length < 2) { showToast('El archivo no tiene líneas de datos debajo de la cabecera.'); return; }
+          if (aoa.length - 1 > 20000) { showToast('El archivo tiene más de 20.000 líneas: divídelo en varios archivos.'); return; }
+          lastUpload = { header: aoa[0], rows: aoa.slice(1), name: file.name };
+          validateUpload();
         };
         if (isExcel) reader.readAsArrayBuffer(file);
         else         reader.readAsText(file, 'UTF-8');
+      }
+
+      async function validateUpload(dateOrder?: string) {
+        if (!lastUpload) return;
+        const box = document.getElementById('mrpAnalysis')!;
+        box.hidden = false;
+        box.replaceChildren(el('p', { text: `Analizando «${lastUpload.name}»…` }));
+        try {
+          const res = await apiJson('/api/mrp/validate', { method: 'POST',
+            body: JSON.stringify({ header: lastUpload.header, rows: lastUpload.rows, date_order: dateOrder || null }) });
+          renderAnalysis(res);
+        } catch (err: any) {
+          box.replaceChildren(
+            el('p', { class: 'mrpa__bad', text: err?.status === 422
+              ? 'El archivo tiene celdas demasiado largas o demasiadas columnas (máximo 50 columnas y 500 caracteres por celda). No se ha cargado nada.'
+              : 'No se pudo analizar el archivo. Comprueba tu conexión e inténtalo de nuevo; no se ha cargado nada.' }),
+            el('button', { class: 'btn-ui', type: 'button', text: 'Reintentar', onclick: () => validateUpload(dateOrder) }));
+        }
+      }
+
+      function issueTable(issues: any[]): HTMLElement {
+        return el('table', { class: 'mrpa__rows' },
+          el('thead', {}, el('tr', {}, ['Fila del Excel', 'Tu valor', 'Qué pasa'].map(h => el('th', { text: h })))),
+          el('tbody', {}, issues.map((x: any) => el('tr', {},
+            el('td', { text: x.row }), el('td', { text: x.value ?? '(vacío)' }),
+            el('td', { class: x.level === 'error' ? 'mrpa__bad' : 'mrpa__warn', text: x.problem })))));
+      }
+
+      function renderAnalysis(res: any) {
+        const box = document.getElementById('mrpAnalysis')!;
+        const r = res.readiness;
+        const LVL: Record<string, [string, string]> = {
+          ready: ['Listo para planificar', 'mrpa__ok'], almost: ['Casi listo', 'mrpa__warn'], not_ready: ['Necesita correcciones', 'mrpa__bad'] };
+        const [lvlTxt, lvlCls] = LVL[r.level] || LVL.not_ready;
+        const nWarn = res.messages.filter((m: any) => m.level === 'warning').length;
+        const reqOk = res.required_found === res.required_total;
+
+        const colRow = (c: any) => {
+          const f = findField(c.key);
+          const parts: any[] = [];
+          if (!c.found) parts.push(el('span', { class: c.status === 'required' ? 'mrpa__bad' : 'pcx-muted', text: c.status === 'required' ? '✕ columna no encontrada' : '○ no incluida (opcional)' }));
+          else {
+            if (c.key === 'fecha' && res.date_order.needs_confirmation) parts.push(el('span', { class: 'mrpa__warn', text: '⏳ pendiente de confirmar el formato de fecha' }));
+            else parts.push(el('span', { class: c.pct_valid >= 95 ? 'mrpa__ok' : c.pct_valid >= 80 ? 'mrpa__warn' : 'mrpa__bad', text: `${c.pct_valid >= 95 ? '✓' : '⚠'} ${c.pct_valid}% válido` }));
+            if (c.missing) parts.push(el('span', { class: c.status === 'required' ? 'mrpa__bad' : 'mrpa__warn', text: `⚠ ${c.missing} vacías` }));
+            if (c.invalid) parts.push(el('span', { class: 'mrpa__bad', text: `✕ ${c.invalid} no válidas` }));
+          }
+          const detail = el('div', { hidden: 'hidden' }, c.issues.length ? issueTable(c.issues) : el('p', { class: 'pcx-muted', text: 'Sin incidencias en esta columna.' }));
+          const btn = el('button', { type: 'button', 'aria-expanded': 'false',
+            onclick: () => { const open = detail.hidden; detail.hidden = !open; btn.setAttribute('aria-expanded', String(open)); } },
+            el('b', { text: f?.label || c.label }), parts,
+            c.issues.length ? el('span', { class: 'pcx-muted', text: `Ver ${c.issues.length} fila${c.issues.length === 1 ? '' : 's'}` }) : null);
+          return el('div', { class: 'mrpa__col' }, btn, detail);
+        };
+
+        const msgCard = (m: any) => el('div', { class: `mrpa__msg${m.level === 'warning' ? ' mrpa__msg--warning' : ''}` },
+          el('p', {}, el('b', { text: m.title })),
+          el('p', {}, el('b', { text: 'Qué afecta: ' }), m.impact),
+          el('p', {}, el('b', { text: 'Cómo corregirlo: ' }), m.fix),
+          m.rows?.length ? el('p', { class: 'pcx-muted', text: `Filas del Excel: ${m.rows.join(', ')}${m.rows.length >= 50 ? '…' : ''}` }) : null,
+          m.help?.length ? el('details', {}, el('summary', { text: '¿Necesitas ayuda para encontrar este dato?' }),
+            el('p', { text: 'Normalmente se obtiene de:' }), el('ul', {}, m.help.map((h: string) => el('li', { text: h }))),
+            el('p', { class: 'pcx-muted', text: 'Son fuentes habituales en fabricación; comprueba cuál aplica en tu empresa.' })) : null);
+
+        const loadBtn = el('button', { class: 'btn-ui btn-ui--primary', type: 'button',
+          text: res.excluded_rows ? `Cargar ${res.loadable_rows} líneas válidas (${res.excluded_rows} con errores se quedan fuera)` : `Cargar ${res.loadable_rows} líneas`,
+          onclick: () => {
+            const clean = res.rows.filter((x: any) => x.clean).map((x: any) => x.clean);
+            localStorage.setItem(MRP_LS, JSON.stringify(clean));
+            renderMrpTable(clean);
+            showToast(`✓ ${clean.length} líneas MRP cargadas`);
+            const sub = document.getElementById('mrpSub');
+            if (sub) sub.textContent = `${clean.length} líneas · ${lastUpload?.name || ''}`;
+          } });
+        if (r.blocking || !res.loadable_rows) loadBtn.setAttribute('disabled', 'disabled');
+
+        box.replaceChildren(...[
+          el('h4', { text: `Análisis del archivo · ${lastUpload?.name || ''}` }),
+          el('ul', { class: 'mrpa__facts' },
+            el('li', { class: 'mrpa__ok', text: `✓ ${res.rows_processed.toLocaleString('es-ES')} líneas procesadas` }),
+            el('li', { class: reqOk ? 'mrpa__ok' : 'mrpa__bad', text: `${reqOk ? '✓' : '✕'} ${res.required_found}/${res.required_total} columnas obligatorias encontradas` }),
+            res.excluded_rows ? el('li', { class: 'mrpa__bad', text: `✕ ${res.excluded_rows} líneas con errores` }) : null,
+            nWarn ? el('li', { class: 'mrpa__warn', text: `⚠ ${nWarn} aviso${nWarn === 1 ? '' : 's'}` }) : null),
+          el('div', { class: 'mrpa__score' },
+            el('div', {}, el('div', { class: `mrpa__big ${lvlCls}`, text: `${r.overall}%` }), el('div', { class: lvlCls, text: `Preparación: ${lvlTxt}` })),
+            el('div', { class: 'mrpa__bd' }, [['Completitud', r.completeness], ['Validez', r.validity], ['Coherencia', r.consistency], ['Líneas cargables', r.loadable_pct]]
+              .map(([k, v]) => el('div', {}, el('b', { text: `${v}%` }), String(k)))),
+            el('p', { style: 'flex-basis:100%;margin:0', text: res.summary })),
+          res.date_order.needs_confirmation ? el('div', { class: 'mrpa__msg' },
+            el('p', {}, el('b', { text: 'Confirma el formato de las fechas' })),
+            el('p', { text: 'Tu archivo usa fechas como 05/06/2026, que pueden leerse de dos maneras. Planning Core no elige por ti.' }),
+            el('div', { class: 'mrpa__actions' },
+              el('button', { class: 'btn-ui btn-ui--primary', type: 'button', text: 'Día/mes/año (05/06 = 5 de junio)', onclick: () => validateUpload('DMY') }),
+              el('button', { class: 'btn-ui', type: 'button', text: 'Mes/día/año (05/06 = 6 de mayo)', onclick: () => validateUpload('MDY') }))) : null,
+          el('h4', { style: 'margin-top:.4rem', text: 'Resultado por columna' }),
+          el('div', {}, res.columns.filter((c: any) => c.found || c.status === 'required').map(colRow)),
+          res.messages.length ? el('div', {}, el('h4', { style: 'margin-top:.8rem', text: 'Qué corregir' }), res.messages.map(msgCard)) : null,
+          el('details', {}, el('summary', { text: 'Cómo se han leído tus columnas' }),
+            res.mapping_mode === 'position' ? el('p', { class: 'mrpa__warn', text: 'No reconocimos los nombres de las columnas, así que se han leído por posición, en el orden de la plantilla. Revisa que coincida.' }) : null,
+            el('ul', {}, res.mapping.map((m: any) => el('li', {}, `Tu Excel: «${m.yours || '(sin nombre)'}» (columna ${m.column}) → Planning Core: `, el('b', { text: m.label })))),
+            res.ignored_columns.length ? el('p', { class: 'pcx-muted', text: `Columnas no usadas: ${res.ignored_columns.join(', ')}.` }) : null),
+          el('details', {}, el('summary', { text: `Transformaciones aplicadas (${res.normalizations.length})` }),
+            res.normalizations.length
+              ? el('table', { class: 'mrpa__rows' },
+                  el('thead', {}, el('tr', {}, ['Fila', 'Columna', 'Tu valor', 'Valor usado', 'Regla aplicada'].map(h => el('th', { text: h })))),
+                  el('tbody', {}, res.normalizations.map((n: any) => el('tr', {},
+                    el('td', { text: n.row }), el('td', { text: n.label }), el('td', { text: n.original }),
+                    el('td', { text: n.normalized }), el('td', { text: n.rule })))))
+              : el('p', { class: 'pcx-muted', text: 'Ningún valor se ha modificado: se usan exactamente los datos del archivo.' })),
+          el('div', { class: 'mrpa__actions' }, loadBtn,
+            el('button', { class: 'btn-ui', type: 'button', text: 'Descartar', onclick: () => { box.hidden = true; lastUpload = null; } }))]
+          .filter(Boolean) as HTMLElement[]);
       }
 
       document.getElementById('mrpClear')?.addEventListener('click', () => {
@@ -8547,14 +8840,13 @@
           const estado = row.cant > row.stock ? 'riesgo' : 'ok';
           tr.dataset.estado = estado;
           const st = rowStatus(row);
-          tr.innerHTML = `
-            <td>${row.of}</td>
-            <td>${row.desc}</td>
-            <td>—</td>
-            <td>${row.fecha || '—'}</td>
-            <td>—</td>
-            <td><div style="display:flex;align-items:center;gap:.5rem"><div class="progress-track" style="width:72px"><div class="progress-fill" style="width:0%"></div></div><span class="progress-pct">0%</span></div></td>
-            <td><span class="status-pill ${estado==='riesgo'?'sp--risk':'sp--ok'}">${estado==='riesgo'?'Riesgo':'En plazo'}</span></td>`;
+          const pill = el('span', { class: `status-pill ${estado === 'riesgo' ? 'sp--risk' : 'sp--ok'}`, text: estado === 'riesgo' ? 'Riesgo' : 'En plazo' });
+          tr.append(el('td', { text: row.of }), el('td', { text: row.desc }), el('td', { text: '—' }),
+            el('td', { text: row.fecha || '—' }), el('td', { text: '—' }),
+            el('td', {}, el('div', { style: 'display:flex;align-items:center;gap:.5rem' },
+              el('div', { class: 'progress-track', style: 'width:72px' }, el('div', { class: 'progress-fill', style: 'width:0%' })),
+              el('span', { class: 'progress-pct', text: '0%' }))),
+            el('td', {}, pill));
           document.getElementById('ordersBody')?.appendChild(tr);
           added++;
         });
@@ -8608,6 +8900,37 @@
 
       document.getElementById('timeSave')?.addEventListener('click', async () => {
         const oldTimes = getProcessTimes();
+        const TIME_RULES: Record<string, [number, number, string]> = {
+          setup: [0, 480, 'Setup debe estar entre 0 y 480 minutos por turno'],
+          ciclo: [0.01, 999, 'Ciclo debe ser mayor que 0 minutos por unidad: sin él no se puede calcular la capacidad'],
+          buffer: [0, 99, 'Buffer debe estar entre 0 y 99 %'],
+          turnos: [1, 3, 'Turnos debe ser 1, 2 o 3'],
+          operarios: [1, 99, 'Operarios/turno debe ser un entero entre 1 y 99'],
+        };
+        const problems: string[] = [];
+        document.querySelectorAll('#timeBody .time-input').forEach(input => {
+          const inp = input as HTMLInputElement;
+          const rule = TIME_RULES[inp.dataset.field!];
+          if (!rule) return;
+          const v = Number(inp.value);
+          const bad = inp.value.trim() === '' || !Number.isFinite(v) || v < rule[0] || v > rule[1]
+            || ((inp.dataset.field === 'turnos' || inp.dataset.field === 'operarios') && !Number.isInteger(v));
+          inp.setAttribute('aria-invalid', String(bad));
+          if (bad) problems.push(`${times[Number(inp.dataset.idx)]?.label || 'Recurso'}: ${rule[2]} (valor actual: «${inp.value || 'vacío'}»).`);
+        });
+        document.querySelectorAll('#timeBody .time-name-input').forEach(input => {
+          const inp = input as HTMLInputElement;
+          const bad = !inp.value.trim();
+          inp.setAttribute('aria-invalid', String(bad));
+          if (bad) problems.push('Hay un recurso sin nombre: escribe el nombre de la máquina o proceso.');
+        });
+        const statusEl = document.getElementById('timeSaveStatus');
+        if (problems.length) {
+          if (statusEl) statusEl.replaceChildren(el('div', { class: 'time-err' },
+            el('b', { text: 'No se ha guardado. Corrige estos valores:' }), el('ul', { style: 'margin:.2rem 0 0;padding-left:1rem' }, problems.map(p => el('li', { text: p })))));
+          showToast('Revisa los tiempos marcados en rojo');
+          return;
+        }
         document.querySelectorAll('#timeBody .time-input').forEach(input => {
           const el    = input as HTMLInputElement | HTMLSelectElement;
           const idx   = parseInt(el.dataset.idx!);
