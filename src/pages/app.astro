@@ -4098,7 +4098,11 @@
         <div class="mrp-tabs">
           <button class="mrp-tab mrp-tab--active" data-mrptab="mrp">Plan MRP</button>
           <button class="mrp-tab" data-mrptab="tiempos">Tiempos de proceso</button>
+          <button class="mrp-tab" data-mrptab="rutas">Rutas y OF</button>
         </div>
+
+        <!-- ── TAB: RUTAS Y OF (built by initRoutingTab from /api/routing) ── -->
+        <div id="mrpTabRutas" style="display:none"></div>
 
         <!-- ── TAB: MRP ── -->
         <div id="mrpTabMrp">
@@ -5185,10 +5189,96 @@
   .mrpa summary { cursor:pointer; font-weight:600; }
   .time-err { color:var(--red); font-size:.78rem; }
   .time-input[aria-invalid="true"] { border-color:var(--red) !important; }
+
+  /* ── MRP & Tiempos: Rutas y OF (routing, OF operations, finite-capacity plan) ── */
+  .rt-head { display:flex; flex-wrap:wrap; gap:.6rem; align-items:center; justify-content:space-between; margin-bottom:.9rem; }
+  .rt-seg { display:inline-flex; border:1px solid var(--n80); border-radius:8px; overflow:hidden; }
+  .rt-seg button { border:0; background:var(--white); color:var(--n30); padding:.42rem .85rem; font:inherit; font-size:.8rem; font-weight:600; cursor:pointer; }
+  .rt-seg button + button { border-left:1px solid var(--n80); }
+  .rt-seg button[aria-selected="true"] { background:var(--brand); color:#fff; }
+  .rt-quality { display:flex; flex-wrap:wrap; align-items:center; gap:.35rem; font-size:.76rem; }
+  .rt-pill { display:inline-block; border-radius:99px; padding:.1rem .55rem; font-size:.72rem; font-weight:700; white-space:nowrap; }
+  .rt-pill--ok { background:var(--green-bg); color:var(--green); }
+  .rt-pill--warn { background:var(--amber-bg); color:var(--amber); }
+  .rt-pill--bad { background:var(--red-bg); color:var(--red); }
+  .rt-pill--mute { background:var(--n90); color:var(--n50); }
+  .rt-pill--info { background:rgba(30,77,183,.12); color:var(--brand-lt); }
+  .rt-box { border:1px solid var(--n80); border-radius:var(--radius-md); padding:.9rem 1rem; margin-bottom:1rem; background:var(--white); font-size:.82rem; }
+  .rt-box h4 { margin:0 0 .5rem; font-size:.92rem; color:var(--n20); }
+  .rt-bar { display:flex; flex-wrap:wrap; gap:.5rem; align-items:center; margin-bottom:.8rem; }
+  .rt-bar label { font-size:.76rem; color:var(--n50); display:flex; align-items:center; gap:.35rem; }
+  .rt-in { border:1px solid var(--n80); border-radius:6px; padding:.3rem .45rem; font:inherit; font-size:.8rem; background:var(--white); color:var(--n20); min-width:0; }
+  .rt-in[aria-invalid="true"] { border-color:var(--red); }
+  .rt-stats { display:grid; grid-template-columns:repeat(4, minmax(0, 1fr)); gap:.6rem; margin-bottom:.8rem; }
+  .rt-stat { border:1px solid var(--n80); border-radius:10px; padding:.6rem .7rem; }
+  .rt-stat b { display:block; font-size:1.35rem; line-height:1.15; }
+  .rt-stat span { font-size:.72rem; color:var(--n50); }
+  .rt-table-wrap { overflow-x:auto; -webkit-overflow-scrolling:touch; }
+  .rt-table { width:100%; border-collapse:collapse; font-size:.8rem; }
+  .rt-table th { text-align:left; font-size:.68rem; text-transform:uppercase; letter-spacing:.03em; color:var(--n50); padding:.35rem .45rem; border-bottom:1px solid var(--n80); white-space:nowrap; }
+  .rt-table td { padding:.42rem .45rem; border-bottom:1px solid var(--n90); vertical-align:top; color:var(--n20); }
+  .rt-table tr.rt-click { cursor:pointer; }
+  .rt-table tr.rt-click:hover td, .rt-table tr[aria-expanded="true"] td { background:var(--n90); }
+  .rt-table tr.rt-click:focus-visible { outline:2px solid var(--brand); outline-offset:-2px; }
+  .rt-table .rt-detail-row > td { background:transparent; padding:.2rem 0 .6rem; }
+  .rt-edit td { padding:.25rem .18rem; }
+  .rt-edit .rt-in { width:100%; min-width:58px; }
+  .rt-num { text-align:right; font-variant-numeric:tabular-nums; }
+  .rt-muted { color:var(--n50); }
+  .rt-bad { color:var(--red); } .rt-warn { color:var(--amber); } .rt-ok { color:var(--green); }
+  .rt-missing { color:var(--amber); font-weight:700; font-size:.72rem; letter-spacing:.02em; }
+  .rt-route { display:flex; flex-wrap:wrap; align-items:center; gap:.3rem; margin:.6rem 0; }
+  .rt-route__op { border:1px solid var(--n80); border-radius:8px; padding:.28rem .55rem; font-size:.76rem; line-height:1.25; background:var(--white); color:var(--n20); }
+  .rt-route__op small { display:block; color:var(--n50); font-size:.68rem; }
+  .rt-route__op--done { border-color:var(--green); }
+  .rt-route__op--run { border-color:var(--brand); box-shadow:0 0 0 1px var(--brand); }
+  .rt-route__op--risk { border-color:var(--red); }
+  .rt-route__op--skip { opacity:.55; border-style:dashed; }
+  .rt-route__arrow { color:var(--n50); font-weight:700; }
+  .rt-op { border:1px solid var(--n80); border-radius:8px; margin:.35rem 0; }
+  .rt-op > summary { display:flex; flex-wrap:wrap; gap:.3rem .7rem; align-items:center; padding:.5rem .7rem; cursor:pointer; list-style:none; }
+  .rt-op > summary::-webkit-details-marker { display:none; }
+  .rt-op > summary::before { content:'▸'; color:var(--n50); }
+  .rt-op[open] > summary::before { content:'▾'; }
+  .rt-op__body { padding:.1rem .7rem .7rem; }
+  .rt-kv { display:grid; grid-template-columns:repeat(auto-fill, minmax(170px, 1fr)); gap:.4rem .9rem; margin:.4rem 0 .5rem; }
+  .rt-kv > div > span:first-child { display:block; font-size:.66rem; color:var(--n50); text-transform:uppercase; letter-spacing:.03em; }
+  .rt-why { background:var(--n90); border-radius:8px; padding:.45rem .6rem; margin:.4rem 0; color:var(--n20); }
+  .rt-alert { border-left:3px solid var(--red); background:var(--red-bg); color:var(--n20); padding:.45rem .65rem; border-radius:0 8px 8px 0; margin:.4rem 0; }
+  .rt-alert--warn { border-left-color:var(--amber); background:var(--amber-bg); }
+  .rt-actions { display:flex; flex-wrap:wrap; gap:.4rem; align-items:center; margin-top:.5rem; }
+  .rt-form { display:grid; grid-template-columns:repeat(auto-fill, minmax(160px, 1fr)); gap:.55rem; align-items:end; }
+  .rt-form label { display:flex; flex-direction:column; gap:.2rem; font-size:.72rem; color:var(--n50); }
+  .rt-days { display:flex; gap:3px; }
+  .rt-days label { display:flex; flex-direction:column; align-items:center; font-size:.66rem; color:var(--n50); }
+  .rt-tl { overflow-x:auto; -webkit-overflow-scrolling:touch; border:1px solid var(--n80); border-radius:8px; margin:.5rem 0; }
+  .rt-tl__inner { position:relative; }
+  .rt-tl__row { display:flex; border-bottom:1px solid var(--n90); }
+  .rt-tl__row:last-child { border-bottom:0; }
+  .rt-tl__label { flex:0 0 130px; padding:.3rem .45rem; font-size:.72rem; position:sticky; left:0; background:var(--white); z-index:2; border-right:1px solid var(--n90); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; color:var(--n20); }
+  .rt-tl__track { position:relative; flex:1; height:30px; }
+  .rt-tl__row--scale .rt-tl__track { height:22px; }
+  .rt-tl__day { position:absolute; top:0; bottom:0; border-left:1px dashed var(--n80); font-size:.62rem; color:var(--n50); padding:2px 0 0 3px; white-space:nowrap; }
+  .rt-tl__bar { position:absolute; top:6px; height:18px; border-radius:4px; font-size:.64rem; color:#fff; padding:0 4px; overflow:hidden; white-space:nowrap; line-height:18px; min-width:3px; z-index:1; }
+  .rt-tl__bar--risk { box-shadow:0 0 0 2px var(--red); }
+  .rt-tl__deadline { position:absolute; top:0; bottom:0; width:2px; background:var(--red); z-index:1; }
   @media (max-width: 640px) {
     .fh-pop { position:fixed; left:0 !important; right:0; bottom:0; top:auto !important; width:auto; max-height:80vh; border-radius:16px 16px 0 0; }
     .mrpg__cols { grid-template-columns:1fr; }
     .fh-btn { width:22px; height:22px; font-size:12px; }
+    .mrp-tabs { overflow-x:auto; }
+    .mrp-tab { white-space:nowrap; padding:.45rem .7rem; }
+    .rt-seg { width:100%; }
+    .rt-seg button { flex:1; padding:.5rem .3rem; }
+    .rt-stats { grid-template-columns:repeat(2, minmax(0, 1fr)); }
+    .rt-tl__label { flex-basis:88px; }
+    .rt-table--cards thead { display:none; }
+    .rt-table--cards tr { display:block; border-bottom:1px solid var(--n80); padding:.35rem 0; }
+    .rt-table--cards td { display:flex; justify-content:space-between; gap:.8rem; border:0; padding:.14rem .35rem; text-align:right; }
+    .rt-table--cards td::before { content:attr(data-label); color:var(--n50); font-size:.72rem; text-align:left; }
+    .rt-table--cards .rt-detail-row { padding:0; border:0; }
+    .rt-table--cards .rt-detail-row > td { display:block; text-align:left; }
+    .rt-table--cards .rt-detail-row > td::before { content:none; }
   }
 </style>
 
@@ -5474,7 +5564,12 @@
                  ...(init.headers || {}) },
     });
     const body = await res.json().catch(() => ({}));
-    if (!res.ok) throw Object.assign(new Error(body.detail || `HTTP ${res.status}`), { status: res.status });
+    if (!res.ok) {
+      // `detail` is a string, an object with a message (routing release) or FastAPI's list of field errors.
+      const d = body.detail;
+      const msg = typeof d === 'string' ? d : d?.message || (Array.isArray(d) && d[0]?.msg) || `HTTP ${res.status}`;
+      throw Object.assign(new Error(msg), { status: res.status, body });
+    }
     return body;
   }
 
@@ -8637,6 +8732,8 @@
           const which = (tab as HTMLElement).dataset.mrptab;
           document.getElementById('mrpTabMrp')!.style.display    = which === 'mrp'     ? '' : 'none';
           document.getElementById('mrpTabTiempos')!.style.display = which === 'tiempos' ? '' : 'none';
+          document.getElementById('mrpTabRutas')!.style.display   = which === 'rutas'   ? '' : 'none';
+          if (which === 'rutas') initRoutingTab();
         });
       });
 
@@ -9164,6 +9261,771 @@
         renderShiftTable(def);
         showToast('Horarios restablecidos');
       });
+    }
+
+    // ── 8f. Rutas y OF: pieza → ruta versionada → operaciones → recursos ──
+    // Everything comes from /api/routing (company-scoped; the server computes
+    // times, capacity, sequencing, risks and explanations). Values are rendered
+    // through el() (textContent), never as markup.
+    const RT_RISK: Record<string, [string, string]> = {
+      on_time: ['En plazo', 'rt-pill rt-pill--ok'], at_risk: ['En riesgo', 'rt-pill rt-pill--warn'],
+      late: ['Retrasada', 'rt-pill rt-pill--bad'], unplanned: ['Sin planificar', 'rt-pill rt-pill--bad'],
+    };
+    const RT_QUALITY: Record<string, [string, string]> = {
+      READY: ['READY', 'rt-pill rt-pill--ok'], WARNING: ['WARNING', 'rt-pill rt-pill--warn'], ERROR: ['ERROR DE RUTA', 'rt-pill rt-pill--bad'],
+    };
+    const RT_STATUS: Record<string, string> = {
+      NOT_STARTED: 'No iniciada', READY: 'Lista para empezar', PLANNED: 'Planificada', IN_PROGRESS: 'En curso',
+      BLOCKED: 'Bloqueada', COMPLETED: 'Terminada', CANCELLED: 'Cancelada',
+    };
+    const RT_LIFE: Record<string, string> = { planned: 'Planificada (no lanzada)', released: 'Lanzada a planta', historical: 'Histórica' };
+    const RT_RSTATUS: Record<string, string> = { draft: 'Borrador', released: 'Liberada', obsolete: 'Obsoleta' };
+    const RT_WEEKDAYS = ['L', 'M', 'X', 'J', 'V', 'S', 'D'];
+    const RT_MISSING = 'DATO FALTANTE';
+    const rt: any = { view: 'orders', plan: null, orders: [], parts: [], resources: [], overview: null,
+                      openOrder: null, openPart: null, openRouting: null };
+    let _rtInited = false;
+
+    function rtErr(e: any): string {
+      if (e?.status === 403) return 'No tienes permiso para esta acción: las piezas, rutas y recursos requieren rol de jefe de planta o superior.';
+      return e?.message || 'No se pudo conectar con el servidor.';
+    }
+    function rtDt(s?: string | null): string {
+      if (!s) return '—';
+      const d = new Date(s);
+      return isNaN(+d) ? '—' : d.toLocaleString('es-ES', { day: '2-digit', month: '2-digit', year: '2-digit', hour: '2-digit', minute: '2-digit' });
+    }
+    function rtDate(s?: string | null): string {
+      if (!s) return '—';
+      const [y, m, d] = String(s).slice(0, 10).split('-');
+      return `${d}/${m}/${y}`;
+    }
+    function rtMin(m: any): string {
+      if (m == null) return RT_MISSING;
+      const t = Math.round(Number(m)), h = Math.floor(t / 60), mm = t % 60;
+      return h ? `${h} h${mm ? ` ${mm} min` : ''}` : `${mm} min`;
+    }
+    function rtVal(v: any, unit = ''): any {
+      return v == null || v === '' ? el('span', { class: 'rt-missing', text: RT_MISSING }) : `${v}${unit}`;
+    }
+    function rtPill(map: Record<string, [string, string]>, key: string): HTMLElement {
+      const m = map[key];
+      return el('span', { class: m ? m[1] : 'rt-pill rt-pill--mute', text: m ? m[0] : key || '—' });
+    }
+    function rtColor(code: string): string {
+      let h = 0;
+      for (const ch of code || '') h = (h * 31 + ch.charCodeAt(0)) >>> 0;
+      return PALETTE[h % PALETTE.length];
+    }
+    function rtLocalNow(): string {
+      const d = new Date(), p = (n: number) => String(n).padStart(2, '0');
+      return `${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())}T${p(d.getHours())}:${p(d.getMinutes())}`;
+    }
+    function rtBody(): HTMLElement { return document.getElementById('rtBody')!; }
+    function rtCall(path: string, init: RequestInit = {}) { return apiJson('/api/routing' + path, init); }
+    function rtJson(method: string, body: any): RequestInit { return { method, body: JSON.stringify(body) }; }
+    // Button that disables itself while its async action runs and reports errors.
+    function rtBtn(label: string, fn: () => Promise<any>, cls = ''): HTMLElement {
+      return el('button', { class: `btn-ui${cls ? ' ' + cls : ''}`, type: 'button', text: label, onclick: async (e: Event) => {
+        const b = e.currentTarget as HTMLButtonElement;
+        b.disabled = true;
+        try { await fn(); } catch (err) { showToast(rtErr(err)); } finally { if (b.isConnected) b.disabled = false; }
+      } });
+    }
+    // Two-step destructive button (no browser dialog).
+    function rtConfirmBtn(label: string, confirmLabel: string, fn: () => Promise<any>): HTMLElement {
+      const b = el('button', { class: 'btn-ui', type: 'button', text: label }) as HTMLButtonElement;
+      b.addEventListener('click', async () => {
+        if (b.dataset.armed !== '1') { b.dataset.armed = '1'; b.textContent = confirmLabel; return; }
+        b.disabled = true;
+        try { await fn(); } catch (err) { showToast(rtErr(err)); b.disabled = false; }
+      });
+      return b;
+    }
+    function rtTable(heads: string[], tbody: HTMLElement, cls = 'rt-table'): HTMLElement {
+      return el('div', { class: 'rt-table-wrap' }, el('table', { class: cls },
+        el('thead', {}, el('tr', {}, heads.map(h => el('th', { text: h })))), tbody));
+    }
+
+    async function initRoutingTab() {
+      const root = document.getElementById('mrpTabRutas');
+      if (!root) return;
+      if (!_rtInited) {
+        _rtInited = true;
+        const views: [string, string][] = [['orders', 'Órdenes y plan'], ['parts', 'Rutas por pieza'], ['resources', 'Recursos']];
+        root.replaceChildren(
+          el('div', { class: 'rt-head' },
+            el('div', { class: 'rt-seg', role: 'tablist', 'aria-label': 'Rutas y OF' }, views.map(([k, l]) =>
+              el('button', { type: 'button', role: 'tab', 'data-rtview': k, 'aria-selected': String(rt.view === k), text: l, onclick: () => rtShow(k) }))),
+            el('div', { class: 'rt-quality', id: 'rtQuality', 'aria-live': 'polite' })),
+          el('div', { id: 'rtBody' }));
+      }
+      rtRefreshOverview();
+      rtShow(rt.view);
+    }
+
+    function rtShow(view: string) {
+      rt.view = view;
+      document.querySelectorAll('[data-rtview]').forEach(b => b.setAttribute('aria-selected', String((b as HTMLElement).dataset.rtview === view)));
+      if (view === 'orders') rtLoadOrders();
+      else if (view === 'parts') rtLoadParts();
+      else rtLoadResources();
+    }
+
+    async function rtRefreshOverview() {
+      const box = document.getElementById('rtQuality');
+      if (!box) return;
+      try { rt.overview = await rtCall('/overview'); }
+      catch (e) { box.replaceChildren(el('span', { class: 'rt-bad', text: rtErr(e) })); return; }
+      const ov = rt.overview, c = ov.routing_status_counts, n = ov.parts.length, nc = ov.resources.without_calendar.length;
+      box.replaceChildren(
+        el('span', { class: 'rt-muted', text: `Rutas (${n} pieza${n === 1 ? '' : 's'}):` }),
+        el('span', { class: 'rt-pill rt-pill--ok', text: `${c.READY} READY` }),
+        c.WARNING ? el('span', { class: 'rt-pill rt-pill--warn', text: `${c.WARNING} WARNING` }) : null,
+        c.ERROR ? el('span', { class: 'rt-pill rt-pill--bad', text: `${c.ERROR} ERROR` }) : null,
+        ov.orders.routing_errors ? el('span', { class: 'rt-pill rt-pill--bad', text: `${ov.orders.routing_errors} OF con ERROR DE RUTA` }) : null,
+        nc ? el('span', { class: 'rt-pill rt-pill--warn', title: ov.resources.without_calendar.join(', '), text: `${nc} recurso${nc === 1 ? '' : 's'} sin calendario` }) : null);
+    }
+
+    // ── Órdenes y plan ──
+    async function rtLoadOrders() {
+      const body = rtBody();
+      body.replaceChildren(el('p', { class: 'rt-muted', text: 'Cargando órdenes de fabricación…' }));
+      try { [rt.orders, rt.parts] = await Promise.all([rtCall('/orders'), rtCall('/parts')]); }
+      catch (e) { body.replaceChildren(el('p', { class: 'rt-bad', text: rtErr(e) })); return; }
+      if (rt.view === 'orders') rtRenderOrders();
+    }
+
+    async function rtReloadOrders() {
+      rt.orders = await rtCall('/orders');
+      rtRenderOrderList();
+      rtRefreshOverview();
+    }
+
+    function rtRenderOrders() {
+      const mrpRows = getMrpRows();
+      const start = el('input', { class: 'rt-in', type: 'datetime-local', value: rtLocalNow() }) as HTMLInputElement;
+      const formBox = el('div', { class: 'rt-box', hidden: 'hidden' });
+      const result = el('div', { 'aria-live': 'polite' });
+      rtBody().replaceChildren(
+        el('div', { class: 'rt-bar' },
+          rtBtn('Planificar', () => rtRunPlan(start.value, result), 'btn-ui--primary'),
+          el('label', {}, 'Inicio', start),
+          el('button', { class: 'btn-ui', type: 'button', disabled: mrpRows.length ? null : 'disabled',
+            title: mrpRows.length ? 'Una OF por línea con necesidad neta > 0' : 'Carga primero un Excel en la pestaña Plan MRP',
+            text: mrpRows.length ? `Crear OF desde el MRP (${mrpRows.length} líneas)` : 'Crear OF desde el MRP',
+            onclick: () => rtImportMrp(result) }),
+          el('button', { class: 'btn-ui', type: 'button', text: 'Nueva OF', onclick: () => {
+            formBox.hidden = !formBox.hidden;
+            if (!formBox.hidden) rtOrderForm(formBox);
+          } })),
+        el('p', { class: 'rt-muted', style: 'margin:-.3rem 0 .8rem', text: 'Planificar ordena las OF por prioridad y fecha de necesidad y coloca cada operación en su recurso respetando la secuencia, el calendario, el mantenimiento y la capacidad. Cada retraso se explica con su causa.' }),
+        formBox, result, el('div', { id: 'rtPlanBox' }), el('div', { id: 'rtOrdersBox' }));
+      rtRenderPlan();
+      rtRenderOrderList();
+    }
+
+    function rtOrderForm(box: HTMLElement) {
+      const num = el('input', { class: 'rt-in', maxlength: '60', placeholder: 'OF-12345' }) as HTMLInputElement;
+      const part = el('select', { class: 'rt-in' }, el('option', { value: '', text: '— Selecciona la pieza —' }),
+        rt.parts.map((p: any) => el('option', { value: String(p.id), text: `${p.part_number}${p.name && p.name !== p.part_number ? ' · ' + p.name : ''}` }))) as HTMLSelectElement;
+      const qty = el('input', { class: 'rt-in', type: 'number', min: '0', step: 'any' }) as HTMLInputElement;
+      const due = el('input', { class: 'rt-in', type: 'date' }) as HTMLInputElement;
+      const prio = el('select', { class: 'rt-in' }, [1, 2, 3, 4, 5].map(n => el('option', { value: String(n), selected: n === 3 ? 'selected' : null,
+        text: n === 1 ? '1 (máxima)' : n === 5 ? '5 (mínima)' : String(n) }))) as HTMLSelectElement;
+      const msg = el('p', { class: 'rt-bad', 'aria-live': 'polite' });
+      box.replaceChildren(
+        el('h4', { text: 'Nueva orden de fabricación' }),
+        el('p', { class: 'rt-muted', style: 'margin:0 0 .6rem', text: 'Sus operaciones se generan automáticamente con la ruta liberada de la pieza.' }),
+        el('div', { class: 'rt-form' },
+          el('label', {}, 'Nº de OF', num), el('label', {}, 'Pieza', part), el('label', {}, 'Cantidad', qty),
+          el('label', {}, 'Fecha de necesidad', due), el('label', {}, 'Prioridad', prio),
+          rtBtn('Crear OF', async () => {
+            msg.textContent = '';
+            const q = Number(qty.value);
+            if (!num.value.trim() || !(q > 0)) { msg.textContent = 'Indica el número de OF y una cantidad mayor que 0.'; return; }
+            try {
+              const o = await rtCall('/orders', rtJson('POST', { order_number: num.value.trim(), part_id: part.value ? Number(part.value) : null,
+                quantity: q, due_date: due.value || null, priority: Number(prio.value) }));
+              showToast(o.routing_status === 'ERROR' ? `OF ${o.order_number} creada con ERROR DE RUTA: revísala` : `✓ OF ${o.order_number} creada con ${o.operations.length} operaciones`);
+              box.hidden = true;
+              rt.openOrder = o.id;
+              await rtReloadOrders();
+            } catch (e) { msg.textContent = rtErr(e); }
+          }, 'btn-ui--primary')),
+        msg);
+    }
+
+    async function rtImportMrp(box: HTMLElement) {
+      const rows = getMrpRows();
+      if (!rows.length) return;
+      box.replaceChildren(el('p', { class: 'rt-muted', text: 'Creando OF a partir del MRP…' }));
+      try {
+        const res = await rtCall('/orders/import-mrp', rtJson('POST', { rows }));
+        const errs = res.created.filter((c: any) => c.routing_status === 'ERROR');
+        box.replaceChildren(el('div', { class: 'rt-box' },
+          el('h4', { text: res.summary }),
+          errs.length ? el('div', { class: 'rt-alert' }, el('b', { text: 'OF con ERROR DE RUTA (sin operaciones hasta corregirlo):' }),
+            el('ul', { style: 'margin:.2rem 0 0;padding-left:1rem' }, errs.slice(0, 30).map((c: any) => el('li', { text: `${c.of}: ${c.issue}` })))) : null,
+          res.skipped.length ? el('details', {}, el('summary', { text: `Líneas sin OF (${res.skipped.length})` }),
+            el('ul', {}, res.skipped.slice(0, 100).map((s: any) => el('li', { text: `${s.of}: ${s.reason}` })))) : null,
+          el('p', { class: 'rt-muted', style: 'margin:.5rem 0 0', text: 'La pieza de cada línea se identifica solo por coincidencia exacta del número de pieza con «OF / Material» o «Descripción»; si no coincide, asígnala en la OF. Cantidad de la OF = necesidad neta (cantidad − stock).' })));
+        await rtReloadOrders();
+      } catch (e) { box.replaceChildren(el('p', { class: 'rt-bad', text: rtErr(e) })); }
+    }
+
+    async function rtRunPlan(start: string, box: HTMLElement) {
+      box.replaceChildren(el('p', { class: 'rt-muted', text: 'Planificando con capacidad finita…' }));
+      try {
+        rt.plan = await rtCall('/plan', rtJson('POST', { start: start || null }));
+        box.replaceChildren();
+        rt.orders = rt.plan.orders;
+        rtRenderPlan();
+        rtRenderOrderList();
+        rtRefreshOverview();
+        showToast('✓ Planificación actualizada');
+      } catch (e) { box.replaceChildren(el('p', { class: 'rt-bad', text: rtErr(e) })); }
+    }
+
+    function rtBarOf(op: any) {
+      const res = op.subcontracted ? 'Externo' : (op.planned_resource_code || op.resource_code || '?');
+      return { s: op.planned_start, e: op.planned_end, label: `${op.code} ${res}`, color: op.subcontracted ? '#64748B' : rtColor(res),
+               risk: !!op.risk, title: `${op.code} · ${op.name} · ${res}\n${rtDt(op.planned_start)} → ${rtDt(op.planned_end)}${op.risk_reason ? '\n' + op.risk_reason : ''}` };
+    }
+
+    // Gantt-style timeline: one row per OF (or per operation), bars positioned
+    // on a shared time axis, the need date as a red line.
+    function rtTimeline(rows: any[], ariaLabel: string): HTMLElement {
+      const bars = rows.flatMap(r => r.bars).filter((b: any) => b.s && b.e);
+      if (!bars.length) return el('p', { class: 'rt-muted', text: 'Sin operaciones planificadas todavía: pulsa «Planificar».' });
+      const t0 = Math.min(...bars.map((b: any) => +new Date(b.s)));
+      let t1 = Math.max(...bars.map((b: any) => +new Date(b.e)));
+      const dl = (d: string) => +new Date(`${String(d).slice(0, 10)}T00:00:00`);
+      rows.forEach(r => { if (r.deadline && dl(r.deadline) > t0) t1 = Math.max(t1, dl(r.deadline)); });
+      const day0 = new Date(t0); day0.setHours(0, 0, 0, 0);
+      const span = Math.max(3600000, t1 - +day0);
+      const days = Math.max(1, Math.ceil(span / 86400000));
+      const pct = (t: number) => Math.max(0, Math.min(100, (t - +day0) / span * 100));
+      const every = Math.max(1, Math.ceil(days / 30));
+      const ticks = (labels: boolean) => Array.from({ length: days }, (_, i) => {
+        const d = new Date(+day0 + i * 86400000);
+        return i % every ? null : el('div', { class: 'rt-tl__day', style: `left:${pct(+d)}%`,
+          text: labels ? d.toLocaleDateString('es-ES', { weekday: 'short', day: '2-digit', month: '2-digit' }) : '' });
+      });
+      return el('div', { class: 'rt-tl', role: 'group', 'aria-label': ariaLabel },
+        el('div', { class: 'rt-tl__inner', style: `min-width:${Math.min(4200, Math.max(620, 130 + Math.ceil(days / every) * 80))}px` },
+          el('div', { class: 'rt-tl__row rt-tl__row--scale' }, el('div', { class: 'rt-tl__label' }), el('div', { class: 'rt-tl__track' }, ticks(true))),
+          rows.map(r => el('div', { class: 'rt-tl__row' },
+            el('div', { class: 'rt-tl__label', title: r.sub ? `${r.label} · ${r.sub}` : r.label }, el('b', { text: r.label }), r.sub ? el('span', { class: 'rt-muted', text: ` ${r.sub}` }) : null),
+            el('div', { class: 'rt-tl__track' }, ticks(false),
+              r.deadline ? el('div', { class: 'rt-tl__deadline', style: `left:${pct(dl(r.deadline))}%`, title: `Fecha de necesidad ${rtDate(r.deadline)}` }) : null,
+              r.bars.filter((b: any) => b.s && b.e).map((b: any) => {
+                const s = +new Date(b.s), e = +new Date(b.e);
+                return el('div', { class: `rt-tl__bar${b.risk ? ' rt-tl__bar--risk' : ''}`, title: b.title, text: b.label,
+                  style: `left:${pct(s)}%;width:${Math.max(0.2, (e - s) / span * 100)}%;background:${b.color}` });
+              }))))));
+    }
+
+    function rtRenderPlan() {
+      const box = document.getElementById('rtPlanBox');
+      if (!box) return;
+      if (!rt.plan) { box.replaceChildren(); return; }
+      const s = rt.plan.summary, cap = rt.plan.capacity.filter((c: any) => c.required_h || c.status === 'NO_CALENDAR');
+      const stat = (v: any, label: string, cls = '') => el('div', { class: 'rt-stat' }, el('b', { class: cls, text: String(v) }), el('span', { text: label }));
+      const capPill = (c: any) => c.status === 'OVERLOAD' ? el('span', { class: 'rt-pill rt-pill--bad', text: `SOBRECARGA +${c.overload_h} h` })
+        : c.status === 'HIGH' ? el('span', { class: 'rt-pill rt-pill--warn', text: 'Carga alta' })
+        : c.status === 'NO_CALENDAR' ? el('span', { class: 'rt-pill rt-pill--warn', text: `Sin calendario (${RT_MISSING})` })
+        : el('span', { class: 'rt-pill rt-pill--ok', text: 'OK' });
+      const over = cap.filter((c: any) => c.status === 'OVERLOAD');
+      box.replaceChildren(el('div', { class: 'rt-box' },
+        el('h4', { text: `Plan desde ${rtDt(rt.plan.period.start)} · capacidad evaluada hasta ${rtDt(rt.plan.period.end)}` }),
+        el('div', { class: 'rt-stats' },
+          stat(s.on_time_pct == null ? '—' : `${s.on_time_pct}%`, `OF en plazo (${s.on_time} de ${s.orders_with_due_date} con fecha)`,
+               s.on_time_pct == null ? '' : s.on_time_pct >= 95 ? 'rt-ok' : 'rt-bad'),
+          stat(s.at_risk, 'En riesgo', s.at_risk ? 'rt-warn' : ''), stat(s.late, 'Retrasadas', s.late ? 'rt-bad' : ''),
+          stat(s.unplanned, 'Sin planificar', s.unplanned ? 'rt-bad' : '')),
+        el('h4', { style: 'margin-top:.4rem', text: 'Capacidad por recurso en el periodo' }),
+        cap.length ? rtTable(['Recurso', 'Necesarias', 'Disponibles', 'Carga', 'Estado'], el('tbody', {}, cap.map((c: any) => el('tr', { title: c.message },
+          el('td', {}, el('b', { text: c.resource })), el('td', { class: 'rt-num', text: `${c.required_h} h` }),
+          el('td', { class: 'rt-num', text: c.available_h == null ? RT_MISSING : `${c.available_h} h` }),
+          el('td', { class: 'rt-num', text: c.load_pct == null ? '—' : `${c.load_pct}%` }), el('td', {}, capPill(c))))))
+          : el('p', { class: 'rt-muted', text: 'Ninguna OF con fecha de necesidad dentro del periodo consume capacidad.' }),
+        over.length ? el('ul', { class: 'rt-bad', style: 'margin:.5rem 0 0;padding-left:1rem' }, over.map((c: any) => el('li', { text: c.message }))) : null,
+        el('h4', { style: 'margin-top:.9rem', text: 'Secuencia planificada' }),
+        rtTimeline(rt.plan.orders.filter((o: any) => o.planned_start).map((o: any) => ({ label: o.order_number, sub: o.part_number, deadline: o.due_date,
+          bars: o.operations.filter((op: any) => !['COMPLETED', 'CANCELLED'].includes(op.status)).map(rtBarOf) })), 'Diagrama de Gantt de las OF planificadas')));
+    }
+
+    function rtRenderOrderList() {
+      const box = document.getElementById('rtOrdersBox');
+      if (!box) return;
+      if (!rt.orders.length) {
+        box.replaceChildren(el('div', { class: 'rt-box' },
+          el('p', { text: 'No hay OF abiertas. Crea una OF con su pieza o genera las OF desde el MRP cargado.' }),
+          el('p', { class: 'rt-muted', style: 'margin-top:.3rem', text: 'Cada OF recibe automáticamente las operaciones de la ruta liberada de su pieza (pestaña «Rutas por pieza»).' })));
+        return;
+      }
+      const tbody = el('tbody');
+      rt.orders.forEach((o: any) => {
+        const open = rt.openOrder === o.id;
+        const toggle = () => { rt.openOrder = open ? null : o.id; rtRenderOrderList(); };
+        tbody.appendChild(el('tr', { class: 'rt-click', tabindex: '0', 'aria-expanded': String(open), onclick: toggle,
+            onkeydown: (e: KeyboardEvent) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggle(); } } },
+          el('td', { 'data-label': 'OF' }, el('b', { text: o.order_number })),
+          el('td', { 'data-label': 'Pieza · ruta' }, o.part_number ? `${o.part_number}${o.routing_version ? ' · V' + o.routing_version : ''}` : el('span', { class: 'rt-bad', text: 'Sin pieza' })),
+          el('td', { 'data-label': 'Cantidad', class: 'rt-num', text: `${o.quantity}${o.unit ? ' ' + o.unit : ''}` }),
+          el('td', { 'data-label': 'Ruta' }, o.route.length ? o.route.join(' → ') : rtPill(RT_QUALITY, 'ERROR')),
+          el('td', { 'data-label': 'Necesidad', text: rtDate(o.due_date) }),
+          el('td', { 'data-label': 'Fin planificado', text: rtDt(o.planned_end) }),
+          el('td', { 'data-label': 'Estado', text: RT_STATUS[o.execution_status] || o.execution_status }),
+          el('td', { 'data-label': 'Riesgo' }, o.risk ? rtPill(RT_RISK, o.risk) : el('span', { class: 'rt-muted', text: 'Sin planificar aún' }))));
+        if (open) tbody.appendChild(el('tr', { class: 'rt-detail-row' },
+          el('td', { colspan: '8', id: `rtOrder-${o.id}` }, el('p', { class: 'rt-muted', text: 'Cargando OF…' }))));
+      });
+      box.replaceChildren(el('h4', { style: 'margin:.4rem 0', text: `Órdenes de fabricación abiertas (${rt.orders.length})` }),
+        rtTable(['OF', 'Pieza · ruta', 'Cantidad', 'Ruta', 'Necesidad', 'Fin planificado', 'Estado', 'Riesgo'], tbody, 'rt-table rt-table--cards'));
+      if (rt.openOrder) rtLoadOrderDetail(rt.openOrder);
+    }
+
+    async function rtLoadOrderDetail(id: number) {
+      const cell = document.getElementById(`rtOrder-${id}`);
+      if (!cell) return;
+      try {
+        const o = await rtCall(`/orders/${id}`);
+        const fromPlan = (rt.plan?.orders || []).find((x: any) => x.id === id);
+        document.getElementById(`rtOrder-${id}`)?.replaceChildren(rtOrderCard(o, fromPlan));
+      } catch (e) { cell.replaceChildren(el('p', { class: 'rt-bad', text: rtErr(e) })); }
+    }
+
+    function rtOrderCard(o: any, fromPlan: any): HTMLElement {
+      const waits: Record<number, any[]> = {};
+      (fromPlan?.operations || []).forEach((op: any) => { if (op.waits?.length) waits[op.id] = op.waits; });
+      const ops = [...o.operations].sort((a: any, b: any) => a.sequence - b.sequence);
+      const patch = async (body: any, ok: string) => { await rtCall(`/orders/${o.id}`, rtJson('PATCH', body)); showToast(ok); await rtReloadOrders(); };
+      const reroute = async (ok: string) => { await rtCall(`/orders/${o.id}/reroute`, { method: 'POST' }); showToast(ok); await rtReloadOrders(); };
+      const started = ops.some((x: any) => ['IN_PROGRESS', 'COMPLETED'].includes(x.status));
+      const actions = el('div', { class: 'rt-actions' },
+        o.status === 'planned' && o.routing_status !== 'ERROR' && ops.length ? rtBtn('Lanzar a planta', () => patch({ status: 'released' }, `✓ OF ${o.order_number} lanzada`), 'btn-ui--primary') : null,
+        o.status === 'released' && !started ? rtBtn('Volver a planificada', () => patch({ status: 'planned' }, 'OF devuelta a planificada')) : null,
+        o.newer_released_version && o.lifecycle === 'planned' && !started ? rtBtn(`Pasar a la ruta V${o.newer_released_version}`, () => reroute(`OF ${o.order_number} regenerada con la ruta V${o.newer_released_version}`)) : null,
+        o.routing_status === 'ERROR' && o.part_number && o.lifecycle === 'planned' ? rtBtn('Reintentar asignación de ruta', () => reroute('Ruta reasignada')) : null,
+        o.lifecycle !== 'historical' ? rtConfirmBtn('Cancelar OF', 'Confirmar cancelación', () => patch({ status: 'cancelled' }, `OF ${o.order_number} cancelada`)) : null,
+        o.status === 'planned' && !started ? rtConfirmBtn('Borrar OF', 'Confirmar borrado', async () => {
+          await rtCall(`/orders/${o.id}`, { method: 'DELETE' }); showToast(`OF ${o.order_number} borrada`); rt.openOrder = null; await rtReloadOrders(); }) : null);
+      let assign: HTMLElement | null = null;
+      if (!o.part_number && o.lifecycle === 'planned') {
+        const sel = el('select', { class: 'rt-in' }, el('option', { value: '', text: '— Selecciona la pieza —' }),
+          rt.parts.map((p: any) => el('option', { value: String(p.id), text: p.part_number }))) as HTMLSelectElement;
+        assign = el('div', { class: 'rt-bar' }, el('label', {}, 'Asignar pieza', sel), rtBtn('Asignar y generar operaciones', async () => {
+          if (!sel.value) throw new Error('Selecciona una pieza.');
+          await patch({ part_id: Number(sel.value) }, 'Pieza asignada: operaciones generadas con su ruta');
+        }, 'btn-ui--primary'));
+      }
+      const chain = el('div', { class: 'rt-route', 'aria-label': 'Ruta de fabricación de la OF' }, ops.flatMap((op: any, i: number) => [
+        i ? el('span', { class: 'rt-route__arrow', 'aria-hidden': 'true', text: '→' }) : null,
+        el('span', { class: 'rt-route__op' + (op.status === 'COMPLETED' ? ' rt-route__op--done' : '') + (op.status === 'IN_PROGRESS' ? ' rt-route__op--run' : '')
+            + (op.risk ? ' rt-route__op--risk' : '') + (op.status === 'CANCELLED' || (op.status === 'BLOCKED' && op.optional) ? ' rt-route__op--skip' : '') },
+          el('b', { text: String(op.sequence) }), ` ${op.name}`,
+          el('small', { text: `${op.subcontracted ? 'Subcontratada' : (op.resource_code || RT_MISSING)} · ${RT_STATUS[op.status] || op.status}` }))]));
+      const t = o.totals;
+      return el('div', { class: 'rt-box', style: 'margin:.3rem 0 0' },
+        el('div', { class: 'rt-bar', style: 'justify-content:space-between;margin-bottom:.4rem' },
+          el('div', {}, el('h4', { style: 'margin:0', text: o.order_number }),
+            el('span', { class: 'rt-muted', text: `${o.part_number ? 'Pieza ' + o.part_number + (o.part_name && o.part_name !== o.part_number ? ' · ' + o.part_name : '') : 'Sin pieza'} · Cantidad ${o.quantity}${o.unit ? ' ' + o.unit : ''} · Necesidad ${rtDate(o.due_date)} · Prioridad ${o.priority}` })),
+          el('div', { class: 'rt-bar', style: 'margin:0' }, el('span', { class: 'rt-pill rt-pill--mute', text: RT_LIFE[o.lifecycle] || o.lifecycle }),
+            el('span', { class: 'rt-pill rt-pill--mute', text: RT_STATUS[o.execution_status] || o.execution_status }), o.risk ? rtPill(RT_RISK, o.risk) : null)),
+        o.risk_reason ? el('p', { class: o.risk === 'on_time' ? 'rt-why' : 'rt-alert', text: o.risk_reason }) : null,
+        el('p', { class: 'rt-why' }, el('b', { text: '¿Por qué estas operaciones? ' }), o.explanation?.routing || ''),
+        o.routing_issues?.length ? el('div', { class: o.routing_status === 'ERROR' ? 'rt-alert' : 'rt-alert rt-alert--warn' },
+          el('b', { text: o.routing_status === 'ERROR' ? 'ERROR DE RUTA' : 'Avisos de la ruta (WARNING)' }),
+          el('ul', { style: 'margin:.2rem 0 0;padding-left:1rem' }, o.routing_issues.map((i: any) => el('li', { text: i.message })))) : null,
+        o.newer_released_version && (o.lifecycle !== 'planned' || started) ? el('p', { class: 'rt-muted', text: `Existe la ruta V${o.newer_released_version}; esta OF conserva la V${o.routing_version} con la que se creó (${o.lifecycle === 'historical' ? 'OF histórica' : started ? 'ya tiene operaciones iniciadas' : 'OF ya lanzada'}).` }) : null,
+        assign,
+        ops.length ? chain : null,
+        ops.some((op: any) => op.planned_start) ? rtTimeline(ops.filter((op: any) => op.planned_start && op.planned_end).map((op: any) => ({ label: op.code, sub: op.name, deadline: o.due_date, bars: [rtBarOf(op)] })), `Operaciones planificadas de ${o.order_number}`) : null,
+        t && ops.length ? el('p', { class: 'rt-muted', text: `Tiempos de la OF (por separado): setup ${rtMin(t.setup_min)} · proceso ${rtMin(t.processing_min)} · cola ${rtMin(t.queue_min)} · transferencia ${rtMin(t.transfer_min)}${t.external_min ? ' · subcontratación ' + rtMin(t.external_min) : ''}${t.missing.length ? ' · Datos faltantes: ' + t.missing.join(', ') : ''}` }) : null,
+        ops.map((op: any) => rtOpCard(o, op, waits[op.id] || [])),
+        actions);
+    }
+
+    function rtOpCard(o: any, op: any, waits: any[]): HTMLElement {
+      const t = op.times, cap = op.resource_capacity;
+      const kv = (k: string, v: any) => el('div', {}, el('span', { text: k }), v);
+      const why = o.explanation?.operations?.[op.id];
+      const riskPill = op.risk === 'capacity' ? el('span', { class: 'rt-pill rt-pill--bad', text: '⚠ Riesgo de capacidad' })
+        : op.risk === 'late' ? el('span', { class: 'rt-pill rt-pill--bad', text: 'Fuera de plazo' })
+        : op.risk === 'unplanned' ? el('span', { class: 'rt-pill rt-pill--bad', text: 'Sin planificar' }) : null;
+      return el('details', { class: 'rt-op' },
+        el('summary', {}, el('b', { text: op.code }), el('span', { text: op.name }),
+          el('span', { class: 'rt-muted', text: op.subcontracted ? 'Subcontratada' : (op.planned_resource_code || op.resource_code || RT_MISSING) }),
+          el('span', { class: 'rt-pill rt-pill--mute', text: RT_STATUS[op.status] || op.status }), riskPill,
+          op.optional ? el('span', { class: 'rt-pill rt-pill--mute', text: 'Opcional' }) : null,
+          op.quality_gate ? el('span', { class: 'rt-pill rt-pill--info', text: 'Control de calidad' }) : null),
+        el('div', { class: 'rt-op__body' },
+          why ? el('p', { class: 'rt-why' }, el('b', { text: '¿Por qué está aquí? ' }), why) : null,
+          el('div', { class: 'rt-kv' },
+            kv('Descripción', op.description || '—'),
+            kv('Recurso', op.subcontracted ? 'Proveedor externo' : rtVal(op.resource_code)),
+            op.planned_resource_code && op.planned_resource_code !== op.resource_code ? kv('Planificada en (alternativo)', op.planned_resource_code) : null,
+            op.alt_resource_codes?.length ? kv('Recursos alternativos', op.alt_resource_codes.join(', ')) : null,
+            op.machine ? kv('Máquina', op.machine) : null,
+            kv('Cantidad', `${op.quantity}${op.unit ? ' ' + op.unit : ''}`),
+            op.subcontracted ? kv('Plazo del proveedor', rtVal(op.external_lead_h, ' h')) : kv('Proceso', rtVal(op.run_min_per_unit, ' min/ud')),
+            op.subcontracted ? null : kv('Setup', rtVal(op.setup_min, ' min')),
+            op.subcontracted ? null : kv('Proceso total', t.processing_min == null ? rtVal(null) : rtMin(t.processing_min)),
+            kv('Cola (antes)', op.queue_min == null ? 'No informada' : rtMin(op.queue_min)),
+            kv('Transferencia (después)', op.transfer_min == null ? 'No informada' : rtMin(op.transfer_min)),
+            op.subcontracted ? null : kv('Capacidad necesaria', op.required_txt || rtVal(null)),
+            op.subcontracted ? null : kv('Disponible del recurso en el periodo', cap ? (cap.available_h == null ? rtVal(null)
+              : `${cap.available_h} h · el recurso necesita ${cap.required_h} h en total`) : 'Planifica para calcularlo'),
+            kv('Inicio → fin planificado', `${rtDt(op.planned_start)} → ${rtDt(op.planned_end)}`),
+            op.actual_start || op.actual_end ? kv('Real', `${rtDt(op.actual_start)} → ${rtDt(op.actual_end)}`) : null,
+            kv('Predecesoras', op.predecessor_sequences?.length ? op.predecessor_sequences.map((s: number) => 'OP' + s).join(', ') : 'Ninguna (inicio)')),
+          op.risk_reason ? el('p', { class: op.risk ? 'rt-alert' : 'rt-alert rt-alert--warn', text: op.risk_reason }) : null,
+          op.block_reason ? el('p', { class: 'rt-alert rt-alert--warn', text: `Bloqueada: ${op.block_reason}` }) : null,
+          waits.length && !op.risk_reason ? el('p', { class: 'rt-muted', text: waits.map((w: any) => `Espera ${w.minutes_txt} por ${w.resource} (ocupado por ${w.held_by}).`).join(' ') }) : null,
+          rtOpActions(o, op)));
+    }
+
+    function rtOpActions(o: any, op: any): HTMLElement | null {
+      if (o.lifecycle === 'historical' || ['COMPLETED', 'CANCELLED'].includes(op.status)) return null;
+      const send = async (body: any, ok: string) => { await rtCall(`/orders/${o.id}/operations/${op.id}`, rtJson('PATCH', body)); showToast(ok); await rtReloadOrders(); };
+      const box = el('div', { class: 'rt-actions' });
+      if (op.status === 'BLOCKED') box.append(rtBtn('Desbloquear', () => send({ status: 'NOT_STARTED' }, `${op.code} desbloqueada`)));
+      else {
+        if (o.status === 'released' && op.status !== 'IN_PROGRESS') box.append(rtBtn('Iniciar', () => send({ status: 'IN_PROGRESS' }, `${op.code} en curso`), 'btn-ui--primary'));
+        if (o.status === 'released') box.append(rtBtn('Terminar', () => send({ status: 'COMPLETED' }, `✓ ${op.code} terminada`)));
+        const reason = el('input', { class: 'rt-in', maxlength: '250', placeholder: 'Motivo del bloqueo', 'aria-label': `Motivo del bloqueo de ${op.code}` }) as HTMLInputElement;
+        box.append(reason, rtBtn('Bloquear', async () => {
+          if (!reason.value.trim()) { reason.setAttribute('aria-invalid', 'true'); throw new Error('Indica el motivo del bloqueo.'); }
+          await send({ status: 'BLOCKED', block_reason: reason.value.trim() }, `${op.code} bloqueada`);
+        }));
+        if (o.status !== 'released') box.append(el('span', { class: 'rt-muted', text: 'Lanza la OF para registrar inicio y fin.' }));
+      }
+      if (op.optional) box.append(rtConfirmBtn('Cancelar (opcional)', 'Confirmar', () => send({ status: 'CANCELLED' }, `${op.code} cancelada`)));
+      return box;
+    }
+
+    // ── Rutas por pieza ──
+    async function rtLoadParts() {
+      const body = rtBody();
+      body.replaceChildren(el('p', { class: 'rt-muted', text: 'Cargando piezas y rutas…' }));
+      try { [rt.parts, rt.resources] = await Promise.all([rtCall('/parts'), rtCall('/resources')]); }
+      catch (e) { body.replaceChildren(el('p', { class: 'rt-bad', text: rtErr(e) })); return; }
+      if (rt.view === 'parts') rtRenderParts();
+    }
+
+    function rtRenderParts() {
+      const form = el('div', { class: 'rt-box', hidden: 'hidden' });
+      const tbody = el('tbody', {}, rt.parts.map((p: any) => {
+        const q = p.quality || {};
+        const rel = p.versions.find((v: any) => v.status === 'released');
+        const first = (q.issues || [])[0];
+        const open = () => { rt.openRouting = null; rtOpenPart(p.id); };
+        return el('tr', { class: 'rt-click', tabindex: '0', 'aria-expanded': String(rt.openPart === p.id), onclick: open,
+            onkeydown: (e: KeyboardEvent) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); open(); } } },
+          el('td', { 'data-label': 'Pieza' }, el('b', { text: p.part_number })),
+          el('td', { 'data-label': 'Nombre', text: p.name || '—' }),
+          el('td', { 'data-label': 'Unidad', text: p.unit || '—' }),
+          el('td', { 'data-label': 'Ruta liberada' }, rel ? `V${rel.version}` : el('span', { class: 'rt-bad', text: 'Ninguna' }),
+            p.versions.some((v: any) => v.status === 'draft') ? el('span', { class: 'rt-muted', text: ' · borrador' }) : null),
+          el('td', { 'data-label': 'Estado de datos' }, rtPill(RT_QUALITY, q.status), first ? el('div', { class: 'rt-muted', style: 'font-size:.72rem;margin-top:.2rem', text: first.message }) : null),
+          el('td', { 'data-label': 'Operaciones', class: 'rt-num', text: String(q.operations ?? 0) }),
+          el('td', { 'data-label': 'Recursos', class: 'rt-num', text: q.resources ? `${q.resources.ok}/${q.resources.total}` : '—' }),
+          el('td', { 'data-label': 'Tiempos', class: 'rt-num', text: q.times ? `${q.times.ok}/${q.times.total}` : '—' }),
+          el('td', { 'data-label': 'Dependencias', class: 'rt-num', text: q.dependencies ? `${q.dependencies.ok}/${q.dependencies.total}` : '—' }));
+      }));
+      rtBody().replaceChildren(
+        el('div', { class: 'rt-bar' },
+          el('button', { class: 'btn-ui btn-ui--primary', type: 'button', text: 'Nueva pieza', onclick: () => { form.hidden = !form.hidden; if (!form.hidden) rtPartForm(form); } }),
+          el('button', { class: 'btn-ui', type: 'button', text: 'Crear desde un tipo de pieza', onclick: () => { form.hidden = false; rtFromPieceType(form); } })),
+        el('p', { class: 'rt-muted', style: 'margin:-.3rem 0 .8rem', text: 'Cada pieza tiene su propia ruta (secuencia de operaciones con recurso y tiempos). Las versiones liberadas no se modifican: un cambio es una nueva versión, y cada OF conserva la versión con la que se creó.' }),
+        form,
+        rt.parts.length ? rtTable(['Pieza', 'Nombre', 'Unidad', 'Ruta liberada', 'Estado de datos', 'Operaciones', 'Recursos', 'Tiempos', 'Dependencias'], tbody, 'rt-table rt-table--cards')
+          : el('div', { class: 'rt-box' }, el('p', { text: 'Aún no hay piezas. Crea una pieza y define su ruta de fabricación.' })),
+        el('div', { id: 'rtRoutingBox', style: 'margin-top:1rem' }));
+      if (rt.openPart) rtOpenPart(rt.openPart);
+    }
+
+    function rtPartForm(box: HTMLElement) {
+      const num = el('input', { class: 'rt-in', maxlength: '60', placeholder: 'PART-001' }) as HTMLInputElement;
+      const name = el('input', { class: 'rt-in', maxlength: '160' }) as HTMLInputElement;
+      const unit = el('input', { class: 'rt-in', maxlength: '20', placeholder: 'ud, kg, m…' }) as HTMLInputElement;
+      const desc = el('input', { class: 'rt-in', maxlength: '500' }) as HTMLInputElement;
+      box.replaceChildren(el('h4', { text: 'Nueva pieza' }), el('div', { class: 'rt-form' },
+        el('label', {}, 'Nº de pieza', num), el('label', {}, 'Nombre', name), el('label', {}, 'Unidad', unit), el('label', {}, 'Descripción', desc),
+        rtBtn('Crear pieza', async () => {
+          if (!num.value.trim()) throw new Error('Indica el número de pieza.');
+          const p = await rtCall('/parts', rtJson('POST', { part_number: num.value.trim(), name: name.value.trim() || null,
+            unit: unit.value.trim() || null, description: desc.value.trim() || null }));
+          showToast(`✓ Pieza ${p.part_number} creada: define ahora su ruta`);
+          rt.openPart = p.id; rt.openRouting = null;
+          await rtLoadParts(); rtRefreshOverview();
+        }, 'btn-ui--primary')));
+    }
+
+    async function rtFromPieceType(box: HTMLElement) {
+      box.replaceChildren(el('p', { class: 'rt-muted', text: 'Cargando tipos de pieza…' }));
+      let pts: any[] = [];
+      try { pts = await apiJson('/api/piece-types'); } catch (e) { box.replaceChildren(el('p', { class: 'rt-bad', text: rtErr(e) })); return; }
+      const sel = el('select', { class: 'rt-in' }, pts.map((p: any) => el('option', { value: String(p.id),
+        text: `${p.name} · ATL ${p.atl_hours} h · autoclave ${p.autoclave_hours} h · NDT ${p.ndt_hours} h · CNC ${p.cnc_hours} h` }))) as HTMLSelectElement;
+      box.replaceChildren(el('h4', { text: 'Crear pieza y ruta desde un tipo de pieza' }),
+        el('p', { class: 'rt-muted', style: 'margin:0 0 .6rem', text: 'Convierte las horas ATL / autoclave / NDT / CNC del tipo de pieza en una ruta V1 en borrador. No se inventa nada: el setup queda como DATO FALTANTE y cada operación usa el recurso con el mismo código si existe. Revísala y libérala.' }),
+        pts.length ? el('div', { class: 'rt-bar' }, sel, rtBtn('Crear pieza y ruta V1', async () => {
+          const res = await rtCall('/parts/from-piece-type', rtJson('POST', { piece_type_id: Number(sel.value) }));
+          showToast(`✓ ${res.part.part_number}: ruta V1 en borrador creada`);
+          rt.openPart = res.part.id; rt.openRouting = res.routing.id;
+          await rtLoadParts(); rtRefreshOverview();
+        }, 'btn-ui--primary')) : el('p', { text: 'No hay tipos de pieza.' }));
+    }
+
+    async function rtOpenPart(pid: number) {
+      rt.openPart = pid;
+      document.querySelectorAll('#rtBody tbody tr.rt-click').forEach(tr => tr.setAttribute('aria-expanded', 'false'));
+      const box = document.getElementById('rtRoutingBox');
+      if (!box) return;
+      box.replaceChildren(el('p', { class: 'rt-muted', text: 'Cargando ruta…' }));
+      let versions: any[] = [];
+      try { versions = await rtCall(`/parts/${pid}/routings`); }
+      catch (e) { box.replaceChildren(el('p', { class: 'rt-bad', text: rtErr(e) })); return; }
+      const part = rt.parts.find((p: any) => p.id === pid) || versions[0]?.part;
+      if (!part) return;
+      const cur = versions.find(v => v.id === rt.openRouting) || versions.find(v => v.status === 'draft')
+        || versions.find(v => v.status === 'released') || versions[0];
+      rt.openRouting = cur ? cur.id : null;
+      box.replaceChildren(rtRoutingPanel(part, versions, cur));
+    }
+
+    async function rtAfterRoutingChange(ok: string) {
+      showToast(ok);
+      rt.parts = await rtCall('/parts');
+      rtRenderParts();
+      rtRefreshOverview();
+    }
+
+    function rtRoutingPanel(part: any, versions: any[], cur: any): HTMLElement {
+      const hasDraft = versions.some(v => v.status === 'draft');
+      const head = el('div', { class: 'rt-bar', style: 'justify-content:space-between' },
+        el('h4', { style: 'margin:0', text: `Ruta de fabricación · ${part.part_number}` }),
+        el('div', { class: 'rt-bar', style: 'margin:0' },
+          versions.map(v => el('button', { class: `btn-ui${cur && v.id === cur.id ? ' btn-ui--primary' : ''}`, type: 'button', 'aria-pressed': String(!!cur && v.id === cur.id),
+            text: `V${v.version} · ${RT_RSTATUS[v.status] || v.status}`, onclick: () => { rt.openRouting = v.id; rtOpenPart(part.id); } })),
+          !hasDraft ? rtBtn(cur ? `Nueva versión (copia de V${cur.version})` : 'Crear ruta V1', async () => {
+            const nv = await rtCall(`/parts/${part.id}/routings`, rtJson('POST', { copy_from_id: cur ? cur.id : null }));
+            rt.openRouting = nv.id;
+            await rtAfterRoutingChange(`V${nv.version} creada en borrador`);
+          }) : null));
+      if (!cur) return el('div', { class: 'rt-box' }, head, el('p', { text: 'Esta pieza aún no tiene ruta: crea la V1 y añade sus operaciones.' }));
+      const v = cur.validation;
+      const val = el('div', { class: v.status === 'READY' ? 'rt-why' : v.status === 'WARNING' ? 'rt-alert rt-alert--warn' : 'rt-alert' },
+        el('div', { class: 'rt-bar', style: 'margin:0' }, rtPill(RT_QUALITY, v.status),
+          el('span', { text: `Operaciones: ${v.operations} · Recursos: ${v.resources.ok}/${v.resources.total} · Tiempos: ${v.times.ok}/${v.times.total} · Dependencias: ${v.dependencies.ok}/${v.dependencies.total}` })),
+        v.issues.length ? el('ul', { style: 'margin:.3rem 0 0;padding-left:1rem' }, v.issues.map((i: any) => el('li', { text: i.message })))
+          : el('p', { style: 'margin:.3rem 0 0', text: 'Ruta completa: lista para generar las operaciones de las OF.' }));
+      const meta = el('p', { class: 'rt-muted', style: 'margin:0 0 .5rem', text: `V${cur.version} · ${RT_RSTATUS[cur.status] || cur.status}`
+        + (cur.released_at ? ` el ${rtDt(cur.released_at)}` : '') + ` · ${cur.orders_using} OF la usan`
+        + (cur.status !== 'draft' ? ' · Solo lectura: para cambiarla crea una nueva versión (las OF existentes conservan la suya).' : '')
+        + (cur.notes ? ` · ${cur.notes}` : '') });
+      return el('div', { class: 'rt-box' }, head, meta, val, cur.editable ? rtRoutingEditor(part, cur) : rtRoutingReadonly(cur));
+    }
+
+    function rtRoutingReadonly(cur: any): HTMLElement {
+      const ops = cur.operations;
+      return el('div', {},
+        el('div', { class: 'rt-route' }, ops.flatMap((op: any, i: number) => [i ? el('span', { class: 'rt-route__arrow', 'aria-hidden': 'true', text: '→' }) : null,
+          el('span', { class: 'rt-route__op' }, el('b', { text: String(op.sequence) }), ` ${op.name}`, el('small', { text: op.subcontracted ? 'Subcontratada' : (op.resource_code || RT_MISSING) }))])),
+        rtTable(['Op.', 'Operación', 'Recurso', 'Alternativos', 'Setup', 'Proceso', 'Cola', 'Transf.', 'Cant./ud', 'Predecesoras', 'Tipo'], el('tbody', {}, ops.map((op: any) => el('tr', {},
+          el('td', {}, el('b', { text: op.code })), el('td', { text: op.name, title: op.description || '' }),
+          el('td', {}, op.subcontracted ? 'Externo' : rtVal(op.resource_code)), el('td', { text: op.alt_resource_codes.join(', ') || '—' }),
+          el('td', {}, op.subcontracted ? '—' : rtVal(op.setup_min, ' min')), el('td', {}, op.subcontracted ? rtVal(op.external_lead_h, ' h ext.') : rtVal(op.run_min_per_unit, ' min/ud')),
+          el('td', { text: op.queue_min == null ? '—' : `${op.queue_min} min` }), el('td', { text: op.transfer_min == null ? '—' : `${op.transfer_min} min` }),
+          el('td', { class: 'rt-num', text: String(op.required_qty ?? 1) }),
+          el('td', { text: op.predecessor_sequences.length ? op.predecessor_sequences.map((s: number) => 'OP' + s).join(', ') : 'Inicio' }),
+          el('td', { text: [op.optional ? 'Opcional' : 'Obligatoria', op.subcontracted ? 'Subcontratada' : '', op.quality_gate ? 'Calidad' : ''].filter(Boolean).join(' · ') }))))));
+    }
+
+    function rtRoutingEditor(part: any, cur: any): HTMLElement {
+      const tbody = el('tbody');
+      const msg = el('div', { 'aria-live': 'polite' });
+      const numIn = (v: any, label: string, step = 'any') => el('input', { class: 'rt-in', type: 'number', min: '0', step, value: v == null ? '' : String(v), placeholder: '—', 'aria-label': label }) as HTMLInputElement;
+      const addRow = (op: any) => {
+        const code = () => `OP${f.sequence.value || '?'}`;
+        const f: any = {
+          sequence: numIn(op.sequence, 'Secuencia', '1'),
+          name: el('input', { class: 'rt-in', value: op.name || '', maxlength: '120', placeholder: 'Mecanizado', 'aria-label': 'Operación' }),
+          description: el('input', { class: 'rt-in', value: op.description || '', maxlength: '500', 'aria-label': 'Descripción' }),
+          resource_id: el('select', { class: 'rt-in', 'aria-label': 'Recurso' }, el('option', { value: '', text: '— Sin recurso —' }),
+            rt.resources.map((r: any) => el('option', { value: String(r.id), text: r.code, selected: r.id === op.resource_id ? 'selected' : null }))),
+          alt: el('select', { class: 'rt-in', multiple: 'multiple', size: '2', 'aria-label': 'Recursos alternativos' },
+            rt.resources.map((r: any) => el('option', { value: String(r.id), text: r.code, selected: (op.alt_resource_ids || []).includes(r.id) ? 'selected' : null }))),
+          machine: el('input', { class: 'rt-in', value: op.machine || '', maxlength: '60', 'aria-label': 'Máquina' }),
+          setup_min: numIn(op.setup_min, 'Setup (min)'), run_min_per_unit: numIn(op.run_min_per_unit, 'Proceso (min/ud)'),
+          queue_min: numIn(op.queue_min, 'Cola (min)'), transfer_min: numIn(op.transfer_min, 'Transferencia (min)'),
+          required_qty: numIn(op.required_qty ?? 1, 'Cantidad por unidad de OF'),
+          unit: el('input', { class: 'rt-in', value: op.unit || '', maxlength: '20', placeholder: part.unit || '', 'aria-label': 'Unidad' }),
+          // Existing operations show their stored predecessors explicitly ("-" = none), so saving never changes them silently.
+          preds: el('input', { class: 'rt-in', value: op.predecessor_sequences ? (op.predecessor_sequences.length ? op.predecessor_sequences.join(', ') : '-') : '',
+            placeholder: 'anterior', 'aria-label': 'Predecesoras', title: 'Secuencias separadas por comas. Vacío = la operación anterior. «-» = ninguna (puede ir en paralelo).' }),
+          optional: el('input', { type: 'checkbox', checked: op.optional ? 'checked' : null, 'aria-label': 'Opcional' }),
+          subcontracted: el('input', { type: 'checkbox', checked: op.subcontracted ? 'checked' : null, 'aria-label': 'Subcontratada' }),
+          external_lead_h: numIn(op.external_lead_h, 'Plazo externo (h)'),
+          quality_gate: el('input', { type: 'checkbox', checked: op.quality_gate ? 'checked' : null, 'aria-label': 'Control de calidad' }),
+        };
+        const tr = el('tr', {}, ['sequence', 'name', 'description', 'resource_id', 'alt', 'machine', 'setup_min', 'run_min_per_unit', 'queue_min',
+          'transfer_min', 'required_qty', 'unit', 'preds', 'optional', 'subcontracted', 'external_lead_h', 'quality_gate'].map(k => el('td', {}, f[k])),
+          el('td', {}, el('button', { class: 'btn-ui', type: 'button', text: '×', 'aria-label': 'Quitar operación', title: 'Quitar operación', onclick: () => tr.remove() })));
+        (tr as any)._f = f;
+        (tr as any)._code = code;
+        tbody.appendChild(tr);
+      };
+      cur.operations.forEach(addRow);
+      const collect = () => {
+        const ops: any[] = [], errs: string[] = [];
+        tbody.querySelectorAll('tr').forEach((tr: any) => {
+          const f = tr._f;
+          const n = (i: HTMLInputElement) => i.value.trim() === '' ? null : Number(i.value);
+          const seq = n(f.sequence);
+          if (seq == null || !Number.isInteger(seq) || seq < 1) errs.push('Hay una operación sin número de secuencia válido (entero mayor que 0).');
+          if (!f.name.value.trim()) errs.push(`${tr._code()}: falta el nombre de la operación.`);
+          const pv = f.preds.value.trim();
+          let preds: number[] | null = null;
+          if (pv === '-') preds = [];
+          else if (pv) {
+            preds = pv.split(/[,;\s]+/).filter(Boolean).map((x: string) => Number(x.replace(/^op/i, '')));
+            if (preds!.some(x => !Number.isInteger(x))) errs.push(`${tr._code()}: predecesoras no válidas («${pv}»). Usa números de secuencia separados por comas.`);
+          }
+          ops.push({ sequence: seq, name: f.name.value.trim(), description: f.description.value.trim() || null,
+            resource_id: f.resource_id.value ? Number(f.resource_id.value) : null,
+            alt_resource_ids: Array.from(f.alt.selectedOptions as HTMLCollectionOf<HTMLOptionElement>).map(o => Number(o.value)),
+            machine: f.machine.value.trim() || null, setup_min: n(f.setup_min), run_min_per_unit: n(f.run_min_per_unit),
+            queue_min: n(f.queue_min), transfer_min: n(f.transfer_min), required_qty: n(f.required_qty) ?? 1,
+            unit: f.unit.value.trim() || null, predecessors: preds, optional: f.optional.checked,
+            subcontracted: f.subcontracted.checked, external_lead_h: n(f.external_lead_h), quality_gate: f.quality_gate.checked });
+        });
+        return { ops, errs };
+      };
+      const save = async () => {
+        const { ops, errs } = collect();
+        if (errs.length) {
+          msg.replaceChildren(el('div', { class: 'rt-alert' }, el('b', { text: 'No se ha guardado:' }), el('ul', { style: 'margin:.2rem 0 0;padding-left:1rem' }, errs.map(x => el('li', { text: x })))));
+          throw new Error('Revisa las operaciones marcadas.');
+        }
+        await rtCall(`/routings/${cur.id}/operations`, rtJson('PUT', { operations: ops }));
+      };
+      return el('div', {},
+        el('p', { class: 'rt-muted', style: 'margin:.6rem 0 .4rem', text: 'Tiempos en minutos (proceso por unidad). Deja vacío lo que no sepas: aparecerá como DATO FALTANTE y la validación dirá si impide planificar. Cola = espera antes de la operación; transferencia = traslado a la siguiente.' }),
+        rtTable(['Sec.', 'Operación', 'Descripción', 'Recurso', 'Alternativos', 'Máquina', 'Setup (min)', 'Proceso (min/ud)', 'Cola (min)', 'Transf. (min)',
+          'Cant./ud', 'Unidad', 'Predecesoras', 'Opc.', 'Subc.', 'Plazo ext. (h)', 'Calidad', ''], tbody, 'rt-table rt-edit'),
+        el('div', { class: 'rt-actions' },
+          el('button', { class: 'btn-ui', type: 'button', text: '+ Añadir operación', onclick: () => {
+            const seqs = Array.from(tbody.querySelectorAll('tr')).map((tr: any) => Number(tr._f.sequence.value) || 0);
+            addRow({ sequence: (Math.max(0, ...seqs) + 10), required_qty: 1 });
+          } }),
+          rtBtn('Guardar borrador', async () => { await save(); msg.replaceChildren(); await rtAfterRoutingChange(`✓ V${cur.version} guardada`); }),
+          rtBtn(`Liberar V${cur.version}`, async () => {
+            await save();
+            try { await rtCall(`/routings/${cur.id}/release`, { method: 'POST' }); }
+            catch (e: any) {
+              const issues = e?.body?.detail?.validation?.issues || [];
+              msg.replaceChildren(el('div', { class: 'rt-alert' }, el('b', { text: e.message }),
+                el('ul', { style: 'margin:.2rem 0 0;padding-left:1rem' }, issues.filter((i: any) => i.level === 'ERROR').map((i: any) => el('li', { text: i.message })))));
+              await rtAfterRoutingChange('Borrador guardado, pero no se puede liberar');
+              return;
+            }
+            await rtAfterRoutingChange(`✓ V${cur.version} liberada: las nuevas OF de ${part.part_number} la usarán`);
+          }, 'btn-ui--primary'),
+          rtConfirmBtn('Borrar borrador', 'Confirmar borrado', async () => {
+            await rtCall(`/routings/${cur.id}`, { method: 'DELETE' }); rt.openRouting = null;
+            await rtAfterRoutingChange(`Borrador V${cur.version} borrado`);
+          })),
+        msg);
+    }
+
+    // ── Recursos ──
+    async function rtLoadResources() {
+      const body = rtBody();
+      body.replaceChildren(el('p', { class: 'rt-muted', text: 'Cargando recursos…' }));
+      try { rt.resources = await rtCall('/resources'); }
+      catch (e) { body.replaceChildren(el('p', { class: 'rt-bad', text: rtErr(e) })); return; }
+      if (rt.view === 'resources') rtRenderResources();
+    }
+
+    function rtRenderResources() {
+      const tbody = el('tbody');
+      const result = el('div', { 'aria-live': 'polite' });
+      const addRow = (r: any) => {
+        const txt = (v: any, label: string, max: string) => el('input', { class: 'rt-in', value: v || '', maxlength: max, 'aria-label': label }) as HTMLInputElement;
+        const num = (v: any, label: string, step = 'any') => el('input', { class: 'rt-in', type: 'number', min: '0', step, value: v == null ? '' : String(v), placeholder: '—', 'aria-label': label }) as HTMLInputElement;
+        const f: any = {
+          code: txt(r.code, 'Código', '40'), name: txt(r.name, 'Nombre', '120'),
+          parallel_units: num(r.parallel_units ?? 1, 'Unidades en paralelo', '1'), hours_per_day: num(r.hours_per_day, 'Horas por día'),
+          day_start: el('input', { class: 'rt-in', type: 'time', value: r.day_start || '', 'aria-label': 'Hora de inicio' }),
+          efficiency_pct: num(r.efficiency_pct ?? 100, 'Eficiencia %'),
+          active: el('input', { type: 'checkbox', checked: r.active === false ? null : 'checked', 'aria-label': 'Activo' }),
+          days: RT_WEEKDAYS.map((d, i) => el('input', { type: 'checkbox', checked: (r.working_days || []).includes(i) ? 'checked' : null, 'aria-label': `Día ${d}` })),
+        };
+        const dt = el('td', { colspan: '10' });
+        const dtRow = el('tr', { hidden: 'hidden' }, dt);
+        const cap = r.id ? (r.calendar_ok ? `${r.weekly_hours} h/semana` : null) : null;
+        const tr = el('tr', {},
+          el('td', {}, f.code), el('td', {}, f.name), el('td', {}, f.parallel_units), el('td', {}, f.hours_per_day),
+          el('td', {}, el('div', { class: 'rt-days' }, RT_WEEKDAYS.map((d, i) => el('label', {}, d, f.days[i])))),
+          el('td', {}, f.day_start), el('td', {}, f.efficiency_pct), el('td', {}, f.active),
+          el('td', {}, cap ? cap : el('span', { class: 'rt-missing', text: r.id ? `${RT_MISSING}: ${(r.missing || []).map((m: string) => m === 'hours_per_day' ? 'horas/día' : 'días').join(', ')}` : '—' })),
+          el('td', {}, el('div', { class: 'rt-actions', style: 'margin:0;flex-wrap:nowrap' },
+            rtBtn(r.id ? 'Guardar' : 'Crear', async () => {
+              if (!f.code.value.trim()) { f.code.setAttribute('aria-invalid', 'true'); throw new Error('Indica el código del recurso.'); }
+              const n = (i: HTMLInputElement) => i.value.trim() === '' ? null : Number(i.value);
+              const days = f.days.map((c: HTMLInputElement, i: number) => c.checked ? i : -1).filter((i: number) => i >= 0);
+              const body = { code: f.code.value.trim(), name: f.name.value.trim() || null, parallel_units: n(f.parallel_units) || 1,
+                hours_per_day: n(f.hours_per_day), working_days: days.length ? days : null, day_start: f.day_start.value || null,
+                efficiency_pct: n(f.efficiency_pct) || 100, active: f.active.checked, notes: r.notes || null };
+              await rtCall(r.id ? `/resources/${r.id}` : '/resources', rtJson(r.id ? 'PATCH' : 'POST', body));
+              showToast(`✓ Recurso ${body.code} guardado`);
+              await rtLoadResources(); rtRefreshOverview();
+            }, r.id ? '' : 'btn-ui--primary'),
+            r.id ? el('button', { class: 'btn-ui', type: 'button', text: `Mantenimiento (${r.downtimes.length})`, onclick: () => {
+              dtRow.hidden = !dtRow.hidden; if (!dtRow.hidden) rtDowntimes(dt, r);
+            } }) : null,
+            r.id ? rtConfirmBtn('Borrar', 'Confirmar', async () => {
+              await rtCall(`/resources/${r.id}`, { method: 'DELETE' }); showToast(`Recurso ${r.code} borrado`); await rtLoadResources();
+            }) : el('button', { class: 'btn-ui', type: 'button', text: '×', 'aria-label': 'Descartar', onclick: () => tr.remove() }))));
+        tbody.append(tr, dtRow);
+      };
+      rt.resources.forEach(addRow);
+      rtBody().replaceChildren(
+        el('div', { class: 'rt-bar' },
+          el('button', { class: 'btn-ui btn-ui--primary', type: 'button', text: 'Añadir recurso', onclick: () => addRow({ parallel_units: 1, efficiency_pct: 100, active: true }) }),
+          rtBtn('Importar desde Tiempos de proceso', async () => {
+            const res = await rtCall('/resources/import-tiempos', { method: 'POST' });
+            result.replaceChildren(el('div', { class: res.missing.length ? 'rt-alert rt-alert--warn' : 'rt-why' },
+              `Creados: ${res.created.join(', ') || 'ninguno'}. `, res.skipped.length ? `Ya existían: ${res.skipped.map((s: any) => s.code).join(', ')}. ` : '',
+              res.missing.length ? `Falta: ${res.missing.join('; ')} (${RT_MISSING}): complétalo aquí.` : ''));
+            await rtLoadResources(); rtRefreshOverview();
+          })),
+        el('p', { class: 'rt-muted', style: 'margin:-.3rem 0 .8rem', text: 'Cada recurso tiene su calendario: horas de trabajo por día laborable a partir de la hora de inicio, días laborables, unidades idénticas en paralelo y eficiencia (tiempo productivo). Sin horas o días, su capacidad es DATO FALTANTE y las operaciones que lo usan no se planifican. «Importar desde Tiempos» usa solo lo que guardaste en esa pestaña (turnos × 8 h, operarios = unidades, 100 − buffer = eficiencia).' }),
+        result,
+        rtTable(['Código', 'Nombre', 'Unidades', 'h/día', 'Días laborables', 'Inicio', 'Eficiencia %', 'Activo', 'Capacidad', ''], tbody, 'rt-table rt-edit'),
+        rt.resources.length ? null : el('p', { class: 'rt-muted', style: 'margin-top:.5rem', text: 'Aún no hay recursos: añádelos o impórtalos desde Tiempos de proceso.' }));
+    }
+
+    function rtDowntimes(cell: HTMLElement, r: any) {
+      const s = el('input', { class: 'rt-in', type: 'datetime-local', 'aria-label': 'Inicio del mantenimiento' }) as HTMLInputElement;
+      const e = el('input', { class: 'rt-in', type: 'datetime-local', 'aria-label': 'Fin del mantenimiento' }) as HTMLInputElement;
+      const reason = el('input', { class: 'rt-in', maxlength: '200', placeholder: 'Motivo (preventivo, avería…)', 'aria-label': 'Motivo' }) as HTMLInputElement;
+      cell.replaceChildren(el('div', { class: 'rt-why' },
+        el('b', { text: `Mantenimiento y paradas de ${r.code}` }),
+        r.downtimes.length ? el('ul', { style: 'margin:.3rem 0;padding-left:1rem' }, r.downtimes.map((d: any) => el('li', {},
+          `${rtDt(d.starts_at)} → ${rtDt(d.ends_at)}${d.reason ? ' · ' + d.reason : ''} `,
+          rtBtn('Quitar', async () => { await rtCall(`/resources/${r.id}/downtimes/${d.id}`, { method: 'DELETE' }); showToast('Mantenimiento quitado'); await rtLoadResources(); }))))
+          : el('p', { class: 'rt-muted', style: 'margin:.3rem 0', text: 'Sin paradas registradas: el recurso está disponible en todo su calendario.' }),
+        el('div', { class: 'rt-bar', style: 'margin:.3rem 0 0' }, el('label', {}, 'Desde', s), el('label', {}, 'Hasta', e), reason,
+          rtBtn('Añadir parada', async () => {
+            if (!s.value || !e.value) throw new Error('Indica inicio y fin.');
+            await rtCall(`/resources/${r.id}/downtimes`, rtJson('POST', { starts_at: s.value, ends_at: e.value, reason: reason.value.trim() || null }));
+            showToast('✓ Parada registrada: la planificación la respetará'); await rtLoadResources();
+          }, 'btn-ui--primary'))));
     }
 
     // ── Admin panel ───────────────────────────────────────────────
