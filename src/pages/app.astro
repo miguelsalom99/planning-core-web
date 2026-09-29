@@ -5824,10 +5824,20 @@
 
   // ── Planning Copilot ──────────────────────────────────────────────────────
   const copilotState = { history: [] as { role: 'user' | 'assistant'; content: string }[], busy: false };
+  // What the user is looking at in MRP & Tiempos → Rutas y OF. Only ids and a
+  // label travel to the server, which resolves ownership against the user's
+  // company before any of it reaches the model (app/copilot_context.py).
+  let copilotFocus: { order_id?: number; operation_id?: number; part_id?: number; resource_id?: number; label?: string } | null = null;
+  function setCopilotFocus(f: typeof copilotFocus) {
+    copilotFocus = f;
+    const ctx = document.getElementById('copilotCtx');
+    if (ctx && document.getElementById('copilotDrawer')?.classList.contains('pcx-open')) copilotChips();
+  }
 
   function copilotPage(): { page: string; kpi_key: string | null; label: string } {
-    const kpisOpen = (document.getElementById('panel-kpis') as HTMLElement | null)?.style.display !== 'none';
-    if (kpisOpen) return { page: 'kpis', kpi_key: kpiState.detailKey, label: kpiState.detailKey ? 'KPIs · análisis del indicador' : 'KPIs · visión general' };
+    const visible = (id: string) => { const p = document.getElementById(id) as HTMLElement | null; return !!p && p.style.display !== 'none'; };
+    if (visible('panel-kpis')) return { page: 'kpis', kpi_key: kpiState.detailKey, label: kpiState.detailKey ? 'KPIs · análisis del indicador' : 'KPIs · visión general' };
+    if (visible('panel-mrp')) return { page: 'mrp', kpi_key: null, label: `MRP & Tiempos${copilotFocus?.label ? ' · ' + copilotFocus.label : ' · rutas y OF'}` };
     return { page: 'planner', kpi_key: null, label: lastPlanRequest ? `Planificador · semana del ${lastPlanRequest.week_start}` : 'Planificador · sin plan generado' };
   }
 
@@ -5835,14 +5845,29 @@
     const box = document.getElementById('copilotChips');
     if (!box) return;
     const ctx = copilotPage();
-    const qs = ctx.page === 'kpis'
-      ? ['¿Por qué está bajando este KPI?', '¿Qué debería mejorar primero?', 'Resume los mayores riesgos']
-      : ['Estado actual del plan', '¿Cabe este plan con la capacidad actual?',
-         '¿Podemos añadir 20 piezas más esta semana?', '¿Qué órdenes debo priorizar?', '¿Por qué es arriesgado este plan?',
-         '¿Qué pasa si la demanda sube un 15%?', '¿Qué pasa si el autoclave pierde un 20% de capacidad?',
-         '¿Y si un proveedor se retrasa 2 días?', 'Crea una estrategia de producción para esta semana'];
-    box.replaceChildren(...qs.map(q => el('button', { class: 'pcx-chip', type: 'button', text: q,
-      onclick: () => sendCopilot(q, q === 'Estado actual del plan' ? 'status' : undefined) })));
+    // [question, request_type] — the context (plan, OF, operation…) is sent automatically.
+    const f = copilotFocus;
+    const qs: [string, string][] = ctx.page === 'kpis'
+      ? [['¿Por qué está bajando este KPI?', 'free'], ['¿Qué debería mejorar primero?', 'find_risks'], ['Resume los mayores riesgos', 'find_risks']]
+      : ctx.page === 'mrp'
+      ? [
+          ...(f?.operation_id ? [['¿Qué pasa con esta operación y cómo lo soluciono?', 'whats_wrong'] as [string, string]] : []),
+          ...(f?.order_id ? [['¿Qué le pasa a esta OF?', 'whats_wrong'], ['¿Por qué se retrasa esta OF?', 'why_delayed'],
+                             ['¿Qué operación consume más capacidad en esta OF?', 'check_capacity'],
+                             ['¿Cómo puedo evitar el retraso de esta OF?', 'suggest_alternatives']] as [string, string][] : []),
+          ...(f?.part_id ? [['¿Por qué esta pieza tiene estas operaciones?', 'explain_plan'], ['¿Por qué tarda tanto esta pieza?', 'explain_plan']] as [string, string][] : []),
+          ['¿Qué está mal en mi plan?', 'whats_wrong'], ['Resume mi plan', 'summarize_plan'], ['Encuentra riesgos', 'find_risks'],
+          ['¿Qué recursos están sobrecargados?', 'check_capacity'], ['¿Qué OF tienen operaciones sin capacidad?', 'check_capacity'],
+          ['Comprueba la disponibilidad de material', 'check_material'],
+          ['¿Qué pasa si el recurso más cargado pierde 8 horas?', 'simulate_change'],
+        ]
+      : [['Estado actual del plan', 'summarize_plan'], ['¿Cabe este plan con la capacidad actual?', 'check_capacity'],
+         ['¿Podemos añadir 20 piezas más esta semana?', 'check_capacity'], ['¿Qué órdenes debo priorizar?', 'suggest_alternatives'],
+         ['¿Por qué es arriesgado este plan?', 'find_risks'], ['¿Qué pasa si la demanda sube un 15%?', 'simulate_change'],
+         ['¿Qué pasa si el autoclave pierde un 20% de capacidad?', 'simulate_change'],
+         ['¿Y si un proveedor se retrasa 2 días?', 'simulate_change'], ['Crea una estrategia de producción para esta semana', 'free']];
+    box.replaceChildren(...qs.map(([q, rt]) => el('button', { class: 'pcx-chip', type: 'button', text: q,
+      onclick: () => sendCopilot(q, q === 'Estado actual del plan' ? 'status' : undefined, rt) })));
     document.getElementById('copilotCtx')!.textContent = ctx.label;
   }
 
@@ -5892,6 +5917,26 @@
         el('div', { class: 'pcx-muted', text: `Confianza ${a.confidence?.level || '—'}: ${(a.confidence?.reasons || []).join(' ')}` }),
         el('div', { class: 'pcx-muted', text: `${a.horizon}. ${a.overtime} ${a.demand_scope}` }));
     }
+    if (a.type === 'routing_scenario') {
+      const keys: [string, string][] = [['on_time', 'OF en plazo'], ['late', 'Retrasadas'], ['at_risk', 'En riesgo'], ['unplanned', 'Sin planificar']];
+      return el('div', { class: 'pcx-card' },
+        el('div', { class: 'pcx-kpi__top' }, el('h4', { text: 'Simulación de rutas' }), el('span', { class: 'pcx-st pcx-st--warn', text: 'SIMULACIÓN — no es el plan real' })),
+        el('ul', { style: 'margin:.3rem 0;padding-left:1rem' }, (a.assumptions || []).map((x: string) => el('li', { class: 'pcx-muted', text: x }))),
+        el('table', {}, el('thead', {}, el('tr', {}, ['', 'Plan actual', 'Simulado'].map(h => el('th', { text: h })))),
+          el('tbody', {}, keys.map(([k, l]) => el('tr', {}, el('td', { text: l }), el('td', { text: String(a.baseline?.[k] ?? '—') }), el('td', { text: String(a.scenario?.[k] ?? '—') }))))),
+        (a.changed || []).length ? el('div', { class: 'pcx-muted', text: 'OF que cambian: ' + a.changed.map((c: any) => `${c.of} (${c.antes?.riesgo || '—'} → ${c.despues?.riesgo || '—'})`).join(', ') }) : null,
+        el('div', { class: 'pcx-muted', text: 'Nada se ha guardado: el plan real no ha cambiado.' }));
+    }
+    if (a.type === 'routing_workload') {
+      const cls = a.verdict === 'sobrecapacidad' ? 'pcx-st pcx-st--bad' : a.verdict === 'cabe' ? 'pcx-st pcx-st--ok' : 'pcx-st pcx-st--none';
+      return el('div', { class: 'pcx-card' },
+        el('div', { class: 'pcx-kpi__top' }, el('h4', { text: 'Carga frente a capacidad' }), el('span', { class: cls, text: a.verdict === 'sobrecapacidad' ? 'Sobrecapacidad' : a.verdict === 'cabe' ? 'Cabe' : 'Datos incompletos' })),
+        el('table', {}, el('thead', {}, el('tr', {}, ['Recurso', 'Comprometida', 'Nueva', 'Disponible', 'Resultado'].map(h => el('th', { text: h })))),
+          el('tbody', {}, (a.rows || []).map((r: any) => el('tr', {}, el('td', { text: r.recurso }), el('td', { text: `${r.comprometido_h} h` }),
+            el('td', { text: `${r.nuevo_h} h` }), el('td', { text: r.disponible_h == null ? 'DATO FALTANTE' : `${r.disponible_h} h` }),
+            el('td', { class: r.exceso_h ? 'pcx-delta--bad' : 'pcx-delta--good', text: r.exceso_h ? `+${r.exceso_h} h` : r.holgura_h != null ? `${r.holgura_h} h libres` : '—' }))))),
+        el('div', { class: 'pcx-muted', text: `Periodo hasta ${String(a.until || '').slice(0, 10)}. Comprobación simulada: no se ha añadido ninguna carga al plan.` }));
+    }
     if (a.type === 'kpi' && a.key) {
       return el('button', { class: 'pcx-chip', type: 'button', text: 'Abrir el análisis del KPI', onclick: () => {
         (document.querySelector('.nav-item[data-panel="kpis"]') as HTMLElement | null)?.click();
@@ -5907,7 +5952,7 @@
     log.scrollTop = log.scrollHeight;
   }
 
-  async function sendCopilot(text: string, pageOverride?: string) {
+  async function sendCopilot(text: string, pageOverride?: string, requestType = 'free') {
     const q = (text || '').trim();
     if (!q || copilotState.busy) return;
     openCopilot();
@@ -5920,20 +5965,34 @@
     let hist = copilotState.history.slice(-12);
     while (hist.length && hist[0].role !== 'user') hist = hist.slice(1);
     const ctx = copilotPage();
+    const inMrp = ctx.page === 'mrp';
+    // Minimum context: the weekly plan only for the planner/KPI pages; ids of what is on screen in MRP.
+    const focus = inMrp && copilotFocus ? Object.fromEntries(Object.entries(copilotFocus)
+      .filter(([k, v]) => k !== 'label' && typeof v === 'number')) : null;
     try {
       const res = await apiJson('/api/copilot', { method: 'POST', body: JSON.stringify({
-        messages: hist, page: pageOverride || ctx.page, kpi_key: ctx.kpi_key, plan: lastPlanRequest,
+        messages: hist, page: pageOverride || ctx.page, kpi_key: ctx.kpi_key, plan: inMrp ? null : lastPlanRequest,
+        focus, request_type: requestType,
       }) });
       thinking.remove();
+      if (res.outcome === 'error' || res.outcome === 'busy') {
+        // Service problem: show it, but keep it out of the conversation sent back to the model.
+        copilotState.history.pop();
+        copilotLogAppend(el('div', { class: 'pcx-msg pcx-msg--err', text: res.reply }));
+        return;
+      }
       copilotState.history.push({ role: 'assistant', content: res.reply });
       copilotLogAppend(el('div', { class: 'pcx-msg pcx-msg--bot', text: res.reply }));
       (res.artifacts || []).forEach((a: any) => { const c = copilotCard(a); if (c) copilotLogAppend(c); });
     } catch (e: any) {
       thinking.remove();
       copilotState.history.pop();
+      // Never show server details: a fixed, reassuring message per case.
       copilotLogAppend(el('div', { class: 'pcx-msg pcx-msg--err', text: e.status === 429
-        ? 'Has alcanzado el límite de consultas del copiloto. Inténtalo más tarde.'
-        : e.status === 403 ? 'Tu usuario no tiene acceso al copiloto.' : `No se pudo obtener respuesta (${e.message}).` }));
+        ? 'Has alcanzado el límite de consultas del copiloto. Inténtalo más tarde. Tu plan no se ha modificado.'
+        : e.status === 403 ? 'Tu usuario no tiene acceso al copiloto.'
+        : e.status === 422 ? 'La pregunta es demasiado larga o la conversación demasiado extensa: empieza una nueva conversación.'
+        : 'El asistente de planificación no está disponible temporalmente. Tu plan no se ha modificado.' }));
     } finally {
       copilotState.busy = false;
       (document.getElementById('copilotSend') as HTMLButtonElement).disabled = false;
@@ -5949,8 +6008,9 @@
     const log = document.getElementById('copilotLog')!;
     if (!log.childElementCount) {
       copilotLogAppend(el('div', { class: 'pcx-msg pcx-msg--bot', text:
-        'Hola. Conozco tu plan abierto, tus KPI y puedo simular escenarios. Pregúntame qué está pasando, por qué, ' +
-        'qué impacto tiene o qué harías — siempre te diré en qué datos me baso.' }));
+        'Hola. Veo lo que tienes en pantalla (tu plan, tus KPI o la OF/operación que estés revisando) y puedo simular ' +
+        'escenarios. Pregúntame qué está mal, por qué, cómo solucionarlo o qué pasa si cambias algo: te diré en qué ' +
+        'datos me baso. Solo consulto y simulo: nunca modifico tu plan.' }));
     }
     const input = document.getElementById('copilotInput') as HTMLTextAreaElement;
     if (prefill) { input.value = prefill; }
@@ -9364,8 +9424,16 @@
       rtShow(rt.view);
     }
 
+    // "Ask the copilot" with the context of what is on screen (read-only answer).
+    function rtAskCopilot(label: string, question: string, requestType: string, focus: any): HTMLElement | null {
+      if (!hasAccess('copilot')) return null;
+      return el('button', { class: 'btn-ui', type: 'button', text: label, title: 'El copiloto analiza estos datos; no modifica nada.',
+        onclick: (e: Event) => { e.stopPropagation(); setCopilotFocus(focus); sendCopilot(question, undefined, requestType); } });
+    }
+
     function rtShow(view: string) {
       rt.view = view;
+      setCopilotFocus(null);
       document.querySelectorAll('[data-rtview]').forEach(b => b.setAttribute('aria-selected', String((b as HTMLElement).dataset.rtview === view)));
       if (view === 'orders') rtLoadOrders();
       else if (view === 'parts') rtLoadParts();
@@ -9545,10 +9613,14 @@
           stat(s.at_risk, 'En riesgo', s.at_risk ? 'rt-warn' : ''), stat(s.late, 'Retrasadas', s.late ? 'rt-bad' : ''),
           stat(s.unplanned, 'Sin planificar', s.unplanned ? 'rt-bad' : '')),
         el('h4', { style: 'margin-top:.4rem', text: 'Capacidad por recurso en el periodo' }),
-        cap.length ? rtTable(['Recurso', 'Necesarias', 'Disponibles', 'Carga', 'Estado'], el('tbody', {}, cap.map((c: any) => el('tr', { title: c.message },
+        cap.length ? rtTable(['Recurso', 'Necesarias', 'Disponibles', 'Carga', 'Estado', ''], el('tbody', {}, cap.map((c: any) => el('tr', { title: c.message },
           el('td', {}, el('b', { text: c.resource })), el('td', { class: 'rt-num', text: `${c.required_h} h` }),
           el('td', { class: 'rt-num', text: c.available_h == null ? RT_MISSING : `${c.available_h} h` }),
-          el('td', { class: 'rt-num', text: c.load_pct == null ? '—' : `${c.load_pct}%` }), el('td', {}, capPill(c))))))
+          el('td', { class: 'rt-num', text: c.load_pct == null ? '—' : `${c.load_pct}%` }), el('td', {}, capPill(c)),
+          el('td', {}, c.status === 'OVERLOAD' || c.status === 'NO_CALENDAR' ? rtAskCopilot('¿Por qué?',
+            c.status === 'OVERLOAD' ? `¿Por qué está sobrecargado ${c.resource}, qué OF afecta y cómo lo soluciono?`
+              : `¿Qué pasa con ${c.resource}, que no tiene calendario?`, 'check_capacity',
+            { resource_id: c.resource_id, label: `Recurso ${c.resource}` }) : null)))))
           : el('p', { class: 'rt-muted', text: 'Ninguna OF con fecha de necesidad dentro del periodo consume capacidad.' }),
         over.length ? el('ul', { class: 'rt-bad', style: 'margin:.5rem 0 0;padding-left:1rem' }, over.map((c: any) => el('li', { text: c.message }))) : null,
         el('h4', { style: 'margin-top:.9rem', text: 'Secuencia planificada' }),
@@ -9568,7 +9640,7 @@
       const tbody = el('tbody');
       rt.orders.forEach((o: any) => {
         const open = rt.openOrder === o.id;
-        const toggle = () => { rt.openOrder = open ? null : o.id; rtRenderOrderList(); };
+        const toggle = () => { rt.openOrder = open ? null : o.id; if (open) setCopilotFocus(null); rtRenderOrderList(); };
         tbody.appendChild(el('tr', { class: 'rt-click', tabindex: '0', 'aria-expanded': String(open), onclick: toggle,
             onkeydown: (e: KeyboardEvent) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggle(); } } },
           el('td', { 'data-label': 'OF' }, el('b', { text: o.order_number })),
@@ -9594,6 +9666,7 @@
         const o = await rtCall(`/orders/${id}`);
         const fromPlan = (rt.plan?.orders || []).find((x: any) => x.id === id);
         document.getElementById(`rtOrder-${id}`)?.replaceChildren(rtOrderCard(o, fromPlan));
+        setCopilotFocus({ order_id: o.id, label: o.order_number });
       } catch (e) { cell.replaceChildren(el('p', { class: 'rt-bad', text: rtErr(e) })); }
     }
 
@@ -9611,7 +9684,12 @@
         o.routing_status === 'ERROR' && o.part_number && o.lifecycle === 'planned' ? rtBtn('Reintentar asignación de ruta', () => reroute('Ruta reasignada')) : null,
         o.lifecycle !== 'historical' ? rtConfirmBtn('Cancelar OF', 'Confirmar cancelación', () => patch({ status: 'cancelled' }, `OF ${o.order_number} cancelada`)) : null,
         o.status === 'planned' && !started ? rtConfirmBtn('Borrar OF', 'Confirmar borrado', async () => {
-          await rtCall(`/orders/${o.id}`, { method: 'DELETE' }); showToast(`OF ${o.order_number} borrada`); rt.openOrder = null; await rtReloadOrders(); }) : null);
+          await rtCall(`/orders/${o.id}`, { method: 'DELETE' }); showToast(`OF ${o.order_number} borrada`); rt.openOrder = null; await rtReloadOrders(); }) : null,
+        rtAskCopilot(o.risk && o.risk !== 'on_time' ? '¿Por qué? Preguntar al copiloto' : 'Preguntar al copiloto',
+          o.risk === 'late' ? `¿Por qué se retrasa la ${o.order_number} y cómo puedo evitarlo?`
+            : o.risk === 'unplanned' ? `¿Por qué no se puede planificar la ${o.order_number} y qué falta?`
+            : o.risk === 'at_risk' ? `¿Por qué está en riesgo la ${o.order_number}?` : `Explícame la ${o.order_number}: ruta, capacidad y riesgos.`,
+          o.risk === 'late' ? 'why_delayed' : 'whats_wrong', { order_id: o.id, label: o.order_number }));
       let assign: HTMLElement | null = null;
       if (!o.part_number && o.lifecycle === 'planned') {
         const sel = el('select', { class: 'rt-in' }, el('option', { value: '', text: '— Selecciona la pieza —' }),
@@ -9655,7 +9733,11 @@
       const riskPill = op.risk === 'capacity' ? el('span', { class: 'rt-pill rt-pill--bad', text: '⚠ Riesgo de capacidad' })
         : op.risk === 'late' ? el('span', { class: 'rt-pill rt-pill--bad', text: 'Fuera de plazo' })
         : op.risk === 'unplanned' ? el('span', { class: 'rt-pill rt-pill--bad', text: 'Sin planificar' }) : null;
-      return el('details', { class: 'rt-op' },
+      return el('details', { class: 'rt-op', ontoggle: (e: Event) => {
+          const open = (e.currentTarget as HTMLDetailsElement).open;
+          setCopilotFocus(open ? { order_id: o.id, operation_id: op.id, label: `${o.order_number} · ${op.code}` }
+                               : { order_id: o.id, label: o.order_number });
+        } },
         el('summary', {}, el('b', { text: op.code }), el('span', { text: op.name }),
           el('span', { class: 'rt-muted', text: op.subcontracted ? 'Subcontratada' : (op.planned_resource_code || op.resource_code || RT_MISSING) }),
           el('span', { class: 'rt-pill rt-pill--mute', text: RT_STATUS[op.status] || op.status }), riskPill,
@@ -9703,6 +9785,10 @@
         if (o.status !== 'released') box.append(el('span', { class: 'rt-muted', text: 'Lanza la OF para registrar inicio y fin.' }));
       }
       if (op.optional) box.append(rtConfirmBtn('Cancelar (opcional)', 'Confirmar', () => send({ status: 'CANCELLED' }, `${op.code} cancelada`)));
+      const ask = rtAskCopilot('Preguntar al copiloto', op.risk ? `¿Por qué ${op.code} de la ${o.order_number} tiene riesgo y qué puedo hacer?`
+        : `Explícame ${op.code} de la ${o.order_number}: tiempos, recurso y capacidad.`, op.risk ? 'whats_wrong' : 'explain_plan',
+        { order_id: o.id, operation_id: op.id, label: `${o.order_number} · ${op.code}` });
+      if (ask) box.append(ask);
       return box;
     }
 
@@ -9795,6 +9881,7 @@
         || versions.find(v => v.status === 'released') || versions[0];
       rt.openRouting = cur ? cur.id : null;
       box.replaceChildren(rtRoutingPanel(part, versions, cur));
+      setCopilotFocus({ part_id: part.id, label: `Pieza ${part.part_number}` });
     }
 
     async function rtAfterRoutingChange(ok: string) {
@@ -9809,6 +9896,8 @@
       const head = el('div', { class: 'rt-bar', style: 'justify-content:space-between' },
         el('h4', { style: 'margin:0', text: `Ruta de fabricación · ${part.part_number}` }),
         el('div', { class: 'rt-bar', style: 'margin:0' },
+          rtAskCopilot('Preguntar al copiloto', `Explícame la ruta de ${part.part_number}: por qué tiene estas operaciones, qué datos faltan y qué operación consume más capacidad.`,
+            'explain_plan', { part_id: part.id, label: `Pieza ${part.part_number}` }),
           versions.map(v => el('button', { class: `btn-ui${cur && v.id === cur.id ? ' btn-ui--primary' : ''}`, type: 'button', 'aria-pressed': String(!!cur && v.id === cur.id),
             text: `V${v.version} · ${RT_RSTATUS[v.status] || v.status}`, onclick: () => { rt.openRouting = v.id; rtOpenPart(part.id); } })),
           !hasDraft ? rtBtn(cur ? `Nueva versión (copia de V${cur.version})` : 'Crear ruta V1', async () => {
