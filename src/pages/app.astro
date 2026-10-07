@@ -3077,6 +3077,10 @@
             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
             Replanificar IA
           </button>
+          <button class="btn-ui" id="layoutEditBtn" type="button" aria-pressed="false" title="Reordena, cambia el ancho, minimiza u oculta los bloques de esta pantalla">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/></svg>
+            Personalizar vista
+          </button>
         </div>
       </div>
 
@@ -3091,7 +3095,10 @@
         <button class="hist-banner__cta" id="histBannerDismiss">Volver al plan actual →</button>
       </div>
 
-      <div class="demo-data-note" role="note" style="font-size:.75rem;font-weight:600;color:#92400E;background:#FEF3C7;border:1px solid #FCD34D;border-radius:8px;padding:.45rem .75rem;margin-bottom:.75rem">Vista de ejemplo: la alerta y los indicadores (OEE, cumplimiento, setup, órdenes en riesgo) son ilustrativos y no reflejan tu planta.</div>
+      <!-- User-arranged blocks: order, width, minimised and hidden are per user (see «Personalizar vista»). -->
+      <div class="lw-region" data-layout="gantt">
+      <section class="lw" data-widget="alert" data-title="Alerta de cuello de botella" data-span="12">
+        <div class="demo-data-note" role="note" style="font-size:.75rem;font-weight:600;color:#92400E;background:#FEF3C7;border:1px solid #FCD34D;border-radius:8px;padding:.45rem .75rem;margin-bottom:.75rem">Vista de ejemplo: esta alerta es ilustrativa y no refleja tu planta.</div>
       <!-- Alert banner -->
       <div class="alert-banner">
         <div class="alert-banner__icon">
@@ -3104,6 +3111,9 @@
         <span class="alert-banner__cta">Ver sugerencia →</span>
       </div>
 
+      </section>
+      <section class="lw" data-widget="kpis" data-title="Indicadores" data-span="12">
+        <div class="demo-data-note" role="note" style="font-size:.75rem;font-weight:600;color:#92400E;background:#FEF3C7;border:1px solid #FCD34D;border-radius:8px;padding:.45rem .75rem;margin-bottom:.75rem">Vista de ejemplo: los indicadores (OEE, cumplimiento, setup, órdenes en riesgo) son ilustrativos. Los reales están en «KPIs del piloto».</div>
       <!-- KPI grid -->
       <div class="kpi-grid">
 
@@ -3165,6 +3175,8 @@
 
       </div>
 
+      </section>
+      <section class="lw" data-widget="gantt" data-title="Gantt de producción y planificador" data-span="12" data-essential="1">
       <!-- Gantt -->
       <div class="gantt-card">
         <div class="gantt-header">
@@ -3530,10 +3542,9 @@
 
       </div>
 
-      <div class="demo-data-note" role="note" style="font-size:.75rem;font-weight:600;color:#92400E;background:#FEF3C7;border:1px solid #FCD34D;border-radius:8px;padding:.45rem .75rem;margin-bottom:.75rem">Vista de ejemplo: las órdenes activas y la capacidad semanal son ilustrativas. Tus OF reales y su carga por recurso están en «MRP &amp; Tiempos».</div>
-      <!-- Bottom grid -->
-      <div class="bottom-grid">
-
+      </section>
+      <section class="lw" data-widget="orders" data-title="Órdenes activas" data-span="8">
+        <div class="demo-data-note" role="note" style="font-size:.75rem;font-weight:600;color:#92400E;background:#FEF3C7;border:1px solid #FCD34D;border-radius:8px;padding:.45rem .75rem;margin-bottom:.75rem">Vista de ejemplo: estas órdenes son ilustrativas. Tus OF reales están en «MRP &amp; Tiempos».</div>
         <!-- Orders -->
         <div class="panel">
           <div class="panel__header">
@@ -3589,6 +3600,9 @@
           </div>
         </div>
 
+      </section>
+      <section class="lw" data-widget="capacity" data-title="Capacidad semanal" data-span="4">
+        <div class="demo-data-note" role="note" style="font-size:.75rem;font-weight:600;color:#92400E;background:#FEF3C7;border:1px solid #FCD34D;border-radius:8px;padding:.45rem .75rem;margin-bottom:.75rem">Vista de ejemplo: esta capacidad es ilustrativa. La carga real por recurso está en «MRP &amp; Tiempos» → Planificar.</div>
         <!-- Capacity -->
         <div class="panel">
           <div class="panel__header">
@@ -3623,8 +3637,8 @@
             </div>
           </div>
         </div>
-
-      </div>
+      </section>
+      </div><!-- /.lw-region -->
     </main>
     </div><!-- /#panel-gantt -->
 
@@ -4005,6 +4019,7 @@
           <div class="pcx-drawer__ctx" id="copilotCtx"></div>
         </div>
         <div style="display:flex;gap:.35rem">
+          <button class="pcx-icon-btn" id="copilotDock" type="button" title="Anclar al lateral: trabaja con el copiloto abierto junto a la pantalla" aria-pressed="false">⇥</button>
           <button class="pcx-icon-btn" id="copilotReset" type="button" title="Nueva conversación">↺</button>
           <button class="pcx-icon-btn" id="copilotClose" type="button" title="Cerrar">×</button>
         </div>
@@ -5054,6 +5069,64 @@
 </button>
 
 <style is:global>
+  /* ── User-arranged layout (Personalizar vista) ─────────────────────────
+     Global on purpose: the per-block bars are built in JS, and Astro only
+     scopes elements it sees at build time. */
+  .lw-region { display:grid; grid-template-columns:repeat(12, minmax(0, 1fr)); gap:1.25rem; }
+  .lw { grid-column:span var(--lw-span, 12); min-width:0; position:relative; display:flex; flex-direction:column; gap:.75rem; }
+  .lw[hidden] { display:none; }
+  .lw > .demo-data-note { margin-bottom:0 !important; }
+  .lw-region .lw .panel { height:100%; }
+  /* The KPI block adapts its own columns to the width the user gave it. */
+  .lw[data-widget="kpis"] { container-type:inline-size; }
+  @container (max-width: 720px) { .lw-region .lw .kpi-grid { grid-template-columns:repeat(2, 1fr); } }
+  @container (max-width: 380px) { .lw-region .lw .kpi-grid { grid-template-columns:1fr; } }
+  @media (max-width: 860px) { .lw { grid-column:span 12; } }
+
+  .lw-bar { display:none; align-items:center; gap:.4rem; flex-wrap:wrap; padding:.35rem .5rem; border:1px solid var(--n80);
+            border-radius:8px; background:var(--white); font-size:.74rem; color:var(--n30); }
+  .lw-bar__title { font-weight:700; color:var(--n20); flex:1 1 auto; min-width:8rem; }
+  .lw-bar button, .lw-bar select { font:inherit; font-size:.72rem; border:1px solid var(--n80); background:var(--white);
+            color:var(--n20); border-radius:6px; padding:.2rem .45rem; cursor:pointer; }
+  .lw-bar button:hover, .lw-bar select:hover { border-color:var(--brand); }
+  .lw-bar button:focus-visible, .lw-bar select:focus-visible { outline:2px solid var(--brand); outline-offset:1px; }
+  .lw-bar__grip { cursor:grab !important; letter-spacing:-.1em; }
+  .lw-bar__grip:active { cursor:grabbing !important; }
+  .lw-bar button:disabled { opacity:.4; cursor:not-allowed; }
+  .lw--collapsed > .lw-bar { display:flex; }
+  .lw--collapsed > :not(.lw-bar) { display:none !important; }
+  .lw-region.lw-editing .lw > .lw-bar { display:flex; border-style:dashed; border-color:var(--brand); }
+  .lw-region.lw-editing .lw { outline:1px dashed rgba(27,63,139,.25); outline-offset:6px; border-radius:10px; }
+  .lw-region.lw-editing .lw.lw--dragging { opacity:.45; }
+  .lw-region.lw-editing .lw.lw--drop-before { box-shadow:-4px 0 0 0 var(--brand); }
+  .lw-region.lw-editing .lw.lw--drop-after { box-shadow:4px 0 0 0 var(--brand); }
+
+  .lw-tools { display:flex; align-items:center; gap:.5rem; flex-wrap:wrap; padding:.6rem .8rem; border:1px solid var(--brand);
+              border-radius:10px; background:rgba(27,63,139,.05); font-size:.78rem; color:var(--n20); }
+  .lw-tools[hidden] { display:none; }
+  .lw-tools__hint { flex:1 1 18rem; }
+  .lw-tools button { font:inherit; font-size:.75rem; border:1px solid var(--n80); background:var(--white); color:var(--n20);
+              border-radius:6px; padding:.3rem .6rem; cursor:pointer; }
+  .lw-tools .lw-tools__done { background:var(--brand); border-color:var(--brand); color:#fff; font-weight:700; }
+  .lw-tools__hidden { display:flex; gap:.35rem; flex-wrap:wrap; align-items:center; }
+  #layoutEditBtn[aria-pressed="true"] { border-color:var(--brand); color:var(--brand); }
+
+  /* Folded sidebar (desktop): more room for the Gantt. The menu button stays
+     in the top bar to bring it back. */
+  @media (min-width: 861px) {
+    body.pc-sidebar-hidden .sidebar { display:none !important; }
+    html body .topbar .sidebar-toggle { display:flex; }
+  }
+  /* Docked copilot: opens beside the screen instead of over it, below the
+     top bar, so every control stays reachable. Wide screens only. */
+  @media (min-width: 1100px) {
+    body.pc-copilot-docked .pcx-drawer { top:var(--topbar-h); height:calc(100vh - var(--topbar-h)); box-shadow:none;
+                                         width:min(430px, 34vw); }
+    body.pc-copilot-docked:has(#copilotDrawer.pcx-open) .app-body { margin-right:min(430px, 34vw); }
+    body.pc-copilot-docked:has(#copilotDrawer.pcx-open) #copilotFab { display:none !important; }
+  }
+  @media (max-width: 1099px) { #copilotDock { display:none; } }
+  #copilotDock[aria-pressed="true"] { border-color:var(--brand); color:var(--brand); }
   /* ── KPI Intelligence + Planning Copilot (runtime-built nodes, so global + pcx- prefix) ── */
   .pcx-kpi-head { display:flex; justify-content:space-between; align-items:flex-end; gap:1rem; flex-wrap:wrap; margin-bottom:1rem; }
   .pcx-kpi-controls { display:flex; gap:.5rem; flex-wrap:wrap; }
@@ -6030,6 +6103,282 @@
     if (!on) document.getElementById('copilotDrawer')?.classList.remove('pcx-open');
   }
 
+  // ── User-arranged layout («Personalizar vista») ──────────────────────
+  // Each `.lw` block of a `.lw-region` can be reordered (drag or ← →),
+  // resized on a 12-column grid, minimised or hidden. Blocks marked
+  // data-essential (the Gantt + planner) can only be minimised, so no tool is
+  // ever lost. Blocks are *moved*, never re-rendered, so their event listeners
+  // and ids keep working. The layout is per user: cached locally for an
+  // instant first paint and stored on the server (PUT /config {layouts}).
+  const LW_SPANS: [number, string][] = [[12, 'Ancho completo'], [8, '2/3'], [6, 'Mitad'], [4, '1/3']];
+  const LW_ID = /^[a-z0-9_-]{1,40}$/;
+  let lwState: any = { version: 1, panels: {}, shell: { sidebar_hidden: false, copilot_docked: false } };
+  const lwDefaults: Record<string, { order: string[]; spans: Record<string, number> }> = {};
+  let lwSaveTimer: any = null;
+  let lwReady = false;
+
+  function lwCacheKey() { return `pc_layouts:${currentUser?.id ?? 'anon'}`; }
+
+  function lwClean(raw: any) {
+    // Mirror of the server schema (schemas.LayoutsIn): anything unknown is dropped.
+    const out: any = { version: 1, panels: {}, shell: { sidebar_hidden: false, copilot_docked: false } };
+    if (!raw || typeof raw !== 'object') return out;
+    out.shell.sidebar_hidden = !!raw.shell?.sidebar_hidden;
+    out.shell.copilot_docked = !!raw.shell?.copilot_docked;
+    for (const [pid, p] of Object.entries<any>(raw.panels || {})) {
+      if (!LW_ID.test(pid) || !p || typeof p !== 'object') continue;
+      const order = [...new Set((Array.isArray(p.order) ? p.order : [])
+        .filter((x: any) => typeof x === 'string' && LW_ID.test(x)))].slice(0, 30);
+      const widgets: any = {};
+      for (const [wid, w] of Object.entries<any>(p.widgets || {})) {
+        if (!LW_ID.test(wid) || !w || typeof w !== 'object') continue;
+        widgets[wid] = { span: LW_SPANS.some(([s]) => s === w.span) ? w.span : 12,
+                         collapsed: !!w.collapsed, hidden: !!w.hidden };
+      }
+      out.panels[pid] = { order, widgets };
+    }
+    return out;
+  }
+
+  function lwBlocks(region: HTMLElement): HTMLElement[] {
+    return Array.from(region.children).filter(c => (c as HTMLElement).classList?.contains('lw')) as HTMLElement[];
+  }
+
+  function lwPanel(pid: string) {
+    if (!lwState.panels[pid]) lwState.panels[pid] = { order: [], widgets: {} };
+    return lwState.panels[pid];
+  }
+
+  function lwWidget(pid: string, wid: string) {
+    const p = lwPanel(pid);
+    if (!p.widgets[wid]) p.widgets[wid] = { span: lwDefaults[pid]?.spans[wid] ?? 12, collapsed: false, hidden: false };
+    return p.widgets[wid];
+  }
+
+  function lwApplyRegion(region: HTMLElement) {
+    const pid = region.dataset.layout!;
+    const def = lwDefaults[pid];
+    if (!def) return;
+    const p = lwState.panels[pid] || { order: [], widgets: {} };
+    const byId: Record<string, HTMLElement> = {};
+    lwBlocks(region).forEach(b => { byId[b.dataset.widget!] = b; });
+    // Saved order first (only blocks that still exist), then any new block in its default place.
+    const order = [...p.order.filter((x: string) => byId[x]), ...def.order.filter(x => !p.order.includes(x))];
+    order.forEach(wid => region.appendChild(byId[wid]));
+    const tools = region.querySelector(':scope > .lw-tools');
+    if (tools) region.prepend(tools);
+    for (const wid of order) {
+      const b = byId[wid];
+      const w = p.widgets[wid] || {};
+      const essential = b.dataset.essential === '1';
+      const span = LW_SPANS.some(([s]) => s === w.span) ? w.span : def.spans[wid];
+      b.style.setProperty('--lw-span', String(span));
+      b.hidden = !essential && !!w.hidden;
+      b.classList.toggle('lw--collapsed', !!w.collapsed);
+    }
+    for (const wid of order) {
+      const w = p.widgets[wid] || {};
+      lwSyncBar(region, byId[wid], LW_SPANS.some(([s]) => s === w.span) ? w.span : def.spans[wid], !!w.collapsed);
+    }
+    lwRenderTools(region);
+  }
+
+  function lwSyncBar(region: HTMLElement, b: HTMLElement, span: number, collapsed: boolean) {
+    const bar = b.querySelector(':scope > .lw-bar') as HTMLElement | null;
+    if (!bar) return;
+    (bar.querySelector('select') as HTMLSelectElement).value = String(span);
+    const col = bar.querySelector('[data-lw="collapse"]') as HTMLButtonElement;
+    col.textContent = collapsed ? 'Mostrar' : 'Minimizar';
+    col.setAttribute('aria-expanded', String(!collapsed));
+    const visible = lwBlocks(region).filter(x => !x.hidden);
+    const i = visible.indexOf(b);
+    (bar.querySelector('[data-lw="prev"]') as HTMLButtonElement).disabled = i <= 0;
+    (bar.querySelector('[data-lw="next"]') as HTMLButtonElement).disabled = i < 0 || i >= visible.length - 1;
+  }
+
+  function lwBuildBar(region: HTMLElement, b: HTMLElement) {
+    const pid = region.dataset.layout!, wid = b.dataset.widget!, title = b.dataset.title || wid;
+    const essential = b.dataset.essential === '1';
+    const sel = el('select', { 'aria-label': `Ancho de «${title}»`, onchange: (e: Event) => {
+      lwWidget(pid, wid).span = Number((e.target as HTMLSelectElement).value); lwCommit(region);
+    } }, LW_SPANS.map(([s, label]) => el('option', { value: String(s), text: label })));
+    const grip = el('button', { type: 'button', class: 'lw-bar__grip', draggable: 'true', title: 'Arrastra para mover',
+                                'aria-label': `Mover «${title}» (arrastrar)`, text: '⋮⋮' });
+    grip.addEventListener('dragstart', (e: DragEvent) => {
+      region.dataset.dragging = wid; b.classList.add('lw--dragging');
+      e.dataTransfer?.setData('text/plain', wid);
+      if (e.dataTransfer) e.dataTransfer.effectAllowed = 'move';
+    });
+    grip.addEventListener('dragend', () => {
+      delete region.dataset.dragging; b.classList.remove('lw--dragging'); lwClearDrop(region);
+    });
+    const bar = el('div', { class: 'lw-bar', role: 'toolbar', 'aria-label': `Bloque «${title}»` },
+      grip,
+      el('span', { class: 'lw-bar__title', text: title }),
+      el('button', { type: 'button', 'data-lw': 'prev', title: 'Mover antes', 'aria-label': `Mover «${title}» antes`,
+                     text: '←', onclick: () => lwMove(region, wid, -1) }),
+      el('button', { type: 'button', 'data-lw': 'next', title: 'Mover después', 'aria-label': `Mover «${title}» después`,
+                     text: '→', onclick: () => lwMove(region, wid, 1) }),
+      sel,
+      el('button', { type: 'button', 'data-lw': 'collapse', onclick: () => {
+        const w = lwWidget(pid, wid); w.collapsed = !w.collapsed; lwCommit(region);
+      } }),
+      essential
+        ? el('span', { style: 'font-size:.7rem;color:var(--n50)', title: 'Contiene el planificador: se puede minimizar, no ocultar',
+                       text: 'Imprescindible' })
+        : el('button', { type: 'button', 'data-lw': 'hide', title: 'Ocultar (se recupera desde «Bloques ocultos»)',
+                         text: 'Ocultar', onclick: () => { lwWidget(pid, wid).hidden = true; lwCommit(region); } }),
+    );
+    b.prepend(bar);
+  }
+
+  function lwClearDrop(region: HTMLElement) {
+    lwBlocks(region).forEach(x => x.classList.remove('lw--drop-before', 'lw--drop-after'));
+  }
+
+  function lwCurrentOrder(region: HTMLElement) { return lwBlocks(region).map(x => x.dataset.widget!); }
+
+  function lwMove(region: HTMLElement, wid: string, dir: number) {
+    const all = lwBlocks(region);
+    const visible = all.filter(x => !x.hidden);
+    const b = all.find(x => x.dataset.widget === wid)!;
+    const i = visible.indexOf(b), j = i + dir;
+    if (i < 0 || j < 0 || j >= visible.length) return;
+    const ref = visible[j];
+    if (dir < 0) region.insertBefore(b, ref); else region.insertBefore(b, ref.nextSibling);
+    lwPanel(region.dataset.layout!).order = lwCurrentOrder(region);
+    lwCommit(region);
+    (b.querySelector(`[data-lw="${dir < 0 ? 'prev' : 'next'}"]`) as HTMLButtonElement | null)?.focus();
+  }
+
+  function lwRenderTools(region: HTMLElement) {
+    let tools = region.querySelector(':scope > .lw-tools') as HTMLElement | null;
+    if (!tools) {
+      tools = el('div', { class: 'lw-tools', role: 'region', 'aria-label': 'Personalizar vista' });
+      region.prepend(tools);
+    }
+    const pid = region.dataset.layout!;
+    const hidden = lwBlocks(region).filter(b => b.hidden);
+    tools.replaceChildren(
+      el('span', { class: 'lw-tools__hint', text: 'Arrastra ⋮⋮ (o usa ← →) para reordenar, elige el ancho de cada bloque, '
+                   + 'minimízalo u ocúltalo. Se guarda para tu usuario.' }),
+      el('span', { class: 'lw-tools__hidden' },
+        hidden.length ? el('span', { text: 'Bloques ocultos:' }) : null,
+        hidden.map(b => el('button', { type: 'button', title: 'Volver a mostrar', text: `+ ${b.dataset.title}`, onclick: () => {
+          lwWidget(pid, b.dataset.widget!).hidden = false; lwCommit(region);
+        } }))),
+      el('button', { type: 'button', text: 'Restablecer', title: 'Vuelve al diseño original de esta pantalla', onclick: () => {
+        delete lwState.panels[pid]; lwCommit(region); showToast('Diseño restablecido');
+      } }),
+      el('button', { type: 'button', class: 'lw-tools__done', text: 'Listo', onclick: () => lwSetEditing(region, false) }),
+    );
+    tools.hidden = !region.classList.contains('lw-editing');
+  }
+
+  function lwSetEditing(region: HTMLElement, on: boolean) {
+    region.classList.toggle('lw-editing', on);
+    const btn = document.getElementById('layoutEditBtn');
+    btn?.setAttribute('aria-pressed', String(on));
+    lwRenderTools(region);
+    if (on) (region.querySelector('.lw-tools button') as HTMLElement | null)?.focus();
+    else btn?.focus();
+  }
+
+  function lwApplyShell() {
+    document.body.classList.toggle('pc-sidebar-hidden', !!lwState.shell.sidebar_hidden);
+    document.body.classList.toggle('pc-copilot-docked', !!lwState.shell.copilot_docked);
+    document.getElementById('copilotDock')?.setAttribute('aria-pressed', String(!!lwState.shell.copilot_docked));
+    const tgl = document.getElementById('sidebarToggle');
+    if (tgl && window.innerWidth > 860) {
+      tgl.setAttribute('aria-label', lwState.shell.sidebar_hidden ? 'Mostrar menú lateral' : 'Ocultar menú lateral');
+      tgl.setAttribute('aria-expanded', String(!lwState.shell.sidebar_hidden));
+    }
+  }
+
+  function lwApplyAll() {
+    document.querySelectorAll<HTMLElement>('.lw-region').forEach(lwApplyRegion);
+    lwApplyShell();
+  }
+
+  function lwCommit(region?: HTMLElement) {
+    lwState = lwClean(lwState);
+    if (region) lwApplyRegion(region); else lwApplyAll();
+    lwApplyShell();
+    try { localStorage.setItem(lwCacheKey(), JSON.stringify(lwState)); } catch {}
+    clearTimeout(lwSaveTimer);
+    lwSaveTimer = setTimeout(async () => {
+      try { await apiJson('/config', { method: 'PUT', body: JSON.stringify({ layouts: lwState }) }); }
+      catch { showToast('No se pudo guardar tu diseño en el servidor; se mantiene en este navegador.'); }
+    }, 700);
+  }
+
+  function lwToggleSidebar() { lwState.shell.sidebar_hidden = !lwState.shell.sidebar_hidden; lwCommit(); }
+  function lwToggleDock() { lwState.shell.copilot_docked = !lwState.shell.copilot_docked; lwCommit(); }
+
+  async function layoutLoadForUser(_user: any) {
+    // Instant: the copy cached for this user; then the server copy wins.
+    try {
+      const c = localStorage.getItem(lwCacheKey());
+      if (c) { lwState = lwClean(JSON.parse(c)); lwApplyAll(); }
+    } catch {}
+    try {
+      const cfg = await apiJson('/config');
+      if (cfg && cfg.layouts) {
+        lwState = lwClean(cfg.layouts);
+        try { localStorage.setItem(lwCacheKey(), JSON.stringify(lwState)); } catch {}
+        lwApplyAll();
+      }
+    } catch { /* offline or an older API: the cached copy or the default layout stays */ }
+  }
+
+  function initLayout() {
+    if (lwReady) return;
+    lwReady = true;
+    document.querySelectorAll<HTMLElement>('.lw-region').forEach(region => {
+      const pid = region.dataset.layout!;
+      const blocks = lwBlocks(region);
+      lwDefaults[pid] = { order: blocks.map(b => b.dataset.widget!),
+                          spans: Object.fromEntries(blocks.map(b => [b.dataset.widget!, Number(b.dataset.span) || 12])) };
+      blocks.forEach(b => lwBuildBar(region, b));
+      region.addEventListener('dragover', (e: DragEvent) => {
+        const dragging = region.dataset.dragging;
+        const target = (e.target as HTMLElement).closest?.('.lw') as HTMLElement | null;
+        if (!dragging || !target || target.parentElement !== region) return;
+        e.preventDefault();
+        lwClearDrop(region);
+        if (target.dataset.widget === dragging) return;
+        const r = target.getBoundingClientRect();
+        // Wide block: drop above/below. Narrow block: drop left/right.
+        const before = r.width > r.height * 2 ? e.clientY < r.top + r.height / 2 : e.clientX < r.left + r.width / 2;
+        target.classList.add(before ? 'lw--drop-before' : 'lw--drop-after');
+      });
+      region.addEventListener('drop', (e: DragEvent) => {
+        const dragging = region.dataset.dragging;
+        const target = (e.target as HTMLElement).closest?.('.lw') as HTMLElement | null;
+        if (!dragging || !target || target.parentElement !== region) return;
+        e.preventDefault();
+        const b = lwBlocks(region).find(x => x.dataset.widget === dragging);
+        const before = target.classList.contains('lw--drop-before');
+        lwClearDrop(region);
+        if (!b || b === target) return;
+        region.insertBefore(b, before ? target : target.nextSibling);
+        lwPanel(pid).order = lwCurrentOrder(region);
+        lwCommit(region);
+      });
+    });
+    document.getElementById('layoutEditBtn')?.addEventListener('click', () => {
+      const region = document.querySelector<HTMLElement>('#panel-gantt .lw-region');
+      if (region) lwSetEditing(region, !region.classList.contains('lw-editing'));
+    });
+    document.getElementById('copilotDock')?.addEventListener('click', lwToggleDock);
+    document.addEventListener('keydown', (e) => {
+      if (e.key !== 'Escape') return;
+      const region = document.querySelector<HTMLElement>('.lw-region.lw-editing');
+      if (region) lwSetEditing(region, false);
+    });
+    lwApplyAll();
+  }
+
   function initCopilot() {
     document.getElementById('copilotFab')?.addEventListener('click', () => openCopilot());
     document.getElementById('copilotClose')?.addEventListener('click', () => {
@@ -6639,6 +6988,7 @@
 
   function applyUser(user: any) {
     currentUser = user;
+    layoutLoadForUser(user);
     try {
       const initials = user.name
         ? user.name.split(' ').map((w: string) => w[0]).slice(0,2).join('').toUpperCase()
@@ -6859,6 +7209,7 @@
     initAdminPanel(!!currentUser?.is_admin);
     initKpiDashboard();
     initCopilot();
+    initLayout();
 
     // 1. Gantt tab switching (Semana / Turno)
     const ganttSemana  = document.getElementById('gantt-semana');
@@ -10903,6 +11254,8 @@
       sidebarBackdropEl?.classList.remove('open');
     }
     sidebarToggleBtn?.addEventListener('click', () => {
+      // Desktop: fold / unfold the menu (saved in the user's layout). Mobile: slide-over.
+      if (window.innerWidth > 860) { lwToggleSidebar(); return; }
       if (sidebarEl2?.classList.contains('mobile-open')) closeMobileSidebar();
       else openMobileSidebar();
     });
