@@ -3258,6 +3258,7 @@
         <!-- ── Manual Gantt (default view) ── -->
         <div id="gantt-manual-view">
 
+        <div class="demo-data-note" role="note" style="font-size:.75rem;font-weight:600;color:#92400E;background:#FEF3C7;border:1px solid #FCD34D;border-radius:8px;padding:.45rem .75rem;margin-bottom:.75rem">Vista de ejemplo: estos datos son ilustrativos y no reflejan tu planta. Pulsa «Generar alternativas» para planificar con tus datos.</div>
         <div id="gantt-semana">
         <div class="gantt-grid">
           <!-- Header row -->
@@ -3628,6 +3629,7 @@
     <!-- ── PANEL: CAPACIDAD ── -->
     <div id="panel-capacidad" class="dash-panel" style="display:none">
       <div class="panel-page">
+        <div class="demo-data-note" role="note" style="font-size:.75rem;font-weight:600;color:#92400E;background:#FEF3C7;border:1px solid #FCD34D;border-radius:8px;padding:.45rem .75rem;margin-bottom:.75rem">Vista de ejemplo: estos datos son ilustrativos y no reflejan tu planta. El plan real de tus OF y su carga por recurso están en «MRP &amp; Tiempos» → Planificar.</div>
         <div class="panel-page-header">
           <div>
             <div class="panel-page-title">Capacidad de planta</div>
@@ -3721,6 +3723,7 @@
     <!-- ── PANEL: ESCENARIOS ── -->
     <div id="panel-escenarios" class="dash-panel" style="display:none">
       <div class="panel-page">
+        <div class="demo-data-note" role="note" style="font-size:.75rem;font-weight:600;color:#92400E;background:#FEF3C7;border:1px solid #FCD34D;border-radius:8px;padding:.45rem .75rem;margin-bottom:.75rem">Vista de ejemplo: estos datos son ilustrativos y no reflejan tu planta. Compara escenarios reales con «Generar alternativas» en Planificación.</div>
         <div class="panel-page-header">
           <div>
             <div class="panel-page-title">Escenarios de planificación</div>
@@ -3771,6 +3774,7 @@
     <!-- ── PANEL: ALERTAS ── -->
     <div id="panel-alertas" class="dash-panel" style="display:none">
       <div class="panel-page">
+        <div class="demo-data-note" role="note" style="font-size:.75rem;font-weight:600;color:#92400E;background:#FEF3C7;border:1px solid #FCD34D;border-radius:8px;padding:.45rem .75rem;margin-bottom:.75rem">Vista de ejemplo: estos datos son ilustrativos y no reflejan tu planta. Las acciones de esta lista no se guardan.</div>
         <div class="panel-page-header">
           <div>
             <div class="panel-page-title">Alertas activas</div>
@@ -3836,6 +3840,7 @@
     <!-- ── PANEL: ÓRDENES ── -->
     <div id="panel-ordenes" class="dash-panel" style="display:none">
       <div class="panel-page">
+        <div class="demo-data-note" role="note" style="font-size:.75rem;font-weight:600;color:#92400E;background:#FEF3C7;border:1px solid #FCD34D;border-radius:8px;padding:.45rem .75rem;margin-bottom:.75rem">Vista de ejemplo: estos datos son ilustrativos y no reflejan tu planta. Tus órdenes de fabricación reales están en «MRP &amp; Tiempos».</div>
         <div class="panel-page-header">
           <div>
             <div class="panel-page-title">Órdenes de fabricación</div>
@@ -7235,9 +7240,21 @@
               <div><span>Piezas completas · P50 / P10</span><b>${pc.p50 ?? '–'} / ${pc.p10 ?? '–'}</b></div>
               <div><span>Duración turnos · P50 / P90</span><b>${mk.p50 ?? '–'} / ${mk.p90 ?? '–'}</b></div>
               <div><span>Exceso esperado</span><b>${p.expected_overflow ?? 0}</b></div>
+              ${p.plan_adherence_pct != null ? `<div><span>Operaciones a su hora</span><b>${p.plan_adherence_pct}%</b></div>` : ''}
             </div>
             <div class="alt-sim__foot">${sim.iterations} iteraciones Monte Carlo${trunc}</div>
           `;
+          // The recommendation comes from the simulation (engine ≥ 2.0), never
+          // from a fixed label: «Equilibrado» used to be marked RECOMENDADO
+          // even when it scored below «Óptimo».
+          card.querySelector('.alt-card__rec')?.remove();
+          if (sim.recommended && label === sim.recommended) {
+            const rec = document.createElement('div');
+            rec.className = 'alt-card__rec';
+            rec.style.cssText = 'font-size:.66rem;font-weight:700;color:#16A34A;background:rgba(22,163,74,.10);border:1px solid rgba(22,163,74,.30);border-radius:6px;padding:3px 8px;margin:.35rem 0;';
+            rec.textContent = `Recomendado por la simulación · ${sim.recommendation_reason || ''}`;
+            card.querySelector('.alt-card__header')?.after(rec);
+          }
         });
         stampAstroScope(altCards);
       }
@@ -8401,6 +8418,9 @@
         day: resource ? Number(disruptDayInput?.value ?? 0) : null,
         shift: resource ? Number(disruptShiftInput?.value ?? 1) : null,
         duration_shifts: resource ? Number(disruptDurationInput?.value ?? 1) : null,
+        // day/shift count from the week on the planner; without it the server
+        // assumes the current week.
+        week_start: resource ? ((document.getElementById('plannerWeekStart') as HTMLInputElement | null)?.value || null) : null,
       });
 
       (disruptSubmit as HTMLButtonElement).disabled = false;
@@ -10107,7 +10127,8 @@
         el('b', { text: `Mantenimiento y paradas de ${r.code}` }),
         r.downtimes.length ? el('ul', { style: 'margin:.3rem 0;padding-left:1rem' }, r.downtimes.map((d: any) => el('li', {},
           `${rtDt(d.starts_at)} → ${rtDt(d.ends_at)}${d.reason ? ' · ' + d.reason : ''} `,
-          rtBtn('Quitar', async () => { await rtCall(`/resources/${r.id}/downtimes/${d.id}`, { method: 'DELETE' }); showToast('Mantenimiento quitado'); await rtLoadResources(); }))))
+          d.id ? rtBtn('Quitar', async () => { await rtCall(`/resources/${r.id}/downtimes/${d.id}`, { method: 'DELETE' }); showToast('Mantenimiento quitado'); await rtLoadResources(); })
+            : el('span', { class: 'rt-muted', text: '(disrupción activa: se resuelve en Disrupciones)' }))))
           : el('p', { class: 'rt-muted', style: 'margin:.3rem 0', text: 'Sin paradas registradas: el recurso está disponible en todo su calendario.' }),
         el('div', { class: 'rt-bar', style: 'margin:.3rem 0 0' }, el('label', {}, 'Desde', s), el('label', {}, 'Hasta', e), reason,
           rtBtn('Añadir parada', async () => {
