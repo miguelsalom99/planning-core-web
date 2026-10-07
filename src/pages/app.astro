@@ -10121,7 +10121,9 @@
             el('td', { text: rtDt(o.end_p50) }), el('td', { text: rtDt(o.end_p90) }),
             el('td', { class: 'rt-num', text: o.late_h_p90 ? (o.late_h_p90 >= 24 ? `${(o.late_h_p90 / 24).toFixed(1)} días` : `${o.late_h_p90} h`) : '—' }),
             el('td', { text: o.main_cause_resource ? `${o.main_cause_resource} (${rtPct(o.main_cause_share)} de los retrasos)` : '—' })))))
-          : el('p', { class: 'rt-muted', text: 'Ninguna OF abierta tiene fecha de necesidad: no hay plazo que evaluar.' }),
+          : el('p', { class: 'rt-muted', text: sim.orders.length
+              ? 'Ninguna OF abierta tiene fecha de necesidad: no hay plazo que evaluar.'
+              : 'No hay OF abiertas que simular. Créalas o impórtalas desde el MRP.' }),
         el('p', { class: 'rt-muted', style: 'margin:.5rem 0 0', text: 'Cada escenario replanifica todas las OF con duraciones variables (más en laminado manual y NDT, menos en el curado) y averías aleatorias, respetando calendarios, mantenimiento y disrupciones activas. No cambia tu plan guardado.' })));
     }
 
