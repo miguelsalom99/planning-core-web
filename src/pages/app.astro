@@ -6352,7 +6352,8 @@
     const stale = s && s.orders !== open;
     bar?.replaceChildren(
       el('span', { text: s ? `Plan de OF calculado el ${homeDt(lp.at)}` : 'Todavía no hay un plan de OF.' }),
-      stale ? el('span', { class: 'home-stale', text: ' · Las OF han cambiado desde entonces: recalcula para verlo al día.' }) : null,
+      // replaceChildren() would print a null as the text «null»: spread instead.
+      ...(stale ? [el('span', { class: 'home-stale', text: ' · Las OF han cambiado desde entonces: recalcula para verlo al día.' })] : []),
       el('span', { style: 'flex:1' }), replan,
       el('button', { class: 'btn-ui', type: 'button', text: 'Ver OF y rutas', onclick: homeGoToOrders }));
 
