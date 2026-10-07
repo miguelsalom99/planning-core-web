@@ -3097,84 +3097,14 @@
 
       <!-- User-arranged blocks: order, width, minimised and hidden are per user (see «Personalizar vista»). -->
       <div class="lw-region" data-layout="gantt">
-      <section class="lw" data-widget="alert" data-title="Alerta de cuello de botella" data-span="12">
-        <div class="demo-data-note" role="note" style="font-size:.75rem;font-weight:600;color:#92400E;background:#FEF3C7;border:1px solid #FCD34D;border-radius:8px;padding:.45rem .75rem;margin-bottom:.75rem">Vista de ejemplo: esta alerta es ilustrativa y no refleja tu planta.</div>
-      <!-- Alert banner -->
-      <div class="alert-banner">
-        <div class="alert-banner__icon">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#D97706" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
-        </div>
-        <div class="alert-banner__body">
-          <strong>Cuello de botella detectado:</strong> CNC-2 alcanza 96% de capacidad el miércoles.
-          Se recomienda reasignar OF-2041 al turno de tarde para evitar retrasos.
-        </div>
-        <span class="alert-banner__cta">Ver sugerencia →</span>
+      <section class="lw" data-widget="alert" data-title="Alerta del plan de OF" data-span="12">
+      <div class="alert-banner" id="homeAlert" role="status" aria-live="polite">
+        <div class="alert-banner__body">Cargando el estado de tus órdenes de fabricación…</div>
       </div>
-
       </section>
-      <section class="lw" data-widget="kpis" data-title="Indicadores" data-span="12">
-        <div class="demo-data-note" role="note" style="font-size:.75rem;font-weight:600;color:#92400E;background:#FEF3C7;border:1px solid #FCD34D;border-radius:8px;padding:.45rem .75rem;margin-bottom:.75rem">Vista de ejemplo: los indicadores (OEE, cumplimiento, setup, órdenes en riesgo) son ilustrativos. Los reales están en «KPIs del piloto».</div>
-      <!-- KPI grid -->
-      <div class="kpi-grid">
-
-        <div class="kpi-card kpi-card--green">
-          <div class="kpi-card__top">
-            <div class="kpi-card__label">OEE acumulado</div>
-            <div class="kpi-card__icon kpi-card__icon--green">
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#16A34A" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg>
-            </div>
-          </div>
-          <div class="kpi-card__val">87%</div>
-          <div class="kpi-card__footer">
-            <span class="kpi-delta kpi-delta--up">↑ +5 pp vs. inicio</span>
-            <span class="kpi-target">Obj: 82%</span>
-          </div>
-        </div>
-
-        <div class="kpi-card kpi-card--blue">
-          <div class="kpi-card__top">
-            <div class="kpi-card__label">Cumplimiento plan</div>
-            <div class="kpi-card__icon kpi-card__icon--blue">
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#1B3F8B" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
-            </div>
-          </div>
-          <div class="kpi-card__val">94%</div>
-          <div class="kpi-card__footer">
-            <span class="kpi-delta kpi-delta--up">↑ +12 pp vs. sem. 1</span>
-            <span class="kpi-target">Obj: 85%</span>
-          </div>
-        </div>
-
-        <div class="kpi-card kpi-card--green">
-          <div class="kpi-card__top">
-            <div class="kpi-card__label">Reducción setup</div>
-            <div class="kpi-card__icon kpi-card__icon--green">
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#16A34A" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-            </div>
-          </div>
-          <div class="kpi-card__val">−18%</div>
-          <div class="kpi-card__footer">
-            <span class="kpi-delta kpi-delta--up">↑ Mejora sostenida</span>
-            <span class="kpi-target">Obj: −10%</span>
-          </div>
-        </div>
-
-        <div class="kpi-card kpi-card--amber">
-          <div class="kpi-card__top">
-            <div class="kpi-card__label">Órdenes en riesgo</div>
-            <div class="kpi-card__icon kpi-card__icon--amber">
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#D97706" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
-            </div>
-          </div>
-          <div class="kpi-card__val">2</div>
-          <div class="kpi-card__footer">
-            <span class="kpi-delta kpi-delta--flat">= igual que sem. 6</span>
-            <span class="kpi-target">Obj: 0</span>
-          </div>
-        </div>
-
-      </div>
-
+      <section class="lw" data-widget="kpis" data-title="Indicadores del plan de OF" data-span="12">
+      <div class="home-plan-bar" id="homePlanBar"></div>
+      <div class="kpi-grid" id="homeKpis"></div>
       </section>
       <section class="lw" data-widget="gantt" data-title="Gantt de producción y planificador" data-span="12" data-essential="1">
       <!-- Gantt -->
@@ -3543,99 +3473,22 @@
       </div>
 
       </section>
-      <section class="lw" data-widget="orders" data-title="Órdenes activas" data-span="8">
-        <div class="demo-data-note" role="note" style="font-size:.75rem;font-weight:600;color:#92400E;background:#FEF3C7;border:1px solid #FCD34D;border-radius:8px;padding:.45rem .75rem;margin-bottom:.75rem">Vista de ejemplo: estas órdenes son ilustrativas. Tus OF reales están en «MRP &amp; Tiempos».</div>
-        <!-- Orders -->
-        <div class="panel">
+      <section class="lw" data-widget="orders" data-title="Órdenes de fabricación" data-span="8">
+        <div class="panel" id="homeOrders">
           <div class="panel__header">
-            <span class="panel__title">Órdenes activas</span>
-            <span class="panel__count">12 en curso</span>
+            <span class="panel__title">Órdenes de fabricación</span>
+            <span class="panel__count" id="homeOrdersCount">—</span>
           </div>
-          <div class="order-list">
-            <div class="order-row">
-              <span class="order-id">OF-2038</span>
-              <span class="order-name">Carcasa A — Lote 24B</span>
-              <div class="order-progress">
-                <div class="progress-track"><div class="progress-fill" style="width:82%"></div></div>
-                <span class="progress-pct">82%</span>
-              </div>
-              <span class="status-pill sp--ok">En plazo</span>
-            </div>
-            <div class="order-row">
-              <span class="order-id">OF-2039</span>
-              <span class="order-name">Placa base — Prototipo X</span>
-              <div class="order-progress">
-                <div class="progress-track"><div class="progress-fill" style="width:61%"></div></div>
-                <span class="progress-pct">61%</span>
-              </div>
-              <span class="status-pill sp--ok">En plazo</span>
-            </div>
-            <div class="order-row">
-              <span class="order-id">OF-2041</span>
-              <span class="order-name">Soporte B — Serie 200</span>
-              <div class="order-progress">
-                <div class="progress-track"><div class="progress-fill" style="width:45%;background:#D97706"></div></div>
-                <span class="progress-pct">45%</span>
-              </div>
-              <span class="status-pill sp--risk">Riesgo</span>
-            </div>
-            <div class="order-row">
-              <span class="order-id">OF-2042</span>
-              <span class="order-name">Brida C — Cliente AZ</span>
-              <div class="order-progress">
-                <div class="progress-track"><div class="progress-fill" style="width:30%;background:#D97706"></div></div>
-                <span class="progress-pct">30%</span>
-              </div>
-              <span class="status-pill sp--risk">Riesgo</span>
-            </div>
-            <div class="order-row">
-              <span class="order-id">OF-2044</span>
-              <span class="order-name">Eje motor — Urgente</span>
-              <div class="order-progress">
-                <div class="progress-track"><div class="progress-fill" style="width:10%"></div></div>
-                <span class="progress-pct">10%</span>
-              </div>
-              <span class="status-pill sp--ok">En plazo</span>
-            </div>
-          </div>
+          <div class="order-list" id="homeOrdersList"></div>
         </div>
-
       </section>
-      <section class="lw" data-widget="capacity" data-title="Capacidad semanal" data-span="4">
-        <div class="demo-data-note" role="note" style="font-size:.75rem;font-weight:600;color:#92400E;background:#FEF3C7;border:1px solid #FCD34D;border-radius:8px;padding:.45rem .75rem;margin-bottom:.75rem">Vista de ejemplo: esta capacidad es ilustrativa. La carga real por recurso está en «MRP &amp; Tiempos» → Planificar.</div>
-        <!-- Capacity -->
-        <div class="panel">
+      <section class="lw" data-widget="capacity" data-title="Carga por recurso" data-span="4">
+        <div class="panel" id="homeCapacity">
           <div class="panel__header">
-            <span class="panel__title">Capacidad semanal</span>
-            <span class="panel__count">% ocupación</span>
+            <span class="panel__title">Carga por recurso</span>
+            <span class="panel__count" id="homeCapPeriod">—</span>
           </div>
-          <div class="cap-list">
-            <div class="cap-row">
-              <span class="cap-name">CNC-1</span>
-              <div class="cap-track"><div class="cap-fill cap-fill--ok" style="width:78%"></div></div>
-              <span class="cap-pct cap-pct--ok">78%</span>
-            </div>
-            <div class="cap-row">
-              <span class="cap-name">CNC-2</span>
-              <div class="cap-track"><div class="cap-fill cap-fill--over" style="width:96%"></div></div>
-              <span class="cap-pct cap-pct--over">96%</span>
-            </div>
-            <div class="cap-row">
-              <span class="cap-name">Soldadura</span>
-              <div class="cap-track"><div class="cap-fill cap-fill--warn" style="width:85%"></div></div>
-              <span class="cap-pct cap-pct--warn">85%</span>
-            </div>
-            <div class="cap-row">
-              <span class="cap-name">Acabados</span>
-              <div class="cap-track"><div class="cap-fill cap-fill--ok" style="width:62%"></div></div>
-              <span class="cap-pct cap-pct--ok">62%</span>
-            </div>
-            <div class="cap-row">
-              <span class="cap-name">Embalaje</span>
-              <div class="cap-track"><div class="cap-fill cap-fill--ok" style="width:40%"></div></div>
-              <span class="cap-pct cap-pct--ok">40%</span>
-            </div>
-          </div>
+          <div class="cap-list" id="homeCapList"></div>
         </div>
       </section>
       </div><!-- /.lw-region -->
@@ -5069,6 +4922,19 @@
 </button>
 
 <style is:global>
+  /* ── Planificación semanal fed by the OF engine ── */
+  .home-plan-bar { display:flex; align-items:center; gap:.5rem; flex-wrap:wrap; font-size:.78rem; color:var(--n30); }
+  .home-stale { color:var(--amber); font-weight:600; }
+  .home-empty { padding:1rem 0; font-size:.8rem; color:var(--n50); }
+  .home-order-dates { font-size:.72rem; color:var(--n50); white-space:nowrap; }
+  .home-more { display:block; width:100%; margin:.5rem 0 .2rem; background:none; border:none; color:var(--brand);
+               font:inherit; font-size:.76rem; font-weight:600; cursor:pointer; text-align:left; padding:.3rem 0; }
+  #panel-gantt .alert-banner.home-alert--ok { background:var(--green-bg); border-color:rgba(22,163,74,.3); border-left-color:var(--green); }
+  #panel-gantt .alert-banner.home-alert--info { background:rgba(27,63,139,.06); border-color:rgba(27,63,139,.2); border-left-color:var(--brand); }
+  #panel-gantt .alert-banner.home-alert--bad { background:var(--red-bg); border-color:rgba(220,38,38,.3); border-left-color:var(--red); }
+  #panel-gantt .alert-banner.home-alert--ok .alert-banner__body, #panel-gantt .alert-banner.home-alert--info .alert-banner__body,
+  #panel-gantt .alert-banner.home-alert--bad .alert-banner__body { color:var(--n20); }
+  .alert-banner .alert-banner__cta { border:none; font:inherit; }
   /* ── User-arranged layout (Personalizar vista) ─────────────────────────
      Global on purpose: the per-block bars are built in JS, and Astro only
      scopes elements it sees at build time. */
@@ -6396,6 +6262,279 @@
     lwApplyAll();
   }
 
+  // ── Planificación semanal: real data from the routing (OF) engine ───────
+  // The four blocks used to be static demo HTML. They now show the company's
+  // own OFs, the last finite-capacity plan and its capacity check
+  // (GET /api/routing/overview + /orders). No number is invented: without
+  // data each block says what is missing and how to get it.
+  let homeLoading = false;
+
+  function homeDt(s?: string | null): string {
+    if (!s) return '—';
+    const d = new Date(s);
+    return isNaN(+d) ? '—' : d.toLocaleString('es-ES', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' });
+  }
+  function homeDate(s?: string | null): string {
+    if (!s) return '—';
+    const d = new Date(`${String(s).slice(0, 10)}T00:00:00`);
+    return isNaN(+d) ? '—' : d.toLocaleDateString('es-ES', { day: '2-digit', month: '2-digit' });
+  }
+  function homeGoToOrders() { (document.querySelector('.nav-item[data-panel="mrp"]') as HTMLElement | null)?.click(); }
+
+  function homeStamp() {
+    document.querySelectorAll('#panel-gantt .lw[data-widget="alert"], #panel-gantt .lw[data-widget="kpis"], '
+      + '#panel-gantt .lw[data-widget="orders"], #panel-gantt .lw[data-widget="capacity"]').forEach(s => stampAstroScope(s));
+  }
+
+  function homeMessage(kind: 'info' | 'warn' | 'bad' | 'ok', text: string, actions: HTMLElement[] = []) {
+    const a = document.getElementById('homeAlert');
+    if (!a) return;
+    a.className = `alert-banner home-alert--${kind}`;
+    a.replaceChildren(el('div', { class: 'alert-banner__body' }, text), ...actions);
+  }
+
+  function homeCta(label: string, onclick: () => void) {
+    return el('button', { class: 'alert-banner__cta', type: 'button', text: label, onclick });
+  }
+
+  function homeEmpty(text: string) {
+    const kp = document.getElementById('homeKpis'); kp?.replaceChildren();
+    const bar = document.getElementById('homePlanBar'); bar?.replaceChildren();
+    const ol = document.getElementById('homeOrdersList');
+    ol?.replaceChildren(el('p', { class: 'home-empty', text }));
+    const cl = document.getElementById('homeCapList');
+    cl?.replaceChildren(el('p', { class: 'home-empty', text }));
+    const oc = document.getElementById('homeOrdersCount'); if (oc) oc.textContent = '—';
+    const cp = document.getElementById('homeCapPeriod'); if (cp) cp.textContent = '—';
+  }
+
+  async function homeReplan(btn: HTMLButtonElement) {
+    btn.disabled = true; btn.textContent = 'Calculando…';
+    try {
+      await apiJson('/api/routing/plan', { method: 'POST', body: JSON.stringify({ start: null }) });
+      showToast('✓ Plan de OF recalculado');
+    } catch (e: any) { showToast(e?.message || 'No se pudo recalcular el plan', 4000); }
+    await loadHomeWidgets();
+  }
+
+  async function loadHomeWidgets() {
+    if (!document.getElementById('homeAlert') || homeLoading) return;
+    homeLoading = true;
+    try {
+      if (!hasAccess('mrp')) {
+        homeMessage('info', 'Estos bloques muestran tus órdenes de fabricación y su plan. Tu usuario no tiene acceso al módulo «MRP & Tiempos»: pide acceso a tu administrador.');
+        homeEmpty('Sin acceso al módulo MRP & Tiempos.');
+        return;
+      }
+      const [ov, orders] = await Promise.all([apiJson('/api/routing/overview'), apiJson('/api/routing/orders')]);
+      homeRender(ov, orders);
+    } catch (e: any) {
+      homeMessage('info', e?.status === 403 ? (e.message || 'Sin acceso a las órdenes de fabricación.')
+        : 'No se pudo cargar el estado de tus OF. Vuelve a intentarlo en unos segundos.',
+        [homeCta('Reintentar', () => loadHomeWidgets())]);
+      homeEmpty('Sin datos.');
+    } finally {
+      homeLoading = false;
+      homeStamp();
+    }
+  }
+
+  function homeRender(ov: any, orders: any[]) {
+    const lp = ov?.last_plan;
+    const s = lp?.summary || null;
+    const open = ov?.orders?.open ?? orders.length;
+    const routeErrors = ov?.orders?.routing_errors ?? 0;
+
+    // Plan bar: when the plan was computed, and recompute.
+    const bar = document.getElementById('homePlanBar');
+    const replan = el('button', { class: 'btn-ui', type: 'button', text: s ? 'Recalcular plan de OF' : 'Calcular plan de OF',
+      onclick: (e: Event) => homeReplan(e.currentTarget as HTMLButtonElement) }) as HTMLButtonElement;
+    const stale = s && s.orders !== open;
+    bar?.replaceChildren(
+      el('span', { text: s ? `Plan de OF calculado el ${homeDt(lp.at)}` : 'Todavía no hay un plan de OF.' }),
+      stale ? el('span', { class: 'home-stale', text: ' · Las OF han cambiado desde entonces: recalcula para verlo al día.' }) : null,
+      el('span', { style: 'flex:1' }), replan,
+      el('button', { class: 'btn-ui', type: 'button', text: 'Ver OF y rutas', onclick: homeGoToOrders }));
+
+    // KPIs (only what the OF engine actually measures).
+    const card = (tone: string, label: string, val: string, foot: string, footTone = 'flat') =>
+      el('div', { class: `kpi-card kpi-card--${tone}` },
+        el('div', { class: 'kpi-card__top' }, el('div', { class: 'kpi-card__label', text: label })),
+        el('div', { class: 'kpi-card__val', text: val }),
+        el('div', { class: 'kpi-card__footer' }, el('span', { class: `kpi-delta kpi-delta--${footTone}`, text: foot })));
+    const over = s?.overloaded_resources || [];
+    const pct = s?.on_time_pct;
+    const behind = s ? (s.late || 0) + (s.unplanned || 0) : null;
+    document.getElementById('homeKpis')?.replaceChildren(
+      card('blue', 'OF abiertas', String(open), routeErrors ? `${routeErrors} con error de ruta` : 'Rutas sin errores',
+           routeErrors ? 'down' : 'up'),
+      card(pct == null ? 'blue' : pct >= 95 ? 'green' : pct >= 80 ? 'amber' : 'red', 'OF en plazo',
+           pct == null ? '—' : `${pct}%`, s ? `${s.on_time} de ${s.orders_with_due_date} con fecha de necesidad` : 'Calcula el plan',
+           pct == null ? 'flat' : pct >= 95 ? 'up' : 'down'),
+      card(behind ? 'red' : 'green', 'Retrasadas o sin planificar', behind == null ? '—' : String(behind),
+           s ? `${s.at_risk || 0} más en riesgo (< 24 h de margen)` : 'Calcula el plan', behind ? 'down' : 'flat'),
+      card(over.length ? 'red' : 'green', 'Recursos sobrecargados', s ? String(over.length) : '—',
+           over.length ? over.slice(0, 3).map((c: any) => c.resource).join(', ') : s ? 'Capacidad suficiente' : 'Calcula el plan',
+           over.length ? 'down' : 'flat'));
+
+    // Alert: the single most important thing to act on.
+    if (!open) {
+      homeMessage('info', 'No hay órdenes de fabricación abiertas. Créalas o impórtalas desde tu MRP en «MRP & Tiempos».',
+        [homeCta('Ir a MRP & Tiempos', homeGoToOrders)]);
+    } else if (!s) {
+      homeMessage('info', `Tienes ${open} OF abiertas sin plan. Calcula el plan para ver qué llega a tiempo y qué recurso limita.`,
+        [homeCta('Calcular plan', () => homeReplan(replan))]);
+    } else if (over.length) {
+      const c = over[0];
+      const n = (s.orders_with_capacity_problems || []).length;
+      homeMessage('bad', `Sobrecarga en ${c.resource}: necesita ${c.required_h} h y dispone de ${c.available_h} h en el periodo `
+        + `(+${c.overload_h} h).${n ? ` Afecta a ${n} OF.` : ''}${over.length > 1 ? ` Y ${over.length - 1} recurso(s) más.` : ''}`,
+        [homeCta('Ver detalle', homeGoToOrders),
+         ...(hasAccess('copilot') ? [homeCta('Preguntar al copiloto', () => openCopilot(`¿Por qué está sobrecargado ${c.resource}, qué OF afecta y cómo lo soluciono?`))] : [])]);
+    } else if (behind) {
+      const late = orders.filter((o: any) => o.risk === 'late' || o.risk === 'unplanned').map((o: any) => o.order_number);
+      homeMessage('bad', `${behind} OF no llegan a su fecha de necesidad o no se pueden planificar: ${late.slice(0, 5).join(', ')}`
+        + `${late.length > 5 ? '…' : ''}. Cada una explica su causa en «Ver detalle».`, [homeCta('Ver detalle', homeGoToOrders)]);
+    } else if (s.at_risk) {
+      homeMessage('warn', `${s.at_risk} OF terminan con menos de 24 h de margen sobre su fecha de necesidad.`,
+        [homeCta('Ver detalle', homeGoToOrders)]);
+    } else {
+      homeMessage('ok', `Todas las OF planificadas llegan a tiempo${s.on_time_pct != null ? ` (${s.on_time} de ${s.orders_with_due_date})` : ''}. Sin sobrecargas en el periodo.`);
+    }
+
+    // Orders: the ones that need attention first.
+    const rank: Record<string, number> = { late: 0, unplanned: 1, at_risk: 2, on_time: 3 };
+    const pill: Record<string, [string, string]> = { late: ['sp--late', 'Retraso'], unplanned: ['sp--late', 'Sin planificar'],
+                                                    at_risk: ['sp--risk', 'En riesgo'], on_time: ['sp--ok', 'En plazo'] };
+    const top = [...orders].sort((a: any, b: any) => (rank[a.risk] ?? 4) - (rank[b.risk] ?? 4)
+      || String(a.due_date || '9999').localeCompare(String(b.due_date || '9999'))).slice(0, 8);
+    const oc = document.getElementById('homeOrdersCount');
+    if (oc) oc.textContent = `${open} abiertas`;
+    document.getElementById('homeOrdersList')?.replaceChildren(...(top.length ? top.map((o: any) => {
+      const [cls, txt] = pill[o.risk] || ['', 'Sin plan'];
+      return el('div', { class: 'order-row', title: o.risk_reason || '' },
+        el('span', { class: 'order-id', text: o.order_number }),
+        el('span', { class: 'order-name', text: `${o.part_number || 'Sin pieza'} · ${o.quantity}${o.unit ? ' ' + o.unit : ''}` }),
+        el('span', { class: 'home-order-dates', text: `Fin ${homeDt(o.planned_end)} · Nec. ${homeDate(o.due_date)}` }),
+        el('span', { class: `status-pill ${cls}`, text: txt }));
+    }) : [el('p', { class: 'home-empty', text: 'No hay OF abiertas.' })]),
+      ...(orders.length > top.length ? [el('button', { class: 'home-more', type: 'button',
+        text: `Ver las ${orders.length} OF en «MRP & Tiempos»`, onclick: homeGoToOrders })] : []));
+
+    // Capacity: load per resource in the plan's period, busiest first.
+    const cap = (s?.capacity || []).filter((c: any) => c.required_h || c.status === 'NO_CALENDAR')
+      .sort((a: any, b: any) => (b.load_pct ?? 999) - (a.load_pct ?? 999)).slice(0, 8);
+    const cp = document.getElementById('homeCapPeriod');
+    if (cp) cp.textContent = s?.period ? `${homeDate(s.period.start)} – ${homeDate(s.period.end)}` : '—';
+    document.getElementById('homeCapList')?.replaceChildren(...(cap.length ? cap.map((c: any) => {
+      const tone = c.status === 'OVERLOAD' ? 'over' : c.status === 'HIGH' ? 'warn' : c.status === 'NO_CALENDAR' ? 'warn' : 'ok';
+      return el('div', { class: 'cap-row', title: c.message || '' },
+        el('span', { class: 'cap-name', text: c.resource }),
+        el('div', { class: 'cap-track' }, el('div', { class: `cap-fill cap-fill--${tone}`, style: `width:${Math.min(100, c.load_pct ?? 100)}%` })),
+        el('span', { class: `cap-pct cap-pct--${tone}`, text: c.status === 'NO_CALENDAR' ? 'Sin cal.' : `${c.load_pct}%` }));
+    }) : [el('p', { class: 'home-empty', text: s ? 'Sin carga en el periodo del plan.' : 'Calcula el plan para ver la carga.' })]));
+  }
+
+  // ── Exportar: the plan on screen as an Excel workbook ───────────────────
+  // Sheets: Resumen · OF · Operaciones · Carga por recurso (from the OF engine,
+  // when the user has the module) and «Planificador» (the alternative chosen in
+  // «Generar alternativas», when there is one). Built in the browser from data
+  // the user can already see; nothing is sent anywhere.
+  let plannerSelectedAlt: any = null;
+  const RISK_TXT: Record<string, string> = { late: 'Retraso', unplanned: 'Sin planificar', at_risk: 'En riesgo', on_time: 'En plazo' };
+  const PLAN_DAY_START_HOUR = 6;   // backend PLAN_DAY_START_HOUR default: shifts 06-14-22
+
+  function xDate(s?: string | null): Date | string {
+    if (!s) return '';
+    const d = new Date(s);
+    return isNaN(+d) ? '' : d;
+  }
+
+  function xSheet(rows: any[][], widths: number[]) {
+    const ws = XLSX.utils.aoa_to_sheet(rows, { cellDates: true, dateNF: 'dd/mm/yyyy hh:mm' } as any);
+    (ws as any)['!cols'] = widths.map(w => ({ wch: w }));
+    if (rows.length > 1) (ws as any)['!autofilter'] = { ref: XLSX.utils.encode_range({ s: { r: 0, c: 0 }, e: { r: rows.length - 1, c: rows[0].length - 1 } }) };
+    return ws;
+  }
+
+  async function exportPlan(btn?: HTMLButtonElement | null) {
+    if (btn) { btn.disabled = true; }
+    try {
+      const wb = XLSX.utils.book_new();
+      const company = selectedEnterprise || currentUser?.company || '';
+      const summary: any[][] = [['Planning Core · exportación del plan'], ['Generado', new Date()], ['Empresa', company], ['Usuario', currentUser?.email || '']];
+      let sheets = 0;
+
+      if (hasAccess('mrp')) {
+        try {
+          const [ov, orders] = await Promise.all([apiJson('/api/routing/overview'), apiJson('/api/routing/orders')]);
+          const s = ov?.last_plan?.summary;
+          summary.push([], ['Plan de OF calculado', xDate(ov?.last_plan?.at)],
+            ['OF abiertas', ov?.orders?.open ?? orders.length],
+            ['OF en plazo (%)', s?.on_time_pct ?? ''], ['Retrasadas', s?.late ?? ''], ['En riesgo', s?.at_risk ?? ''],
+            ['Sin planificar', s?.unplanned ?? ''],
+            ['Recursos sobrecargados', (s?.overloaded_resources || []).map((c: any) => c.resource).join(', ')]);
+          if (orders.length) {
+            XLSX.utils.book_append_sheet(wb, xSheet([
+              ['OF', 'Pieza', 'Cantidad', 'Unidad', 'Prioridad', 'Fecha de necesidad', 'Inicio previsto', 'Fin previsto', 'Riesgo', 'Motivo', 'Ruta'],
+              ...orders.map((o: any) => [o.order_number, o.part_number || '', o.quantity, o.unit || '', o.priority,
+                xDate(o.due_date), xDate(o.planned_start), xDate(o.planned_end), RISK_TXT[o.risk] || 'Sin plan',
+                o.risk_reason || '', (o.route || []).join(' → ')]),
+            ], [12, 16, 9, 7, 9, 16, 17, 17, 13, 60, 30]), 'OF');
+            XLSX.utils.book_append_sheet(wb, xSheet([
+              ['OF', 'Operación', 'Nombre', 'Recurso', 'Inicio previsto', 'Fin previsto', 'Horas', 'Estado', 'Motivo'],
+              ...orders.flatMap((o: any) => (o.operations || []).map((op: any) => [o.order_number, op.code, op.name,
+                op.subcontracted ? 'Externo' : (op.planned_resource_code || op.resource_code || ''),
+                xDate(op.planned_start), xDate(op.planned_end), op.required_h ?? '', op.status, op.risk_reason || ''])),
+            ], [12, 10, 24, 14, 17, 17, 8, 13, 60]), 'Operaciones');
+            sheets += 2;
+          }
+          const cap = (s?.capacity || []).filter((c: any) => c.required_h || c.status === 'NO_CALENDAR');
+          if (cap.length) {
+            XLSX.utils.book_append_sheet(wb, xSheet([
+              ['Recurso', 'Horas necesarias', 'Horas disponibles', 'Carga (%)', 'Estado', 'Exceso (h)'],
+              ...cap.map((c: any) => [c.resource, c.required_h, c.available_h ?? '', c.load_pct ?? '',
+                { OVERLOAD: 'Sobrecarga', HIGH: 'Carga alta', OK: 'OK', NO_CALENDAR: 'Sin calendario' }[c.status as string] || c.status,
+                c.overload_h || 0]),
+            ], [16, 16, 17, 10, 14, 10]), 'Carga por recurso');
+            sheets += 1;
+          }
+        } catch { summary.push([], ['OF', 'No se pudieron cargar las órdenes de fabricación']); }
+      }
+
+      const alt = plannerSelectedAlt;
+      if (alt?.events?.length) {
+        const week = (document.getElementById('plannerWeekStart') as HTMLInputElement | null)?.value;
+        const origin = week ? new Date(`${week}T${String(PLAN_DAY_START_HOUR).padStart(2, '0')}:00:00`) : null;
+        const at = (day: number, shift: number, plus = 0) => origin
+          ? new Date(+origin + ((day * 3 + (shift - 1)) + plus) * 8 * 3600000) : '';
+        summary.push([], ['Alternativa del planificador', alt.summary?.label || ''], ['Semana', week || '']);
+        XLSX.utils.book_append_sheet(wb, xSheet([
+          ['Recurso', 'Pieza', 'Operación', 'Día', 'Turno', 'Inicio', 'Fin', 'Turnos'],
+          ...alt.events.filter((e: any) => e.resource !== 'WORKERS').map((e: any) => [e.resource, e.title, e.subtitle,
+            (alt.week_days || [])[e.day] || e.day + 1, e.shift, at(e.day, e.shift), at(e.day, e.shift, e.duration_shifts || 1),
+            e.duration_shifts]),
+        ], [12, 16, 20, 10, 7, 17, 17, 8]), 'Planificador');
+        sheets += 1;
+      }
+
+      if (!sheets) {
+        showToast('Todavía no hay nada que exportar: calcula el plan de OF o genera alternativas en el planificador.', 4500);
+        return;
+      }
+      XLSX.utils.book_append_sheet(wb, xSheet(summary, [28, 40]), 'Resumen');
+      // «Resumen» first.
+      wb.SheetNames.unshift(wb.SheetNames.pop()!);
+      const slug = String(company || 'plan').toLowerCase().normalize('NFD').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || 'plan';
+      XLSX.writeFile(wb, `planning-core-${slug}-${new Date().toISOString().slice(0, 10)}.xlsx`, { cellDates: true } as any);
+      showToast('✓ Plan exportado a Excel');
+    } catch (e: any) {
+      showToast('No se pudo generar el Excel: ' + (e?.message || 'error desconocido'), 4500);
+    } finally {
+      if (btn) btn.disabled = false;
+    }
+  }
+
   function initCopilot() {
     document.getElementById('copilotFab')?.addEventListener('click', () => openCopilot());
     document.getElementById('copilotClose')?.addEventListener('click', () => {
@@ -6969,6 +7108,7 @@
       el.classList.toggle('ind-item--active', el.dataset.industry === industry);
     });
     initDashboard();
+    loadHomeWidgets();
     setCopilotAvailable(true);
     initContextBar(industry, selectedEnterprise);
     // honour the "start panel" preference (Configuración) — only if the user
@@ -7631,6 +7771,7 @@
 
       // Render the composites planner Gantt
       function renderPlannerGantt(alt: any) {
+        plannerSelectedAlt = alt;   // what «Exportar» writes to the «Planificador» sheet
         const RESOURCES = ['ATL-01', 'ATL-02', 'AUTOCLAVE', 'NDT', 'CNC', 'WORKERS'];
         const RES_LABELS: Record<string, string> = {
           'ATL-01': 'Máquina ATL', 'ATL-02': 'Máquina ATL',
@@ -9868,6 +10009,7 @@
       rtBody().replaceChildren(
         el('div', { class: 'rt-bar' },
           rtBtn('Planificar', () => rtRunPlan(start.value, result), 'btn-ui--primary'),
+          rtBtn('Simular robustez', () => rtRunSimulation(start.value, result)),
           el('label', {}, 'Inicio', start),
           el('button', { class: 'btn-ui', type: 'button', disabled: mrpRows.length ? null : 'disabled',
             title: mrpRows.length ? 'Una OF por línea con necesidad neta > 0' : 'Carga primero un Excel en la pestaña Plan MRP',
@@ -9878,8 +10020,9 @@
             if (!formBox.hidden) rtOrderForm(formBox);
           } })),
         el('p', { class: 'rt-muted', style: 'margin:-.3rem 0 .8rem', text: 'Planificar ordena las OF por prioridad y fecha de necesidad y coloca cada operación en su recurso respetando la secuencia, el calendario, el mantenimiento y la capacidad. Cada retraso se explica con su causa.' }),
-        formBox, result, el('div', { id: 'rtPlanBox' }), el('div', { id: 'rtOrdersBox' }));
+        formBox, result, el('div', { id: 'rtPlanBox' }), el('div', { id: 'rtSimBox' }), el('div', { id: 'rtOrdersBox' }));
       rtRenderPlan();
+      rtRenderSim();
       rtRenderOrderList();
     }
 
@@ -9920,6 +10063,7 @@
       box.replaceChildren(el('p', { class: 'rt-muted', text: 'Creando OF a partir del MRP…' }));
       try {
         const res = await rtCall('/orders/import-mrp', rtJson('POST', { rows }));
+        rt.sim = null; rtRenderSim();
         const errs = res.created.filter((c: any) => c.routing_status === 'ERROR');
         box.replaceChildren(el('div', { class: 'rt-box' },
           el('h4', { text: res.summary }),
@@ -9932,15 +10076,65 @@
       } catch (e) { box.replaceChildren(el('p', { class: 'rt-bad', text: rtErr(e) })); }
     }
 
+
+    // Monte Carlo on the OF plan: how likely each OF is to make its need date.
+    // Read-only on the server; the result is kept in rt.sim until the data or
+    // the plan changes (then it is stale and dropped).
+    async function rtRunSimulation(start: string, box: HTMLElement) {
+      box.replaceChildren(el('p', { class: 'rt-muted', text: 'Simulando cientos de escenarios (duraciones variables y averías)…' }));
+      try {
+        rt.sim = await rtCall('/simulate', rtJson('POST', { start: start || null }));
+        box.replaceChildren();
+        rtRenderSim();
+        rtRenderOrderList();
+        showToast('✓ Simulación de robustez lista');
+      } catch (e) { box.replaceChildren(el('p', { class: 'rt-bad', text: rtErr(e) })); }
+    }
+
+    function rtPct(p: number | null | undefined) { return p == null ? '—' : `${Math.round(p * 100)}%`; }
+    function rtPctCls(p: number | null | undefined) { return p == null ? '' : p >= 0.9 ? 'rt-ok' : p >= 0.6 ? 'rt-warn' : 'rt-bad'; }
+
+    function rtRenderSim() {
+      const box = document.getElementById('rtSimBox');
+      if (!box) return;
+      const sim = rt.sim;
+      if (!sim) { box.replaceChildren(); return; }
+      const s = sim.summary;
+      const stat = (v: any, label: string, cls = '') => el('div', { class: 'rt-stat' }, el('b', { class: cls, text: String(v) }), el('span', { text: label }));
+      const rows = sim.orders.filter((o: any) => o.p_on_time != null).slice(0, 12);
+      box.replaceChildren(el('div', { class: 'rt-box' },
+        el('h4', { text: `Robustez Monte Carlo de las OF · ${sim.iterations} escenarios${sim.truncated ? ' (cortado por tiempo)' : ''}` }),
+        sim.model?.calibrated ? null : el('div', { class: 'rt-pill rt-pill--warn', style: 'display:inline-block;margin-bottom:.5rem',
+          text: 'Averías con parámetros por defecto: se calibrarán con tu historial cuando haya al menos 5 averías resueltas en 12 semanas' }),
+        el('div', { class: 'rt-stats' },
+          stat(rtPct(s.p_all_on_time), 'Prob. de que todas lleguen a tiempo', rtPctCls(s.p_all_on_time)),
+          stat(s.expected_late_orders, 'OF con retraso esperadas', s.expected_late_orders >= 1 ? 'rt-bad' : ''),
+          stat(s.at_risk_orders, 'OF con menos del 80% de prob.', s.at_risk_orders ? 'rt-warn' : ''),
+          stat(s.most_frequent_bottleneck || '—', 'Recurso que más retrasos causa')),
+        rows.length ? rtTable(['OF', 'Necesidad', 'Prob. a tiempo', 'Fin P50', 'Fin P90', 'Retraso P90', 'Causa principal'],
+          el('tbody', {}, rows.map((o: any) => el('tr', {},
+            el('td', {}, el('b', { text: o.order_number })),
+            el('td', { text: rtDate(o.due_date) }),
+            el('td', { class: `rt-num ${rtPctCls(o.p_on_time)}`,
+                       title: o.p_on_time_ci ? `IC95 ${rtPct(o.p_on_time_ci[0])}–${rtPct(o.p_on_time_ci[1])}` : '' , text: rtPct(o.p_on_time) }),
+            el('td', { text: rtDt(o.end_p50) }), el('td', { text: rtDt(o.end_p90) }),
+            el('td', { class: 'rt-num', text: o.late_h_p90 ? (o.late_h_p90 >= 24 ? `${(o.late_h_p90 / 24).toFixed(1)} días` : `${o.late_h_p90} h`) : '—' }),
+            el('td', { text: o.main_cause_resource ? `${o.main_cause_resource} (${rtPct(o.main_cause_share)} de los retrasos)` : '—' })))))
+          : el('p', { class: 'rt-muted', text: 'Ninguna OF abierta tiene fecha de necesidad: no hay plazo que evaluar.' }),
+        el('p', { class: 'rt-muted', style: 'margin:.5rem 0 0', text: 'Cada escenario replanifica todas las OF con duraciones variables (más en laminado manual y NDT, menos en el curado) y averías aleatorias, respetando calendarios, mantenimiento y disrupciones activas. No cambia tu plan guardado.' })));
+    }
+
     async function rtRunPlan(start: string, box: HTMLElement) {
       box.replaceChildren(el('p', { class: 'rt-muted', text: 'Planificando con capacidad finita…' }));
       try {
         rt.plan = await rtCall('/plan', rtJson('POST', { start: start || null }));
+        rt.sim = null; rtRenderSim();
         box.replaceChildren();
         rt.orders = rt.plan.orders;
         rtRenderPlan();
         rtRenderOrderList();
         rtRefreshOverview();
+        loadHomeWidgets();
         showToast('✓ Planificación actualizada');
       } catch (e) { box.replaceChildren(el('p', { class: 'rt-bad', text: rtErr(e) })); }
     }
@@ -10028,6 +10222,9 @@
         return;
       }
       const tbody = el('tbody');
+      const simBy: Record<number, any> = {};
+      (rt.sim?.orders || []).forEach((x: any) => { simBy[x.id] = x; });
+      const withSim = !!rt.sim;
       rt.orders.forEach((o: any) => {
         const open = rt.openOrder === o.id;
         const toggle = () => { rt.openOrder = open ? null : o.id; if (open) setCopilotFocus(null); rtRenderOrderList(); };
@@ -10040,12 +10237,13 @@
           el('td', { 'data-label': 'Necesidad', text: rtDate(o.due_date) }),
           el('td', { 'data-label': 'Fin planificado', text: rtDt(o.planned_end) }),
           el('td', { 'data-label': 'Estado', text: RT_STATUS[o.execution_status] || o.execution_status }),
-          el('td', { 'data-label': 'Riesgo' }, o.risk ? rtPill(RT_RISK, o.risk) : el('span', { class: 'rt-muted', text: 'Sin planificar aún' }))));
+          el('td', { 'data-label': 'Riesgo' }, o.risk ? rtPill(RT_RISK, o.risk) : el('span', { class: 'rt-muted', text: 'Sin planificar aún' })),
+          withSim ? el('td', { 'data-label': 'Prob. a tiempo', class: `rt-num ${rtPctCls(simBy[o.id]?.p_on_time)}`, text: rtPct(simBy[o.id]?.p_on_time) }) : null));
         if (open) tbody.appendChild(el('tr', { class: 'rt-detail-row' },
-          el('td', { colspan: '8', id: `rtOrder-${o.id}` }, el('p', { class: 'rt-muted', text: 'Cargando OF…' }))));
+          el('td', { colspan: withSim ? '9' : '8', id: `rtOrder-${o.id}` }, el('p', { class: 'rt-muted', text: 'Cargando OF…' }))));
       });
       box.replaceChildren(el('h4', { style: 'margin:.4rem 0', text: `Órdenes de fabricación abiertas (${rt.orders.length})` }),
-        rtTable(['OF', 'Pieza · ruta', 'Cantidad', 'Ruta', 'Necesidad', 'Fin planificado', 'Estado', 'Riesgo'], tbody, 'rt-table rt-table--cards'));
+        rtTable(['OF', 'Pieza · ruta', 'Cantidad', 'Ruta', 'Necesidad', 'Fin planificado', 'Estado', 'Riesgo', ...(withSim ? ['Prob. a tiempo'] : [])], tbody, 'rt-table rt-table--cards'));
       if (rt.openOrder) rtLoadOrderDetail(rt.openOrder);
     }
 
@@ -11692,9 +11890,7 @@
     // showed the Escenarios toast) and the toast claimed a download that never happened.
     const exportBtn = document.getElementById('exportPlanBtn');
     if (exportBtn) {
-      exportBtn.addEventListener('click', () => {
-        showToast('La exportación del plan aún no está disponible. Usa «Guardar plan» para conservarlo.', 4000);
-      });
+      exportBtn.addEventListener('click', () => exportPlan(exportBtn as HTMLButtonElement));
     }
 
     // 6. Escenarios
