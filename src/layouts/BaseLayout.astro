@@ -8,9 +8,9 @@ const SITE = 'https://planning-core-web.vercel.app';
 
 const {
   title = 'Planning Core — Software de Planificación para Manufactura',
-  description = 'El Gantt inteligente para manufactura industrial. Planifica producción, mide la robustez de cada plan y replanifica en segundos cuando la realidad cambia. Sin código, sin IT, en 12 semanas.',
+  description = 'Planificación de capacidad finita para fabricación industrial. Planifica tus órdenes de fabricación con rutas y calendarios reales, simula cientos de imprevistos y sabe qué OF no llegarán a tiempo y por qué. Encima de tu ERP, desde tu Excel de MRP.',
   accent = '#1E4DB7',
-  ogImage = '/images/logo-stacked.png',
+  ogImage = '/images/og-image.png',
 } = Astro.props;
 
 const canonical = new URL(Astro.url.pathname, SITE).href;
@@ -42,7 +42,8 @@ const jsonLd = {
     <meta name="description" content={description} />
     <link rel="canonical" href={canonical} />
 
-    <link rel="icon" type="image/png" sizes="32x32" href="/favicon.png" />
+    <link rel="icon" type="image/png" sizes="64x64" href="/favicon.png" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <link rel="shortcut icon" href="/favicon.ico" />
 
     <!-- Open Graph / Twitter -->
@@ -52,6 +53,9 @@ const jsonLd = {
     <meta property="og:description" content={description} />
     <meta property="og:url" content={canonical} />
     <meta property="og:image" content={ogImageUrl} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="Planning Core: sabe hoy qué órdenes no llegarán a tiempo." />
     <meta property="og:locale" content="es_ES" />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content={title} />

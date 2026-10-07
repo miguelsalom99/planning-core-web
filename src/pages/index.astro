@@ -12,74 +12,71 @@ import SectorIcon from '../components/SectorIcon.astro';
       <div class="hero__content">
         <div class="badge hero__badge">
           <span class="hero__badge-dot"></span>
-          <span data-i18n="home.hero.badge">El plan «óptimo» se rompe el martes</span>
+          <span data-i18n="home.hero.badge">Planificación de capacidad finita + Monte Carlo</span>
         </div>
         <h1 class="hero__title" data-i18n-html="home.hero.title">
-          Elige un plan que aguante,<br/>
-          <span class="hero__accent">no uno que solo se vea bien.</span>
+          Sabe hoy qué órdenes no llegarán a tiempo.<br/><span class="hero__accent">Y por qué.</span>
         </h1>
         <p class="hero__sub" data-i18n-html="home.hero.sub">
-          Todo software de planificación te entrega un plan óptimo: impecable en
-          papel, frágil en planta. Planning Core genera tres, simula cientos de
-          imprevistos sobre cada uno y te da su
-          <span class="hero__relief">puntuación de robustez</span>: eliges el que
-          encaja con tu tolerancia al riesgo, con datos y no a ojo.
+          Planning Core planifica tus órdenes de fabricación con sus rutas, calendarios y mantenimiento reales, simula cientos de imprevistos sobre el plan y te da la <span class="hero__relief">probabilidad de entrega de cada OF</span> con la causa de cada retraso. Encima de tu ERP, empezando por el Excel de tu MRP.
         </p>
         <div class="hero__ctas">
-          <a href="/contacto" class="btn btn--primary" data-i18n="home.hero.cta1">Quiero verlo con mis datos →</a>
-          <a href="#stress" class="btn btn--outline" data-i18n="home.hero.cta2">Ver la robustez en acción</a>
+          <a href="/contacto" class="btn btn--primary" data-i18n="home.hero.cta1">Solicitar demo con mis datos →</a>
+          <a href="#stress" class="btn btn--outline" data-i18n="home.hero.cta2">Ver la simulación en acción</a>
         </div>
         <div class="hero__trust">
-          <span data-i18n="home.hero.trust1">Robustez medida, no supuesta</span>
+          <span data-i18n="home.hero.trust1">Probabilidad medida, no supuesta</span>
           <span class="hero__trust-sep">·</span>
           <span data-i18n="home.hero.trust2">Sin reemplazar tu ERP</span>
           <span class="hero__trust-sep">·</span>
-          <span data-i18n="home.hero.trust3">Operativo en 12 semanas</span>
+          <span data-i18n="home.hero.trust3">Piloto de 12 semanas</span>
         </div>
       </div>
 
       <div class="hero__visual">
-        <div class="planner">
+        <div class="planner" aria-label="Ejemplo de análisis de robustez de órdenes de fabricación">
           <div class="planner__bar">
             <span class="planner__dot"></span><span class="planner__dot"></span><span class="planner__dot"></span>
-            <span class="planner__name" data-i18n="home.demo.frame">Planning Core · Planificación semanal</span>
+            <span class="planner__name" data-i18n="home.demo.frame">Planning Core · Robustez de las OF</span>
           </div>
-          <div class="planner__scenarios" data-planner>
-            <button class="scn" type="button" data-scn="opt"><span data-i18n="home.gantt.opt">Óptimo</span></button>
-            <button class="scn scn--on" type="button" data-scn="bal"><span data-i18n="home.gantt.bal">Equilibrado</span></button>
-            <button class="scn" type="button" data-scn="con"><span data-i18n="home.gantt.con">Conservador</span></button>
-          </div>
-          <div class="planner__gantt">
-            {[
-              { r: 'ATL-01',    c: '#1589EE' },
-              { r: 'ATL-02',    c: '#1589EE' },
-              { r: 'AUTOCLAVE', c: '#F4740B' },
-              { r: 'NDT',       c: '#7B5EA7' },
-              { r: 'CNC',       c: '#2E844A' },
-            ].map(row => (
-              <div class="grow">
-                <span class="grow__label">{row.r}</span>
-                <span class="grow__track">
-                  <span class="grow__bar" data-bar style={`background:${row.c}`}></span>
-                </span>
-              </div>
-            ))}
-          </div>
-          <div class="planner__kpis">
-            <div class="pk">
-              <span class="pk__k" data-i18n="home.demo.finish">Fin del plan</span>
-              <b class="pk__v" data-pk="finish">Jue · T1</b>
+          <div class="ofp" role="table">
+            <div class="ofp__row ofp__row--head" role="row">
+              <span role="columnheader" data-i18n="home.of.h.of">OF</span>
+              <span role="columnheader" data-i18n="home.of.h.due">Necesidad</span>
+              <span role="columnheader" data-i18n="home.of.h.p">Prob. a tiempo</span>
+              <span role="columnheader" data-i18n="home.of.h.cause">Causa principal</span>
             </div>
-            <div class="pk">
-              <span class="pk__k" data-i18n="home.demo.buffer">Margen entre ops.</span>
-              <b class="pk__v" data-pk="buffer">1 turno</b>
+            <div class="ofp__row" role="row">
+              <span class="ofp__of" role="cell"><b>OF-2041</b><em>Costilla</em></span>
+              <span class="ofp__due" role="cell">09/10</span>
+              <span class="ofp__p ofp__p--ok" role="cell"><i style="width:97%"></i><b>97%</b></span>
+              <span class="ofp__cause" role="cell">—</span>
             </div>
-            <div class="pk pk--wide">
-              <span class="pk__k" data-i18n="home.demo.robust">Robustez Monte Carlo</span>
-              <span class="pk__meter"><i data-pk="robBar" style="width:84%"></i></span>
-              <b class="pk__v pk__v--ok"><span data-pk="rob">84</span><span>/100</span></b>
+            <div class="ofp__row" role="row">
+              <span class="ofp__of" role="cell"><b>OF-2044</b><em>Larguero</em></span>
+              <span class="ofp__due" role="cell">10/10</span>
+              <span class="ofp__p ofp__p--ok" role="cell"><i style="width:88%"></i><b>88%</b></span>
+              <span class="ofp__cause" role="cell">NDT-1</span>
+            </div>
+            <div class="ofp__row" role="row">
+              <span class="ofp__of" role="cell"><b>OF-2047</b><em>Panel</em></span>
+              <span class="ofp__due" role="cell">10/10</span>
+              <span class="ofp__p ofp__p--warn" role="cell"><i style="width:61%"></i><b>61%</b></span>
+              <span class="ofp__cause" role="cell">AUTOCLAVE-01</span>
+            </div>
+            <div class="ofp__row" role="row">
+              <span class="ofp__of" role="cell"><b>OF-2052</b><em>Revestimiento</em></span>
+              <span class="ofp__due" role="cell">11/10</span>
+              <span class="ofp__p ofp__p--bad" role="cell"><i style="width:23%"></i><b>23%</b></span>
+              <span class="ofp__cause" role="cell">AUTOCLAVE-01</span>
             </div>
           </div>
+          <div class="planner__kpis ofp__kpis">
+            <div class="pk"><span class="pk__k" data-i18n="home.of.all">Prob. de que todas lleguen</span><b class="pk__v pk__v--warn">14%</b></div>
+            <div class="pk"><span class="pk__k" data-i18n="home.of.bottleneck">Cuello de botella</span><b class="pk__v">AUTOCLAVE-01</b></div>
+            <div class="pk"><span class="pk__k" data-i18n="home.of.risk">OF en riesgo</span><b class="pk__v">2</b></div>
+          </div>
+          <p class="ofp__caption" data-i18n="home.of.caption">Datos de ejemplo · 400 escenarios simulados</p>
         </div>
       </div>
     </div>
@@ -88,13 +85,13 @@ import SectorIcon from '../components/SectorIcon.astro';
   <!-- ═══ PROOF BAR ═══ -->
   <div class="proof">
     <div class="container proof__inner">
-      <div class="proof__item"><strong>9</strong><span data-i18n="home.proof.sectors">sectores preconfigurados</span></div>
+      <div class="proof__item"><strong data-i18n-html="home.proof.0n">1&nbsp;Excel</strong><span data-i18n="home.proof.0">para empezar: el de tu MRP</span></div>
       <span class="proof__sep"></span>
-      <div class="proof__item"><strong data-i18n="home.proof.pilotN">12&nbsp;semanas</strong><span data-i18n="home.proof.pilot">del piloto a producción</span></div>
+      <div class="proof__item"><strong data-i18n-html="home.proof.1n">12&nbsp;semanas</strong><span data-i18n="home.proof.1">de piloto, con métricas acordadas</span></div>
       <span class="proof__sep"></span>
-      <div class="proof__item"><strong>3&nbsp;s</strong><span data-i18n="home.proof.scenarios">para replanificar la semana</span></div>
+      <div class="proof__item"><strong data-i18n-html="home.proof.2n">0&nbsp;cambios</strong><span data-i18n="home.proof.2">en tu ERP</span></div>
       <span class="proof__sep"></span>
-      <div class="proof__item"><strong>300</strong><span data-i18n="home.proof.sims">imprevistos simulados por plan</span></div>
+      <div class="proof__item"><strong data-i18n-html="home.proof.3n">Cada OF</strong><span data-i18n="home.proof.3">con su probabilidad y su causa</span></div>
     </div>
   </div>
 
@@ -102,32 +99,29 @@ import SectorIcon from '../components/SectorIcon.astro';
   <section class="how">
     <div class="container">
       <p class="section-label" data-i18n="home.how.label">Cómo funciona</p>
-      <h2 class="section-title how__title" data-i18n-html="home.how.title">Un Gantt que decide,<br/>no solo que dibuja</h2>
-      <p class="section-sub how__sub" data-i18n="home.how.sub">
-        Planning Core vive encima de tu ERP. Tú defines los recursos y las
-        restricciones; el motor construye el plan y lo mantiene al día.
-      </p>
+      <h2 class="section-title how__title" data-i18n-html="home.how.title">Un plan que explica,<br/>no solo que dibuja</h2>
+      <p class="section-sub how__sub" data-i18n="home.how.sub">Planning Core trabaja encima de tu ERP: lee tus órdenes, planifica con la capacidad real de cada recurso y mide el riesgo antes de que comprometas una fecha.</p>
 
       <ol class="steps">
         <li class="step">
           <span class="step__n">01</span>
-          <h3 class="step__t" data-i18n="home.steps.0.title">Define tus recursos</h3>
-          <p class="step__d" data-i18n="home.steps.0.desc">Máquinas, operarios, turnos y restricciones de secuencia. Sin código, sin IT, en menos de una semana.</p>
+          <h3 class="step__t" data-i18n="home.steps.0.title">Carga tu MRP y tus rutas</h3>
+          <p class="step__d" data-i18n="home.steps.0.desc">Sube el Excel de tu MRP: validamos campos, unidades y fechas. Defines recursos, calendarios y la ruta de cada pieza (OP10, OP20…) sin programar.</p>
         </li>
         <li class="step">
           <span class="step__n">02</span>
-          <h3 class="step__t" data-i18n="home.steps.1.title">El motor planifica y simula</h3>
-          <p class="step__d" data-i18n="home.steps.1.desc">Construye el plan óptimo respetando cada restricción y lo somete a cientos de simulaciones Monte Carlo para medir su robustez ante imprevistos.</p>
+          <h3 class="step__t" data-i18n="home.steps.1.title">Plan de capacidad finita</h3>
+          <p class="step__d" data-i18n="home.steps.1.desc">Cada operación en su recurso, respetando secuencia, calendario, mantenimiento y disrupciones activas. Cada retraso se explica con su causa.</p>
         </li>
         <li class="step">
           <span class="step__n">03</span>
-          <h3 class="step__t" data-i18n="home.steps.2.title">Compara 3 escenarios</h3>
-          <p class="step__d" data-i18n="home.steps.2.desc">Óptimo, Equilibrado y Conservador, cada uno con su fecha de fin, su margen ante imprevistos y su puntuación de robustez. Eliges con datos, no a ojo.</p>
+          <h3 class="step__t" data-i18n="home.steps.2.title">Simula cientos de imprevistos</h3>
+          <p class="step__d" data-i18n="home.steps.2.desc">Duraciones variables y averías aleatorias, calibradas con tu historial: la probabilidad de entrega de cada OF y el recurso que más la frena.</p>
         </li>
         <li class="step">
           <span class="step__n">04</span>
-          <h3 class="step__t" data-i18n="home.steps.3.title">Ejecuta y mide</h3>
-          <p class="step__d" data-i18n="home.steps.3.desc">Gantt en tiempo real, alertas de cuello de botella antes de que ocurra y un scorecard de impacto desde el primer día.</p>
+          <h3 class="step__t" data-i18n="home.steps.3.title">Decide y compártelo</h3>
+          <p class="step__d" data-i18n="home.steps.3.desc">Compara escenarios, pregunta al copiloto sobre tus propios datos y exporta el plan a Excel para el taller.</p>
         </li>
       </ol>
     </div>
@@ -141,10 +135,7 @@ import SectorIcon from '../components/SectorIcon.astro';
       <h2 class="section-title section-title--light replan__title" data-i18n-html="home.stress.title">
         El plan que no has puesto a prueba<br/>no es un plan. Es una apuesta.
       </h2>
-      <p class="replan__sub" data-i18n="home.stress.sub">
-        Lanza un imprevisto y observa cómo responde cada escenario. La puntuación
-        de robustez ya predecía cuál iba a aguantar.
-      </p>
+      <p class="replan__sub" data-i18n="home.stress.sub">Lanza un imprevisto y observa qué escenario mantiene su horario publicado. El margen entre operaciones compra estabilidad: el plan más ajustado termina antes, pero cualquier imprevisto lo mueve.</p>
 
       <div class="stress" data-stress>
         <div class="stress__controls">
@@ -159,27 +150,27 @@ import SectorIcon from '../components/SectorIcon.astro';
 
         <div class="stress__grid" aria-live="polite">
           {[
-            { key: 'opt', rob: 71 },
-            { key: 'bal', rob: 84 },
-            { key: 'con', rob: 92 },
+            { key: 'opt', rob: 48 },
+            { key: 'bal', rob: 61 },
+            { key: 'con', rob: 68 },
           ].map(s => (
             <div class="scard" data-scard={s.key}>
               <div class="scard__head">
                 <span class="scard__label" data-i18n={`home.gantt.${s.key}`}>{s.key === 'opt' ? 'Óptimo' : s.key === 'bal' ? 'Equilibrado' : 'Conservador'}</span>
-                <span class="scard__rob"><span data-i18n="home.stress.rob">Robustez</span> <b>{s.rob}</b></span>
+                <span class="scard__rob"><span data-i18n="home.stress.rob">A su hora</span> <b>{s.rob}%</b></span>
               </div>
               <div class="scard__bar"><i style={`width:${s.rob}%`}></i></div>
               <div class="scard__result" data-scard-result>
                 <span class="scard__state" data-st="idle" data-i18n="home.stress.idle">Plan publicado · listo</span>
                 <span class="scard__state scard__state--ok" data-st="held" data-i18n="home.stress.held" hidden>Absorbido</span>
-                <span class="scard__state scard__state--bad" data-st="broke" data-i18n="home.stress.broke" hidden>Fechas rotas</span>
+                <span class="scard__state scard__state--bad" data-st="broke" data-i18n="home.stress.broke" hidden>Horario roto</span>
                 <span class="scard__metric" data-sm hidden></span>
                 <span class="scard__note" data-sn hidden></span>
               </div>
             </div>
           ))}
         </div>
-        <p class="stress__caption" data-i18n="home.stress.caption">Datos de ejemplo. Con tus datos, la robustez se calcula sobre tu planta real.</p>
+        <p class="stress__caption" data-i18n="home.stress.caption">Datos de ejemplo. «A su hora» = operaciones que empiezan en su turno publicado, sobre cientos de escenarios simulados. Con tus datos se calcula sobre tu planta real.</p>
       </div>
 
       <a href="/comparativa" class="btn btn--outline replan__cta" data-i18n="home.stress.cta">Ver cómo se compara con lo de siempre →</a>
@@ -217,26 +208,23 @@ import SectorIcon from '../components/SectorIcon.astro';
       <div class="value__text">
         <p class="section-label" data-i18n="home.value.label">Por qué Planning Core</p>
         <h2 class="section-title" data-i18n-html="home.value.title">No es otro ERP.<br/>Es la capa que faltaba.</h2>
-        <p class="section-sub" data-i18n="home.value.sub">
-          Tu ERP registra lo que pasó. Planning Core decide qué producir mañana,
-          encima de tu sistema actual, sin migraciones ni consultores.
-        </p>
+        <p class="section-sub" data-i18n="home.value.sub">Tu ERP registra lo que pasó. Planning Core decide qué producir y cuándo, con la capacidad real, encima de tu sistema actual.</p>
         <div class="value__list">
           <div class="vi">
             <span class="vi__k">01</span>
-            <div><strong data-i18n="home.value.1.title">Robustez medida, no supuesta</strong><span data-i18n="home.value.1.desc">Cada escenario trae su puntuación Monte Carlo: sabes cuál aguanta antes de elegirlo.</span></div>
+            <div><strong data-i18n="home.value.1.title">Probabilidad medida, no supuesta</strong><span data-i18n="home.value.1.desc">Cada OF trae su probabilidad de entrega con su intervalo de confianza: sabes qué fecha puedes comprometer antes de darla.</span></div>
           </div>
           <div class="vi">
             <span class="vi__k">02</span>
-            <div><strong data-i18n="home.value.0.title">Replanifica en segundos</strong><span data-i18n="home.value.0.desc">Un imprevisto no cuesta una reunión de dos horas. Cuesta tres segundos.</span></div>
+            <div><strong data-i18n="home.value.0.title">Cada retraso, con su causa</strong><span data-i18n="home.value.0.desc">No solo «llega tarde»: qué operación espera, en qué recurso y detrás de qué otra OF.</span></div>
           </div>
           <div class="vi">
             <span class="vi__k">03</span>
-            <div><strong data-i18n="home.value.2.title">La lógica de tu sector, ya dentro</strong><span data-i18n="home.value.2.desc">Ciclo de autoclave, ventanas de mantenimiento, trazabilidad GxP: todo preconfigurado.</span></div>
+            <div><strong data-i18n="home.value.2.title">La lógica de composites, ya dentro</strong><span data-i18n="home.value.2.desc">Autoclave, NDT, laminado y ventanas de mantenimiento, con la variabilidad propia de cada tipo de operación.</span></div>
           </div>
           <div class="vi">
             <span class="vi__k">04</span>
-            <div><strong data-i18n="home.value.3.title">Sin tocar tu ERP</strong><span data-i18n="home.value.3.desc">Integración vía API en días. Escala de una máquina a cientos de recursos.</span></div>
+            <div><strong data-i18n="home.value.3.title">Sin tocar tu ERP</strong><span data-i18n="home.value.3.desc">Sin migraciones: lees el Excel que ya exporta tu ERP y devuelves el plan en Excel.</span></div>
           </div>
         </div>
       </div>
@@ -252,11 +240,11 @@ import SectorIcon from '../components/SectorIcon.astro';
         </div>
         <div class="cmp cmp--new">
           <div class="cmp__h" data-i18n="home.comp.withLabel">Con Planning Core</div>
-          <div class="cmp__row"><span class="cmp__ok">✓</span><span data-i18n="home.comp.new.0">Un plan en tiempo real para todo el equipo</span></div>
-          <div class="cmp__row"><span class="cmp__ok">✓</span><span data-i18n="home.comp.new.1">Alerta automática antes de que ocurra</span></div>
-          <div class="cmp__row"><span class="cmp__ok">✓</span><span data-i18n="home.comp.new.2">El Gantt se actualiza solo</span></div>
-          <div class="cmp__row"><span class="cmp__ok">✓</span><span data-i18n="home.comp.new.3">Replanificación en segundos, con robustez medida</span></div>
-          <div class="cmp__row"><span class="cmp__ok">✓</span><span data-i18n="home.comp.new.4">Visibilidad para toda la planta</span></div>
+          <div class="cmp__row"><span class="cmp__ok">✓</span><span data-i18n="home.comp.new.0">Un plan de capacidad finita para todo el equipo</span></div>
+          <div class="cmp__row"><span class="cmp__ok">✓</span><span data-i18n="home.comp.new.1">Las OF en riesgo, señaladas antes de comprometer la fecha</span></div>
+          <div class="cmp__row"><span class="cmp__ok">✓</span><span data-i18n="home.comp.new.2">Replanificas en un clic cuando cambian las OF o una máquina</span></div>
+          <div class="cmp__row"><span class="cmp__ok">✓</span><span data-i18n="home.comp.new.3">Probabilidad de entrega por OF, con su causa</span></div>
+          <div class="cmp__row"><span class="cmp__ok">✓</span><span data-i18n="home.comp.new.4">El plan exportado a Excel para el taller</span></div>
         </div>
       </div>
     </div>
@@ -594,6 +582,33 @@ import SectorIcon from '../components/SectorIcon.astro';
     .proof__sep { display: none; }
     .proof__inner { justify-content: flex-start; gap: 1rem 1.75rem; }
   }
+
+  /* OF robustness card (hero) */
+  .ofp { padding: .55rem .9rem .2rem; display: flex; flex-direction: column; }
+  .ofp__row { display: grid; grid-template-columns: 1.35fr .7fr 1.2fr 1.1fr; gap: .6rem; align-items: center;
+              padding: .42rem 0; border-bottom: 1px solid rgba(255,255,255,.06); font-size: .7rem; color: rgba(255,255,255,.75); }
+  .ofp__row:last-child { border-bottom: none; }
+  .ofp__row--head { font-size: .58rem; text-transform: uppercase; letter-spacing: .05em; color: rgba(255,255,255,.4); padding-top: .2rem; }
+  .ofp__of b { color: #fff; font-weight: 700; margin-right: .35rem; }
+  .ofp__of em { font-style: normal; color: rgba(255,255,255,.45); }
+  .ofp__due { font-variant-numeric: tabular-nums; }
+  .ofp__p { display: grid; grid-template-columns: 1fr auto; align-items: center; gap: .45rem; }
+  .ofp__p i { display: block; height: 5px; border-radius: 999px; background: currentColor; opacity: .85; }
+  .ofp__p b { font-variant-numeric: tabular-nums; min-width: 2.4em; text-align: right; }
+  .ofp__p--ok { color: #4ade80; } .ofp__p--warn { color: #fbbf24; } .ofp__p--bad { color: #f87171; }
+  .ofp__cause { color: rgba(255,255,255,.6); font-size: .66rem; }
+  .ofp__kpis { grid-template-columns: repeat(3, 1fr); }
+  .pk__v--warn { color: #fbbf24; }
+  .ofp__caption { margin: 0; padding: 0 .9rem .7rem; font-size: .6rem; color: rgba(255,255,255,.35); }
+  @media (max-width: 520px) {
+    .ofp__row { grid-template-columns: 1.2fr 1.1fr 1fr; }
+    .ofp__due, .ofp__row--head > :nth-child(2) { display: none; }
+    .ofp__of em { display: none; }
+  }
+  /* Trust line: separators never orphan at the start of a wrapped line */
+  .hero__trust { display: flex; flex-wrap: wrap; column-gap: .9rem; row-gap: .35rem; }
+  .hero__trust-sep { display: none; }
+  .hero__trust > span:not(.hero__trust-sep)::before { content: '✓'; margin-right: .35rem; color: #8BC2C6; }
 </style>
 
 <script>
@@ -658,58 +673,4 @@ import SectorIcon from '../components/SectorIcon.astro';
     render();
   }
 
-  // Hero planner mock — switch scenario, update gantt + KPIs
-  const planner = document.querySelector('[data-planner]');
-  if (planner) {
-    const SCN = {
-      opt: {
-        bars: [[6,14],[6,14],[22,15],[39,13],[54,13]],
-        finish: { es: 'Mié · T1', en: 'Wed · S1' },
-        buffer: { es: '0 turnos', en: '0 shifts' },
-        rob: 71,
-      },
-      bal: {
-        bars: [[6,14],[6,14],[24,20],[46,16],[64,16]],
-        finish: { es: 'Jue · T1', en: 'Thu · S1' },
-        buffer: { es: '1 turno', en: '1 shift' },
-        rob: 84,
-      },
-      con: {
-        bars: [[6,14],[6,14],[26,23],[51,18],[71,18]],
-        finish: { es: 'Vie · T1', en: 'Fri · S1' },
-        buffer: { es: '2 turnos', en: '2 shifts' },
-        rob: 92,
-      },
-    };
-    const bars = [...document.querySelectorAll('[data-bar]')];
-    const pk = (k: string) => document.querySelector<HTMLElement>(`[data-pk="${k}"]`);
-    let current = 'bal';
-
-    const render = (key: string) => {
-      const s = SCN[key as keyof typeof SCN];
-      if (!s) return;
-      current = key;
-      const lang = document.documentElement.lang === 'en' ? 'en' : 'es';
-      bars.forEach((b, i) => {
-        const [l, w] = s.bars[i] || [0, 0];
-        b.style.left = l + '%';
-        b.style.width = w + '%';
-      });
-      const f = pk('finish'); if (f) f.textContent = s.finish[lang];
-      const bf = pk('buffer'); if (bf) bf.textContent = s.buffer[lang];
-      const rb = pk('robBar'); if (rb) rb.style.width = s.rob + '%';
-      const r = pk('rob'); if (r) r.textContent = String(s.rob);
-      planner.querySelectorAll('.scn').forEach(btn => {
-        btn.classList.toggle('scn--on', (btn as HTMLElement).dataset.scn === key);
-      });
-    };
-
-    planner.querySelectorAll('.scn').forEach(btn => {
-      btn.addEventListener('click', () => render((btn as HTMLElement).dataset.scn!));
-    });
-    // Re-render when <html lang> flips (BaseLayout's applyLang), so KPI strings stay in sync
-    new MutationObserver(() => render(current))
-      .observe(document.documentElement, { attributes: true, attributeFilter: ['lang'] });
-    render('bal');
-  }
 </script>

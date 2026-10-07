@@ -3,17 +3,14 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 ---
 <BaseLayout
   title="Producto — Planning Core"
-  description="Cómo funciona Planning Core: Gantt en tiempo real, tres escenarios con robustez Monte Carlo medida, y replanificación en segundos para manufactura industrial."
+  description="Cómo funciona Planning Core: plan de capacidad finita por OF, probabilidad de entrega con Monte Carlo, causa de cada retraso y exportación a Excel, encima de tu ERP."
 >
   <!-- HERO -->
   <section class="page-hero">
     <div class="container">
       <p class="section-label" data-i18n="prod.hero.label">El producto</p>
       <h1 class="section-title section-title--light" data-i18n-html="prod.hero.title">Un Gantt que decide,<br/>no solo que dibuja</h1>
-      <p class="page-hero__sub" data-i18n="prod.hero.sub">
-        Planning Core es la capa de planificación que tu ERP no tiene. Gestiona recursos,
-        simula escenarios y replanifica en segundos cuando la realidad cambia.
-      </p>
+      <p class="page-hero__sub" data-i18n="prod.hero.sub">Planning Core es la capa de planificación que tu ERP no tiene: planifica tus órdenes con capacidad finita, simula imprevistos y te dice qué llega a tiempo, qué no y por qué.</p>
     </div>
   </section>
 
@@ -22,18 +19,14 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     <div class="container">
       <div class="feature-block feature-block--reverse">
         <div class="feature-block__text">
-          <p class="section-label" data-i18n="prod.f1.label">Gantt en tiempo real</p>
-          <h2 class="section-title" data-i18n-html="prod.f1.title">Visibilidad total<br/>de tu planta</h2>
-          <p class="feature-desc" data-i18n="prod.f1.desc">
-            Ve todas tus máquinas, líneas y operarios en una sola pantalla.
-            El plan se actualiza automáticamente cuando cambia algo en producción.
-            Sin refrescos manuales, sin versiones desactualizadas.
-          </p>
+          <p class="section-label" data-i18n="prod.f1.label">Plan de capacidad finita</p>
+          <h2 class="section-title" data-i18n-html="prod.f1.title">Cada OF en su recurso,<br/>y la causa si se retrasa</h2>
+          <p class="feature-desc" data-i18n="prod.f1.desc">Las operaciones de cada OF salen de la ruta liberada de su pieza y se colocan en su recurso respetando secuencia, calendario, mantenimiento, recursos alternativos y disrupciones activas. Si una OF llega tarde, ves qué operación espera, dónde y detrás de qué otra OF.</p>
           <ul class="feature-list">
-            <li data-i18n="prod.f1.li.0">Arrastrar y soltar para reordenar operaciones</li>
-            <li data-i18n="prod.f1.li.1">Alertas automáticas de colisión de recursos</li>
-            <li data-i18n="prod.f1.li.2">Vista por turno, día o semana</li>
-            <li data-i18n="prod.f1.li.3">Exportación a PDF o integración vía API</li>
+            <li data-i18n="prod.f1.li.0">Rutas versionadas por pieza (OP10, OP20…)</li>
+            <li data-i18n="prod.f1.li.1">Calendario, eficiencia y unidades en paralelo por recurso</li>
+            <li data-i18n="prod.f1.li.2">Carga por recurso y aviso de sobrecarga</li>
+            <li data-i18n="prod.f1.li.3">Exportación del plan a Excel</li>
           </ul>
         </div>
         <div class="feature-block__visual">
@@ -59,7 +52,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
                   </div>
                 ))}
               </div>
-              <div class="alert-chip" data-i18n="prod.f1.alert">Colisión detectada en Línea B, Sem 3</div>
+              <div class="alert-chip" data-i18n="prod.f1.alert">Sobrecarga en AUTOCLAVE-01 · semana 41</div>
             </div>
           </div>
         </div>
@@ -69,24 +62,20 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         <div class="feature-block__text">
           <p class="section-label" data-i18n="prod.f2.label">Escenarios de simulación</p>
           <h2 class="section-title" data-i18n-html="prod.f2.title">3 planes en segundos.<br/>Tú eliges cuál ejecutar.</h2>
-          <p class="feature-desc" data-i18n="prod.f2.desc">
-            El motor genera tres versiones del plan (Óptimo, Equilibrado y Conservador)
-            y las somete a cientos de simulaciones Monte Carlo. Cada tarjeta trae su fecha
-            de fin, su margen ante imprevistos y su puntuación de robustez. Eliges con datos.
-          </p>
+          <p class="feature-desc" data-i18n="prod.f2.desc">El motor genera tres versiones del plan (Óptimo, Equilibrado y Conservador) y simula cientos de escenarios sobre cada una. Cada tarjeta trae su probabilidad de terminar a tiempo y el porcentaje de operaciones que mantienen su horario: la recomendación sale de los datos, no de una etiqueta.</p>
           <ul class="feature-list">
             <li data-i18n="prod.f2.li.0">Óptimo: termina antes, sin colchón entre operaciones</li>
-            <li data-i18n="prod.f2.li.1">Equilibrado: 1 turno de margen, rendimiento y robustez a la vez</li>
-            <li data-i18n="prod.f2.li.2">Conservador: máximo margen ante disrupciones</li>
-            <li data-i18n="prod.f2.li.3">Robustez Monte Carlo medida en cada escenario</li>
+            <li data-i18n="prod.f2.li.1">Equilibrado: 1 turno de margen entre operaciones</li>
+            <li data-i18n="prod.f2.li.2">Conservador: el horario publicado más estable</li>
+            <li data-i18n="prod.f2.li.3">Recomendación calculada con la simulación</li>
           </ul>
         </div>
         <div class="feature-block__visual">
           <div class="scenarios-card">
             {[
-              { i:0, label:'Óptimo',      otd:'100%', fin:'Mié · T1', rob:71 },
-              { i:1, label:'Equilibrado', otd:'100%', fin:'Jue · T1', rob:84, active:true },
-              { i:2, label:'Conservador', otd:'100%', fin:'Vie · T1', rob:92 },
+              { i:0, label:'Óptimo',      otd:'97%', fin:'Mié · T1', rob:48 },
+              { i:1, label:'Equilibrado', otd:'96%', fin:'Jue · T1', rob:61, active:true },
+              { i:2, label:'Conservador', otd:'91%', fin:'Vie · T1', rob:68 },
             ].map(sc => (
               <div class={`scenario ${sc.active ? 'scenario--active' : ''}`}>
                 <div class="scenario__top">
@@ -94,13 +83,13 @@ import BaseLayout from '../layouts/BaseLayout.astro';
                   {sc.active && <span class="scenario__tag" data-i18n="prod.f2.recommended">Recomendado</span>}
                 </div>
                 <div class="scenario__metrics">
-                  <div class="sc-metric"><span data-i18n="prod.f2.m.otd">Cumplimiento OTD</span><strong>{sc.otd}</strong></div>
+                  <div class="sc-metric"><span data-i18n="prod.f2.m.otd">Prob. a tiempo</span><strong>{sc.otd}</strong></div>
                   <div class="sc-metric"><span data-i18n="home.demo.finish">Fin del plan</span><strong>{sc.fin}</strong></div>
                 </div>
                 <div class="scenario__rob">
-                  <span data-i18n="home.demo.robust">Robustez Monte Carlo</span>
+                  <span data-i18n="prod.f2.m.adh">Operaciones a su hora</span>
                   <span class="rob-bar"><i style={`width:${sc.rob}%`}></i></span>
-                  <b>{sc.rob}<em>/100</em></b>
+                  <b>{sc.rob}<em>%</em></b>
                 </div>
               </div>
             ))}
@@ -112,14 +101,11 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         <div class="feature-block__text">
           <p class="section-label" data-i18n="prod.f3.label">Replanificación inteligente</p>
           <h2 class="section-title" data-i18n-html="prod.f3.title">La realidad cambia.<br/>El plan también.</h2>
-          <p class="feature-desc" data-i18n="prod.f3.desc">
-            Avería, pedido urgente, operario de baja. Planning Core detecta la desviación
-            y genera un nuevo plan en segundos, sin perder las fechas comprometidas.
-          </p>
+          <p class="feature-desc" data-i18n="prod.f3.desc">Avería, pedido urgente u OF nueva: recalculas el plan en un clic con los datos actuales y ves el impacto en cada OF antes de comprometer fechas.</p>
           <ul class="feature-list">
             <li data-i18n="prod.f3.li.0">Replanificación con un clic</li>
-            <li data-i18n="prod.f3.li.1">Mantiene restricciones regulatorias y de calidad</li>
-            <li data-i18n="prod.f3.li.2">Auditoría de cambios con marca de tiempo</li>
+            <li data-i18n="prod.f3.li.1">Disrupciones con fecha que bloquean el recurso afectado</li>
+            <li data-i18n="prod.f3.li.2">Simulaciones guardadas y reproducibles</li>
             <li data-i18n="prod.f3.li.3">Simulación de impacto antes de confirmar</li>
           </ul>
         </div>
@@ -133,7 +119,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
             <div class="rc-arrow" data-i18n="prod.f3.replanning">Replanificando…</div>
             <div class="rc-row rc-row--ok">
               <span class="rc-dot"></span>
-              <div><strong data-i18n="prod.f3.ready">Nuevo plan listo</strong><span data-i18n="prod.f3.result">3 OTs reasignadas · OTD 96% mantenido</span></div>
+              <div><strong data-i18n="prod.f3.ready">Nuevo plan listo</strong><span data-i18n="prod.f3.result">3 OF reasignadas · 96 % en plazo</span></div>
               <span class="rc-time">14:32<em> + 3 s</em></span>
             </div>
           </div>
@@ -145,18 +131,15 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   <!-- INTEGRATIONS -->
   <section class="integrations">
     <div class="container text-center">
-      <p class="section-label" data-i18n="prod.int.label">Integraciones</p>
+      <p class="section-label" data-i18n="prod.int.label">Tus datos</p>
       <h2 class="section-title" data-i18n="prod.int.title">Encima de lo que ya tienes</h2>
-      <p class="section-sub text-center" style="margin:0 auto 3rem" data-i18n="prod.int.sub">
-        Planning Core no reemplaza tu ERP. Se conecta vía API y añade la capa de
-        planificación inteligente que le faltaba.
-      </p>
+      <p class="section-sub text-center" style="margin:0 auto 3rem" data-i18n="prod.int.sub">Planning Core no reemplaza tu ERP. Empiezas con el Excel o CSV que ya exporta tu MRP y devuelves el plan en Excel. La conexión directa con tu ERP la definimos con tu equipo durante el piloto.</p>
       <div class="integrations-grid">
-        {['SAP', 'Sage', 'Odoo', 'Dynamics 365', 'Fichero CSV', 'API REST'].map(int => (
+        {['Excel del MRP', 'CSV', 'SAP', 'Dynamics 365', 'Sage', 'Odoo'].map(int => (
           <div class="integration-chip">{int}</div>
         ))}
       </div>
-      <p class="integrations-note" data-i18n="prod.int.note">¿Tu ERP no está en la lista? Contáctanos. La integración suele tardar menos de una semana.</p>
+      <p class="integrations-note" data-i18n="prod.int.note">Cualquier ERP que exporte a Excel o CSV sirve para empezar.</p>
     </div>
   </section>
 
