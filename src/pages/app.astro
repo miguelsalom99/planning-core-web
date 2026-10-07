@@ -3061,7 +3061,7 @@
           </div>
         </div>
         <div class="header-actions">
-          <button class="btn-ui">
+          <button class="btn-ui" id="exportPlanBtn" type="button">
             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
             Exportar
           </button>
@@ -3069,7 +3069,7 @@
             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
             Guardar plan
           </button>
-          <button class="btn-ui">
+          <button class="btn-ui" id="scenariosHeaderBtn" type="button" title="Compara las alternativas Óptimo / Equilibrado / Conservador">
             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M15 3h6v6"/><path d="M10 14 21 3"/></svg>
             Escenarios
           </button>
@@ -11671,18 +11671,26 @@
     }
 
     // 5. Exportar
-    const exportBtn = document.querySelector('.header-actions .btn-ui:first-child');
+    // By id: the positional selectors picked the wrong buttons («Guardar plan»
+    // showed the Escenarios toast) and the toast claimed a download that never happened.
+    const exportBtn = document.getElementById('exportPlanBtn');
     if (exportBtn) {
       exportBtn.addEventListener('click', () => {
-        showToast('Plan exportado · Descarga iniciada');
+        showToast('La exportación del plan aún no está disponible. Usa «Guardar plan» para conservarlo.', 4000);
       });
     }
 
     // 6. Escenarios
-    const scenariosBtn = document.querySelector('.header-actions .btn-ui:nth-child(2)');
+    const scenariosBtn = document.getElementById('scenariosHeaderBtn');
     if (scenariosBtn) {
       scenariosBtn.addEventListener('click', () => {
-        showToast('Escenarios: función disponible próximamente');
+        // The real scenario comparison is the planner: open it (and un-minimise its block).
+        const planBtn = [...document.querySelectorAll<HTMLButtonElement>('#panel-gantt .gantt-card button')]
+          .find(b => b.textContent?.trim().startsWith('Planificar IA'));
+        const block = document.querySelector<HTMLElement>('#panel-gantt .lw[data-widget="gantt"]');
+        if (block?.classList.contains('lw--collapsed')) (block.querySelector('[data-lw="collapse"]') as HTMLButtonElement)?.click();
+        planBtn?.click();
+        block?.scrollIntoView({ behavior: 'smooth', block: 'start' });
       });
     }
 
