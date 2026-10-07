@@ -6309,6 +6309,7 @@
     lwSaveTimer = setTimeout(async () => {
       try { await apiJson('/config', { method: 'PUT', body: JSON.stringify({ layouts: lwState }) }); }
       catch { showToast('No se pudo guardar tu diseño en el servidor; se mantiene en este navegador.'); }
+      finally { lwSaveTimer = null; }
     }, 700);
   }
 
@@ -6371,6 +6372,22 @@
       if (region) lwSetEditing(region, !region.classList.contains('lw-editing'));
     });
     document.getElementById('copilotDock')?.addEventListener('click', lwToggleDock);
+    // Several tabs / devices: the last save would silently overwrite the
+    // others. Another tab of this browser saving → apply its copy at once;
+    // coming back to this tab → reload the server copy (unless editing here).
+    window.addEventListener('storage', (e) => {
+      if (e.key !== lwCacheKey() || !e.newValue || document.querySelector('.lw-region.lw-editing')) return;
+      try { lwState = lwClean(JSON.parse(e.newValue)); lwApplyAll(); } catch {}
+    });
+    let lwLastPull = 0;
+    const lwPull = () => {
+      if (!currentUser || document.visibilityState !== 'visible' || document.querySelector('.lw-region.lw-editing')) return;
+      if (Date.now() - lwLastPull < 5000 || lwSaveTimer) return;
+      lwLastPull = Date.now();
+      layoutLoadForUser(currentUser);
+    };
+    window.addEventListener('focus', lwPull);
+    document.addEventListener('visibilitychange', lwPull);
     document.addEventListener('keydown', (e) => {
       if (e.key !== 'Escape') return;
       const region = document.querySelector<HTMLElement>('.lw-region.lw-editing');
