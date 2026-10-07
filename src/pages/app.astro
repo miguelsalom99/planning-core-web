@@ -3091,6 +3091,7 @@
         <button class="hist-banner__cta" id="histBannerDismiss">Volver al plan actual →</button>
       </div>
 
+      <div class="demo-data-note" role="note" style="font-size:.75rem;font-weight:600;color:#92400E;background:#FEF3C7;border:1px solid #FCD34D;border-radius:8px;padding:.45rem .75rem;margin-bottom:.75rem">Vista de ejemplo: la alerta y los indicadores (OEE, cumplimiento, setup, órdenes en riesgo) son ilustrativos y no reflejan tu planta.</div>
       <!-- Alert banner -->
       <div class="alert-banner">
         <div class="alert-banner__icon">
@@ -3529,6 +3530,7 @@
 
       </div>
 
+      <div class="demo-data-note" role="note" style="font-size:.75rem;font-weight:600;color:#92400E;background:#FEF3C7;border:1px solid #FCD34D;border-radius:8px;padding:.45rem .75rem;margin-bottom:.75rem">Vista de ejemplo: las órdenes activas y la capacidad semanal son ilustrativas. Tus OF reales y su carga por recurso están en «MRP &amp; Tiempos».</div>
       <!-- Bottom grid -->
       <div class="bottom-grid">
 
@@ -7143,7 +7145,7 @@
           card.innerHTML = `
             <div class="alt-card__header">
               <span class="alt-card__badge">${s.badge}</span>
-              <span class="alt-card__label">${s.label}</span>
+              <span class="alt-card__label" hidden>${s.label}</span>
             </div>
             <div class="alt-card__desc">${s.description}</div>
             <div class="alt-card__kpis">
