@@ -13,7 +13,7 @@ export const SECTORS = [
     cycle: "4-8 meses",
     fit: "5/5",
     icp: "Director de Producción · Planning Manager · MRO Manager",
-    roiHeadline: "Ciclos de autoclave al 95%+ · Replanificación en segundos · Trazabilidad AS9100 lista",
+    roiHeadline: "Probabilidad de entrega por OF · El autoclave como cuello de botella, a la vista · Replanificación en un clic",
     pains: [
       ["Autoclave como cuello de botella crítico", "El autoclave es el recurso más caro y más estrecho. Sin secuenciación precisa, las piezas esperan fuera y el ciclo térmico se pierde."],
       ["Replanificación manual ante disrupciones", "Una rotura de útil o un rechazo en inspección rompe el plan de toda la semana. El replanner tarda horas en redistribuir las órdenes."],
@@ -21,17 +21,17 @@ export const SECTORS = [
       ["Utillaje y moldes no coordinados", "El útil está ocupado en otra pieza cuando se necesita. Sin visibilidad de recursos secundarios, los bloqueos son invisibles hasta el momento de ejecución."],
     ],
     differentiators: [
-      ["Secuenciación de autoclave optimizada", "Planning Core ordena las cargas del autoclave minimizando tiempos muertos entre ciclos y maximizando el aprovechamiento térmico."],
-      ["Replanificación IA en segundos", "Ante cualquier disrupción (rechazo, avería, pedido urgente), el motor genera un nuevo plan coherente sin perder el ciclo siguiente."],
-      ["Trazabilidad automática por pieza", "Cada operación planificada queda registrada con recurso, turno y operario. El informe AS9100 se genera sin trabajo adicional."],
+      ["El autoclave, medido como cuello de botella", "Planning Core planifica el autoclave con capacidad finita, muestra su carga en el periodo y te dice qué OF esperan por él y cuánto."],
+      ["Replanificación en un clic", "Ante una avería, un rechazo en NDT o un pedido urgente, recalculas el plan con los datos actuales y ves qué OF cambian de fecha."],
+      ["Probabilidad de entrega por OF", "Planning Core simula cientos de escenarios con la variabilidad del laminado, el curado y el NDT, y te da la probabilidad de que cada OF llegue a tiempo."],
     ],
     pilotSteps: [
       ["Sem 1-2", "Mapeo de autoclaves, útiles, turnos y tipos de pieza"],
-      ["Sem 3-5", "Configuración de tiempos de ciclo, setup y restricciones de utillaje"],
+      ["Sem 3-5", "Configuración de rutas por pieza, tiempos de ciclo y setup"],
       ["Sem 6-8", "Validación con plan real: Planning Core vs Excel actual"],
       ["Sem 9-12", "Go-live · Rutina diaria · Scorecard de utilización de autoclave"],
     ],
-    kpis: ["Utilización de autoclave (%)", "Replanificaciones urgentes/semana", "OTD a cliente final", "Tiempo de generación de informe de trazabilidad"],
+    kpis: ["Utilización de autoclave (%)", "Replanificaciones urgentes/semana", "OTD a cliente final", "Probabilidad de entrega de las OF"],
     competitors: [
       ["Siemens Opcenter APS", "Potente pero implantación 12-18 meses, costoso"],
       ["Preactor / Ortems", "APS genérico sin lógica de composites"],
@@ -48,7 +48,7 @@ export const SECTORS = [
       price: "€2,000-4,500 / site / month",
       cycle: "4-8 months",
       icp: "Production Director · Planning Manager · MRO Manager",
-      roiHeadline: "Autoclave cycles at 95%+ · Replanning in seconds · AS9100 traceability ready",
+      roiHeadline: "On-time probability per order · The autoclave bottleneck in plain sight · One-click replanning",
       pains: [
         ["Autoclave as the critical bottleneck", "The autoclave is the most expensive and tightest resource. Without precise sequencing, parts wait outside and the thermal cycle is lost."],
         ["Manual replanning after disruptions", "A tooling breakage or an inspection rejection breaks the whole week's plan. Replanning takes hours to redistribute orders."],
@@ -56,17 +56,17 @@ export const SECTORS = [
         ["Tooling and molds not coordinated", "The tool is busy on another part when it's needed. Without visibility of secondary resources, blockages stay invisible until execution."],
       ],
       differentiators: [
-        ["Optimized autoclave sequencing", "Planning Core orders autoclave loads minimizing dead time between cycles and maximizing thermal utilization."],
-        ["AI replanning in seconds", "Facing any disruption (rejection, breakdown, urgent order), the engine generates a coherent new plan without losing the next cycle."],
-        ["Automatic per-part traceability", "Every planned operation is logged with resource, shift and operator. The AS9100 report is generated with no extra work."],
+        ["The autoclave, measured as the bottleneck", "Planning Core plans the autoclave with finite capacity, shows its load over the period and tells you which orders wait for it, and for how long."],
+        ["One-click replanning", "After a breakdown, an NDT rejection or a rush order, you recompute the plan with current data and see which orders move."],
+        ["On-time probability per order", "Planning Core simulates hundreds of scenarios with the variability of layup, cure and NDT and gives you the probability that each order ships on time."],
       ],
       pilotSteps: [
         ["Wk 1-2", "Mapping autoclaves, tooling, shifts and part types"],
-        ["Wk 3-5", "Configuring cycle times, setup and tooling constraints"],
+        ["Wk 3-5", "Configuring routings per part, cycle times and setup"],
         ["Wk 6-8", "Validation with a real plan: Planning Core vs current Excel"],
         ["Wk 9-12", "Go-live · Daily routine · Autoclave utilization scorecard"],
       ],
-      kpis: ["Autoclave utilization (%)", "Urgent replans/week", "OTD to final customer", "Traceability report generation time"],
+      kpis: ["Autoclave utilization (%)", "Urgent replans/week", "OTD to final customer", "On-time probability of orders"],
       competitors: [
         ["Siemens Opcenter APS", "Powerful but 12-18 month rollout, costly"],
         ["Preactor / Ortems", "Generic APS with no composites logic"],

@@ -37,17 +37,17 @@ const ROWS = [
   {
     k: 'robust', dim: 'Robustez del plan',
     excel: 'Desconocida', aps: 'Desconocida',
-    erp: 'Desconocida', pc: 'Puntuación Monte Carlo por escenario',
+    erp: 'Desconocida', pc: 'Probabilidad de entrega por OF y por escenario (Monte Carlo)',
   },
   {
     k: 'erpRel', dim: 'Relación con tu ERP',
     excel: 'Vive al margen', aps: 'Lo sustituye',
-    erp: 'Te ata más a él', pc: 'Encima, vía API',
+    erp: 'Te ata más a él', pc: 'Encima, con el Excel o CSV que ya exporta',
   },
   {
     k: 'sector', dim: 'Lógica de tu sector',
     excel: 'La montas tú', aps: 'Proyecto de configuración',
-    erp: 'Genérica', pc: 'Preconfigurada',
+    erp: 'Genérica', pc: 'Preconfigurada para composites; el resto, en el piloto',
   },
 ];
 
@@ -62,7 +62,7 @@ const VS = [
   },
   {
     k: 'erp', title: 'vs. el módulo de planificación de tu ERP',
-    body: 'El MRP de tu ERP registra y recalcula por lotes; no es una herramienta de decisión en planta. No tiene Gantt visual, no compara escenarios y no mide riesgo. Planning Core se conecta por API y añade exactamente esa capa, sin atarte más al ERP.',
+    body: 'El MRP de tu ERP registra y recalcula por lotes; no es una herramienta de decisión en planta. No tiene Gantt visual, no compara escenarios y no mide riesgo. Planning Core lee los datos que ya exporta tu ERP y añade exactamente esa capa, sin atarte más a él.',
   },
 ];
 
@@ -83,8 +83,8 @@ const NOT = [
       <h1 class="section-title section-title--light" data-i18n-html="comp.hero.title">La planificación que mide<br/>lo que las demás suponen</h1>
       <p class="page-hero__sub" data-i18n="comp.hero.sub">
         Excel, un APS clásico o el MRP de tu ERP te dan un plan y te piden que
-        confíes. Planning Core te da tres, cada uno con su puntuación de robustez, y
-        te deja elegir con datos, en 12 semanas y sin reemplazar nada.
+        confíes. Planning Core te dice la probabilidad de entrega de cada OF, la causa de
+        cada retraso y te deja comparar escenarios con datos, en 12 semanas y sin reemplazar nada.
       </p>
     </div>
   </section>
