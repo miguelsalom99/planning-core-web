@@ -2,6 +2,19 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { SECTORS } from '../data/sectors.js';
 import SectorIcon from '../components/SectorIcon.astro';
+
+const FAQ_LD = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: [
+    { '@type': 'Question', name: '¿Qué es un software de planificación de la producción con capacidad finita?', acceptedAnswer: { '@type': 'Answer', text: 'Es una herramienta que coloca cada operación de cada orden de fabricación en el recurso que la ejecuta, respetando su capacidad real: calendario, turnos, mantenimiento y lo que ya tiene ocupado. A diferencia del MRP, que supone capacidad infinita, te dice cuándo terminará de verdad cada orden.' } },
+    { '@type': 'Question', name: '¿Planning Core sustituye a mi ERP o a mi MRP?', acceptedAnswer: { '@type': 'Answer', text: 'No. Planning Core trabaja encima de tu ERP: lee el Excel o CSV que ya exporta tu MRP con las órdenes de fabricación y te devuelve el plan en Excel. La conexión directa con tu ERP se define con tu equipo durante el piloto.' } },
+    { '@type': 'Question', name: '¿Cómo calcula la probabilidad de entrega de cada orden de fabricación?', acceptedAnswer: { '@type': 'Answer', text: 'Con una simulación Monte Carlo: repite el plan cientos de veces con duraciones variables y averías aleatorias, calibradas con tu historial cuando hay suficiente, y cuenta en cuántos escenarios cada orden termina antes de su fecha de necesidad. También te dice qué recurso la retrasa más a menudo.' } },
+    { '@type': 'Question', name: '¿Qué datos necesito para empezar?', acceptedAnswer: { '@type': 'Answer', text: 'El Excel de tu MRP con las órdenes de fabricación, sus cantidades y fechas de necesidad; los recursos con su calendario; y la ruta de cada pieza (sus operaciones y tiempos). Planning Core valida los datos al cargarlos y te dice qué falta.' } },
+    { '@type': 'Question', name: '¿Para qué sectores está pensado?', acceptedAnswer: { '@type': 'Answer', text: 'Empieza por composites y aeronáutica, con el autoclave, el NDT y el laminado como cuellos de botella típicos. Para fundición, packaging, MedTech, ferroviario, naval y otros sectores, la lógica específica se configura con tu equipo durante el piloto.' } },
+    { '@type': 'Question', name: '¿Cuánto se tarda en implantar?', acceptedAnswer: { '@type': 'Answer', text: 'El piloto dura 12 semanas: mapeo de recursos y rutas, validación del plan, uso en paralelo con tu sistema actual y puesta en marcha con métricas acordadas. Si no aporta valor, no hay contrato.' } }
+  ],
+};
 ---
 <BaseLayout>
 
@@ -12,13 +25,13 @@ import SectorIcon from '../components/SectorIcon.astro';
       <div class="hero__content">
         <div class="badge hero__badge">
           <span class="hero__badge-dot"></span>
-          <span data-i18n="home.hero.badge">Planificación de capacidad finita + Monte Carlo</span>
+          <span data-i18n="home.hero.badge">Software APS · Capacidad finita + Monte Carlo</span>
         </div>
         <h1 class="hero__title" data-i18n-html="home.hero.title">
           Descubre hoy qué órdenes no llegarán a tiempo.<br/><span class="hero__accent">Y por qué.</span>
         </h1>
         <p class="hero__sub" data-i18n-html="home.hero.sub">
-          Planning Core planifica tus órdenes de fabricación con sus rutas, calendarios y mantenimiento reales, simula cientos de imprevistos sobre el plan y te da la <span class="hero__relief">probabilidad de entrega de cada OF</span> con la causa de cada retraso. Funciona encima de tu ERP y empieza por el Excel de tu MRP.
+          Planning Core planifica tus órdenes de fabricación con sus rutas, calendarios y mantenimiento reales, simula cientos de imprevistos sobre el plan y te da la <span class="hero__relief">probabilidad de entrega de cada orden de fabricación</span> con la causa de cada retraso. Funciona encima de tu ERP y empieza por el Excel de tu MRP.
         </p>
         <div class="hero__ctas">
           <a href="/contacto" class="btn btn--primary" data-i18n="home.hero.cta1">Solicitar demo con mis datos →</a>
@@ -37,11 +50,11 @@ import SectorIcon from '../components/SectorIcon.astro';
         <div class="planner" aria-label="Ejemplo de análisis de robustez de órdenes de fabricación">
           <div class="planner__bar">
             <span class="planner__dot"></span><span class="planner__dot"></span><span class="planner__dot"></span>
-            <span class="planner__name" data-i18n="home.demo.frame">Planning Core · Robustez de las OF</span>
+            <span class="planner__name" data-i18n="home.demo.frame">Planning Core · Robustez de las órdenes de fabricación</span>
           </div>
           <div class="ofp" role="table">
             <div class="ofp__row ofp__row--head" role="row">
-              <span role="columnheader" data-i18n="home.of.h.of">OF</span>
+              <span role="columnheader" data-i18n="home.of.h.of">Orden</span>
               <span role="columnheader" data-i18n="home.of.h.due">Necesidad</span>
               <span role="columnheader" data-i18n="home.of.h.p">Prob. a tiempo</span>
               <span role="columnheader" data-i18n="home.of.h.cause">Causa principal</span>
@@ -74,7 +87,7 @@ import SectorIcon from '../components/SectorIcon.astro';
           <div class="planner__kpis ofp__kpis">
             <div class="pk"><span class="pk__k" data-i18n="home.of.all">Prob. de que todas lleguen</span><b class="pk__v pk__v--warn">14%</b></div>
             <div class="pk"><span class="pk__k" data-i18n="home.of.bottleneck">Cuello de botella</span><b class="pk__v">AUTOCLAVE-01</b></div>
-            <div class="pk"><span class="pk__k" data-i18n="home.of.risk">OF en riesgo</span><b class="pk__v">2</b></div>
+            <div class="pk"><span class="pk__k" data-i18n="home.of.risk">Órdenes en riesgo</span><b class="pk__v">2</b></div>
           </div>
           <p class="ofp__caption" data-i18n="home.of.caption">Datos de ejemplo · 400 escenarios simulados</p>
         </div>
@@ -91,7 +104,7 @@ import SectorIcon from '../components/SectorIcon.astro';
       <span class="proof__sep"></span>
       <div class="proof__item"><strong data-i18n-html="home.proof.2n">0&nbsp;cambios</strong><span data-i18n="home.proof.2">en tu ERP</span></div>
       <span class="proof__sep"></span>
-      <div class="proof__item"><strong data-i18n-html="home.proof.3n">Cada OF</strong><span data-i18n="home.proof.3">con su probabilidad y su causa</span></div>
+      <div class="proof__item"><strong data-i18n-html="home.proof.3n">Cada orden</strong><span data-i18n="home.proof.3">de fabricación, con su probabilidad de entrega</span></div>
     </div>
   </div>
 
@@ -99,7 +112,7 @@ import SectorIcon from '../components/SectorIcon.astro';
   <section class="how">
     <div class="container">
       <p class="section-label" data-i18n="home.how.label">Cómo funciona</p>
-      <h2 class="section-title how__title" data-i18n-html="home.how.title">Un plan que explica,<br/>no uno que solo dibuja</h2>
+      <h2 class="section-title how__title" data-i18n-html="home.how.title">Planificación de la producción<br/>que explica cada retraso</h2>
       <p class="section-sub how__sub" data-i18n="home.how.sub">Planning Core trabaja encima de tu ERP: lee tus órdenes, planifica con la capacidad real de cada recurso y mide el riesgo antes de que comprometas una fecha.</p>
 
       <ol class="steps">
@@ -116,7 +129,7 @@ import SectorIcon from '../components/SectorIcon.astro';
         <li class="step">
           <span class="step__n">03</span>
           <h3 class="step__t" data-i18n="home.steps.2.title">Simula cientos de imprevistos</h3>
-          <p class="step__d" data-i18n="home.steps.2.desc">Planning Core repite el plan con duraciones variables y averías aleatorias, calibradas con tu historial, y te da la probabilidad de entrega de cada OF y el recurso que más la frena.</p>
+          <p class="step__d" data-i18n="home.steps.2.desc">Planning Core repite el plan con duraciones variables y averías aleatorias, calibradas con tu historial, y te da la probabilidad de entrega de cada orden de fabricación y el recurso que más la frena.</p>
         </li>
         <li class="step">
           <span class="step__n">04</span>
@@ -181,7 +194,7 @@ import SectorIcon from '../components/SectorIcon.astro';
   <section class="sectors">
     <div class="container">
       <p class="section-label" data-i18n="home.sectors.label">Sectores</p>
-      <h2 class="section-title" data-i18n-html="home.sectors.title">Diseñado para tu industria,<br/>no para todas a la vez</h2>
+      <h2 class="section-title" data-i18n-html="home.sectors.title">Software de planificación<br/>para tu sector industrial</h2>
       <p class="section-sub sectors__sub" data-i18n="home.sectors.sub">
         Cada sector tiene sus propias restricciones. Planning Core llega
         preconfigurado con la lógica de la tuya.
@@ -207,16 +220,16 @@ import SectorIcon from '../components/SectorIcon.astro';
     <div class="container value__grid">
       <div class="value__text">
         <p class="section-label" data-i18n="home.value.label">Por qué Planning Core</p>
-        <h2 class="section-title" data-i18n-html="home.value.title">No es otro ERP.<br/>Es la capa que faltaba.</h2>
+        <h2 class="section-title" data-i18n-html="home.value.title">No es otro ERP.<br/>Es la capa de planificación que le faltaba.</h2>
         <p class="section-sub" data-i18n="home.value.sub">Tu ERP registra lo que pasó. Planning Core decide qué producir y cuándo, con la capacidad real, encima de tu sistema actual.</p>
         <div class="value__list">
           <div class="vi">
             <span class="vi__k">01</span>
-            <div><strong data-i18n="home.value.1.title">Probabilidad medida, no supuesta</strong><span data-i18n="home.value.1.desc">Cada OF trae su probabilidad de entrega con su intervalo de confianza: sabes qué fecha puedes comprometer antes de darla.</span></div>
+            <div><strong data-i18n="home.value.1.title">Probabilidad medida, no supuesta</strong><span data-i18n="home.value.1.desc">Cada orden de fabricación trae su probabilidad de entrega con su intervalo de confianza: sabes qué fecha puedes comprometer antes de darla.</span></div>
           </div>
           <div class="vi">
             <span class="vi__k">02</span>
-            <div><strong data-i18n="home.value.0.title">Cada retraso, con su causa</strong><span data-i18n="home.value.0.desc">No se queda en «llega tarde»: te dice qué operación espera, en qué recurso y detrás de qué otra OF.</span></div>
+            <div><strong data-i18n="home.value.0.title">Cada retraso, con su causa</strong><span data-i18n="home.value.0.desc">No se queda en «llega tarde»: te dice qué operación espera, en qué recurso y detrás de qué otra orden.</span></div>
           </div>
           <div class="vi">
             <span class="vi__k">03</span>
@@ -241,13 +254,50 @@ import SectorIcon from '../components/SectorIcon.astro';
         <div class="cmp cmp--new">
           <div class="cmp__h" data-i18n="home.comp.withLabel">Con Planning Core</div>
           <div class="cmp__row"><span class="cmp__ok">✓</span><span data-i18n="home.comp.new.0">Un plan de capacidad finita para todo el equipo</span></div>
-          <div class="cmp__row"><span class="cmp__ok">✓</span><span data-i18n="home.comp.new.1">Las OF en riesgo, señaladas antes de comprometer la fecha</span></div>
-          <div class="cmp__row"><span class="cmp__ok">✓</span><span data-i18n="home.comp.new.2">Replanificación en un clic cuando cambian las OF o una máquina</span></div>
-          <div class="cmp__row"><span class="cmp__ok">✓</span><span data-i18n="home.comp.new.3">Probabilidad de entrega de cada OF, con la causa de cada retraso</span></div>
+          <div class="cmp__row"><span class="cmp__ok">✓</span><span data-i18n="home.comp.new.1">Las órdenes de fabricación en riesgo, señaladas antes de comprometer la fecha</span></div>
+          <div class="cmp__row"><span class="cmp__ok">✓</span><span data-i18n="home.comp.new.2">Replanificación en un clic cuando cambian las órdenes o una máquina</span></div>
+          <div class="cmp__row"><span class="cmp__ok">✓</span><span data-i18n="home.comp.new.3">Probabilidad de entrega de cada orden de fabricación, con la causa de cada retraso</span></div>
           <div class="cmp__row"><span class="cmp__ok">✓</span><span data-i18n="home.comp.new.4">El plan exportado a Excel para el taller</span></div>
         </div>
       </div>
     </div>
+  </section>
+
+  <!-- ═══ FAQ (visible copy = FAQPage structured data) ═══ -->
+  <section class="faq" id="preguntas">
+    <div class="container faq__inner">
+      <div>
+        <p class="section-label" data-i18n="home.faq.label">Preguntas frecuentes</p>
+        <h2 class="section-title" data-i18n-html="home.faq.title">Planificación de la producción:<br/>lo que nos preguntan</h2>
+      </div>
+      <div class="faq__list">
+        <details class="faq__item">
+          <summary class="faq__q" data-i18n="home.faq.0.q">¿Qué es un software de planificación de la producción con capacidad finita?</summary>
+          <p class="faq__a" data-i18n="home.faq.0.a">Es una herramienta que coloca cada operación de cada orden de fabricación en el recurso que la ejecuta, respetando su capacidad real: calendario, turnos, mantenimiento y lo que ya tiene ocupado. A diferencia del MRP, que supone capacidad infinita, te dice cuándo terminará de verdad cada orden.</p>
+        </details>
+        <details class="faq__item">
+          <summary class="faq__q" data-i18n="home.faq.1.q">¿Planning Core sustituye a mi ERP o a mi MRP?</summary>
+          <p class="faq__a" data-i18n="home.faq.1.a">No. Planning Core trabaja encima de tu ERP: lee el Excel o CSV que ya exporta tu MRP con las órdenes de fabricación y te devuelve el plan en Excel. La conexión directa con tu ERP se define con tu equipo durante el piloto.</p>
+        </details>
+        <details class="faq__item">
+          <summary class="faq__q" data-i18n="home.faq.2.q">¿Cómo calcula la probabilidad de entrega de cada orden de fabricación?</summary>
+          <p class="faq__a" data-i18n="home.faq.2.a">Con una simulación Monte Carlo: repite el plan cientos de veces con duraciones variables y averías aleatorias, calibradas con tu historial cuando hay suficiente, y cuenta en cuántos escenarios cada orden termina antes de su fecha de necesidad. También te dice qué recurso la retrasa más a menudo.</p>
+        </details>
+        <details class="faq__item">
+          <summary class="faq__q" data-i18n="home.faq.3.q">¿Qué datos necesito para empezar?</summary>
+          <p class="faq__a" data-i18n="home.faq.3.a">El Excel de tu MRP con las órdenes de fabricación, sus cantidades y fechas de necesidad; los recursos con su calendario; y la ruta de cada pieza (sus operaciones y tiempos). Planning Core valida los datos al cargarlos y te dice qué falta.</p>
+        </details>
+        <details class="faq__item">
+          <summary class="faq__q" data-i18n="home.faq.4.q">¿Para qué sectores está pensado?</summary>
+          <p class="faq__a" data-i18n="home.faq.4.a">Empieza por composites y aeronáutica, con el autoclave, el NDT y el laminado como cuellos de botella típicos. Para fundición, packaging, MedTech, ferroviario, naval y otros sectores, la lógica específica se configura con tu equipo durante el piloto.</p>
+        </details>
+        <details class="faq__item">
+          <summary class="faq__q" data-i18n="home.faq.5.q">¿Cuánto se tarda en implantar?</summary>
+          <p class="faq__a" data-i18n="home.faq.5.a">El piloto dura 12 semanas: mapeo de recursos y rutas, validación del plan, uso en paralelo con tu sistema actual y puesta en marcha con métricas acordadas. Si no aporta valor, no hay contrato.</p>
+        </details>
+      </div>
+    </div>
+    <script type="application/ld+json" set:html={JSON.stringify(FAQ_LD)} />
   </section>
 
   <!-- ═══ PILOT CTA ═══ -->
@@ -255,7 +305,7 @@ import SectorIcon from '../components/SectorIcon.astro';
     <div class="container pilot__inner">
       <div>
         <p class="section-label section-label--light" data-i18n="home.pilot.label">Piloto 12 semanas</p>
-        <h2 class="section-title section-title--light" data-i18n-html="home.pilot.title">De Excel a Gantt inteligente<br/>en 12 semanas</h2>
+        <h2 class="section-title section-title--light" data-i18n-html="home.pilot.title">De Excel a un plan de producción fiable<br/>en 12 semanas</h2>
         <p class="pilot__sub" data-i18n="home.pilot.sub">
           Mapeamos tus recursos en la semana 1, validamos el plan en la 8 y
           hacemos go-live con métricas reales antes de la 12. Si no genera valor,
@@ -610,6 +660,20 @@ import SectorIcon from '../components/SectorIcon.astro';
   .hero__trust { display: flex; flex-wrap: wrap; column-gap: .9rem; row-gap: .35rem; }
   .hero__trust-sep { display: none; }
   .hero__trust > span:not(.hero__trust-sep)::before { content: '✓'; margin-right: .35rem; color: #8BC2C6; }
+
+  /* FAQ */
+  .faq { padding: 5rem 0; background: var(--white, #fff); }
+  .faq__inner { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.6fr); gap: 3rem; align-items: start; }
+  .faq__list { display: flex; flex-direction: column; }
+  .faq__item { border-bottom: 1px solid rgba(15, 23, 42, .1); }
+  .faq__q { cursor: pointer; list-style: none; padding: 1.1rem 2rem 1.1rem 0; font-weight: 700; font-size: 1rem;
+            color: var(--navy, #0B1C3A); position: relative; }
+  .faq__q::-webkit-details-marker { display: none; }
+  .faq__q::after { content: '+'; position: absolute; right: .2rem; top: 1rem; font-size: 1.2rem; color: var(--steel, #475569); }
+  .faq__item[open] .faq__q::after { content: '–'; }
+  .faq__q:focus-visible { outline: 2px solid #1E4DB7; outline-offset: 2px; }
+  .faq__a { margin: 0 0 1.2rem; color: var(--steel, #475569); line-height: 1.6; font-size: .95rem; }
+  @media (max-width: 860px) { .faq__inner { grid-template-columns: 1fr; gap: 1.5rem; } .faq { padding: 3.5rem 0; } }
 </style>
 
 <script>

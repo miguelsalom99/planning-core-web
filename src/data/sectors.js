@@ -13,7 +13,7 @@ export const SECTORS = [
     cycle: "4-8 meses",
     fit: "5/5",
     icp: "Director de Producción · Planning Manager · MRO Manager",
-    roiHeadline: "Probabilidad de entrega por OF · El autoclave como cuello de botella, a la vista · Replanificación en un clic",
+    roiHeadline: "Probabilidad de entrega por orden de fabricación · El autoclave como cuello de botella, a la vista · Replanificación en un clic",
     pains: [
       ["Autoclave como cuello de botella crítico", "El autoclave es el recurso más caro y más estrecho. Sin secuenciación precisa, las piezas esperan fuera y el ciclo térmico se pierde."],
       ["Replanificación manual ante disrupciones", "Una rotura de útil o un rechazo en inspección rompe el plan de toda la semana. El replanner tarda horas en redistribuir las órdenes."],
@@ -21,9 +21,9 @@ export const SECTORS = [
       ["Utillaje y moldes no coordinados", "El útil está ocupado en otra pieza cuando se necesita. Sin visibilidad de recursos secundarios, los bloqueos son invisibles hasta el momento de ejecución."],
     ],
     differentiators: [
-      ["El autoclave, medido como cuello de botella", "Planning Core planifica el autoclave con capacidad finita, muestra su carga en el periodo y te dice qué OF esperan por él y cuánto."],
-      ["Replanificación en un clic", "Ante una avería, un rechazo en NDT o un pedido urgente, recalculas el plan con los datos actuales y ves qué OF cambian de fecha."],
-      ["Probabilidad de entrega por OF", "Planning Core simula cientos de escenarios con la variabilidad del laminado, el curado y el NDT, y te da la probabilidad de que cada OF llegue a tiempo."],
+      ["El autoclave, medido como cuello de botella", "Planning Core planifica el autoclave con capacidad finita, muestra su carga en el periodo y te dice qué órdenes de fabricación esperan por él y cuánto."],
+      ["Replanificación en un clic", "Ante una avería, un rechazo en NDT o un pedido urgente, recalculas el plan con los datos actuales y ves qué órdenes cambian de fecha."],
+      ["Probabilidad de entrega por orden de fabricación", "Planning Core simula cientos de escenarios con la variabilidad del laminado, el curado y el NDT, y te da la probabilidad de que cada orden llegue a tiempo."],
     ],
     pilotSteps: [
       ["Sem 1-2", "Mapeo de autoclaves, útiles, turnos y tipos de pieza"],
@@ -31,7 +31,7 @@ export const SECTORS = [
       ["Sem 6-8", "Validación con plan real: Planning Core vs Excel actual"],
       ["Sem 9-12", "Go-live · Rutina diaria · Scorecard de utilización de autoclave"],
     ],
-    kpis: ["Utilización de autoclave (%)", "Replanificaciones urgentes/semana", "OTD a cliente final", "Probabilidad de entrega de las OF"],
+    kpis: ["Utilización de autoclave (%)", "Replanificaciones urgentes/semana", "OTD a cliente final", "Probabilidad de entrega de las órdenes de fabricación"],
     competitors: [
       ["Siemens Opcenter APS", "Potente pero implantación 12-18 meses, costoso"],
       ["Preactor / Ortems", "APS genérico sin lógica de composites"],

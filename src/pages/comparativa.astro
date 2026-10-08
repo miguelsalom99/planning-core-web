@@ -37,7 +37,7 @@ const ROWS = [
   {
     k: 'robust', dim: 'Robustez del plan',
     excel: 'Desconocida', aps: 'Desconocida',
-    erp: 'Desconocida', pc: 'Probabilidad de entrega por OF y por escenario (Monte Carlo)',
+    erp: 'Desconocida', pc: 'Probabilidad de entrega por orden de fabricación y por escenario (Monte Carlo)',
   },
   {
     k: 'erpRel', dim: 'Relación con tu ERP',
@@ -74,8 +74,8 @@ const NOT = [
 ];
 ---
 <BaseLayout
-  title="Comparativa — Planning Core vs. Excel, APS y módulos de ERP"
-  description="Por qué Planning Core y no lo de siempre: 12 semanas frente a más de un año, tres escenarios con robustez medida, y una capa sobre tu ERP en vez de un reemplazo."
+  title="Planning Core vs. Excel, APS y ERP | Comparativa"
+  description="Compara Planning Core con Excel, un APS tradicional y el módulo de planificación de tu ERP: plazo de implantación, coste, capacidad finita y riesgo de entrega."
 >
   <section class="page-hero">
     <div class="container">
@@ -83,7 +83,7 @@ const NOT = [
       <h1 class="section-title section-title--light" data-i18n-html="comp.hero.title">La planificación que mide<br/>lo que las demás suponen</h1>
       <p class="page-hero__sub" data-i18n="comp.hero.sub">
         Excel, un APS clásico o el MRP de tu ERP te dan un plan y te piden que
-        confíes. Planning Core te dice la probabilidad de entrega de cada OF, la causa de
+        confíes. Planning Core te dice la probabilidad de entrega de cada orden de fabricación, la causa de
         cada retraso y te deja comparar escenarios con datos, en 12 semanas y sin reemplazar nada.
       </p>
     </div>

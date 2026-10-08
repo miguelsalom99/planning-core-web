@@ -2,14 +2,14 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 ---
 <BaseLayout
-  title="Producto — Planning Core"
-  description="Cómo funciona Planning Core: plan de capacidad finita por OF, probabilidad de entrega con Monte Carlo, causa de cada retraso y exportación a Excel, encima de tu ERP."
+  title="Software APS con capacidad finita | Planning Core"
+  description="Rutas por pieza, calendarios y carga por recurso, con la probabilidad de entrega de cada orden de fabricación (Monte Carlo). Importa tu MRP desde Excel."
 >
   <!-- HERO -->
   <section class="page-hero">
     <div class="container">
       <p class="section-label" data-i18n="prod.hero.label">El producto</p>
-      <h1 class="section-title section-title--light" data-i18n-html="prod.hero.title">Un Gantt que decide,<br/>no solo que dibuja</h1>
+      <h1 class="section-title section-title--light" data-i18n-html="prod.hero.title">Planificación de la producción<br/>con capacidad finita</h1>
       <p class="page-hero__sub" data-i18n="prod.hero.sub">Planning Core es la capa de planificación que tu ERP no tiene: planifica tus órdenes con capacidad finita, simula imprevistos y te dice qué llega a tiempo, qué no y por qué.</p>
     </div>
   </section>
@@ -20,8 +20,8 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       <div class="feature-block feature-block--reverse">
         <div class="feature-block__text">
           <p class="section-label" data-i18n="prod.f1.label">Plan de capacidad finita</p>
-          <h2 class="section-title" data-i18n-html="prod.f1.title">Cada OF en su recurso,<br/>y la causa si se retrasa</h2>
-          <p class="feature-desc" data-i18n="prod.f1.desc">Las operaciones de cada OF salen de la ruta liberada de su pieza y se colocan en su recurso respetando secuencia, calendario, mantenimiento, recursos alternativos y disrupciones activas. Si una OF llega tarde, ves qué operación espera, dónde y detrás de qué otra OF.</p>
+          <h2 class="section-title" data-i18n-html="prod.f1.title">Cada orden de fabricación en su recurso,<br/>y la causa si se retrasa</h2>
+          <p class="feature-desc" data-i18n="prod.f1.desc">Las operaciones de cada orden de fabricación salen de la ruta liberada de su pieza y se colocan en su recurso respetando secuencia, calendario, mantenimiento, recursos alternativos y disrupciones activas. Si una orden llega tarde, ves qué operación espera, dónde y detrás de qué otra orden.</p>
           <ul class="feature-list">
             <li data-i18n="prod.f1.li.0">Rutas versionadas por pieza (OP10, OP20…)</li>
             <li data-i18n="prod.f1.li.1">Calendario, eficiencia y unidades en paralelo por recurso</li>
@@ -101,7 +101,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         <div class="feature-block__text">
           <p class="section-label" data-i18n="prod.f3.label">Replanificación inteligente</p>
           <h2 class="section-title" data-i18n-html="prod.f3.title">La realidad cambia.<br/>El plan también.</h2>
-          <p class="feature-desc" data-i18n="prod.f3.desc">Si hay una avería, un pedido urgente o una OF nueva, recalculas el plan en un clic con los datos actuales y ves el impacto en cada OF antes de comprometer fechas.</p>
+          <p class="feature-desc" data-i18n="prod.f3.desc">Si hay una avería, un pedido urgente o una orden de fabricación nueva, recalculas el plan en un clic con los datos actuales y ves el impacto en cada orden antes de comprometer fechas.</p>
           <ul class="feature-list">
             <li data-i18n="prod.f3.li.0">Replanificación con un clic</li>
             <li data-i18n="prod.f3.li.1">Disrupciones con fecha que bloquean el recurso afectado</li>
@@ -119,7 +119,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
             <div class="rc-arrow" data-i18n="prod.f3.replanning">Replanificando…</div>
             <div class="rc-row rc-row--ok">
               <span class="rc-dot"></span>
-              <div><strong data-i18n="prod.f3.ready">Nuevo plan listo</strong><span data-i18n="prod.f3.result">3 OF reasignadas · 96 % en plazo</span></div>
+              <div><strong data-i18n="prod.f3.ready">Nuevo plan listo</strong><span data-i18n="prod.f3.result">3 órdenes reasignadas · 96 % en plazo</span></div>
               <span class="rc-time">14:32<em> + 3 s</em></span>
             </div>
           </div>

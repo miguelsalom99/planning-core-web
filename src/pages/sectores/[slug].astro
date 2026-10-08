@@ -10,8 +10,8 @@ export function getStaticPaths() {
 const { sector: s } = Astro.props;
 ---
 <BaseLayout
-  title={`${s.name} — Software de planificación · Planning Core`}
-  description={`Planning Core para ${s.name}: ${s.roiHeadline}. Piloto de 12 semanas, ROI medible con tus propios datos.`}
+  title={`${s.short}: planificación de la producción`}
+  description={`Software de planificación de la producción para ${s.short}: ${s.tagline}. Piloto de 12 semanas con tus datos.`}
   accent={s.accent}
 >
   <!-- HERO -->
@@ -129,7 +129,7 @@ const { sector: s } = Astro.props;
         ))}
         <div class="sd-comp__row sd-comp__row--us">
           <span class="sd-comp__name">Planning Core ✓</span>
-          <span class="sd-comp__why" data-i18n="sectorDetail.comp.usWhy">Probabilidad de entrega por OF · Causa de cada retraso · Sin reemplazar ERP · Piloto en 12 sem</span>
+          <span class="sd-comp__why" data-i18n="sectorDetail.comp.usWhy">Probabilidad de entrega por orden de fabricación · Causa de cada retraso · Sin reemplazar ERP · Piloto en 12 sem</span>
         </div>
       </div>
     </div>
