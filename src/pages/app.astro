@@ -10012,6 +10012,10 @@
           rtBtn('Planificar', () => rtRunPlan(start.value, result), 'btn-ui--primary'),
           rtBtn('Simular robustez', () => rtRunSimulation(start.value, result)),
           el('label', {}, 'Inicio', start),
+          el('label', { title: 'Qué órdenes reservan capacidad primero' }, 'Secuencia',
+            el('select', { class: 'rt-in', onchange: (e: Event) => { rt.sequencing = (e.target as HTMLSelectElement).value; } },
+              el('option', { value: 'priority', text: 'Por prioridad', selected: rt.sequencing === 'due_date' ? null : 'selected' }),
+              el('option', { value: 'due_date', text: 'Por fecha de necesidad', selected: rt.sequencing === 'due_date' ? 'selected' : null }))),
           el('button', { class: 'btn-ui', type: 'button', disabled: mrpRows.length ? null : 'disabled',
             title: mrpRows.length ? 'Una OF por línea con necesidad neta > 0' : 'Carga primero un Excel en la pestaña Plan MRP',
             text: mrpRows.length ? `Crear OF desde el MRP (${mrpRows.length} líneas)` : 'Crear OF desde el MRP',
@@ -10084,7 +10088,7 @@
     async function rtRunSimulation(start: string, box: HTMLElement) {
       box.replaceChildren(el('p', { class: 'rt-muted', text: 'Simulando cientos de escenarios (duraciones variables y averías)…' }));
       try {
-        rt.sim = await rtCall('/simulate', rtJson('POST', { start: start || null }));
+        rt.sim = await rtCall('/simulate', rtJson('POST', { start: start || null, sequencing: rt.sequencing || 'priority' }));
         box.replaceChildren();
         rtRenderSim();
         rtRenderOrderList();
@@ -10112,12 +10116,18 @@
           stat(s.expected_late_orders, 'OF con retraso esperadas', s.expected_late_orders >= 1 ? 'rt-bad' : ''),
           stat(s.at_risk_orders, 'OF con menos del 80% de prob.', s.at_risk_orders ? 'rt-warn' : ''),
           stat(s.most_frequent_bottleneck || '—', 'Recurso que más retrasos causa')),
+        s.unreliable_orders ? el('p', { class: 'rt-muted', style: 'margin:-.3rem 0 .6rem', text:
+          `${s.unreliable_orders} probabilidad${s.unreliable_orders === 1 ? '' : 'es'} marcada${s.unreliable_orders === 1 ? '' : 's'} con ≈ `
+          + `tiene${s.unreliable_orders === 1 ? '' : 'n'} un intervalo de confianza amplio: no cupieron suficientes escenarios en el tiempo disponible. `
+          + 'Tómalas como orientativas.' }) : null,
         rows.length ? rtTable(['OF', 'Necesidad', 'Prob. a tiempo', 'Fin P50', 'Fin P90', 'Retraso P90', 'Causa principal'],
           el('tbody', {}, rows.map((o: any) => el('tr', {},
             el('td', {}, el('b', { text: o.order_number })),
             el('td', { text: rtDate(o.due_date) }),
-            el('td', { class: `rt-num ${rtPctCls(o.p_on_time)}`,
-                       title: o.p_on_time_ci ? `IC95 ${rtPct(o.p_on_time_ci[0])}–${rtPct(o.p_on_time_ci[1])}` : '' , text: rtPct(o.p_on_time) }),
+            el('td', { class: `rt-num ${o.p_on_time_reliable === false ? 'rt-muted' : rtPctCls(o.p_on_time)}`,
+                       title: o.p_on_time_ci ? `IC95 ${rtPct(o.p_on_time_ci[0])}–${rtPct(o.p_on_time_ci[1])}`
+                         + (o.p_on_time_reliable === false ? ' · poco fiable: pocos escenarios en el tiempo disponible' : '') : '',
+                       text: (o.p_on_time_reliable === false ? '≈' : '') + rtPct(o.p_on_time) }),
             el('td', { text: rtDt(o.end_p50) }), el('td', { text: rtDt(o.end_p90) }),
             el('td', { class: 'rt-num', text: o.late_h_p90 ? (o.late_h_p90 >= 24 ? `${(o.late_h_p90 / 24).toFixed(1)} días` : `${o.late_h_p90} h`) : '—' }),
             el('td', { text: o.main_cause_resource ? `${o.main_cause_resource} (${rtPct(o.main_cause_share)} de los retrasos)` : '—' })))))
@@ -10130,7 +10140,7 @@
     async function rtRunPlan(start: string, box: HTMLElement) {
       box.replaceChildren(el('p', { class: 'rt-muted', text: 'Planificando con capacidad finita…' }));
       try {
-        rt.plan = await rtCall('/plan', rtJson('POST', { start: start || null }));
+        rt.plan = await rtCall('/plan', rtJson('POST', { start: start || null, sequencing: rt.sequencing || 'priority' }));
         rt.sim = null; rtRenderSim();
         box.replaceChildren();
         rt.orders = rt.plan.orders;
@@ -10181,6 +10191,26 @@
               }))))));
     }
 
+    const RT_SEQ: Record<string, string> = { priority: 'por prioridad', due_date: 'por fecha de necesidad' };
+
+    // Every plan is also computed with the other sequencing rule (in memory).
+    // When that one delivers more OFs on time, say it with the numbers and offer it.
+    function rtSequencingHint(plan: any, box: HTMLElement) {
+      const c = plan?.sequencing_comparison;
+      if (!c?.other_is_better) return null;
+      const bad = (x: any) => (x.late || 0) + (x.unplanned || 0);
+      const gain = bad(c.current) - bad(c.other);
+      return el('div', { class: 'rt-alert', style: 'display:flex;gap:.6rem;align-items:center;flex-wrap:wrap;margin:.2rem 0 .8rem' },
+        el('span', { style: 'flex:1 1 18rem', text: `Con la secuencia ${RT_SEQ[c.other.sequencing]} llegarían a tiempo ${gain} `
+          + `${gain === 1 ? 'orden de fabricación más' : 'órdenes de fabricación más'} `
+          + `(retrasadas o sin planificar: ${bad(c.current)} → ${bad(c.other)}).` }),
+        rtBtn(`Planificar ${RT_SEQ[c.other.sequencing]}`, async () => {
+          rt.sequencing = c.other.sequencing;
+          await rtRunPlan(String(plan.plan_start || '').slice(0, 16), box);
+          rtRenderOrders();
+        }));
+    }
+
     function rtRenderPlan() {
       const box = document.getElementById('rtPlanBox');
       if (!box) return;
@@ -10193,7 +10223,9 @@
         : el('span', { class: 'rt-pill rt-pill--ok', text: 'OK' });
       const over = cap.filter((c: any) => c.status === 'OVERLOAD');
       box.replaceChildren(el('div', { class: 'rt-box' },
-        el('h4', { text: `Plan desde ${rtDt(rt.plan.period.start)} · capacidad evaluada hasta ${rtDt(rt.plan.period.end)}` }),
+        el('h4', { text: `Plan desde ${rtDt(rt.plan.period.start)} · capacidad evaluada hasta ${rtDt(rt.plan.period.end)}`
+          + ` · secuencia ${RT_SEQ[rt.plan.sequencing] || RT_SEQ.priority}` }),
+        rtSequencingHint(rt.plan, box),
         el('div', { class: 'rt-stats' },
           stat(s.on_time_pct == null ? '—' : `${s.on_time_pct}%`, `OF en plazo (${s.on_time} de ${s.orders_with_due_date} con fecha)`,
                s.on_time_pct == null ? '' : s.on_time_pct >= 95 ? 'rt-ok' : 'rt-bad'),
@@ -10241,7 +10273,9 @@
           el('td', { 'data-label': 'Fin planificado', text: rtDt(o.planned_end) }),
           el('td', { 'data-label': 'Estado', text: RT_STATUS[o.execution_status] || o.execution_status }),
           el('td', { 'data-label': 'Riesgo' }, o.risk ? rtPill(RT_RISK, o.risk) : el('span', { class: 'rt-muted', text: 'Sin planificar aún' })),
-          withSim ? el('td', { 'data-label': 'Prob. a tiempo', class: `rt-num ${rtPctCls(simBy[o.id]?.p_on_time)}`, text: rtPct(simBy[o.id]?.p_on_time) }) : null));
+          withSim ? el('td', { 'data-label': 'Prob. a tiempo',
+            class: `rt-num ${simBy[o.id]?.p_on_time_reliable === false ? 'rt-muted' : rtPctCls(simBy[o.id]?.p_on_time)}`,
+            text: (simBy[o.id]?.p_on_time_reliable === false ? '≈' : '') + rtPct(simBy[o.id]?.p_on_time) }) : null));
         if (open) tbody.appendChild(el('tr', { class: 'rt-detail-row' },
           el('td', { colspan: withSim ? '9' : '8', id: `rtOrder-${o.id}` }, el('p', { class: 'rt-muted', text: 'Cargando OF…' }))));
       });
